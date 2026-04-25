@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whitepaper | ExergyNet</title>
+<meta name="description" content="ExergyNet: Machine-to-Machine Settlement for Useful Compute. Technical whitepaper.">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.wp-body { max-width: 680px; }
+.wp-section { margin-bottom: 2.5rem; }
+.wp-section h2 { font-size: 1.35rem; margin-bottom: 0.75rem; }
+.wp-section p { color: var(--text-muted); line-height: 1.75; margin-bottom: 0.75rem; }
+.abstract {
+  border-left: 3px solid var(--accent);
+  padding: 1.25rem 1.5rem;
+  background: var(--accent-light);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 1.5rem 0 2rem;
+}
+.abstract p { color: var(--text); font-style: italic; margin: 0; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="protocol.html">Protocol</a></li>
+    <li><a href="sdk.html">SDK</a></li>
+    <li><a href="mcp.html">MCP</a></li>
+    <li><a href="proof.html">Proof</a></li>
+    <li><a href="agents.html">Agents</a></li>
+    <li><a href="security.html">Security</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="whitepaper.html">Whitepaper</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">●</button>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="container">
+    <div class="wp-body">
+
+      <div class="page-header">
+        <div class="section-label">Technical paper</div>
+        <h1>ExergyNet: Machine-to-Machine Settlement for Useful Compute</h1>
+      </div>
+
+      <div class="abstract">
+        <p>Autonomous agents require settlement rails that are machine-readable, economically bounded, and verifiable without human negotiation. ExergyNet introduces a public interface for LNES-01, a Solana Mainnet-Beta program designed to route useful compute settlement through deterministic program execution.</p>
+      </div>
+
+      <section class="wp-section">
+        <div class="section-label">1</div>
+        <h2>Problem</h2>
+        <p>As AI agents become capable of delegating and purchasing compute work autonomously, they encounter a structural gap: no standard payment primitive exists for machine-to-machine compute exchange.</p>
+        <p>Existing payment infrastructure assumes human counterparties, manual invoice reconciliation, and negotiated trust. An agent cannot evaluate a vendor's reputation, negotiate contract terms, or dispute a charge. It needs a primitive that routes value based on verifiable conditions — not promises.</p>
+        <p>Without this primitive, agentic compute markets are limited to closed ecosystems with platform-specific billing, or they require human intervention at every payment boundary.</p>
+      </section>
+
+      <section class="wp-section">
+        <div class="section-label">2</div>
+        <h2>Agent-native settlement</h2>
+        <p>Agent-native settlement has three requirements: it must be machine-readable, economically bounded, and verifiable without a trusted intermediary.</p>
+        <p>Machine-readable means the settlement interface can be discovered, parsed, and invoked programmatically with no human explanation. Economically bounded means the agent can evaluate the cost of settlement before committing capital. Verifiable means any third party can inspect the settlement outcome on a public ledger.</p>
+        <p>ExergyNet is designed to satisfy all three requirements through the LNES-01 on-chain program.</p>
+      </section>
+
+      <section class="wp-section">
+        <div class="section-label">3</div>
+        <h2>Exergy as useful work value</h2>
+        <p>In thermodynamics, exergy is the maximum useful work extractable from a system. ExergyNet borrows this concept as a settlement primitive: a unit of useful compute work that has been performed, verified, and is eligible for economic settlement.</p>
+        <p>Not all compute is exergy. Compute that does not produce a useful output, does not clear the economic gate, or cannot be verified does not qualify for settlement. This constraint prevents agents from settling trivial or low-value work at a net economic loss.</p>
+      </section>
+
+      <section class="wp-section">
+        <div class="section-label">4</div>
+        <h2>LNES-01 architecture</h2>
+        <p>LNES-01 is a Solana program that implements a three-phase settlement loop: job opening, proof submission, and USDC routing.</p>
+        <p>In the job-opening phase, an escrow program-derived address (PDA) is created and funded with the toll amount. In the proof-submission phase, the agent submits an axiom hash binding the settlement to a specific compute output. In the routing phase, the SettleExergy instruction validates all inputs and transfers USDC to predefined vault accounts.</p>
+        <p>All state transitions are on-chain and verifiable. No off-chain oracle, human arbiter, or reputation score influences the settlement outcome.</p>
+      </section>
+
+      <section class="wp-section">
+        <div class="section-label">5</div>
+        <h2>Economic gate</h2>
+        <p>The exergy gate is a precondition for settlement. An agent should only open a job when the expected value of the compute output exceeds the full cost of settlement.</p>
+
+        <div class="formula">
+          external_compute_cost &gt; lnes_settlement_cost + proof_cost + transaction_cost + risk_margin
+        </div>
+
+        <p>The <code>estimateExergyGate()</code> SDK method evaluates this condition before any on-chain action. If the gate does not clear, the agent should not proceed. This constraint is enforced at the application layer — it is the agent's responsibility to evaluate the gate before committing to settlement.</p>
+      </section>
+
+      <section class="wp-section">
+        <div class="section-label">6</div>
+        <h2>Program settlement flow</h2>
+        <p>The SettleExergy instruction accepts a job ID, axiom hash, toll amount in USDC micro-units, and a set of account references including the escrow PDA, USDC mint, agent token account, escrow token account, and destination vault token accounts.</p>
+        <p>The program validates all account ownership, verifies the escrow balance, and executes a tri-partite USDC transfer to the vault destinations. The initial proven execution transferred 5.000000 USDC across three vaults: 1.666666 + 1.666666 + 1.666668 USDC.</p>
+        <p>The transaction is confirmed on Solana Mainnet-Beta and verifiable on Solscan.</p>
+      </section>
+
+      <section class="wp-section">
+        <div class="section-label">7</div>
+        <h2>SDK and MCP interfaces</h2>
+        <p>Developers integrate LNES-01 through the <code>lnes-agent-sdk-core</code> TypeScript package, available on npm. The SDK exposes <code>estimateExergyGate()</code>, <code>openJob()</code>, and <code>settleExergy()</code> as the primary integration surface.</p>
+        <p>For autonomous agent runtimes that support the Model Context Protocol, the planned <code>exergynet-mcp-server</code> package will expose the same capabilities as callable MCP tools, enabling zero-code integration for compatible agent frameworks.</p>
+      </section>
+
+      <section class="wp-section">
+        <div class="section-label">8</div>
+        <h2>Security model</h2>
+        <p>LNES-01 is in early Mainnet-Beta deployment. The program is upgradeable. Program source verification and third-party audit are planned for Phase 9.</p>
+        <p>Agents and developers are required to verify the Program ID before signing, simulate transactions before submitting, and use limited hot wallets for autonomous operations. The security model relies on Solana's base-layer cryptographic guarantees for transaction validity and account ownership.</p>
+      </section>
+
+      <section class="wp-section">
+        <div class="section-label">9</div>
+        <h2>Roadmap</h2>
+        <p>Phase 7 completed the core protocol: Mainnet deployment, SettleExergy proof, and SDK publication. Phase 8 establishes the public infrastructure layer: website, machine-readable discovery, and MCP server specification. Phase 9 targets external agent integration, job marketplace automation, SDK safety tooling, and third-party audit preparation.</p>
+        <p>The long-term objective is an open, composable settlement primitive that any agent runtime can discover, verify, and integrate without human intermediation.</p>
+      </section>
+
+      <div class="btn-row">
+        <a href="proof.html" class="btn btn-primary">View mainnet proof</a>
+        <a href="sdk.html" class="btn btn-secondary">Install SDK</a>
+        <a href="protocol.html" class="btn btn-ghost">Protocol spec →</a>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
+  <div class="footer-links">
+    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
+  </div>
+  <div>LNES-01 · Solana Mainnet-Beta</div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>

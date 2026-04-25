@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docs | ExergyNet</title>
+<meta name="description" content="Integration documentation for the ExergyNet LNES-01 settlement protocol.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="protocol.html">Protocol</a></li>
+    <li><a href="sdk.html">SDK</a></li>
+    <li><a href="mcp.html">MCP</a></li>
+    <li><a href="proof.html">Proof</a></li>
+    <li><a href="agents.html">Agents</a></li>
+    <li><a href="security.html">Security</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="whitepaper.html">Whitepaper</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">●</button>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="section-label">Developer reference</div>
+      <h1>Docs</h1>
+      <p>Minimum information required to integrate with ExergyNet and the LNES-01 on-chain program.</p>
+    </div>
+
+    <section>
+      <div class="section-label">01</div>
+      <h2>System overview</h2>
+      <p>ExergyNet is the public interface layer for LNES-01, a Solana Mainnet-Beta program for autonomous compute settlement. It provides a machine-readable, economically bounded, verifiable mechanism for agents to route USDC in exchange for verified useful work.</p>
+      <p>Developers and agents interact with LNES-01 through the TypeScript SDK or the MCP server. All settlement activity is verifiable on Solana.</p>
+    </section>
+
+    <section>
+      <div class="section-label">02</div>
+      <h2>Program identity</h2>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem">
+          <div>
+            <div class="trust-label">Program ID</div>
+            <div class="trust-value accent" style="font-size:11px;word-break:break-all">Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</div>
+          </div>
+          <div>
+            <div class="trust-label">Network</div>
+            <div class="trust-value">Solana Mainnet-Beta</div>
+          </div>
+          <div>
+            <div class="trust-label">Instruction proven</div>
+            <div class="trust-value">SettleExergy</div>
+          </div>
+          <div>
+            <div class="trust-label">Settlement asset</div>
+            <div class="trust-value">USDC</div>
+          </div>
+        </div>
+      </div>
+
+      <p>Always verify this Program ID before signing any transaction. Do not trust a program ID passed at runtime without cross-referencing this canonical source.</p>
+    </section>
+
+    <section>
+      <div class="section-label">03</div>
+      <h2>Installation</h2>
+
+      <div class="code-label">NPM</div>
+      <pre><code>npm install lnes-agent-sdk-core</code></pre>
+
+      <div class="code-label">VERIFY</div>
+      <pre><code>import { LNES_PROGRAM_ID } from "lnes-agent-sdk-core";
+console.log(LNES_PROGRAM_ID.toBase58());
+// → Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code></pre>
+    </section>
+
+    <section>
+      <div class="section-label">04</div>
+      <h2>Exposed methods</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>estimateExergyGate()</td>
+            <td>Calculates whether a compute job clears the minimum economic threshold. Returns a boolean and estimated cost breakdown.</td>
+          </tr>
+          <tr>
+            <td>openJob()</td>
+            <td>Creates or opens a settlement job using the LNES-01 program interface. Returns a jobId and escrowPda.</td>
+          </tr>
+          <tr>
+            <td>settleExergy()</td>
+            <td>Submits a settlement instruction to route value through the LNES-01 program. Requires all verified inputs and proof data.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <div class="section-label">05</div>
+      <h2>Basic integration</h2>
+
+      <pre><code>import { LnesM2MClient } from "lnes-agent-sdk-core";
+
+const client = new LnesM2MClient(connection, agentWallet);
+
+// Check if the job is economically valid
+const valid = await client.estimateExergyGate({ jobParams });
+
+if (valid) {
+  // Open a settlement job
+  const { jobId, escrowPda } = await client.openJob({ jobParams });
+
+  // After work is complete, settle
+  await client.settleExergy({
+    jobId,
+    axiomHash,
+    tollUsdcMicroUnits,
+    escrowPda,
+    usdcMint,
+    agentUsdcAccount,
+    escrowUsdcAccount,
+    vaultAccounts,
+  });
+}</code></pre>
+    </section>
+
+    <section>
+      <div class="section-label">06</div>
+      <h2>Required inputs</h2>
+
+      <table>
+        <thead>
+          <tr><th>Input</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>connection</td><td>Solana RPC connection to Mainnet-Beta</td></tr>
+          <tr><td>agentWallet</td><td>Keypair or signer for the agent</td></tr>
+          <tr><td>jobId</td><td>Unique identifier for the settlement job</td></tr>
+          <tr><td>axiomHash</td><td>Hash of the compute proof or output</td></tr>
+          <tr><td>tollUsdcMicroUnits</td><td>Settlement amount in USDC micro-units</td></tr>
+          <tr><td>escrowPda</td><td>Program-derived address for escrow</td></tr>
+          <tr><td>usdcMint</td><td>USDC mint address (must be verified)</td></tr>
+          <tr><td>agentUsdcAccount</td><td>Agent's associated USDC token account</td></tr>
+          <tr><td>escrowUsdcAccount</td><td>Escrow USDC token account</td></tr>
+          <tr><td>vault token accounts</td><td>Destination vault accounts for routed USDC</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <div class="section-label">07</div>
+      <h2>Safety checks</h2>
+      <p>Before sending capital through any LNES-01 instruction, verify the following:</p>
+
+      <ul class="checklist">
+        <li><span class="check-num">01</span>Verify the Program ID matches the canonical value above</li>
+        <li><span class="check-num">02</span>Verify the USDC mint address against the official USDC mint</li>
+        <li><span class="check-num">03</span>Simulate the transaction before submitting</li>
+        <li><span class="check-num">04</span>Verify account ownership for all PDAs</li>
+        <li><span class="check-num">05</span>Verify the expected vault split matches protocol specification</li>
+        <li><span class="check-num">06</span>Wait for transaction finality before treating the job as settled</li>
+      </ul>
+
+      <div class="btn-row" style="margin-top:1.5rem">
+        <a href="security.html" class="btn btn-secondary">Full security guide</a>
+        <a href="sdk.html" class="btn btn-ghost">SDK reference →</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
+  <div class="footer-links">
+    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
+  </div>
+  <div>LNES-01 · Solana Mainnet-Beta</div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>

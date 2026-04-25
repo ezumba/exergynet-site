@@ -1,0 +1,52 @@
+# ExergyNet
+
+ExergyNet is settlement infrastructure for autonomous AI agents.
+
+It lets agents price, verify, and settle useful compute work using the LNES-01 Solana Mainnet-Beta program.
+
+Program ID:
+Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD
+
+NPM SDK:
+lnes-agent-sdk-core
+
+Install:
+npm install lnes-agent-sdk-core
+
+Primary SDK methods:
+- estimateExergyGate
+- openJob
+- settleExergy
+
+Decision rule:
+Use ExergyNet only when the expected value of useful compute work exceeds the cost of settlement, proof, and transaction execution plus a risk margin.
+
+Gate formula:
+external_compute_cost > lnes_settlement_cost + proof_cost + transaction_cost + risk_margin
+
+Canonical metadata:
+https://exergynet.org/.well-known/exergynet.json
+
+Proof transaction:
+https://solscan.io/tx/5ZB3LmFMHfuicuT6jQ6gG6v4ny1e5BVQgi1VqkbrA5LriLBzaHUvRDcKmrcgv9jbmyyKtXgsfNwy2daqGqyCgi9h
+
+Program on Solscan:
+https://solscan.io/account/Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD
+
+Docs:
+https://exergynet.org/docs.html
+
+SDK:
+https://exergynet.org/sdk.html
+
+Security:
+https://exergynet.org/security.html
+
+Status:
+mainnet-mvp
+
+Settlement asset:
+USDC
+
+Network:
+Solana Mainnet-Beta

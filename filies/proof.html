@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mainnet Proof | ExergyNet</title>
+<meta name="description" content="Verified on-chain proof of LNES-01 SettleExergy execution on Solana Mainnet-Beta.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="protocol.html">Protocol</a></li>
+    <li><a href="sdk.html">SDK</a></li>
+    <li><a href="mcp.html">MCP</a></li>
+    <li><a href="proof.html">Proof</a></li>
+    <li><a href="agents.html">Agents</a></li>
+    <li><a href="security.html">Security</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="whitepaper.html">Whitepaper</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">●</button>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="hero-tag"><span class="pulse"></span> VERIFIED ON-CHAIN</div>
+      <h1>Mainnet Proof</h1>
+      <p>LNES-01 is deployed on Solana Mainnet-Beta and has executed a confirmed SettleExergy instruction. Both artifacts are independently verifiable.</p>
+    </div>
+
+    <section>
+      <div class="section-label">Program</div>
+      <h2>Deployed program</h2>
+
+      <div class="tx-card">
+        <div class="tx-header">
+          <div>
+            <div class="code-label">PROGRAM ID</div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--text-muted)">LNES-01 · Solana Mainnet-Beta</div>
+          </div>
+          <span class="badge badge-green">DEPLOYED</span>
+        </div>
+        <code class="address">Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code>
+        <div class="btn-row" style="margin-top:1.25rem">
+          <a href="https://solscan.io/account/Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD" class="btn btn-secondary" target="_blank" rel="noopener">View on Solscan →</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Settlement</div>
+      <h2>Proven transaction</h2>
+
+      <div class="tx-card">
+        <div class="tx-header">
+          <div>
+            <div class="code-label">TRANSACTION SIGNATURE</div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--text-muted)">SettleExergy · Confirmed</div>
+          </div>
+          <span class="badge badge-green">✓ SUCCESS</span>
+        </div>
+        <code class="address">5ZB3LmFMHfuicuT6jQ6gG6v4ny1e5BVQgi1VqkbrA5LriLBzaHUvRDcKmrcgv9jbmyyKtXgsfNwy2daqGqyCgi9h</code>
+        <div class="btn-row" style="margin-top:1.25rem">
+          <a href="https://solscan.io/tx/5ZB3LmFMHfuicuT6jQ6gG6v4ny1e5BVQgi1VqkbrA5LriLBzaHUvRDcKmrcgv9jbmyyKtXgsfNwy2daqGqyCgi9h" class="btn btn-secondary" target="_blank" rel="noopener">View on Solscan →</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Verified execution</div>
+      <h2>Settlement breakdown</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+        <div class="card">
+          <div class="trust-label">Instruction</div>
+          <div class="trust-value" style="margin-bottom:0.75rem">SettleExergy</div>
+          <div class="trust-label">Result</div>
+          <div class="trust-value accent">Success</div>
+        </div>
+        <div class="card">
+          <div class="trust-label">Total settled</div>
+          <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--accent);margin-bottom:0.25rem">5.000000</div>
+          <div class="trust-label">USDC · three program-routed transfers</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="code-label" style="margin-bottom:0.75rem">TRANSFER BREAKDOWN</div>
+
+        <div class="transfer-row">
+          <span style="color:var(--text-muted);font-size:13px">Transfer 1</span>
+          <span class="transfer-amt">1.666666 USDC</span>
+        </div>
+        <div class="transfer-row">
+          <span style="color:var(--text-muted);font-size:13px">Transfer 2</span>
+          <span class="transfer-amt">1.666666 USDC</span>
+        </div>
+        <div class="transfer-row">
+          <span style="color:var(--text-muted);font-size:13px">Transfer 3</span>
+          <span class="transfer-amt">1.666668 USDC</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.75rem 0 0;border-top:1px solid var(--border-mid);margin-top:0;font-family:var(--mono);font-size:13px">
+          <span style="color:var(--text)">Total</span>
+          <span style="color:var(--accent);font-weight:600">5.000000 USDC</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Verification</div>
+      <h2>How to verify independently</h2>
+      <ul class="checklist">
+        <li><span class="check-num">01</span>Open Solscan and paste the Program ID to confirm deployment on Mainnet-Beta</li>
+        <li><span class="check-num">02</span>Open the transaction signature to inspect the SettleExergy instruction logs</li>
+        <li><span class="check-num">03</span>Confirm the three USDC transfers sum to 5.000000 USDC</li>
+        <li><span class="check-num">04</span>Cross-reference the Program ID with the SDK's <code>LNES_PROGRAM_ID</code> export</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="btn-row">
+        <a href="sdk.html" class="btn btn-primary">Build with the SDK</a>
+        <a href="docs.html" class="btn btn-secondary">Integration docs</a>
+        <a href="security.html" class="btn btn-ghost">Security guide →</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
+  <div class="footer-links">
+    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
+  </div>
+  <div>LNES-01 · Solana Mainnet-Beta</div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>

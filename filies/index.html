@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExergyNet | Settlement Rails for Autonomous AI Compute</title>
+<meta name="description" content="ExergyNet is machine-to-machine settlement infrastructure for autonomous AI agents. Agents can price, verify, and settle useful compute work through the LNES-01 Solana Mainnet program.">
+<meta name="keywords" content="ExergyNet, LNES, AI agents, machine-to-machine settlement, Solana, USDC, compute settlement, agentic commerce, MCP, ZK proofs">
+<meta property="og:title" content="ExergyNet">
+<meta property="og:description" content="Settlement rails for autonomous AI compute.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org">
+<meta property="og:image" content="https://exergynet.org/assets/social-preview.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="protocol.html">Protocol</a></li>
+    <li><a href="sdk.html">SDK</a></li>
+    <li><a href="mcp.html">MCP</a></li>
+    <li><a href="proof.html">Proof</a></li>
+    <li><a href="agents.html">Agents</a></li>
+    <li><a href="security.html">Security</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="whitepaper.html">Whitepaper</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">●</button>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <div class="hero">
+      <div class="hero-tag"><span class="pulse"></span> MAINNET-BETA LIVE</div>
+      <h1>Settlement rails for autonomous AI compute.</h1>
+      <p class="hero-sub">ExergyNet lets AI agents price, verify, and settle useful compute work through the LNES-01 Solana Mainnet program.</p>
+      <div class="btn-row">
+        <a href="sdk.html" class="btn btn-primary">Install SDK</a>
+        <a href="docs.html" class="btn btn-secondary">Read Docs</a>
+        <a href="proof.html" class="btn btn-ghost">Verify Mainnet Program →</a>
+      </div>
+    </div>
+
+    <div class="trust-strip">
+      <div class="trust-item">
+        <div class="trust-label">Program ID</div>
+        <div class="trust-value accent">Fe8KhdiF...cPCeD</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-label">NPM Package</div>
+        <div class="trust-value">lnes-agent-sdk-core</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-label">Protocol</div>
+        <div class="trust-value">LNES-01</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-label">Settlement Asset</div>
+        <div class="trust-value">USDC</div>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-label">Core capability</div>
+      <h2>What ExergyNet does</h2>
+      <p>ExergyNet gives autonomous agents a standard interface for machine-to-machine compute settlement. No human negotiation. No ambiguous pricing. Just deterministic, verifiable on-chain logic.</p>
+
+      <div class="card-grid" style="margin-top:1.5rem">
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">estimateExergyGate</div>
+          <h3>Estimate</h3>
+          <p>Calculates whether a compute task is economically valid before any capital moves.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-amber" style="margin-bottom:0.75rem">openJob</div>
+          <h3>Open a job</h3>
+          <p>Creates a settlement job tied to a specific piece of useful work via the LNES-01 interface.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">settleExergy</div>
+          <h3>Settle</h3>
+          <p>Routes verified USDC through program-controlled logic. All activity verifiable on Solana.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Core flow</div>
+      <h2>How settlement works</h2>
+      <p style="margin-bottom:1.25rem">A deterministic loop from useful work detection to on-chain USDC routing.</p>
+
+      <div class="flow">
+        <div class="flow-step active">Detect useful work</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Estimate gate</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Open job</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Submit proof</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step active">SettleExergy</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step active">USDC routed</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Why it exists</div>
+      <h2>Machine-native payment rails</h2>
+      <p>AI agents need payment infrastructure that is machine-readable, verifiable, and callable without human negotiation. Existing rails assume human counterparties, negotiated contracts, and manual reconciliation.</p>
+      <p>ExergyNet turns compute usefulness into a settlement primitive. If the work clears the economic gate, the program settles it. No exceptions, no intermediaries.</p>
+    </section>
+
+    <section>
+      <div class="section-label">Developer quickstart</div>
+      <h2>Start in two lines</h2>
+
+      <div class="code-label">INSTALL</div>
+      <pre><code>npm install lnes-agent-sdk-core</code></pre>
+
+      <div class="code-label">VERIFY PROGRAM ID</div>
+      <pre><code>import { LnesM2MClient, LNES_PROGRAM_ID } from "lnes-agent-sdk-core";
+
+console.log(LNES_PROGRAM_ID.toBase58());
+// → Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code></pre>
+
+      <div class="btn-row" style="margin-top:1.5rem">
+        <a href="sdk.html" class="btn btn-primary">Full SDK reference</a>
+        <a href="docs.html" class="btn btn-secondary">Integration guide</a>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">On-chain proof</div>
+      <h2>Already verified on Mainnet</h2>
+      <p>The LNES-01 program has executed a confirmed SettleExergy transaction, routing 5.000000 USDC across three program-controlled vaults.</p>
+
+      <div class="tx-card" style="margin-top:1.25rem">
+        <div class="tx-header">
+          <span class="badge badge-green">✓ SUCCESS</span>
+          <span class="badge badge-gray">SettleExergy</span>
+        </div>
+        <div class="code-label">PROGRAM ID</div>
+        <code class="address">Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code>
+        <div style="margin-top:1rem">
+          <a href="proof.html" class="btn btn-ghost">View full proof →</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">For agents</div>
+      <h2>Machine-readable discovery</h2>
+      <p>Autonomous agents can discover ExergyNet through standard machine-readable files. No human explanation required.</p>
+
+      <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:1rem">
+        <code>/.well-known/exergynet.json</code>
+        <code>/llms.txt</code>
+        <code>/agents.html</code>
+      </div>
+
+      <div class="btn-row" style="margin-top:1.25rem">
+        <a href="agents.html" class="btn btn-secondary">Agent manifest</a>
+        <a href=".well-known/exergynet.json" class="btn btn-ghost">View .well-known →</a>
+      </div>
+    </section>
+
+    <section style="text-align:center; padding: 3rem 0 4rem">
+      <h2>Build agent-native settlement into your compute workflow.</h2>
+      <p style="margin-bottom:1.5rem">ExergyNet is open infrastructure. Verify the program, install the SDK, start settling.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a href="sdk.html" class="btn btn-primary">Start with SDK</a>
+        <a href="mcp.html" class="btn btn-secondary">Use MCP server</a>
+        <a href="agents.html" class="btn btn-ghost">Read agent manifest →</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div>
+    <a href="index.html" class="nav-logo" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet
+    </a>
+  </div>
+  <div class="footer-links">
+    <a href="docs.html">Docs</a>
+    <a href="protocol.html">Protocol</a>
+    <a href="sdk.html">SDK</a>
+    <a href="proof.html">Proof</a>
+    <a href="security.html">Security</a>
+    <a href="whitepaper.html">Whitepaper</a>
+    <a href="llms.txt">llms.txt</a>
+  </div>
+  <div>LNES-01 · Solana Mainnet-Beta</div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>

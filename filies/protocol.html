@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocol | ExergyNet</title>
+<meta name="description" content="LNES-01: the on-chain settlement protocol beneath ExergyNet.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="protocol.html">Protocol</a></li>
+    <li><a href="sdk.html">SDK</a></li>
+    <li><a href="mcp.html">MCP</a></li>
+    <li><a href="proof.html">Proof</a></li>
+    <li><a href="agents.html">Agents</a></li>
+    <li><a href="security.html">Security</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="whitepaper.html">Whitepaper</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">●</button>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="section-label">On-chain settlement</div>
+      <h1>LNES-01 Protocol</h1>
+      <p>The deterministic settlement layer beneath ExergyNet. Routes machine-to-machine compute value through on-chain program logic.</p>
+    </div>
+
+    <section>
+      <div class="section-label">Overview</div>
+      <h2>What LNES-01 is</h2>
+      <p>LNES-01 is the on-chain settlement protocol beneath ExergyNet. It routes machine-to-machine compute settlement through deterministic program logic deployed on Solana Mainnet-Beta.</p>
+      <p>Unlike reputation systems or negotiation-based protocols, LNES-01 requires no trust between counterparties. Settlement is conditional on verified useful work, not promises or platform reputation.</p>
+    </section>
+
+    <section>
+      <div class="section-label">First principles</div>
+      <h2>The use rule</h2>
+      <p>LNES-01 is built around a single economic constraint. An agent should use it only when the math clears.</p>
+
+      <div class="formula">
+        external_compute_cost &gt; lnes_settlement_cost + proof_cost + transaction_cost + risk_margin
+      </div>
+
+      <p>This gate exists to prevent agents from spending more on settlement than the underlying compute is worth. The <code>estimateExergyGate()</code> method evaluates this condition before any capital moves.</p>
+    </section>
+
+    <section>
+      <div class="section-label">Settlement logic</div>
+      <h2>How the protocol works</h2>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="badge badge-gray" style="margin-bottom:0.75rem">STEP 1</div>
+          <h3>Useful work is detected</h3>
+          <p>An agent identifies a compute task that exceeds the economic gate. It estimates cost and expected output value.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-gray" style="margin-bottom:0.75rem">STEP 2</div>
+          <h3>Job is opened</h3>
+          <p>A settlement job is opened via the LNES-01 interface. An escrow PDA is derived and funded.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-gray" style="margin-bottom:0.75rem">STEP 3</div>
+          <h3>Work is submitted</h3>
+          <p>The compute output and axiom hash are submitted as proof. These bind the settlement to the specific work performed.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">STEP 4</div>
+          <h3>SettleExergy executes</h3>
+          <p>The program validates all inputs and routes USDC to the defined vault destinations. Deterministic, verifiable, final.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Design philosophy</div>
+      <h2>Settlement without negotiation</h2>
+      <p>The protocol is designed around useful work settlement, not persuasion, reputation, or manual negotiation. Every decision path is deterministic. Every output is verifiable.</p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem">
+        <div class="card">
+          <h3>What LNES-01 is not</h3>
+          <p>A marketplace. A reputation layer. A payment processor. A credit system. An escrow service with human arbiters.</p>
+        </div>
+        <div class="card">
+          <h3>What LNES-01 is</h3>
+          <p>A compute settlement primitive. An on-chain program. A deterministic USDC router. A machine-native economic gate.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Mainnet evidence</div>
+      <h2>Verified on-chain</h2>
+      <p>LNES-01 is deployed and has proven execution. Both artifacts are verifiable on Solscan.</p>
+
+      <div class="card" style="margin-top:1.25rem">
+        <div class="code-label">PROGRAM DEPLOYED</div>
+        <code class="address" style="margin-bottom:1rem;display:block">Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code>
+
+        <div class="code-label">CONFIRMED SETTLE EXERGY TX</div>
+        <code class="address">5ZB3LmFMHfuicuT6jQ6gG6v4ny1e5BVQgi1VqkbrA5LriLBzaHUvRDcKmrcgv9jbmyyKtXgsfNwy2daqGqyCgi9h</code>
+
+        <div class="btn-row" style="margin-top:1.25rem">
+          <a href="proof.html" class="btn btn-primary">View full proof</a>
+          <a href="https://solscan.io/account/Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD" class="btn btn-ghost" target="_blank" rel="noopener">Solscan →</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="btn-row">
+        <a href="sdk.html" class="btn btn-primary">Build with the SDK</a>
+        <a href="whitepaper.html" class="btn btn-secondary">Read the whitepaper</a>
+        <a href="docs.html" class="btn btn-ghost">Integration docs →</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
+  <div class="footer-links">
+    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
+  </div>
+  <div>LNES-01 · Solana Mainnet-Beta</div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>

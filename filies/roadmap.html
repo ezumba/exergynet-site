@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap | ExergyNet</title>
+<meta name="description" content="ExergyNet development roadmap: completed phases, active work, and planned milestones.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="protocol.html">Protocol</a></li>
+    <li><a href="sdk.html">SDK</a></li>
+    <li><a href="mcp.html">MCP</a></li>
+    <li><a href="proof.html">Proof</a></li>
+    <li><a href="agents.html">Agents</a></li>
+    <li><a href="security.html">Security</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="whitepaper.html">Whitepaper</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">●</button>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="section-label">Development progress</div>
+      <h1>Roadmap</h1>
+      <p>ExergyNet is built in phases. Each phase has a defined scope and exits only when its conditions are fully met.</p>
+    </div>
+
+    <section>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem">
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--accent)">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block"></span> Completed
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--amber)">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block;animation:pulse 2s infinite"></span> Active
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--text-faint)">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--bg-muted);border:2px solid var(--border-mid);display:inline-block"></span> Planned
+        </div>
+      </div>
+
+      <div class="phase done">
+        <div class="phase-label done">PHASE 7 — COMPLETED</div>
+        <ul class="phase-items">
+          <li>Mainnet program deployed to Solana Mainnet-Beta</li>
+          <li>SettleExergy transaction executed and confirmed</li>
+          <li>NPM SDK published as <code>lnes-agent-sdk-core</code></li>
+          <li>README and basic documentation added</li>
+        </ul>
+      </div>
+
+      <div class="phase active">
+        <div class="phase-label active">PHASE 8 — ACTIVE</div>
+        <ul class="phase-items">
+          <li>Public website at exergynet.org</li>
+          <li>Machine-readable metadata (<code>.well-known/exergynet.json</code>)</li>
+          <li><code>llms.txt</code> for LLM and agent discovery</li>
+          <li>GitHub repository (<code>exergynet-site</code>)</li>
+          <li>MCP server specification and development</li>
+          <li>Agent manifest and discovery layer</li>
+          <li>Solscan metadata hardening</li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-label planned">PHASE 9 — PLANNED</div>
+        <ul class="phase-items">
+          <li>External agent integrations (ElizaOS, Swarms, Virtuals)</li>
+          <li>Automated job marketplace</li>
+          <li>Expanded proof receipt validation</li>
+          <li>SDK safety helpers and simulation wrappers</li>
+          <li>Public test harness for integration verification</li>
+          <li>Third-party security audit preparation</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Current phase definition of done</div>
+      <h2>Phase 8 exit conditions</h2>
+      <p>Phase 8 is complete when all of the following resolve publicly:</p>
+
+      <ul class="checklist">
+        <li><span class="check-num">—</span><code>https://exergynet.org</code></li>
+        <li><span class="check-num">—</span><code>https://exergynet.org/docs.html</code></li>
+        <li><span class="check-num">—</span><code>https://exergynet.org/sdk.html</code></li>
+        <li><span class="check-num">—</span><code>https://exergynet.org/proof.html</code></li>
+        <li><span class="check-num">—</span><code>https://exergynet.org/agents.html</code></li>
+        <li><span class="check-num">—</span><code>https://exergynet.org/.well-known/exergynet.json</code></li>
+        <li><span class="check-num">—</span><code>https://exergynet.org/llms.txt</code></li>
+        <li><span class="check-num">—</span><code>https://exergynet.org/sitemap.xml</code></li>
+      </ul>
+
+      <div class="formula" style="margin-top:1.5rem">
+        Minimum success condition: An AI agent can discover ExergyNet, read machine metadata, install the SDK, verify the program ID, and identify the proven settlement transaction without human explanation.
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
+  <div class="footer-links">
+    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
+  </div>
+  <div>LNES-01 · Solana Mainnet-Beta</div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>

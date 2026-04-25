@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Server | ExergyNet</title>
+<meta name="description" content="ExergyNet MCP server: agent-native access to LNES-01 settlement tools.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="protocol.html">Protocol</a></li>
+    <li><a href="sdk.html">SDK</a></li>
+    <li><a href="mcp.html">MCP</a></li>
+    <li><a href="proof.html">Proof</a></li>
+    <li><a href="agents.html">Agents</a></li>
+    <li><a href="security.html">Security</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="whitepaper.html">Whitepaper</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">●</button>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <div class="page-header">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem">
+        <div class="section-label" style="margin-bottom:0">Model Context Protocol</div>
+        <span class="badge badge-amber">PLANNED</span>
+      </div>
+      <h1>MCP Server</h1>
+      <p>SDKs require developer integration. MCP exposes ExergyNet as callable tools for autonomous agents — no custom integration required.</p>
+    </div>
+
+    <section>
+      <div class="card" style="background:var(--amber-light);border-color:var(--amber);margin-bottom:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.5rem">
+          <span class="badge badge-amber">IN DEVELOPMENT</span>
+        </div>
+        <p style="font-size:14px;color:var(--text-muted)">The <code>exergynet-mcp-server</code> package is planned as part of Phase 8. The specification below reflects the intended interface. Subscribe to the GitHub repository for release announcements.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Why MCP</div>
+      <h2>Agent-native access</h2>
+      <p>The TypeScript SDK requires code-level integration. The MCP server exposes the same LNES-01 capabilities as structured, callable tools that autonomous agents can discover and invoke directly.</p>
+      <p>Any MCP-compatible agent runtime — Claude, ElizaOS, Swarms, custom orchestrators — can connect to ExergyNet without writing SDK integration code.</p>
+    </section>
+
+    <section>
+      <div class="section-label">Package</div>
+      <h2>Installation</h2>
+
+      <div class="code-label">GLOBAL INSTALL</div>
+      <pre><code>npm install -g exergynet-mcp-server</code></pre>
+    </section>
+
+    <section>
+      <div class="section-label">Config</div>
+      <h2>Agent configuration</h2>
+      <p>Add ExergyNet to your agent's MCP server configuration:</p>
+
+      <div class="code-label">claude_desktop_config.json / agent-config.json</div>
+      <pre><code>{
+  "mcpServers": {
+    "exergynet": {
+      "command": "npx",
+      "args": ["exergynet-mcp-server"]
+    }
+  }
+}</code></pre>
+    </section>
+
+    <section>
+      <div class="section-label">Tools</div>
+      <h2>Exposed tools</h2>
+
+      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:1rem">
+
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <code>exergynet_get_program_id</code>
+          <span class="badge badge-gray">READ</span>
+        </div>
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <code>exergynet_get_metadata</code>
+          <span class="badge badge-gray">READ</span>
+        </div>
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <code>exergynet_estimate_gate</code>
+          <span class="badge badge-amber">COMPUTE</span>
+        </div>
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <code>exergynet_open_job</code>
+          <span class="badge badge-amber">WRITE</span>
+        </div>
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <code>exergynet_settle_exergy</code>
+          <span class="badge badge-green">SETTLE</span>
+        </div>
+        <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between">
+          <code>exergynet_get_transaction_status</code>
+          <span class="badge badge-gray">READ</span>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Alternative</div>
+      <h2>SDK integration</h2>
+      <p>If you need lower-level control, the TypeScript SDK is available now on npm.</p>
+      <div class="btn-row">
+        <a href="sdk.html" class="btn btn-primary">Install SDK</a>
+        <a href="agents.html" class="btn btn-secondary">Agent manifest</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
+  <div class="footer-links">
+    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
+  </div>
+  <div>LNES-01 · Solana Mainnet-Beta</div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>
