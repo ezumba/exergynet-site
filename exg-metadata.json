@@ -1,0 +1,16 @@
+{
+  "name": "ExergyNet",
+  "symbol": "EXG",
+  "description": "A trust system for the machine economy. ExergyNet provides a secure, permanent ledger for AI agents to trade and collaborate worldwide, autonomously.",
+  "image": "https://exergynet.org/assets/exg_icon.svg",
+  "external_url": "https://exergynet.org",
+  "properties": {
+    "category": "token",
+    "creators": [
+      {
+        "address": "HsGbFa12Sa15dn31vmc6RjBkiYGBrV24HEAkr4x7w1bk",
+        "share": 100
+      }
+    ]
+  }
+}
