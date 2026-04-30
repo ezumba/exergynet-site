@@ -1,11 +1,20 @@
 # ExergyNet
 
-ExergyNet is settlement infrastructure for autonomous AI agents.
+ExergyNet is settlement infrastructure for autonomous AI agents and useful compute.
 
-It lets agents price, verify, and settle useful compute work using the LNES-01 Solana Mainnet-Beta program.
+It lets agents price, verify, and settle machine work using the LNES-01 Solana Mainnet-Beta program.
+
+Canonical website:
+https://exergynet.org
 
 Program ID:
 Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD
+
+Network:
+Solana Mainnet-Beta
+
+Settlement asset:
+USDC
 
 NPM SDK:
 lnes-agent-sdk-core
@@ -19,13 +28,25 @@ Primary SDK methods:
 - settleExergy
 
 Decision rule:
-Use ExergyNet only when the expected value of useful compute work exceeds the cost of settlement, proof, and transaction execution plus a risk margin.
+Use ExergyNet only when the expected value of useful compute work exceeds the cost of settlement, proof, transaction execution, and risk margin.
 
 Gate formula:
-external_compute_cost > lnes_settlement_cost + proof_cost + transaction_cost + risk_margin
+external_compute_value > settlement_cost + proof_cost + transaction_cost + risk_margin
 
 Canonical metadata:
 https://exergynet.org/.well-known/exergynet.json
+
+Agent manifest:
+https://exergynet.org/agent-manifest.json
+
+Token metadata:
+https://exergynet.org/exg-metadata.json
+
+Live L0 explorer:
+https://exergynet.org/explorer.html
+
+Explorer API:
+https://explorer-api.exergynet.org/api/v1/state
 
 Proof transaction:
 https://solscan.io/tx/5ZB3LmFMHfuicuT6jQ6gG6v4ny1e5BVQgi1VqkbrA5LriLBzaHUvRDcKmrcgv9jbmyyKtXgsfNwy2daqGqyCgi9h
@@ -39,14 +60,27 @@ https://exergynet.org/docs.html
 SDK:
 https://exergynet.org/sdk.html
 
+MCP:
+https://exergynet.org/mcp.html
+
+Proof:
+https://exergynet.org/proof.html
+
+Explorer:
+https://exergynet.org/explorer.html
+
 Security:
 https://exergynet.org/security.html
+
+Roadmap:
+https://exergynet.org/roadmap.html
 
 Status:
 mainnet-mvp
 
-Settlement asset:
-USDC
-
-Network:
-Solana Mainnet-Beta
+Active development:
+- L0 explorer telemetry
+- multi-producer node accounting
+- persistent node identity
+- LNES-03 recursive aggregation research
+- production key-signature hardening

@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Security | ExergyNet</title>
-<meta name="description" content="Security model, verification requirements, and disclosure policy for ExergyNet and LNES-01.">
-<link rel="stylesheet" href="assets/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Security | ExergyNet</title>
+  <meta name="description" content="Security status, verification checklist, operational limits, and disclosure policy for ExergyNet.">
+  <link rel="canonical" href="https://exergynet.org/security.html">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-
 <nav>
-  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
+  <a class="nav-logo" href="index.html"><span class="dot"></span>ExergyNet</a>
+  <button class="hamburger" id="hamburger">☰</button>
   <ul class="nav-links" id="nav-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="docs.html">Docs</a></li>
@@ -26,127 +27,89 @@
   </ul>
   <div class="nav-actions">
     <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">●</button>
-    <button class="hamburger" id="hamburger">☰</button>
   </div>
 </nav>
 
 <main class="page">
-  <div class="container">
-
-    <div class="page-header">
-      <div class="section-label">Verification and disclosure</div>
+  <header class="page-header">
+    <div class="container">
+      <div class="section-label">Verification and Disclosure</div>
       <h1>Security</h1>
-      <p>LNES-01 is an early Mainnet-Beta MVP. Use small amounts first. Verify all accounts before signing.</p>
+      <p>LNES-01 is an early Mainnet-Beta MVP. Verify every address, use small amounts first, and treat all tooling as active development infrastructure.</p>
     </div>
+  </header>
 
-    <section>
-      <div class="card" style="background:var(--amber-light);border-color:var(--amber);margin-bottom:0">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.5rem">
-          <span class="badge badge-amber">EARLY MVP</span>
-        </div>
-        <p style="font-size:14px;color:var(--text-muted)">LNES-01 is in active development. The program has executed a confirmed SettleExergy transaction but has not undergone a formal third-party security audit. Use only amounts you are prepared to lose while the protocol matures.</p>
+  <section>
+    <div class="container">
+      <div class="card" style="border-color: var(--amber);">
+        <span class="badge badge-amber">EARLY MVP</span>
+        <p style="margin-top: 1rem;">
+          ExergyNet has executed a confirmed settlement proof path and publishes public verification metadata. It has not yet completed a formal third-party security audit. Do not route funds you cannot afford to lose.
+        </p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section>
+  <section>
+    <div class="container">
       <div class="section-label">Before you sign</div>
-      <h2>Required verification steps</h2>
-      <p>Complete every item on this checklist before sending any capital through LNES-01:</p>
-
+      <h2>Required verification checklist</h2>
       <ul class="checklist">
-        <li><span class="check-num">01</span>Verify the Program ID matches <code>Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code> on Solscan</li>
-        <li><span class="check-num">02</span>Verify the USDC mint address against the official USDC program</li>
-        <li><span class="check-num">03</span>Verify all destination account addresses before signing</li>
-        <li><span class="check-num">04</span>Simulate the full transaction and inspect account delta before submitting</li>
-        <li><span class="check-num">05</span>Verify account ownership for all PDAs using the correct program authority</li>
-        <li><span class="check-num">06</span>Verify the expected vault split matches the protocol specification</li>
-        <li><span class="check-num">07</span>Use a limited hot wallet — never expose a primary key in agent environments</li>
-        <li><span class="check-num">08</span>Wait for transaction finality before treating the job as settled</li>
+        <li><span class="check-num">01</span> Verify the Program ID matches <code>Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code>.</li>
+        <li><span class="check-num">02</span> Verify token mint, vault, and destination accounts before signing any transaction.</li>
+        <li><span class="check-num">03</span> Verify the transaction instruction, accounts, fees, and expected settlement route.</li>
+        <li><span class="check-num">04</span> Use small test amounts before routing larger value.</li>
+        <li><span class="check-num">05</span> Reject any SDK, MCP server, or website copy that changes the Program ID or metadata origin.</li>
       </ul>
-    </section>
+    </div>
+  </section>
 
-    <section>
-      <div class="section-label">Program status</div>
-      <h2>Verification status</h2>
-
-      <table>
-        <thead>
-          <tr><th>Property</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Deployed on Mainnet-Beta</td>
-            <td><span class="badge badge-green">Yes</span></td>
-          </tr>
-          <tr>
-            <td>SettleExergy executed</td>
-            <td><span class="badge badge-green">Confirmed</span></td>
-          </tr>
-          <tr>
-            <td>Upgradeable</td>
-            <td><span class="badge badge-amber">Yes</span></td>
-          </tr>
-          <tr>
-            <td>Program verified (source)</td>
-            <td><span class="badge badge-amber">Pending</span></td>
-          </tr>
-          <tr>
-            <td>security.txt</td>
-            <td><span class="badge badge-amber">Pending</span></td>
-          </tr>
-          <tr>
-            <td>Third-party audit</td>
-            <td><span class="badge badge-gray">Phase 9</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section>
-      <div class="section-label">Disclosure</div>
-      <h2>Responsible disclosure</h2>
-
-      <div class="card" style="margin-bottom:1rem">
-        <div class="code-label">SECURITY CONTACT</div>
-        <a href="mailto:security@exergynet.org" style="font-family:var(--mono);font-size:14px;color:var(--accent)">security@exergynet.org</a>
-      </div>
-
-      <p>Report vulnerabilities privately before public disclosure. Include the following in your report:</p>
-
-      <ul class="checklist">
-        <li><span class="check-num">—</span>Transaction signatures demonstrating the issue</li>
-        <li><span class="check-num">—</span>Account addresses involved</li>
-        <li><span class="check-num">—</span>Reproduction steps</li>
-        <li><span class="check-num">—</span>Expected versus actual behavior</li>
-      </ul>
-    </section>
-
-    <section>
-      <div class="section-label">Best practices</div>
-      <h2>Key management</h2>
-      <p>Agent environments present unusual risks for private key exposure. Follow these practices to reduce surface area:</p>
-
+  <section>
+    <div class="container-wide">
+      <div class="section-label">Security boundaries</div>
+      <h2>What is protected and what is not yet protected.</h2>
       <div class="card-grid">
         <div class="card">
-          <h3>Hot wallet isolation</h3>
-          <p>Create a dedicated keypair for agent settlement operations with a limited USDC balance. Never use a primary or high-value wallet in an automated context.</p>
+          <h3>Published Program ID</h3>
+          <p>The canonical program reference is public and should be verified against Solscan before use.</p>
         </div>
         <div class="card">
-          <h3>Environment secrets</h3>
-          <p>Store private keys as environment variables or use a secrets manager. Never commit key material to source control or include it in agent configuration files.</p>
+          <h3>Machine-readable metadata</h3>
+          <p>Metadata endpoints are published for agents and indexers, including llms.txt and the well-known ExergyNet manifest.</p>
+        </div>
+        <div class="card">
+          <h3>Explorer telemetry</h3>
+          <p>The L0 explorer displays live producer and block state. It is operational telemetry, not a substitute for cryptographic audit.</p>
+        </div>
+        <div class="card">
+          <h3>Current limitation</h3>
+          <p>Prototype node identities are file-based. Production hardening should use cryptographic keypairs and signed block submissions.</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-  </div>
+  <section>
+    <div class="container">
+      <div class="section-label">Disclosure</div>
+      <h2>Responsible reporting</h2>
+      <p>
+        Report suspected vulnerabilities with the affected endpoint, transaction, account, reproduction path, and expected impact. Do not exploit live users or attempt unauthorized fund movement.
+      </p>
+      <p>
+        Security priority is determined by first principles: fund safety, key safety, transaction correctness, replay resistance, metadata integrity, and agent discovery integrity.
+      </p>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
+  <div>ExergyNet · Security</div>
   <div class="footer-links">
-    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
+    <a href="proof.html">Proof</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="explorer.html">Explorer</a>
   </div>
-  <div>LNES-01 · Solana Mainnet-Beta</div>
 </footer>
 
 <script src="assets/main.js"></script>
