@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExergyNet L0 Explorer</title>
+  <style>
+    :root {
+      --bg: #050706;
+      --panel: #0d1110;
+      --panel2: #111816;
+      --line: #24332e;
+      --text: #eafff4;
+      --muted: #7f9b8f;
+      --green: #00ff66;
+      --amber: #ffc857;
+      --red: #ff4d4d;
+      --blue: #68d8ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(0,255,102,0.08), transparent 34rem),
+        radial-gradient(circle at top right, rgba(104,216,255,0.06), transparent 36rem),
+        var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      padding: 28px;
+    }
+
+    .shell {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 22px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--green);
+      letter-spacing: 0.06em;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 10px;
+      max-width: 900px;
+      line-height: 1.5;
+    }
+
+    .status-pill {
+      border: 1px solid rgba(0,255,102,0.45);
+      color: var(--green);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(0,255,102,0.07);
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      min-height: 92px;
+      box-shadow: 0 0 24px rgba(0,0,0,0.25);
+    }
+
+    .card-label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      color: var(--green);
+      font-size: 24px;
+      font-weight: 900;
+      word-break: break-word;
+    }
+
+    .card-sub {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.45fr 0.85fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(13,17,16,0.94);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .panel-title {
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tools {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    input, select, button {
+      background: #070a09;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    button:hover {
+      border-color: var(--green);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(36,51,46,0.75);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      background: rgba(255,255,255,0.025);
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:hover td {
+      background: rgba(0,255,102,0.035);
+    }
+
+    .mono-green { color: var(--green); }
+    .mono-muted { color: var(--muted); }
+    .mono-blue { color: var(--blue); }
+    .mono-amber { color: var(--amber); }
+
+    .hash, .addr {
+      word-break: break-all;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px solid rgba(0,255,102,0.35);
+      color: var(--green);
+      background: rgba(0,255,102,0.08);
+    }
+
+    .badge.warn {
+      border-color: rgba(255,200,87,0.45);
+      color: var(--amber);
+      background: rgba(255,200,87,0.08);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: 780px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 180px;
+      display: block;
+    }
+
+    .detail {
+      padding: 18px;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 8px 14px;
+      margin-bottom: 14px;
+      font-size: 14px;
+    }
+
+    .kv .k {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 12px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 14px;
+      background: #070a09;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: auto;
+      color: var(--green);
+      max-height: 320px;
+    }
+
+    .footer {
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      margin-top: 28px;
+      padding-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12px;
+    }
+
+    @media (max-width: 1150px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 16px; }
+      header { flex-direction: column; }
+      .grid { grid-template-columns: 1fr; }
+      .panel-head { flex-direction: column; align-items: stretch; }
+      input, select, button { width: 100%; }
+      table { font-size: 12px; }
+      th, td { padding: 10px; }
+      .kv { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>EXERGYNET L0 EXPLORER</h1>
+        <div class="subtitle">
+          Live thermodynamic substrate telemetry. Reads ExergyNet L0 blocks, miner identities,
+          thermal anchors, derived yield, state hashes, and sovereign ledger balances.
+        </div>
+      </div>
+      <div class="status-pill" id="connectionStatus">CONNECTING</div>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <div class="card-label">Latest Block Height</div>
+        <div class="card-value" id="height">0</div>
+        <div class="card-sub" id="heightSub">awaiting blocks</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Unique Producers</div>
+        <div class="card-value" id="nodes">0</div>
+        <div class="card-sub">derived from block feed</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Chain Integrity</div>
+        <div class="card-value" id="integrity">AWAITING</div>
+        <div class="card-sub" id="integritySub">height continuity check</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Thermal Flux</div>
+        <div class="card-value" id="flux">0 mC</div>
+        <div class="card-sub">sum of visible anchors</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Derived EXG Yield</div>
+        <div class="card-value" id="yield">0 $EXG</div>
+        <div class="card-sub">sum of visible rewards</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">L1 Solana Membrane</div>
+        <div class="card-value" id="l1">AWAITING</div>
+        <div class="card-sub">program status endpoint</div>
+      </div>
+    </section>
+
+    <div class="two-col">
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Exergonic Waveform · L0 Blocks</div>
+          <div class="tools">
+            <input id="search" placeholder="Search height, miner, hash..." />
+            <select id="limit">
+              <option value="25">25 blocks</option>
+              <option value="50">50 blocks</option>
+              <option value="100">100 blocks</option>
+              <option value="9999">All blocks</option>
+            </select>
+            <button id="searchBtn" type="button">Search</button>
+            <button id="refreshBtn" type="button">Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Height</th>
+                <th>Age</th>
+                <th>Miner</th>
+                <th>Heat</th>
+                <th>Reward</th>
+                <th>State Hash</th>
+                <th>ZK</th>
+              </tr>
+            </thead>
+            <tbody id="blockRows">
+              <tr><td colspan="7" class="mono-muted">Awaiting substrate telemetry...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside>
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Thermal Flux Curve</div>
+          </div>
+          <div class="detail">
+            <canvas id="fluxChart" width="700" height="220"></canvas>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Selected Block</div>
+          </div>
+          <div class="detail" id="blockDetail">
+            <div class="mono-muted">Click a block row to inspect its full state.</div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Sovereign Treasury</div>
+          </div>
+          <div class="table-wrap" style="max-height: 360px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Miner Address</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody id="accountRows">
+                <tr><td colspan="2" class="mono-muted">Awaiting ledger state...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Raw API Snapshot</div>
+        <div class="tools">
+          <button onclick="copySnapshot()">Copy JSON</button>
+        </div>
+      </div>
+      <div class="detail">
+        <pre id="rawSnapshot">{}</pre>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div>ExergyNet Omniscient Explorer · Local L0 telemetry plus L1 membrane status</div>
+      <div id="lastUpdated">Last update: never</div>
+    </div>
+  </div>
+
+<script>
+const EXERGYNET_API_BASE = "https://explorer-api.exergynet.org";
+
+let latestBlocks = [];
+let latestAccounts = {};
+let latestHealth = {};
+let selectedBlock = null;
+
+const $ = (id) => document.getElementById(id);
+
+function shortHash(value, n = 10) {
+  if (!value) return "...";
+  if (Array.isArray(value)) {
+    value = value.map(x => Number(x).toString(16).padStart(2, "0")).join("");
+  }
+  value = String(value);
+  return value.length > n ? value.slice(0, n) + "..." : value;
+}
+
+function fullHash(value) {
+  if (!value) return "";
+  if (Array.isArray(value)) {
+    return value.map(x => Number(x).toString(16).padStart(2, "0")).join("");
+  }
+  return String(value);
+}
+
+function normalizeBlock(b) {
+  return {
+    height: b.height ?? 0,
+    miner: b.miner ?? b.miner_address ?? "unknown",
+    heat: b.heat ?? b.ambient_heat ?? 0,
+    reward: b.reward ?? 0,
+    hash: b.hash ?? fullHash(b.state_hash),
+    status: b.status ?? "[VERIFIED]",
+    raw: b
+  };
+}
+
+async function fetchJson(url, fallback) {
+  try {
+    const apiUrl = url.startsWith("/api/") ? EXERGYNET_API_BASE + url : url;
+    const r = await fetch(apiUrl + (apiUrl.includes("?") ? "&" : "?") + "ts=" + Date.now());
+    if (!r.ok) return fallback;
+    return await r.json();
+  } catch {
+    return fallback;
+  }
+}
+
+async function refreshNow() {
+  $("connectionStatus").textContent = "SYNCING";
+  $("connectionStatus").style.color = "var(--amber)";
+
+  let state = await fetchJson("/api/v1/state", null);
+
+  let blocks;
+  let accounts;
+  let health;
+
+  if (state && Array.isArray(state.recent_blocks)) {
+    blocks = state.recent_blocks.map(normalizeBlock);
+    accounts = state.treasury || {};
+    health = { l1_solana: state.l1_solana || "UNKNOWN", status: "Operational" };
+  } else {
+    const results = await Promise.all([
+      fetchJson("/api/v1/blocks", []),
+      fetchJson("/api/v1/accounts", {}),
+      fetchJson("/api/v1/health", {})
+    ]);
+    blocks = Array.isArray(results[0]) ? results[0].map(normalizeBlock) : [];
+    accounts = results[1] || {};
+    health = results[2] || {};
+  }
+
+  latestBlocks = blocks.sort((a, b) => b.height - a.height);
+  latestAccounts = accounts;
+  latestHealth = health;
+
+  renderAll();
+
+  $("connectionStatus").textContent = "LIVE";
+  $("connectionStatus").style.color = "var(--green)";
+  $("lastUpdated").textContent = "Last update: " + new Date().toLocaleString();
+}
+
+function renderAll() {
+  renderCards();
+  renderBlocks();
+  renderAccounts();
+  renderChart();
+  renderRaw();
+  renderRoute();
+}
+
+function renderCards() {
+  const blocks = latestBlocks;
+  const latest = blocks[0];
+
+  const producers = new Set(blocks.map(b => b.miner).filter(Boolean));
+  const totalFlux = blocks.reduce((s, b) => s + Number(b.heat || 0), 0);
+  const totalYieldVisible = blocks.reduce((s, b) => s + Number(b.reward || 0), 0);
+  const totalYieldLedger = Object.values(latestAccounts).reduce((s, v) => s + Number(v || 0), 0);
+
+  $("height").textContent = latest ? latest.height.toLocaleString() : "0";
+  $("heightSub").textContent = latest ? "latest visible block" : "awaiting blocks";
+
+  $("nodes").textContent = Math.max(producers.size, Object.keys(latestAccounts).length).toLocaleString();
+
+  const integrity = checkIntegrity(blocks);
+  $("integrity").textContent = integrity.ok ? "PASS" : "GAP";
+  $("integrity").style.color = integrity.ok ? "var(--green)" : "var(--amber)";
+  $("integritySub").textContent = integrity.message;
+
+  $("flux").textContent = totalFlux.toLocaleString() + " mC";
+  $("yield").textContent = (totalYieldLedger || totalYieldVisible).toLocaleString() + " $EXG";
+  $("l1").textContent = latestHealth.l1_solana || latestHealth.status || "UNKNOWN";
+}
+
+function checkIntegrity(blocks) {
+  if (!blocks.length) return { ok: false, message: "no blocks loaded" };
+
+  const heights = blocks.map(b => Number(b.height)).sort((a, b) => b - a);
+  let gaps = 0;
+  for (let i = 0; i < heights.length - 1; i++) {
+    if (heights[i] - heights[i + 1] !== 1) gaps++;
+  }
+
+  if (gaps === 0) return { ok: true, message: "visible heights continuous" };
+  return { ok: false, message: gaps + " visible height gap(s)" };
+}
+
+function renderBlocks() {
+  const q = $("search").value.trim().toLowerCase();
+  const limit = Number($("limit").value);
+
+  let rows = latestBlocks;
+
+  if (q) {
+    rows = rows.filter(b =>
+      String(b.height).includes(q) ||
+      String(b.miner).toLowerCase().includes(q) ||
+      String(b.hash).toLowerCase().includes(q)
+    );
+  }
+
+  rows = rows.slice(0, limit);
+
+  if (!rows.length) {
+    $("blockRows").innerHTML = '<tr><td colspan="7" class="mono-muted">No matching blocks.</td></tr>';
+    return;
+  }
+
+  $("blockRows").innerHTML = rows.map((b, i) => `
+    <tr class="block-row" data-height="${b.height}">
+      <td class="mono-green">${b.height}</td>
+      <td class="mono-muted">${i === 0 ? "latest" : i + " rows ago"}</td>
+      <td class="addr mono-green miner-cell" data-miner="${escapeHtml(b.miner)}">${shortHash(b.miner, 14)}</td>
+      <td>${Number(b.heat).toLocaleString()} mC</td>
+      <td class="mono-amber">${Number(b.reward).toLocaleString()} EXG</td>
+      <td class="hash mono-blue">${shortHash(b.hash, 18)}</td>
+      <td><span class="badge">${b.status || "[VERIFIED]"}</span></td>
+    </tr>
+  `).join("");
+}
+
+function renderAccounts() {
+  const entries = Object.entries(latestAccounts || {})
+    .sort((a, b) => Number(b[1]) - Number(a[1]));
+
+  if (!entries.length) {
+    const producers = {};
+    latestBlocks.forEach(b => {
+      producers[b.miner] = (producers[b.miner] || 0) + Number(b.reward || 0);
+    });
+
+    const inferred = Object.entries(producers).sort((a, b) => b[1] - a[1]);
+
+    if (!inferred.length) {
+      $("accountRows").innerHTML = '<tr><td colspan="2" class="mono-muted">No ledger balances available.</td></tr>';
+      return;
+    }
+
+    $("accountRows").innerHTML = inferred.map(([addr, bal]) => `
+      <tr>
+        <td class="addr mono-green">${addr}</td>
+        <td class="mono-amber">${Number(bal).toLocaleString()} EXG <span class="mono-muted">(visible)</span></td>
+      </tr>
+    `).join("");
+    return;
+  }
+
+  $("accountRows").innerHTML = entries.map(([addr, bal]) => `
+    <tr>
+      <td class="addr mono-green">${addr}</td>
+      <td class="mono-amber">${Number(bal).toLocaleString()} EXG</td>
+    </tr>
+  `).join("");
+}
+
+function selectBlock(index) {
+  selectedBlock = latestBlocks[index];
+  if (!selectedBlock) return;
+
+  $("blockDetail").innerHTML = `
+    <div class="kv">
+      <div class="k">Height</div><div class="mono-green">${selectedBlock.height}</div>
+      <div class="k">Miner</div><div class="addr">${selectedBlock.miner}</div>
+      <div class="k">Thermal Anchor</div><div>${Number(selectedBlock.heat).toLocaleString()} mC</div>
+      <div class="k">Reward</div><div class="mono-amber">${Number(selectedBlock.reward).toLocaleString()} EXG</div>
+      <div class="k">State Hash</div><div class="hash mono-blue">${selectedBlock.hash}</div>
+      <div class="k">Status</div><div><span class="badge">${selectedBlock.status}</span></div>
+    </div>
+    <div class="card-label">Raw block</div>
+    <pre>${escapeHtml(JSON.stringify(selectedBlock.raw, null, 2))}</pre>
+  `;
+}
+
+function renderChart() {
+  const c = $("fluxChart");
+  const ctx = c.getContext("2d");
+  const blocks = [...latestBlocks].sort((a, b) => a.height - b.height).slice(-50);
+
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.strokeStyle = "rgba(36,51,46,1)";
+  ctx.lineWidth = 1;
+
+  for (let i = 0; i < 6; i++) {
+    const y = 20 + i * 34;
+    ctx.beginPath();
+    ctx.moveTo(20, y);
+    ctx.lineTo(c.width - 20, y);
+    ctx.stroke();
+  }
+
+  if (!blocks.length) {
+    ctx.fillStyle = "#7f9b8f";
+    ctx.fillText("Awaiting block data", 24, 40);
+    return;
+  }
+
+  const max = Math.max(...blocks.map(b => Number(b.heat || 0)), 1);
+  const min = Math.min(...blocks.map(b => Number(b.heat || 0)), 0);
+  const spread = Math.max(max - min, 1);
+
+  ctx.strokeStyle = "#00ff66";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+
+  blocks.forEach((b, i) => {
+    const x = 24 + (i / Math.max(blocks.length - 1, 1)) * (c.width - 48);
+    const y = c.height - 24 - ((Number(b.heat || 0) - min) / spread) * (c.height - 48);
+
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+
+  ctx.stroke();
+
+  ctx.fillStyle = "#7f9b8f";
+  ctx.fillText("mC thermal anchor, last " + blocks.length + " blocks", 24, 18);
+}
+
+function renderRaw() {
+  $("rawSnapshot").textContent = JSON.stringify({
+    health: latestHealth,
+    blocks_visible: latestBlocks.length,
+    accounts: latestAccounts,
+    latest_block: latestBlocks[0] || null
+  }, null, 2);
+}
+
+function copySnapshot() {
+  const text = $("rawSnapshot").textContent || "";
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(function() {
+      $("connectionStatus").textContent = "COPIED";
+      setTimeout(function(){ $("connectionStatus").textContent = "LIVE"; }, 1200);
+    }).catch(fallbackCopy);
+  } else {
+    fallbackCopy();
+  }
+
+  function fallbackCopy() {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+
+    try {
+      document.execCommand("copy");
+      $("connectionStatus").textContent = "COPIED";
+    } catch {
+      $("connectionStatus").textContent = "COPY FAILED";
+    }
+
+    document.body.removeChild(ta);
+    setTimeout(function(){ $("connectionStatus").textContent = "LIVE"; }, 1200);
+  }
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+
+function openBlockRoute(height) {
+  window.location.hash = "#/block/" + encodeURIComponent(height);
+  renderRoute();
+}
+
+function openMinerRoute(miner) {
+  window.location.hash = "#/miner/" + encodeURIComponent(miner);
+  renderRoute();
+}
+
+function openSearchRoute(query) {
+  window.location.hash = "#/search/" + encodeURIComponent(query);
+  renderRoute();
+}
+
+async function renderRoute() {
+  const hash = window.location.hash || "";
+
+  if (hash.startsWith("#/block/")) {
+    const height = decodeURIComponent(hash.replace("#/block/", ""));
+    const data = await fetchJson("/api/v1/blocks/" + encodeURIComponent(height), null);
+
+    if (data && data.found && data.block) {
+      const b = normalizeBlock(data.block);
+      selectedBlock = b;
+      $("blockDetail").innerHTML = `
+        <div class="kv">
+          <div class="k">Route</div><div class="mono-green">#/block/${height}</div>
+          <div class="k">Height</div><div class="mono-green">${b.height}</div>
+          <div class="k">Miner</div><div class="addr mono-green">${b.miner}</div>
+          <div class="k">Thermal Anchor</div><div>${Number(b.heat).toLocaleString()} mC</div>
+          <div class="k">Reward</div><div class="mono-amber">${Number(b.reward).toLocaleString()} EXG</div>
+          <div class="k">State Hash</div><div class="hash mono-blue">${b.hash}</div>
+          <div class="k">Status</div><div><span class="badge">${b.status}</span></div>
+        </div>
+        <div class="card-label">Raw block</div>
+        <pre>${escapeHtml(JSON.stringify(data.block, null, 2))}</pre>
+      `;
+      return;
+    }
+
+    $("blockDetail").innerHTML = `<div class="mono-amber">Block ${height} not found.</div>`;
+    return;
+  }
+
+  if (hash.startsWith("#/miner/")) {
+    const miner = decodeURIComponent(hash.replace("#/miner/", ""));
+    const data = await fetchJson("/api/v1/miners", {});
+    const m = data[miner];
+
+    const minerBlocks = latestBlocks.filter(b => b.miner === miner);
+    const visibleReward = minerBlocks.reduce((s, b) => s + Number(b.reward || 0), 0);
+    const visibleHeat = minerBlocks.reduce((s, b) => s + Number(b.heat || 0), 0);
+
+    $("blockDetail").innerHTML = `
+      <div class="kv">
+        <div class="k">Route</div><div class="mono-green">#/miner/${miner}</div>
+        <div class="k">Miner</div><div class="addr mono-green">${miner}</div>
+        <div class="k">Blocks Visible</div><div>${minerBlocks.length}</div>
+        <div class="k">Visible Heat</div><div>${visibleHeat.toLocaleString()} mC</div>
+        <div class="k">Visible Reward</div><div class="mono-amber">${visibleReward.toLocaleString()} EXG</div>
+        <div class="k">Ledger Balance</div><div class="mono-amber">${m ? Number(m.ledger_balance || 0).toLocaleString() : "not found"} EXG</div>
+      </div>
+      <div class="card-label">Miner API record</div>
+      <pre>${escapeHtml(JSON.stringify(m || { error: "miner not found in /api/v1/miners", miner }, null, 2))}</pre>
+    `;
+
+    $("search").value = miner;
+    renderBlocks();
+    return;
+  }
+
+  if (hash.startsWith("#/search/")) {
+    const query = decodeURIComponent(hash.replace("#/search/", ""));
+    $("search").value = query;
+    renderBlocks();
+
+    const data = await fetchJson("/api/v1/search?q=" + encodeURIComponent(query), {});
+    $("blockDetail").innerHTML = `
+      <div class="kv">
+        <div class="k">Route</div><div class="mono-green">#/search/${query}</div>
+        <div class="k">Query</div><div>${query}</div>
+        <div class="k">Block Results</div><div>${(data.blocks || []).length}</div>
+        <div class="k">Account Results</div><div>${(data.accounts || []).length}</div>
+      </div>
+      <div class="card-label">Search API result</div>
+      <pre>${escapeHtml(JSON.stringify(data, null, 2))}</pre>
+    `;
+    return;
+  }
+}
+
+window.addEventListener("hashchange", renderRoute);
+
+$("search").addEventListener("input", renderBlocks);
+$("search").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") openSearchRoute($("search").value.trim());
+});
+
+document.addEventListener("click", function(e) {
+  const minerCell = e.target.closest(".miner-cell");
+  if (minerCell) {
+    e.stopPropagation();
+    openMinerRoute(minerCell.dataset.miner);
+    return;
+  }
+
+  const blockRow = e.target.closest(".block-row");
+  if (blockRow) {
+    openBlockRoute(blockRow.dataset.height);
+    return;
+  }
+});
+
+const searchBtn = $("searchBtn");
+if (searchBtn) {
+  searchBtn.addEventListener("click", function() {
+    openSearchRoute($("search").value.trim());
+  });
+}
+
+const refreshBtn = $("refreshBtn");
+if (refreshBtn) {
+  refreshBtn.addEventListener("click", refreshNow);
+}
+$("limit").addEventListener("change", renderBlocks);
+
+setInterval(refreshNow, 2500);
+refreshNow();
+</script>
+</body>
+</html>
