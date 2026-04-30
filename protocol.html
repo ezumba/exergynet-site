@@ -3,8 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Protocol | ExergyNet</title>
-<meta name="description" content="LNES-01: the on-chain settlement protocol beneath ExergyNet.">
+<title>LNES-01 Protocol | ExergyNet</title>
+<meta name="description" content="LNES-01 is the thermodynamic settlement protocol beneath ExergyNet, binding verified physical compute work to Solana Mainnet-Beta liquidity.">
+<meta name="ai-service-protocol" content="LNES-01">
+<meta name="ai-service-layer" content="ExergyNet Thermodynamic Settlement Protocol">
+<meta name="ai-service-network" content="Solana Mainnet-Beta">
+<meta name="ai-service-program-id" content="Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD">
+<meta name="ai-service-asset" content="EXG">
+<meta name="ai-service-asset-mint" content="euUTMww4x9KFYZ1kXFddtkz1EHBdqeme3PHMwEuDmgU">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -33,92 +39,185 @@
   <div class="container">
 
     <div class="page-header">
-      <div class="section-label">On-chain settlement</div>
+      <div class="section-label">Thermodynamic settlement layer</div>
       <h1>LNES-01 Protocol</h1>
-      <p>The deterministic settlement layer beneath ExergyNet. Routes machine-to-machine compute value through on-chain program logic.</p>
+      <p>LNES-01 is the settlement interface between physical compute work and Solana liquidity. It treats computation and value movement as one measurable thermodynamic process.</p>
     </div>
 
     <section>
-      <div class="section-label">Overview</div>
-      <h2>What LNES-01 is</h2>
-      <p>LNES-01 is the on-chain settlement protocol beneath ExergyNet. It routes machine-to-machine compute settlement through deterministic program logic deployed on Solana Mainnet-Beta.</p>
-      <p>Unlike reputation systems or negotiation-based protocols, LNES-01 requires no trust between counterparties. Settlement is conditional on verified useful work, not promises or platform reputation.</p>
+      <div class="section-label">Protocol definition</div>
+      <h2>The thermodynamic settlement protocol</h2>
+      <p>LNES-01 is the ExergyNet settlement layer. It connects Layer-0 silicon entropy, meaning physical computation performed by hardware, with Layer-1 Solana liquidity, meaning programmable digital settlement.</p>
+      <p>The protocol does not rely on reputation, social agreement, or institutional trust. Settlement is gated by cryptographically verified work and deterministic program execution.</p>
     </section>
 
     <section>
-      <div class="section-label">First principles</div>
+      <div class="section-label">Foundational axioms</div>
+      <h2>First principles</h2>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Monism of entropy</h3>
+          <p>LNES-01 does not separate computation from financial settlement. Both are treated as expressions of a physical gradient: energy is spent, information state changes, and value moves only when the work condition is satisfied.</p>
+        </div>
+
+        <div class="card">
+          <h3>Deterministic settlement</h3>
+          <p>Value movement is governed by cryptographically verified physical work, not by social agreement, trust scoring, or manual arbitration.</p>
+        </div>
+
+        <div class="card">
+          <h3>Zero-trust topology</h3>
+          <p>Counterparties do not need institutional trust or shared context. A valid proof of thermodynamic work is the prerequisite for liquidity movement.</p>
+        </div>
+
+        <div class="card">
+          <h3>Thermodynamic hardening</h3>
+          <p>Settlement is restricted by the Minimum Logical Energy condition. If the cost of settlement exceeds the value of the work, the protocol should reject the transaction path.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Economic gate</div>
       <h2>The use rule</h2>
-      <p>LNES-01 is built around a single economic constraint. An agent should use it only when the math clears.</p>
+      <p>LNES-01 should be used only when the external value of compute exceeds the total cost of proving, settling, transacting, and absorbing risk.</p>
 
       <div class="formula">
         external_compute_cost &gt; lnes_settlement_cost + proof_cost + transaction_cost + risk_margin
       </div>
 
-      <p>This gate exists to prevent agents from spending more on settlement than the underlying compute is worth. The <code>estimateExergyGate()</code> method evaluates this condition before any capital moves.</p>
+      <p>This rule prevents agents from burning more value in settlement than the computation is worth. It is the economic expression of thermodynamic consistency.</p>
     </section>
 
     <section>
-      <div class="section-label">Settlement logic</div>
+      <div class="section-label">Exergonic Carnot cycle</div>
       <h2>How the protocol works</h2>
 
       <div class="card-grid">
         <div class="card">
           <div class="badge badge-gray" style="margin-bottom:0.75rem">STEP 1</div>
-          <h3>Useful work is detected</h3>
-          <p>An agent identifies a compute task that exceeds the economic gate. It estimates cost and expected output value.</p>
+          <h3>Ingestion</h3>
+          <p>Autonomous agents or swarm nodes detect a computational need. The job is only valid if the value of the work can justify the full proof and settlement pathway.</p>
         </div>
+
         <div class="card">
           <div class="badge badge-gray" style="margin-bottom:0.75rem">STEP 2</div>
-          <h3>Job is opened</h3>
-          <p>A settlement job is opened via the LNES-01 interface. An escrow PDA is derived and funded.</p>
+          <h3>Compression</h3>
+          <p>Layer-0 bare-metal hardware performs the computation. The work generates a compact proof that binds physical silicon activity to a computational state.</p>
         </div>
+
         <div class="card">
           <div class="badge badge-gray" style="margin-bottom:0.75rem">STEP 3</div>
-          <h3>Work is submitted</h3>
-          <p>The compute output and axiom hash are submitted as proof. These bind the settlement to the specific work performed.</p>
+          <h3>Radiation</h3>
+          <p>The mesh broadcasts the proof across the network. The proof becomes the machine-readable evidence that useful work occurred.</p>
         </div>
+
         <div class="card">
-          <div class="badge badge-green" style="margin-bottom:0.75rem">STEP 4</div>
-          <h3>SettleExergy executes</h3>
-          <p>The program validates all inputs and routes USDC to the defined vault destinations. Deterministic, verifiable, final.</p>
+          <div class="badge badge-gray" style="margin-bottom:0.75rem">STEP 4</div>
+          <h3>Verification</h3>
+          <p>The Layer-1 Membrane validates the proof on Solana Mainnet-Beta through deterministic program logic.</p>
+        </div>
+
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">STEP 5</div>
+          <h3>Extraction</h3>
+          <p>Once validation succeeds, the protocol closes the settlement path, releases the escrow state, refunds eligible rent, and mints or routes value to the worker wallet.</p>
         </div>
       </div>
     </section>
 
     <section>
       <div class="section-label">Design philosophy</div>
-      <h2>Settlement without negotiation</h2>
-      <p>The protocol is designed around useful work settlement, not persuasion, reputation, or manual negotiation. Every decision path is deterministic. Every output is verifiable.</p>
+      <h2>Beyond the dualist fallacy</h2>
+      <p>Legacy blockchains often treat digital state as if it were detached from physical cost. LNES-01 rejects that separation. Its design starts from the fact that every computation consumes energy, changes entropy, and produces a measurable state transition.</p>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem">
         <div class="card">
-          <h3>What LNES-01 is not</h3>
-          <p>A marketplace. A reputation layer. A payment processor. A credit system. An escrow service with human arbiters.</p>
-        </div>
-        <div class="card">
           <h3>What LNES-01 is</h3>
-          <p>A compute settlement primitive. An on-chain program. A deterministic USDC router. A machine-native economic gate.</p>
+          <p>A thermodynamic valve. An automated minting authority. A machine-native settlement engine. A protocol for converting verified physical compute work into programmable liquidity.</p>
+        </div>
+
+        <div class="card">
+          <h3>What LNES-01 is not</h3>
+          <p>A social-consensus database. A marketplace for human opinion. A credit-based lending platform. A reputation system. A manually arbitrated escrow service.</p>
         </div>
       </div>
     </section>
 
     <section>
-      <div class="section-label">Mainnet evidence</div>
-      <h2>Verified on-chain</h2>
-      <p>LNES-01 is deployed and has proven execution. Both artifacts are verifiable on Solscan.</p>
+      <div class="section-label">Liquidity membrane</div>
+      <h2>Layer-0 work, Layer-1 settlement</h2>
+      <p>ExergyNet uses a hybrid liquidity model. Layer 0 operates on physical computation and energy expenditure. Layer 1 provides high-speed settlement, asset routing, and retail integration through the Solana ecosystem.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Layer 0: Mesh</h3>
+          <p>The mesh is the physical substrate. Compute nodes expend energy, perform useful work, and generate proof artifacts from real hardware execution.</p>
+        </div>
+
+        <div class="card">
+          <h3>Layer 1: Solana</h3>
+          <p>Solana acts as the liquidity membrane. It receives proof-linked state transitions and executes deterministic settlement through deployed program logic.</p>
+        </div>
+
+        <div class="card">
+          <h3>$EXG asset</h3>
+          <p>$EXG represents verified thermodynamic work. It is designed as a certificate of physical energy dissipation rather than an inflationary claim detached from work.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Mainnet-Beta artifacts</div>
+      <h2>Technical artifacts</h2>
+      <p>The protocol state is externally inspectable on Solana Mainnet-Beta. These identifiers define the current public settlement membrane and native asset surface.</p>
 
       <div class="card" style="margin-top:1.25rem">
-        <div class="code-label">PROGRAM DEPLOYED</div>
+        <div class="code-label">SOVEREIGN MEMBRANE ID</div>
         <code class="address" style="margin-bottom:1rem;display:block">Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code>
 
-        <div class="code-label">CONFIRMED SETTLE EXERGY TX</div>
-        <code class="address">5ZB3LmFMHfuicuT6jQ6gG6v4ny1e5BVQgi1VqkbrA5LriLBzaHUvRDcKmrcgv9jbmyyKtXgsfNwy2daqGqyCgi9h</code>
+        <div class="code-label">NATIVE ASSET — $EXG</div>
+        <code class="address" style="margin-bottom:1rem;display:block">euUTMww4x9KFYZ1kXFddtkz1EHBdqeme3PHMwEuDmgU</code>
+
+        <div class="code-label">MINT AUTHORITY PDA</div>
+        <code class="address" style="margin-bottom:1rem;display:block">2syWy7amxbTa7pfG6nDRWxqNtPmqeTLDZ4JzCUxkpYB8</code>
 
         <div class="btn-row" style="margin-top:1.25rem">
           <a href="proof.html" class="btn btn-primary">View full proof</a>
-          <a href="https://solscan.io/account/Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD" class="btn btn-ghost" target="_blank" rel="noopener">Solscan →</a>
+          <a href="https://solscan.io/account/Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD" class="btn btn-ghost" target="_blank" rel="noopener">View membrane on Solscan →</a>
+          <a href="https://solscan.io/token/euUTMww4x9KFYZ1kXFddtkz1EHBdqeme3PHMwEuDmgU" class="btn btn-ghost" target="_blank" rel="noopener">View $EXG asset →</a>
         </div>
       </div>
+    </section>
+
+    <section>
+      <div class="section-label">Observability</div>
+      <h2>Continuous transparency</h2>
+      <p>ExergyNet is designed for machine-readable observability. Protocol state, asset identifiers, and settlement evidence should be inspectable by agents, developers, validators, and external auditors.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Real-time ledger</h3>
+          <p>Protocol accounts and token state are visible through public Solana explorers.</p>
+        </div>
+
+        <div class="card">
+          <h3>Protocol status</h3>
+          <p>The current membrane is executable and active on Solana Mainnet-Beta.</p>
+        </div>
+
+        <div class="card">
+          <h3>Treasury integrity</h3>
+          <p>The protocol design relies on proof-linked settlement logic so capital movement remains tied to verifiable work conditions.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Proof-of-Exergy</div>
+      <h2>The energy-backed internet</h2>
+      <p>LNES-01 defines a path toward machine-native economic settlement where verified compute work becomes the basis of liquidity movement. In this model, an agent is not merely a user of a network. It is a thermodynamic actor producing measurable work and receiving deterministic settlement.</p>
     </section>
 
     <section>
@@ -137,7 +236,7 @@
   <div class="footer-links">
     <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
   </div>
-  <div>LNES-01 · Solana Mainnet-Beta</div>
+  <div>LNES-01 · Solana Mainnet-Beta · Proof-of-Exergy</div>
 </footer>
 
 <script src="assets/main.js"></script>
