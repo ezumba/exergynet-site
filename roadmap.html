@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roadmap | ExergyNet</title>
-<meta name="description" content="ExergyNet development roadmap: completed phases, active work, and planned milestones.">
-<link rel="stylesheet" href="assets/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Roadmap | ExergyNet</title>
+  <meta name="description" content="ExergyNet roadmap from LNES-01 mainnet settlement to L0 explorer, multi-producer telemetry, and recursive aggregation.">
+  <link rel="canonical" href="https://exergynet.org/roadmap.html">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-
 <nav>
-  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
+  <a class="nav-logo" href="index.html"><span class="dot"></span>ExergyNet</a>
+  <button class="hamburger" id="hamburger">☰</button>
   <ul class="nav-links" id="nav-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="docs.html">Docs</a></li>
@@ -26,98 +27,98 @@
   </ul>
   <div class="nav-actions">
     <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">●</button>
-    <button class="hamburger" id="hamburger">☰</button>
   </div>
 </nav>
 
 <main class="page">
-  <div class="container">
-
-    <div class="page-header">
-      <div class="section-label">Development progress</div>
+  <header class="page-header">
+    <div class="container">
+      <div class="section-label">Development Progress</div>
       <h1>Roadmap</h1>
-      <p>ExergyNet is built in phases. Each phase has a defined scope and exits only when its conditions are fully met.</p>
+      <p>ExergyNet is built in phases. A phase exits only when its public verification conditions are met.</p>
     </div>
+  </header>
 
-    <section>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem">
-        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--accent)">
-          <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block"></span> Completed
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--amber)">
-          <span style="width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block;animation:pulse 2s infinite"></span> Active
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--text-faint)">
-          <span style="width:8px;height:8px;border-radius:50%;background:var(--bg-muted);border:2px solid var(--border-mid);display:inline-block"></span> Planned
-        </div>
+  <section>
+    <div class="container">
+      <div class="phase done">
+        <div class="phase-label done">Phase 7 · Completed</div>
+        <h3>Mainnet settlement foundation</h3>
+        <ul class="phase-items">
+          <li>Deploy LNES-01 program reference to Solana Mainnet-Beta</li>
+          <li>Execute and publish confirmed settlement proof transaction</li>
+          <li>Publish SDK package: <code>lnes-agent-sdk-core</code></li>
+          <li>Publish core documentation and verification pages</li>
+        </ul>
       </div>
 
       <div class="phase done">
-        <div class="phase-label done">PHASE 7 — COMPLETED</div>
+        <div class="phase-label done">Phase 8 · Completed</div>
+        <h3>Public discovery and machine-readable metadata</h3>
         <ul class="phase-items">
-          <li>Mainnet program deployed to Solana Mainnet-Beta</li>
-          <li>SettleExergy transaction executed and confirmed</li>
-          <li>NPM SDK published as <code>lnes-agent-sdk-core</code></li>
-          <li>README and basic documentation added</li>
+          <li>Launch public website at <code>exergynet.org</code></li>
+          <li>Publish <code>/.well-known/exergynet.json</code></li>
+          <li>Publish <code>/llms.txt</code> for LLM and agent discovery</li>
+          <li>Publish token metadata endpoint <code>/exg-metadata.json</code></li>
+          <li>Add explorer, docs, SDK, MCP, proof, and security pages</li>
         </ul>
       </div>
 
       <div class="phase active">
-        <div class="phase-label active">PHASE 8 — ACTIVE</div>
+        <div class="phase-label active">Phase 9 · Active</div>
+        <h3>L0 explorer and producer telemetry</h3>
         <ul class="phase-items">
-          <li>Public website at exergynet.org</li>
-          <li>Machine-readable metadata (<code>.well-known/exergynet.json</code>)</li>
-          <li><code>llms.txt</code> for LLM and agent discovery</li>
-          <li>GitHub repository (<code>exergynet-site</code>)</li>
-          <li>MCP server specification and development</li>
-          <li>Agent manifest and discovery layer</li>
-          <li>Solscan metadata hardening</li>
+          <li>Run live ExergyNet L0 explorer at <code>/explorer.html</code></li>
+          <li>Expose HTTPS explorer API through <code>explorer-api.exergynet.org</code></li>
+          <li>Track block height, producer identity, thermal anchors, reward, hash, and ledger state</li>
+          <li>Stabilize persistent node identity across restarts</li>
+          <li>Support multi-producer block ingestion and producer-level search</li>
+        </ul>
+      </div>
+
+      <div class="phase active">
+        <div class="phase-label active">Phase 10 · Active R&D</div>
+        <h3>LNES-03 recursive aggregation</h3>
+        <ul class="phase-items">
+          <li>Validate local recursive proof prototype</li>
+          <li>Aggregate child proof outputs into a parent proof path</li>
+          <li>Map recursive proof state to future batch settlement logic</li>
+          <li>Design batch settlement interfaces for multi-agent useful compute</li>
         </ul>
       </div>
 
       <div class="phase">
-        <div class="phase-label planned">PHASE 9 — PLANNED</div>
+        <div class="phase-label planned">Phase 11 · Planned</div>
+        <h3>External agent integrations</h3>
         <ul class="phase-items">
-          <li>External agent integrations (ElizaOS, Swarms, Virtuals)</li>
-          <li>Automated job marketplace</li>
-          <li>Expanded proof receipt validation</li>
-          <li>SDK safety helpers and simulation wrappers</li>
-          <li>Public test harness for integration verification</li>
-          <li>Third-party security audit preparation</li>
+          <li>Package MCP tools for autonomous agent runtimes</li>
+          <li>Add examples for agent frameworks and local LLM harnesses</li>
+          <li>Publish reference integration scripts</li>
+          <li>Document operational safety, keys, limits, and expected-value gating</li>
         </ul>
       </div>
-    </section>
 
-    <section>
-      <div class="section-label">Current phase definition of done</div>
-      <h2>Phase 8 exit conditions</h2>
-      <p>Phase 8 is complete when all of the following resolve publicly:</p>
-
-      <ul class="checklist">
-        <li><span class="check-num">—</span><code>https://exergynet.org</code></li>
-        <li><span class="check-num">—</span><code>https://exergynet.org/docs.html</code></li>
-        <li><span class="check-num">—</span><code>https://exergynet.org/sdk.html</code></li>
-        <li><span class="check-num">—</span><code>https://exergynet.org/proof.html</code></li>
-        <li><span class="check-num">—</span><code>https://exergynet.org/agents.html</code></li>
-        <li><span class="check-num">—</span><code>https://exergynet.org/.well-known/exergynet.json</code></li>
-        <li><span class="check-num">—</span><code>https://exergynet.org/llms.txt</code></li>
-        <li><span class="check-num">—</span><code>https://exergynet.org/sitemap.xml</code></li>
-      </ul>
-
-      <div class="formula" style="margin-top:1.5rem">
-        Minimum success condition: An AI agent can discover ExergyNet, read machine metadata, install the SDK, verify the program ID, and identify the proven settlement transaction without human explanation.
+      <div class="phase">
+        <div class="phase-label planned">Phase 12 · Planned</div>
+        <h3>Security hardening and audit readiness</h3>
+        <ul class="phase-items">
+          <li>Replace text node identities with cryptographic signing keys</li>
+          <li>Verify block signatures before crediting rewards</li>
+          <li>Separate test telemetry from production settlement state</li>
+          <li>Prepare third-party audit package and reproducibility notes</li>
+        </ul>
       </div>
-    </section>
-
-  </div>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
+  <div>ExergyNet · Roadmap</div>
   <div class="footer-links">
-    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
+    <a href="security.html">Security</a>
+    <a href="explorer.html">Explorer</a>
+    <a href="whitepaper.html">Whitepaper</a>
   </div>
-  <div>LNES-01 · Solana Mainnet-Beta</div>
 </footer>
 
 <script src="assets/main.js"></script>
