@@ -16,4 +16,5 @@
   <url><loc>https://exergynet.org/.well-known/exergynet.json</loc></url>
   <url><loc>https://exergynet.org/agent-manifest.json</loc></url>
   <url><loc>https://exergynet.org/exg-metadata.json</loc></url>
+  <url><loc>https://exergynet.org/metadata.json</loc></url>
 </urlset>
