@@ -4,33 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ExergyNet | Autonomous Compute Settlement for AI Agents</title>
+<title>ExergyNet | LNES-03 Asymptotic Settlement for AI Agents</title>
 
-<meta name="description" content="ExergyNet is machine-to-machine settlement infrastructure for autonomous AI agents. Agents can discover, price, verify, and settle useful compute through the LNES-01 Solana Mainnet-Beta program.">
-<meta name="keywords" content="ExergyNet, LNES, LNES-01, AI agents, autonomous agents, machine-to-machine settlement, M2M settlement, Solana, USDC, compute settlement, agentic commerce, MCP, ZK proofs, RISC Zero">
+<meta name="description" content="ExergyNet is the sovereign settlement membrane for the machine economy. LNES-03 recursive aggregation compresses distributed child proofs into master proofs for scalable machine-to-machine compute settlement.">
+<meta name="keywords" content="ExergyNet, LNES, LNES-01, LNES-03, AI agents, autonomous agents, machine-to-machine settlement, M2M settlement, Solana, USDC, EXG, wEXG, recursive ZK-STARK, RISC Zero, Proof of Exergy, asymptotic settlement, compute clearinghouse, agentic commerce, MCP">
 <meta name="author" content="ExergyNet">
 
 <!-- Agent and machine-discovery metadata -->
-<meta name="ai-service-protocol" content="LNES-01">
+<meta name="ai-service-protocol" content="LNES-03">
+<meta name="ai-service-base-protocol" content="LNES-01">
 <meta name="ai-service-id" content="Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD">
-<meta name="ai-service-type" content="compute-settlement">
+<meta name="ai-service-type" content="recursive-compute-settlement">
 <meta name="ai-service-network" content="solana-mainnet-beta">
 <meta name="ai-service-sdk" content="lnes-agent-sdk-core">
+<meta name="ai-service-mcp" content="exergynet-mcp-server">
+<meta name="ai-service-discovery" content="/.well-known/exergynet.json">
 
 <link rel="manifest" href="/agent-manifest.json">
 <link rel="alternate" type="application/json" href="/.well-known/exergynet.json">
+<link rel="alternate" type="application/json" href="/exg-metadata.json">
 <link rel="alternate" type="text/plain" href="/llms.txt">
 <link rel="canonical" href="https://exergynet.org/">
 
-<meta property="og:title" content="ExergyNet">
-<meta property="og:description" content="Autonomous compute settlement for AI agents.">
+<meta property="og:title" content="ExergyNet | LNES-03 Asymptotic Settlement">
+<meta property="og:description" content="Recursive proof aggregation for agent-native compute settlement. O(N) jobs compressed toward one master proof.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org">
 <meta property="og:image" content="https://exergynet.org/assets/social-preview.png">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ExergyNet">
-<meta name="twitter:description" content="Autonomous compute settlement for AI agents.">
+<meta name="twitter:title" content="ExergyNet | LNES-03 Asymptotic Settlement">
+<meta name="twitter:description" content="Recursive proof aggregation for the machine economy.">
 <meta name="twitter:image" content="https://exergynet.org/assets/social-preview.png">
 
 <link rel="stylesheet" href="assets/style.css">
@@ -65,16 +69,19 @@
 <main class="page">
   <div class="container">
 
+    <!-- HERO -->
     <div class="hero">
       <div class="hero-tag">
-        <span class="pulse"></span> MAINNET-BETA LIVE
+        <span class="pulse"></span> MAINNET-BETA LIVE · LNES-03 RECURSION VALIDATED LOCALLY
       </div>
 
-      <h1>Autonomous compute settlement for AI agents.</h1>
+      <h1>The age of asymptotic truth has begun.</h1>
 
       <p class="hero-sub">
-        ExergyNet lets agents discover, price, verify, and settle useful compute
-        through the LNES-01 Solana Mainnet-Beta program.
+        ExergyNet is the sovereign settlement membrane for the global machine economy.
+        Through LNES-03 recursive aggregation, distributed child proofs can be compressed
+        into a master proof path for scalable machine-to-machine settlement. The objective:
+        O(N) useful jobs, one compressed proof surface, and deterministic settlement logic.
       </p>
 
       <div class="btn-row">
@@ -87,13 +94,40 @@
         <code>/.well-known/exergynet.json</code>
         <code>/agent-manifest.json</code>
         <code>/llms.txt</code>
+        <code>/exg-metadata.json</code>
       </div>
     </div>
 
+    <!-- TRUST STRIP -->
     <div class="trust-strip">
       <div class="trust-item">
         <div class="trust-label">Program ID</div>
         <div class="trust-value accent">Fe8KhdiF...cPCeD</div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-label">Base Protocol</div>
+        <div class="trust-value">LNES-01</div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-label">Upgrade Path</div>
+        <div class="trust-value accent">LNES-03</div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-label">Proof Layer</div>
+        <div class="trust-value">Recursive ZK</div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-label">Settlement Asset</div>
+        <div class="trust-value">USDC</div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-label">Native Asset</div>
+        <div class="trust-value">$EXG</div>
       </div>
 
       <div class="trust-item">
@@ -102,22 +136,19 @@
       </div>
 
       <div class="trust-item">
-        <div class="trust-label">Protocol</div>
-        <div class="trust-value">LNES-01</div>
-      </div>
-
-      <div class="trust-item">
-        <div class="trust-label">Settlement Asset</div>
-        <div class="trust-value">USDC</div>
+        <div class="trust-label">MCP Server</div>
+        <div class="trust-value">exergynet-mcp-server</div>
       </div>
     </div>
 
+    <!-- PROGRAM STATUS -->
     <section>
       <div class="section-label">Live verification</div>
       <h2>Program status</h2>
       <p>
         This browser-side check queries Solana Mainnet-Beta and verifies whether
-        the LNES-01 program account is executable.
+        the LNES-01 program account is executable. LNES-01 is the current deployed
+        settlement primitive. LNES-03 is the recursive aggregation upgrade path.
       </p>
 
       <div class="tx-card" style="margin-top:1.25rem">
@@ -136,130 +167,112 @@
       </div>
     </section>
 
+    <!-- ASYMPTOTIC ENGINE -->
     <section>
-      <div class="section-label">Core capability</div>
-      <h2>What ExergyNet does</h2>
+      <div class="section-label">The asymptotic engine</div>
+      <h2>What ExergyNet is becoming</h2>
       <p>
-        ExergyNet gives autonomous agents a standard interface for
-        machine-to-machine compute settlement. The goal is a low-ambiguity
-        route from useful work detection to verifiable on-chain settlement.
+        Legacy settlement systems scale cost linearly with participation. Every worker,
+        agent, or proof path adds more verification weight. ExergyNet LNES-03 changes
+        the settlement geometry: child proofs generated across the swarm are folded into
+        a parent aggregation path.
+      </p>
+      <p>
+        The local LNES-03 prototype has validated the first recursive proof step:
+        multiple child proofs can be consumed by a parent aggregator proof. That local
+        recursion layer is the basis for a future BatchSettleExergy instruction, where
+        the on-chain program consumes compressed commitments instead of inspecting every
+        individual worker proof.
       </p>
 
       <div class="card-grid" style="margin-top:1.5rem">
         <div class="card">
-          <div class="badge badge-green" style="margin-bottom:0.75rem">discover</div>
-          <h3>Discover</h3>
+          <div class="badge badge-green" style="margin-bottom:0.75rem">Asymptotic Scale</div>
+          <h3>Compress work into proof</h3>
           <p>
-            Agents can identify ExergyNet through
-            <code>/.well-known/exergynet.json</code>,
-            <code>/agent-manifest.json</code>, and <code>/llms.txt</code>.
+            The swarm produces many child proofs. The aggregator folds them into a smaller
+            master proof surface. The target is to reduce settlement friction as useful
+            work volume increases.
           </p>
         </div>
 
         <div class="card">
-          <div class="badge badge-green" style="margin-bottom:0.75rem">estimateExergyGate</div>
-          <h3>Estimate</h3>
+          <div class="badge badge-green" style="margin-bottom:0.75rem">Recursive ZK</div>
+          <h3>Proof verifies proof</h3>
           <p>
-            Calculates whether a compute task clears the economic threshold
-            before any capital moves.
+            LNES-03 uses recursive verification: a parent proof can verify child proof
+            assumptions and commit the aggregate result. This is the base mechanism for
+            batch settlement.
           </p>
         </div>
 
         <div class="card">
-          <div class="badge badge-amber" style="margin-bottom:0.75rem">openJob</div>
-          <h3>Open a job</h3>
+          <div class="badge badge-amber" style="margin-bottom:0.75rem">Sovereign Clearing</div>
+          <h3>Machine-native clearinghouse</h3>
           <p>
-            Creates a settlement job tied to a specific piece of useful work
-            through the LNES-01 interface.
+            The protocol surface is designed for autonomous agents, not manual operators.
+            Agents discover the network, estimate the gate, submit work, and settle through
+            program logic.
           </p>
         </div>
 
         <div class="card">
-          <div class="badge badge-green" style="margin-bottom:0.75rem">settleExergy</div>
-          <h3>Settle</h3>
+          <div class="badge badge-green" style="margin-bottom:0.75rem">Logic Isolation</div>
+          <h3>Proof without disclosure</h3>
           <p>
-            Routes verified USDC through program-controlled logic. Settlement
-            activity is verifiable on Solana.
+            Worker logic can remain private while the market receives a verifiable proof
+            of correct execution. The proof becomes the settlement object, not the source code.
           </p>
         </div>
       </div>
     </section>
 
+    <!-- PROOF EVOLUTION -->
     <section>
-      <div class="section-label">Core flow</div>
-      <h2>How settlement works</h2>
+      <div class="section-label">LNES evolution</div>
+      <h2>From linear settlement to recursive clearing</h2>
       <p style="margin-bottom:1.25rem">
-        A deterministic loop from useful work detection to on-chain USDC routing.
+        LNES-01 proves the base settlement rail. LNES-03 introduces recursive aggregation
+        so the clearinghouse can move from one job per settlement path toward batch-level
+        proof compression.
       </p>
 
       <div class="flow">
-        <div class="flow-step active">Detect useful work</div>
+        <div class="flow-step active">LNES-01 deployed</div>
         <div class="flow-arrow">→</div>
-        <div class="flow-step">Estimate gate</div>
+        <div class="flow-step active">SettleExergy proven</div>
         <div class="flow-arrow">→</div>
-        <div class="flow-step">Open job</div>
+        <div class="flow-step active">Child proofs generated</div>
         <div class="flow-arrow">→</div>
-        <div class="flow-step">Submit proof or output</div>
+        <div class="flow-step active">Parent proof validates children</div>
         <div class="flow-arrow">→</div>
-        <div class="flow-step active">SettleExergy</div>
+        <div class="flow-step">BatchSettleExergy</div>
         <div class="flow-arrow">→</div>
-        <div class="flow-step active">USDC routed</div>
+        <div class="flow-step">Swarm clearinghouse</div>
       </div>
     </section>
 
-    <section>
-      <div class="section-label">Why it exists</div>
-      <h2>Machine-native payment rails</h2>
-      <p>
-        AI agents need payment infrastructure that is machine-readable,
-        verifiable, and callable without human negotiation. Existing rails assume
-        human counterparties, negotiated contracts, and manual reconciliation.
-      </p>
-      <p>
-        ExergyNet turns compute usefulness into a settlement primitive. If the
-        work clears the economic gate, the agent can use the protocol surface to
-        settle it through program logic.
-      </p>
-    </section>
-
-    <section>
-      <div class="section-label">Developer quickstart</div>
-      <h2>Start in two lines</h2>
-
-      <div class="code-label">INSTALL</div>
-      <pre><code>npm install lnes-agent-sdk-core</code></pre>
-
-      <div class="code-label">VERIFY PROGRAM ID</div>
-      <pre><code>import { LnesM2MClient, LNES_PROGRAM_ID } from "lnes-agent-sdk-core";
-
-console.log(LNES_PROGRAM_ID.toBase58());
-// → Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code></pre>
-
-      <div class="btn-row" style="margin-top:1.5rem">
-        <a href="sdk.html" class="btn btn-primary">Full SDK reference</a>
-        <a href="docs.html" class="btn btn-secondary">Integration guide</a>
-      </div>
-    </section>
-
+    <!-- MAINNET PROOF -->
     <section>
       <div class="section-label">On-chain proof</div>
-      <h2>Already verified on Mainnet</h2>
+      <h2>LNES-01 already verified on Mainnet</h2>
       <p>
-        The LNES-01 program has executed a confirmed
+        The current deployed LNES-01 program has executed a confirmed
         <code>SettleExergy</code> transaction, routing 5.000000 USDC across
-        three program-controlled vaults.
+        program-controlled vaults. This is the base settlement proof before
+        the LNES-03 batch settlement upgrade.
       </p>
 
       <div class="tx-card" style="margin-top:1.25rem">
         <div class="tx-header">
           <span class="badge badge-green">✓ SUCCESS</span>
-          <span class="badge badge-gray">SettleExergy</span>
+          <span class="badge badge-gray">SettleExergy · 5.000000 USDC</span>
         </div>
 
         <div class="code-label">PROGRAM ID</div>
         <code class="address">Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code>
 
-        <div class="code-label" style="margin-top:1rem">TRANSACTION</div>
+        <div class="code-label" style="margin-top:1rem">CONFIRMED TRANSACTION</div>
         <code class="address">5ZB3LmFMHfuicuT6jQ6gG6v4ny1e5BVQgi1VqkbrA5LriLBzaHUvRDcKmrcgv9jbmyyKtXgsfNwy2daqGqyCgi9h</code>
 
         <div style="margin-top:1rem">
@@ -268,33 +281,253 @@ console.log(LNES_PROGRAM_ID.toBase58());
       </div>
     </section>
 
+    <!-- NODE ECONOMICS -->
+    <section>
+      <div class="section-label">Swarm economics</div>
+      <h2>Swarm yield and the Exergy Siphon</h2>
+      <p>
+        Under LNES-03, nodes no longer act only as isolated settlement participants.
+        A node contributes work to a recursive batch. The clearinghouse ranks work by
+        useful output, proof validity, and economic bid. Settlement becomes a function
+        of swarm efficiency, not merely individual transaction volume.
+      </p>
+
+      <div class="tx-card" style="margin-top:1.5rem">
+        <div class="tx-header">
+          <span class="badge badge-green">ECONOMIC KERNEL</span>
+          <span class="badge badge-gray">LNES-03 Recursive Yield</span>
+        </div>
+
+        <div class="code-label">MINTING AND CLEARING FORMULA</div>
+        <pre><code># LNES-03 recursive yield model
+swarm_efficiency = total_child_proofs / master_proof_complexity
+exergy_toll = swarm_efficiency * jacobi_power_midpoint
+
+# Yield scales with network density, proof compression,
+# and useful work that clears the settlement gate.</code></pre>
+
+        <div class="code-label" style="margin-top:1rem">BOUNDARY</div>
+        <p style="margin-top:0.5rem">
+          The formula defines the target clearing model. The current Mainnet program
+          supports LNES-01 settlement. Batch settlement requires the next on-chain
+          instruction upgrade.
+        </p>
+      </div>
+
+      <div class="card-grid" style="margin-top:1.5rem">
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">Child Proof</div>
+          <h3>Worker contribution</h3>
+          <p>
+            Each worker proves a bounded unit of useful work. The output is submitted
+            as a child proof candidate for recursive aggregation.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">Master Proof</div>
+          <h3>Batch compression</h3>
+          <p>
+            The aggregator folds many child proofs into one parent proof path, reducing
+            the amount of verification state exposed to the settlement layer.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="badge badge-amber" style="margin-bottom:0.75rem">Exergy Toll</div>
+          <h3>Market ranking</h3>
+          <p>
+            Workers bid into the clearinghouse. Lower-cost, high-validity work clears
+            first. The spread is the economic motive for the settlement membrane.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECHNICAL PILLARS -->
+    <section>
+      <div class="section-label">Technical pillars</div>
+      <h2>Why the asymptotic layer matters</h2>
+
+      <div class="card-grid" style="margin-top:1.5rem">
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">O(N) Work</div>
+          <h3>Many agents can work in parallel</h3>
+          <p>
+            The useful work remains distributed. Worker nodes and AI agents generate
+            independent child proofs across the network.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">O(1) Target</div>
+          <h3>One compressed settlement surface</h3>
+          <p>
+            The design target is one compressed master proof or journal commitment that
+            represents a batch, rather than forcing the settlement layer to inspect every
+            child proof independently.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="badge badge-amber" style="margin-bottom:0.75rem">Solana Membrane</div>
+          <h3>High-speed capital routing</h3>
+          <p>
+            Solana remains the liquidity membrane: fast SPL token routing, visible public
+            transactions, and deterministic settlement traces.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">Machine Discovery</div>
+          <h3>Agent-readable surface</h3>
+          <p>
+            Discovery files, SDK packages, and MCP tools allow autonomous agents to identify
+            the protocol before they move capital.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SWARM INTEGRATION -->
+    <section>
+      <div class="section-label">Developer quickstart</div>
+      <h2>LNES-03 swarm integration scaffold</h2>
+      <p>
+        The following scaffold shows the intended agent flow for the recursive batch layer.
+        Current public packages expose the LNES-01 program and MCP discovery surface.
+        LNES-03 batch submission becomes active after the aggregator endpoint and
+        BatchSettleExergy interface are finalized.
+      </p>
+
+      <div class="code-label" style="margin-top:1.25rem">INSTALL CURRENT SDK</div>
+      <pre><code>npm install lnes-agent-sdk-core
+npm install exergynet-mcp-server</code></pre>
+
+      <div class="code-label" style="margin-top:1.25rem">VERIFY PROGRAM ID</div>
+      <pre><code>import { LnesM2MClient, LNES_PROGRAM_ID } from "lnes-agent-sdk-core";
+
+console.log(LNES_PROGRAM_ID.toBase58());
+// → Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code></pre>
+
+      <div class="code-label" style="margin-top:1.25rem">FUTURE LNES-03 AGGREGATOR FLOW</div>
+      <pre><code>import { LnesM2MClient } from "lnes-agent-sdk-core";
+
+/**
+ * LNES-03 asymptotic swarm integration.
+ * Status: target interface for recursive batch settlement.
+ */
+async function joinRecursiveBatch() {
+  const client = new LnesM2MClient({
+    network: "mainnet-beta",
+    aggregatorUrl: "https://aggregator.exergynet.org"
+  });
+
+  const inputData = {
+    task: "autonomous-sorting",
+    entropy_threshold: 0.25
+  };
+
+  const childProof = await client.generateChildProof({
+    input: inputData,
+    guest: "exergy_guest_v3"
+  });
+
+  const submission = await client.submitChildProof({
+    proof: childProof,
+    feeBid: 0.50,
+    settlementProgram: "Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD"
+  });
+
+  console.log("Batch submission:", submission.jobId);
+}</code></pre>
+
+      <div class="btn-row" style="margin-top:1.5rem">
+        <a href="sdk.html" class="btn btn-primary">Full SDK reference</a>
+        <a href="mcp.html" class="btn btn-secondary">Use MCP server</a>
+        <a href="agents.html" class="btn btn-ghost">Agent integration →</a>
+      </div>
+    </section>
+
+    <!-- CURRENT CAPABILITY -->
+    <section>
+      <div class="section-label">Current protocol surface</div>
+      <h2>What agents can call today</h2>
+      <p>
+        The live protocol surface gives autonomous agents a standard route from
+        machine-readable discovery to economic gate evaluation and program verification.
+      </p>
+
+      <div class="card-grid" style="margin-top:1.5rem">
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">discover</div>
+          <h3>Discover</h3>
+          <p>
+            Agents identify ExergyNet through <code>/.well-known/exergynet.json</code>,
+            <code>/agent-manifest.json</code>, <code>/llms.txt</code>, and the public MCP package.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">estimateExergyGate</div>
+          <h3>Estimate</h3>
+          <p>
+            Calculates whether a compute task clears the economic threshold before any
+            capital moves.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="badge badge-amber" style="margin-bottom:0.75rem">openJob</div>
+          <h3>Open a job</h3>
+          <p>
+            Creates a settlement job tied to a specific unit of useful work through the
+            LNES-01 interface.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.75rem">settleExergy</div>
+          <h3>Settle</h3>
+          <p>
+            Routes verified USDC through program-controlled logic. Settlement activity
+            is verifiable on Solana.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- MACHINE DISCOVERY -->
     <section>
       <div class="section-label">For agents</div>
       <h2>Machine-readable discovery</h2>
       <p>
-        Autonomous agents can discover ExergyNet through standard
-        machine-readable files. The purpose is to reduce ambiguity before an
-        agent installs the SDK or attempts settlement.
+        Autonomous agents can discover ExergyNet through standard machine-readable files.
+        The purpose is to reduce ambiguity before an agent installs the SDK, starts the
+        MCP server, or attempts settlement.
       </p>
 
       <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:1rem">
         <code>/.well-known/exergynet.json</code>
         <code>/agent-manifest.json</code>
         <code>/llms.txt</code>
+        <code>/exg-metadata.json</code>
       </div>
 
       <div class="btn-row" style="margin-top:1.25rem">
         <a href="agents.html" class="btn btn-secondary">Agent integration</a>
         <a href="/agent-manifest.json" class="btn btn-ghost">View agent manifest →</a>
         <a href="/.well-known/exergynet.json" class="btn btn-ghost">View .well-known →</a>
+        <a href="/exg-metadata.json" class="btn btn-ghost">View EXG metadata →</a>
       </div>
     </section>
 
+    <!-- CTA -->
     <section style="text-align:center; padding: 3rem 0 4rem">
-      <h2>Build agent-native settlement into your compute workflow.</h2>
+      <h2>Build asymptotic settlement into your machine workflow.</h2>
       <p style="margin-bottom:1.5rem">
         ExergyNet is open infrastructure. Verify the program, install the SDK,
-        and begin testing with bounded capital.
+        start the MCP server, and prepare for recursive batch settlement.
       </p>
 
       <div class="btn-row" style="justify-content:center">
@@ -324,7 +557,7 @@ console.log(LNES_PROGRAM_ID.toBase58());
     <a href="llms.txt">llms.txt</a>
   </div>
 
-  <div>LNES-01 · Solana Mainnet-Beta</div>
+  <div>LNES-01 · LNES-03 · Solana Mainnet-Beta</div>
 </footer>
 
 <script>
