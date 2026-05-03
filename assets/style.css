@@ -760,3 +760,26 @@ footer {
     font-size: 0.78rem;
   }
 }
+
+/* Theme toggle hardening */
+.theme-toggle {
+  flex: 0 0 auto;
+}
+
+[data-theme="dark"] img,
+[data-theme="dark"] svg {
+  color-scheme: dark;
+}
+
+@media (max-width: 768px) {
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .theme-toggle,
+  .hamburger {
+    flex: 0 0 auto;
+  }
+}
