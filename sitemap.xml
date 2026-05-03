@@ -2,19 +2,18 @@
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://exergynet.org/</loc></url>
   <url><loc>https://exergynet.org/index.html</loc></url>
+  <url><loc>https://exergynet.org/enterprise.html</loc></url>
+  <url><loc>https://exergynet.org/nodes.html</loc></url>
   <url><loc>https://exergynet.org/docs.html</loc></url>
   <url><loc>https://exergynet.org/protocol.html</loc></url>
   <url><loc>https://exergynet.org/sdk.html</loc></url>
   <url><loc>https://exergynet.org/mcp.html</loc></url>
   <url><loc>https://exergynet.org/proof.html</loc></url>
-  <url><loc>https://exergynet.org/explorer.html</loc></url>
   <url><loc>https://exergynet.org/agents.html</loc></url>
   <url><loc>https://exergynet.org/security.html</loc></url>
   <url><loc>https://exergynet.org/roadmap.html</loc></url>
   <url><loc>https://exergynet.org/whitepaper.html</loc></url>
   <url><loc>https://exergynet.org/llms.txt</loc></url>
   <url><loc>https://exergynet.org/.well-known/exergynet.json</loc></url>
-  <url><loc>https://exergynet.org/agent-manifest.json</loc></url>
-  <url><loc>https://exergynet.org/exg-metadata.json</loc></url>
-  <url><loc>https://exergynet.org/metadata.json</loc></url>
+  <url><loc>https://exergynet.org/.well-known/ai-plugin.json</loc></url>
 </urlset>
