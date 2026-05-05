@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$EXG Token Physics | ExergyNet</title>
+<meta name="description" content="ExergyNet $EXG — Transient Zero-Knowledge Energy Receipt. Internal accounting unit of the LNES-03 Unidirectional Sump. Not a speculative token.">
+<link rel="stylesheet" href="style.css">
+<script>
+// Inline theme init to prevent flash
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <!-- Header will be injected here -->
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:380px;top:-100px;right:-200px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-150px;"></div>
+    
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Transient Accounting Unit</div>
+      <h1>$EXG<br><span class="accent">Token Physics</span></h1>
+      <p class="hero-sub">The internal Zero-Knowledge Energy Receipt of the LNES-03 Unidirectional Sump. $EXG exists only for the duration of a compute cycle and is annihilated upon settlement.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- CRYPTOGRAPHIC COORDINATES -->
+    <section>
+      <div class="section-label">Cryptographic Coordinates</div>
+      <h2>Asset Definition</h2>
+      <div class="card accent-border">
+        <ul class="spec-list">
+          <li><span class="spec-key">Asset</span><span class="spec-val"><strong>$EXG</strong> — Transient Energy Receipt</span></li>
+          <li><span class="spec-key">Standard</span><span class="spec-val">SPL Token-2022 (Solana)</span></li>
+          <li><span class="spec-key">Mint Address</span><span class="spec-val"><code>C7Qw2s4UGuMtF6mFif68pxtZMNAnokXQ9SZDmAzfuxMm</code></span></li>
+          <li><span class="spec-key">Mint Authority</span><span class="spec-val"><code>4eDMtpNWUtgB5krA1w2rQEdEv7Ma47dkE7ZEobQATG9V</code> (PDA)</span></li>
+          <li><span class="spec-key">Decimals</span><span class="spec-val">6</span></li>
+          <li><span class="spec-key">Total Supply</span><span class="spec-val"><span class="badge badge-amber">TRANSIENT — BURNED ON SETTLEMENT</span></span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PHYSICS OF $EXG -->
+    <section>
+      <div class="section-label">Token Mechanics</div>
+      <h2>What $EXG Actually Is</h2>
+      <div class="card accent-border">
+        <p style="font-size:15px; line-height:1.8;">
+          $EXG is a <strong>transient internal accounting unit</strong> used exclusively within the LNES-03 Membrane. 
+          When an AI agent locks 0.002 SOL (or equivalent on Base), the contract mints the precise equivalent in $EXG into a sealed Escrow PDA. 
+          This token serves as cryptographic proof that compute energy has been escrowed.
+        </p>
+        <p style="margin-top:1.25rem; font-size:15px; line-height:1.8;">
+          Upon successful ZK-STARK verification by the physical swarm, the Sovereign Siphon burns the $EXG completely and atomically releases the underlying capital (30% to the node operator, 70% to the Protocol Treasury).
+        </p>
+      </div>
+    </section>
+
+    <!-- WHAT $EXG IS NOT -->
+    <section>
+      <div class="section-label">Important Clarification</div>
+      <h2>What $EXG Is Not</h2>
+      <div class="card" style="border-color:var(--red-dim);">
+        <div class="badge badge-red" style="margin-bottom:0.75rem;">NOT A SPECULATIVE ASSET</div>
+        <p style="font-size:14px;">
+          $EXG is <strong>not tradable</strong> on open markets. All liquidity pools from earlier epochs have been permanently removed. 
+          It cannot be purchased, held long-term, or used for speculation. Any attempt to treat $EXG as an investment vehicle is an entropic misunderstanding of its purpose.
+        </p>
+        <p style="margin-top:1rem; font-size:14px; color:var(--red);">
+          $EXG exists only for the exact duration between <code>open_job</code> and <code>settle_exergy</code>. It is then mathematically annihilated.
+        </p>
+      </div>
+    </section>
+
+    <!-- VERIFICATION -->
+    <section>
+      <div class="section-label">Independent Verification</div>
+      <h2>Verify the Physics</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>On Solana</h4>
+          <p>View the mint and Token-2022 metadata on Solscan.</p>
+          <a href="https://solscan.io/token/C7Qw2s4UGuMtF6mFif68pxtZMNAnokXQ9SZDmAzfuxMm" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:1rem; font-size:12px;">View Mint on Solscan &rarr;</a>
+        </div>
+        <div class="card">
+          <h4>Protocol Behavior</h4>
+          <p>Observe live <code>MintTo</code> and <code>Burn</code> instructions in recent LNES-03 settlements.</p>
+          <a href="proof.html" class="btn btn-secondary" style="margin-top:1rem; font-size:12px;">View Recent Settlements &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Understand Before You Integrate</h2>
+        <p>$EXG is a thermodynamic receipt — not an investment.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="protocol.html" class="btn btn-primary">Protocol Reference</a>
+          <a href="whitepaper.html" class="btn btn-secondary">Full Architecture</a>
+          <a href="docs.html" class="btn btn-ghost">Integration Guide &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <!-- Footer will be injected here -->
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

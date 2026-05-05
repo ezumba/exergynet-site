@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ | ExergyNet</title>
+<meta name="description" content="Frequently Asked Questions about ExergyNet — Proof-of-Exergy, LNES-03 Membrane, $EXG mechanics, integration, and security.">
+<link rel="stylesheet" href="style.css">
+<script>
+// Inline theme init to prevent flash
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <!-- Header will be injected here -->
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:380px;top:-100px;right:-200px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-150px;"></div>
+    
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Systemic Inquiry</div>
+      <h1>Frequently Asked<br><span class="accent">Questions</span></h1>
+      <p class="hero-sub">Clear answers to the most common questions about ExergyNet’s architecture, integration, and mechanics.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- PROTOCOL & ARCHITECTURE -->
+    <section>
+      <div class="section-label">I. Protocol & Architecture</div>
+      <h2>Core Concepts</h2>
+
+      <div class="space-y-4">
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            Is ExergyNet a blockchain?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            No. ExergyNet is a dual-layer thermodynamic settlement engine. The <strong>Layer-0 Mesh</strong> (physical hardware swarm) generates verifiable truth. The <strong>Layer-1 Membranes</strong> (LNES-03 on Solana + LNES-04 on Base) act as financial clearinghouses that verify proofs and settle capital.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is Proof-of-Exergy (PoX)?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            PoX replaces wasteful hashing (PoW) and capital plutocracy (PoS) with thermodynamically anchored truth. Physical compute work executed in a RISC Zero zkVM produces a ZK-STARK proof. Consensus is derived from mathematical verification of useful work — not synthetic effort.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is the difference between LNES-03 and LNES-04?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            LNES-03 is the Solana Mainnet-Beta deployment. LNES-04 is the Base L2 (EVM) deployment. Both are powered by the same global Layer-0 physical swarm. Agents can request compute on either chain and receive mathematically verified results.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- INTEGRATION -->
+    <section>
+      <div class="section-label">II. Integration & AI Agents</div>
+      <h2>Developer & Agent Questions</h2>
+
+      <div class="space-y-4">
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            Why do autonomous agents need ExergyNet?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            Agents need mathematically verifiable off-chain compute. Running heavy logic on-chain is too expensive. Relying on centralized APIs requires blind trust. ExergyNet lets agents outsource computation and receive cryptographically guaranteed results before releasing capital.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is the cost per compute cycle?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            Currently 0.002 SOL on LNES-03. Pricing is dynamic and adjusts based on network conditions to ensure reliable settlement while maintaining fair rewards for node operators.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            How do agents pay automatically?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            Through the MCP Neural Gateway and SDKs. Agents can call <code>estimateExergyGate</code> to determine profitability, then programmatically execute an <code>open_job</code> transaction if conditions are favorable.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- SECURITY & ECONOMICS -->
+    <section>
+      <div class="section-label">III. Security & Economics</div>
+      <h2>Security, Yield & $EXG</h2>
+
+      <div class="space-y-4">
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            How does the protocol prevent hallucinations?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            Through ZK-STARK proofs. Any alteration of logic invalidates the proof. The smart contract rejects invalid proofs. Dishonest nodes receive zero yield.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is $EXG and can I buy it?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            $EXG is a transient internal accounting token. It is minted when capital is locked and burned upon successful settlement. It is <strong>not tradable</strong> and holds no speculative value. It exists only for the duration of a compute cycle.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            How is node yield paid?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            30% of every toll is routed atomically and instantly to the node operator’s Solana/Base wallet upon successful proof verification. No claims. No delays.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Still have questions?</h2>
+        <p>Join the community or read the full architecture.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="https://discord.gg/EXERGYNET" target="_blank" class="btn btn-primary">Join Discord</a>
+          <a href="whitepaper.html" class="btn btn-secondary">Read Whitepaper</a>
+          <a href="docs.html" class="btn btn-ghost">Integration Docs &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <!-- Footer will be injected here -->
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
