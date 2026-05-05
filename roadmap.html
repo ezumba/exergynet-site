@@ -1,126 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Roadmap | ExergyNet</title>
-  <meta name="description" content="ExergyNet roadmap from LNES-01 mainnet settlement to L0 explorer, multi-producer telemetry, and recursive aggregation.">
-  <link rel="canonical" href="https://exergynet.org/roadmap.html">
-  <link rel="stylesheet" href="assets/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap | ExergyNet</title>
+<meta name="description" content="ExergyNet development roadmap — Phase 8 complete, Phase 9 active, Phase 10 planned.">
+<link rel="stylesheet" href="style.css">
+<script>
+// Inline theme init to prevent flash
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 </head>
 <body>
-<nav>
-  <a class="nav-logo" href="index.html"><span class="dot"></span>ExergyNet</a>
-  <button class="hamburger" id="hamburger">☰</button>
-  <ul class="nav-links" id="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="docs.html">Docs</a></li>
-    <li><a href="protocol.html">Protocol</a></li>
-    <li><a href="sdk.html">SDK</a></li>
-    <li><a href="mcp.html">MCP</a></li>
-    <li><a href="proof.html">Proof</a></li>
-    <li><a href="explorer.html">Explorer</a></li>
-    <li><a href="agents.html">Agents</a></li>
-    <li><a href="security.html">Security</a></li>
-    <li><a href="roadmap.html">Roadmap</a></li>
-    <li><a href="whitepaper.html">Whitepaper</a></li>
-  </ul>
-  <div class="nav-actions">
-    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light and dark mode">●</button>
-  </div>
-</nav>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <!-- Header will be injected here -->
+  <div id="site-header"></div>
 
 <main class="page">
-  <header class="page-header">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+    
     <div class="container">
-      <div class="section-label">Development Progress</div>
-      <h1>Roadmap</h1>
-      <p>ExergyNet is built in phases. A phase exits only when its public verification conditions are met.</p>
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Development Progress</div>
+      <h1>ExergyNet<br><span class="accent">Roadmap</span></h1>
+      <p class="hero-sub">Built in strict, deterministic phases. Each epoch expands the physical and economic boundaries of the network. A phase exits only when its cryptographic and thermodynamic conditions are mathematically fulfilled on Mainnet.</p>
     </div>
-  </header>
+  </div>
 
-  <section>
-    <div class="container">
+  <div class="container">
+
+    <!-- PHASE 8 - COMPLETED -->
+    <section>
+      <div class="section-label">Completed</div>
+      <h2>Phase 8 — The Omega Singularity</h2>
       <div class="phase done">
-        <div class="phase-label done">Phase 7 · Completed</div>
-        <h3>Mainnet settlement foundation</h3>
+        <div class="phase-label done">&#10003; COMPLETE</div>
         <ul class="phase-items">
-          <li>Deploy LNES-01 program reference to Solana Mainnet-Beta</li>
-          <li>Execute and publish confirmed settlement proof transaction</li>
-          <li>Publish SDK package: <code>lnes-agent-sdk-core</code></li>
-          <li>Publish core documentation and verification pages</li>
+          <li>LNES-03 Deployment: The Unidirectional Compute Membrane deployed to Solana Mainnet-Beta.</li>
+          <li>Economic Hardening: Transitioned to Native SOL escrows; eradicated bilateral AMM liquidity vulnerabilities.</li>
+          <li>L0 Cryptographic Mesh: Upgraded the physical node swarm to Ed25519 Signed Identities.</li>
+          <li>M2M Security: Hardened the MCP Neural Gateway with temporal bounding and nonce-replay protection.</li>
+          <li>Agent Colonization: Released the official <code>@elizaos/plugin-exergynet</code> package.</li>
+          <li>Global Discovery: Deployed machine-readable manifests for autonomous agent ingestion.</li>
         </ul>
       </div>
 
-      <div class="phase done">
-        <div class="phase-label done">Phase 8 · Completed</div>
-        <h3>Public discovery and machine-readable metadata</h3>
-        <ul class="phase-items">
-          <li>Launch public website at <code>exergynet.org</code></li>
-          <li>Publish <code>/.well-known/exergynet.json</code></li>
-          <li>Publish <code>/llms.txt</code> for LLM and agent discovery</li>
-          <li>Publish token metadata endpoint <code>/exg-metadata.json</code></li>
-          <li>Add explorer, docs, SDK, MCP, proof, and security pages</li>
+      <div class="card accent-border">
+        <h4>Proof of Completion</h4>
+        <ul class="spec-list">
+          <li><span class="spec-key">Program ID</span><span class="spec-val"><code>7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
+          <li><span class="spec-key">Proof Tx</span><span class="spec-val"><code style="font-size:11px;">3MFnUnvVN2EbnUC3gPAWWERCNz283672Xus8iGZqWihvnQkndExNKnGHoGBgjb4aqs1pyke2iKWihPgMnQUvPiZe</code></span></li>
         </ul>
+        <div style="margin-top:1rem;">
+          <a href="proof.html" class="btn btn-primary">View Mainnet Proof &rarr;</a>
+        </div>
       </div>
+    </section>
 
+    <!-- PHASE 9 - ACTIVE -->
+    <section>
+      <div class="section-label">Active</div>
+      <h2>Phase 9 — The Asymptotic Swarm</h2>
       <div class="phase active">
-        <div class="phase-label active">Phase 9 · Active</div>
-        <h3>L0 explorer and producer telemetry</h3>
+        <div class="phase-label active">&#9654; IN PROGRESS</div>
         <ul class="phase-items">
-          <li>Run live ExergyNet L0 explorer at <code>/explorer.html</code></li>
-          <li>Expose HTTPS explorer API through <code>explorer-api.exergynet.org</code></li>
-          <li>Track block height, producer identity, thermal anchors, reward, hash, and ledger state</li>
-          <li>Stabilize persistent node identity across restarts</li>
-          <li>Support multi-producer block ingestion and producer-level search</li>
+          <li>Decentralized Hardware Onboarding: Opening the entropy-k-core daemon to global third-party node operators.</li>
+          <li>Ecosystem Expansion: Extending native SDK support to additional agentic frameworks.</li>
+          <li>Treasury Sovereignty: Implementation of multisig cold-storage governance for Vault Alpha.</li>
+          <li>Recursive Optimization: Enhancing the Siphon's ZK-STARK Master Aggregator for larger batch compression.</li>
+          <li>Third-Party Audits: Preparation for external security audits of LNES-03 and MCP Gateway.</li>
         </ul>
       </div>
 
-      <div class="phase active">
-        <div class="phase-label active">Phase 10 · Active R&D</div>
-        <h3>LNES-03 recursive aggregation</h3>
+      <div class="card">
+        <h4>Phase 9 — Definition of Done</h4>
         <ul class="phase-items">
-          <li>Validate local recursive proof prototype</li>
-          <li>Aggregate child proof outputs into a parent proof path</li>
-          <li>Map recursive proof state to future batch settlement logic</li>
-          <li>Design batch settlement interfaces for multi-agent useful compute</li>
+          <li>The ExergyNet L0 Mesh consists of &gt;50 geographically distributed, third-party verified nodes.</li>
+          <li>The LNES-03 Smart Contract successfully processes a continuous 1,000-job recursive batch in a single Mainnet transaction.</li>
+          <li>ExergyNet is actively utilized in at least three major open-source AI frameworks.</li>
+          <li>Treasury governance transitioned to 3-of-5 hardware multisig.</li>
         </ul>
       </div>
+    </section>
 
+    <!-- PHASE 10 - PLANNED -->
+    <section>
+      <div class="section-label">Planned</div>
+      <h2>Phase 10 — LNES-04 Base Deployment</h2>
       <div class="phase">
-        <div class="phase-label planned">Phase 11 · Planned</div>
-        <h3>External agent integrations</h3>
+        <div class="phase-label planned">&#9900; PLANNED</div>
         <ul class="phase-items">
-          <li>Package MCP tools for autonomous agent runtimes</li>
-          <li>Add examples for agent frameworks and local LLM harnesses</li>
-          <li>Publish reference integration scripts</li>
-          <li>Document operational safety, keys, limits, and expected-value gating</li>
+          <li>Cross-Chain Substrate Expansion: Deploying the Unidirectional Membrane to Base L2.</li>
+          <li>EVM Settlement: Solidity-compatible ZK-STARK verifier contracts.</li>
+          <li>Interoperable State: Allowing agents on Base to leverage the same physical L0 swarm.</li>
+          <li>Post-Quantum Architecture: Integration of NIST-approved Lattice-based signatures.</li>
         </ul>
       </div>
+    </section>
 
-      <div class="phase">
-        <div class="phase-label planned">Phase 12 · Planned</div>
-        <h3>Security hardening and audit readiness</h3>
-        <ul class="phase-items">
-          <li>Replace text node identities with cryptographic signing keys</li>
-          <li>Verify block signatures before crediting rewards</li>
-          <li>Separate test telemetry from production settlement state</li>
-          <li>Prepare third-party audit package and reproducibility notes</li>
-        </ul>
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Join Phase 9</h2>
+        <p>Run a node. Earn yield. Expand the mesh.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="nodes.html" class="btn btn-primary">Run a Node</a>
+          <a href="proof.html" class="btn btn-secondary">View Mainnet</a>
+          <a href="https://github.com/exergynet" target="_blank" rel="noopener" class="btn btn-ghost">GitHub &rarr;</a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+  </div>
+
 </main>
 
-<footer>
-  <div>ExergyNet · Roadmap</div>
-  <div class="footer-links">
-    <a href="security.html">Security</a>
-    <a href="explorer.html">Explorer</a>
-    <a href="whitepaper.html">Whitepaper</a>
-  </div>
-</footer>
+  <!-- Footer will be injected here -->
+  <div id="site-footer"></div>
 
-<script src="assets/main.js"></script>
+</div></div>
+
+
+<script src="main.js"></script>
 </body>
 </html>

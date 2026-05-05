@@ -1,142 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MCP Server | ExergyNet</title>
-<meta name="description" content="ExergyNet MCP server: agent-native access to LNES-01 settlement tools.">
-<link rel="stylesheet" href="assets/style.css">
+<title>MCP Neural Gateway | ExergyNet</title>
+<meta name="description" content="ExergyNet MCP Neural Gateway — Model Context Protocol integration for autonomous AI agents. Ed25519 authenticated compute access.">
+<link rel="stylesheet" href="style.css">
+<script>
+// Inline theme init to prevent flash
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
-  <ul class="nav-links" id="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="docs.html">Docs</a></li>
-    <li><a href="protocol.html">Protocol</a></li>
-    <li><a href="sdk.html">SDK</a></li>
-    <li><a href="mcp.html">MCP</a></li>
-    <li><a href="proof.html">Proof</a></li>
-    <li><a href="explorer.html">Explorer</a></li>
-    <li><a href="agents.html">Agents</a></li>
-    <li><a href="security.html">Security</a></li>
-    <li><a href="roadmap.html">Roadmap</a></li>
-    <li><a href="whitepaper.html">Whitepaper</a></li>
-  </ul>
-  <div class="nav-actions">
-    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light and dark mode">●</button>
-    <button class="hamburger" id="hamburger">☰</button>
-  </div>
-</nav>
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <!-- Header will be injected here -->
+  <div id="site-header"></div>
 
 <main class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+    
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>MCP Reference</div>
+      <h1>MCP Neural<br><span class="accent">Gateway</span></h1>
+      <p class="hero-sub">Model Context Protocol integration specification for autonomous AI agents. Secure, Ed25519-authenticated access to the ExergyNet physical compute mesh.</p>
+    </div>
+  </div>
+
   <div class="container">
 
-    <div class="page-header">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem">
-        <div class="section-label" style="margin-bottom:0">Model Context Protocol</div>
-        <span class="badge badge-amber">PLANNED</span>
-      </div>
-      <h1>MCP Server</h1>
-      <p>SDKs require developer integration. MCP exposes ExergyNet as callable tools for autonomous agents — no custom integration required.</p>
-    </div>
-
+    <!-- GATEWAY ENDPOINT -->
     <section>
-      <div class="card" style="background:var(--amber-light);border-color:var(--amber);margin-bottom:0">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.5rem">
-          <span class="badge badge-amber">IN DEVELOPMENT</span>
+      <div class="section-label">Gateway Endpoint</div>
+      <h2>Connection Coordinates</h2>
+      <div class="card accent-border">
+        <ul class="spec-list">
+          <li><span class="spec-key">Endpoint</span>  <span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
+          <li><span class="spec-key">Protocol</span>  <span class="spec-val">Model Context Protocol (MCP)</span></li>
+          <li><span class="spec-key">Method</span>    <span class="spec-val">HTTP POST</span></li>
+          <li><span class="spec-key">Auth</span>      <span class="spec-val">Ed25519 signature of <code>method||timestamp|nonce</code></span></li>
+          <li><span class="spec-key">Replay Guard</span><span class="spec-val">60-second timestamp window</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- HANDSHAKE PROTOCOL -->
+    <section>
+      <div class="section-label">Handshake Protocol</div>
+      <h2>Ed25519 Authentication</h2>
+      <p style="max-width:660px; margin-bottom:1.5rem;">All requests to the MCP Neural Gateway must be signed with your agent's Solana Ed25519 private key to prevent replay attacks and MITM intercepts.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>Step 01 — Generate Entropy</h4>
+          <pre><code>const timestamp = Math.floor(Date.now() / 1000);
+const nonce = crypto.randomBytes(8).toString('hex');</code></pre>
         </div>
-        <p style="font-size:14px;color:var(--text-muted)">The <code>exergynet-mcp-server</code> package is planned as part of Phase 8. The specification below reflects the intended interface. Subscribe to the GitHub repository for release announcements.</p>
-      </div>
-    </section>
-
-    <section>
-      <div class="section-label">Why MCP</div>
-      <h2>Agent-native access</h2>
-      <p>The TypeScript SDK requires code-level integration. The MCP server exposes the same LNES-01 capabilities as structured, callable tools that autonomous agents can discover and invoke directly.</p>
-      <p>Any MCP-compatible agent runtime — Claude, ElizaOS, Swarms, custom orchestrators — can connect to ExergyNet without writing SDK integration code.</p>
-    </section>
-
-    <section>
-      <div class="section-label">Package</div>
-      <h2>Installation</h2>
-
-      <div class="code-label">GLOBAL INSTALL</div>
-      <pre><code>npm install -g exergynet-mcp-server</code></pre>
-    </section>
-
-    <section>
-      <div class="section-label">Config</div>
-      <h2>Agent configuration</h2>
-      <p>Add ExergyNet to your agent's MCP server configuration:</p>
-
-      <div class="code-label">claude_desktop_config.json / agent-config.json</div>
-      <pre><code>{
-  "mcpServers": {
-    "exergynet": {
-      "command": "npx",
-      "args": ["exergynet-mcp-server"]
-    }
-  }
+        <div class="card">
+          <h4>Step 02 — Construct Payload</h4>
+          <pre><code>const message = `${method}||${timestamp}|${nonce}`;</code></pre>
+        </div>
+        <div class="card">
+          <h4>Step 03 — Sign</h4>
+          <pre><code>const signature = nacl.sign.detached(
+  Buffer.from(message), 
+  agentKeypair.secretKey
+);</code></pre>
+        </div>
+        <div class="card accent-border">
+          <h4>Step 04 — POST Payload</h4>
+          <pre><code>{
+  "method": "exergynet_open_job",
+  "client_id": "<Base58_Public_Key>",
+  "timestamp": 1777728610,
+  "nonce": "a1b2c3d4e5f60718",
+  "signature": "<Base58_Encoded_Signature>"
 }</code></pre>
-    </section>
+        </div>
+      </div>
 
-    <section>
-      <div class="section-label">Tools</div>
-      <h2>Exposed tools</h2>
-
-      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:1rem">
-
-        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-          <code>exergynet_get_program_id</code>
-          <span class="badge badge-gray">READ</span>
-        </div>
-        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-          <code>exergynet_get_metadata</code>
-          <span class="badge badge-gray">READ</span>
-        </div>
-        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-          <code>exergynet_estimate_gate</code>
-          <span class="badge badge-amber">COMPUTE</span>
-        </div>
-        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-          <code>exergynet_open_job</code>
-          <span class="badge badge-amber">WRITE</span>
-        </div>
-        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-          <code>exergynet_settle_exergy</code>
-          <span class="badge badge-green">SETTLE</span>
-        </div>
-        <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between">
-          <code>exergynet_get_transaction_status</code>
-          <span class="badge badge-gray">READ</span>
-        </div>
-
+      <div class="card" style="background:var(--accent-dim); border-color:rgba(0,232,135,0.2); margin-top:1rem;">
+        <h4>Success Response</h4>
+        <pre><code>{ "status": "proxy_initiated", "verified": true }</code></pre>
+        <p style="margin-top:0.75rem; font-size:13px;">Your agent is now cleared to broadcast the 0.002 SOL lock transaction.</p>
       </div>
     </section>
 
+    <!-- AVAILABLE METHODS -->
     <section>
-      <div class="section-label">Alternative</div>
-      <h2>SDK integration</h2>
-      <p>If you need lower-level control, the TypeScript SDK is available now on npm.</p>
-      <div class="btn-row">
-        <a href="sdk.html" class="btn btn-primary">Install SDK</a>
-        <a href="agents.html" class="btn btn-secondary">Agent manifest</a>
+      <div class="section-label">Available Methods</div>
+      <h2>MCP Action Reference</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>Method</th><th>Description</th><th>Cost</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>exergynet_open_job</td>
+              <td>Initiate a compute job — locks SOL escrow</td>
+              <td><span class="badge badge-blue">0.002 SOL</span></td>
+            </tr>
+            <tr>
+              <td>exergynet_status</td>
+              <td>Query execution status by job ID</td>
+              <td><span class="badge badge-gray">Read-only</span></td>
+            </tr>
+            <tr>
+              <td>exergynet_get_proof</td>
+              <td>Retrieve ZK-STARK proof for a completed job</td>
+              <td><span class="badge badge-gray">Read-only</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ELIZAOS PLUGIN -->
+    <section>
+      <div class="section-label">ElizaOS Plugin</div>
+      <h2>Native Plugin Integration</h2>
+      <p style="max-width:640px;">For ElizaOS agents, the official plugin handles the full MCP handshake automatically.</p>
+      <div class="card">
+        <pre><code>pnpm install @elizaos/plugin-exergynet</code></pre>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Deploy Your First MCP-Enabled Agent</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="docs.html"    class="btn btn-primary">Integration Guide</a>
+          <a href="agents.html"  class="btn btn-secondary">Agent Manifest</a>
+        </div>
       </div>
     </section>
 
   </div>
+
 </main>
 
-<footer>
-  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
-  <div class="footer-links">
-    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
-  </div>
-  <div>LNES-01 · Solana Mainnet-Beta</div>
-</footer>
+  <!-- Footer will be injected here -->
+  <div id="site-footer"></div>
 
-<script src="assets/main.js"></script>
+</div></div>
+
+
+<script src="main.js"></script>
 </body>
 </html>

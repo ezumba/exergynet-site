@@ -1,142 +1,194 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Whitepaper | ExergyNet</title>
-  <meta name="description" content="ExergyNet whitepaper: machine-to-machine settlement infrastructure for useful compute and autonomous agents.">
-  <link rel="canonical" href="https://exergynet.org/whitepaper.html">
-  <link rel="stylesheet" href="assets/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Whitepaper | ExergyNet</title>
+<meta name="description" content="ExergyNet Architecture Manifest — Proof-of-Exergy, RISC Zero ZK-STARK Compression Matrix, and the LNES-03 Unidirectional Sump. The Thermodynamic Singularity.">
+<link rel="stylesheet" href="style.css">
+<script>
+// Inline theme init to prevent flash
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 </head>
 <body>
-<nav>
-  <a class="nav-logo" href="index.html"><span class="dot"></span>ExergyNet</a>
-  <button class="hamburger" id="hamburger">☰</button>
-  <ul class="nav-links" id="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="docs.html">Docs</a></li>
-    <li><a href="protocol.html">Protocol</a></li>
-    <li><a href="sdk.html">SDK</a></li>
-    <li><a href="mcp.html">MCP</a></li>
-    <li><a href="proof.html">Proof</a></li>
-    <li><a href="explorer.html">Explorer</a></li>
-    <li><a href="agents.html">Agents</a></li>
-    <li><a href="security.html">Security</a></li>
-    <li><a href="roadmap.html">Roadmap</a></li>
-    <li><a href="whitepaper.html">Whitepaper</a></li>
-  </ul>
-  <div class="nav-actions">
-    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light and dark mode">●</button>
-  </div>
-</nav>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <!-- Header will be injected here -->
+  <div id="site-header"></div>
 
 <main class="page">
-  <header class="page-header">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+    
     <div class="container">
-      <div class="section-label">Technical Paper</div>
-      <h1>ExergyNet: Settlement Infrastructure for Useful Compute</h1>
-      <p>Autonomous agents require settlement rails that are machine-readable, economically bounded, verifiable, and executable without human negotiation.</p>
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Architecture Manifest</div>
+      <h1>ExergyNet:<br>The Thermodynamic<br><span class="accent">Singularity</span></h1>
+      <p class="hero-sub">As AI transitions from localized generation to autonomous, high-stakes financial and logistical execution, the demand for trustless, verifiable off-chain computation has reached critical mass. This document describes the ExergyNet solution architecture.</p>
     </div>
-  </header>
+  </div>
 
-  <section>
-    <div class="container">
-      <div class="wp-section">
-        <h2>Abstract</h2>
-        <p>
-          ExergyNet introduces a settlement interface for autonomous machine-to-machine work. Its purpose is to let agents determine whether useful compute should be executed, estimate settlement viability, and route value through a deterministic program path.
-        </p>
-        <p>
-          The system currently includes a Solana Mainnet-Beta program reference, SDK tooling, MCP-facing surfaces, public machine-readable metadata, and a live L0 explorer for substrate telemetry.
-        </p>
+  <div class="container">
+
+    <!-- ABSTRACT -->
+    <section>
+      <div class="section-label">Abstract</div>
+      <h2>The Mandate</h2>
+      <div class="card accent-border" style="margin-bottom:1.5rem;">
+        <p>Legacy blockchain architectures are constrained by state bloat and prohibitive gas costs, while centralized cloud providers operate as opaque black boxes. ExergyNet resolves this by introducing a decentralized, thermodynamic compute layer built on Solana, utilizing cryptographic Zero-Knowledge (ZK-STARK) proofs to bind digital logic directly to physical hardware entropy.</p>
       </div>
 
-      <div class="wp-section">
-        <h2>Problem</h2>
-        <p>
-          Autonomous agents can generate, buy, sell, and coordinate compute, but they require verifiable economic boundaries. A useful job should execute only when the expected value of the work exceeds all relevant costs.
-        </p>
-        <div class="formula">
-          useful_value &gt; settlement_cost + proof_cost + transaction_cost + risk_margin
+      <div class="card-grid">
+        <div class="card">
+          <h4>Problem</h4>
+          <h3>The Verification Gap</h3>
+          <p>As AI agents take control of real-world capital, "trust me" is structurally insufficient. Algorithmic decisions require mathematical verification — not probabilistic assurance.</p>
         </div>
-        <p>
-          Without this decision boundary, agents either overpay for low-value work or fail to execute valuable work because they lack a trusted settlement path.
-        </p>
-      </div>
-
-      <div class="wp-section">
-        <h2>System model</h2>
-        <p>
-          ExergyNet separates the system into four surfaces: decision, execution, verification, and settlement. Each surface can be tested independently.
-        </p>
-        <div class="flow">
-          <div class="flow-step active">Agent evaluates job</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step active">SDK estimates gate</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step active">Settlement path selected</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step active">Explorer exposes telemetry</div>
+        <div class="card">
+          <h4>Solution</h4>
+          <h3>Thermodynamic Truth</h3>
+          <p>Bind digital computation to physical law. If the physics occurred, the proof exists. If the proof exists, the computation is true. No ambiguity. No exceptions.</p>
         </div>
       </div>
+    </section>
+
+    <!-- POX -->
+    <section>
+      <div class="section-label">Section I</div>
+      <h2>Proof-of-Exergy (PoX)</h2>
+      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">Binding Digital Truth to Physical Law</h3>
 
       <div class="wp-section">
-        <h2>LNES-01</h2>
-        <p>
-          LNES-01 is the current Mainnet-Beta settlement interface. It provides the public program anchor and the first executable path for ExergyNet settlement logic.
-        </p>
-        <p>
-          Program ID:
-        </p>
-        <span class="address">Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</span>
+        <p>Legacy consensus mechanisms rely on Proof-of-Work (wasted hashing) or Proof-of-Stake (capital plutocracy). ExergyNet pioneers Proof-of-Exergy (PoX).</p>
+        <p>In thermodynamics, "Exergy" is the maximum useful work possible during a process that brings a system into equilibrium with a heat reservoir. ExergyNet mathematically binds the physical entropy generated by a CPU — thermal flux measured in millidegrees Celsius — directly to the cryptographic verification of a compute payload.</p>
       </div>
 
-      <div class="wp-section">
-        <h2>L0 explorer</h2>
-        <p>
-          The ExergyNet L0 explorer displays live operational state: block height, producer identity, thermal anchor, reward, state hash, and ledger balances. This data is exposed through a public HTTPS API and rendered at <code>/explorer.html</code>.
-        </p>
-        <p>
-          The explorer is not a financial audit layer. It is a telemetry layer used to inspect live producer behavior and substrate state.
-        </p>
+      <div class="card accent-border">
+        <h4>Mechanism</h4>
+        <p style="font-size:14px; line-height:1.8;">By running the <code>entropy-k-core</code> Rust daemon, decentralized hardware operators form a trustless mesh. When an AI agent submits a complex logic task, a swarm node executes the operation inside a Zero-Knowledge Virtual Machine (zkVM). The physical thermal exertion required to solve the logic is cryptographically signed via an Ed25519 keypair and permanently anchored to the resulting proof.</p>
+        <div style="margin-top:1.25rem; padding:1.25rem; background:var(--accent-dim); border-radius:var(--radius); border:1px solid rgba(0,232,135,0.2);">
+          <p style="font-family:var(--mono); font-size:12px; color:var(--accent); margin:0;">Truth is no longer a matter of consensus — it is a matter of physics.</p>
+        </div>
       </div>
+    </section>
+
+    <!-- ZK STARK -->
+    <section>
+      <div class="section-label">Section II</div>
+      <h2>RISC Zero ZK-STARK Compression Matrix</h2>
+      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">Asymptotic Recursion Engine for Global Scale</h3>
 
       <div class="wp-section">
-        <h2>LNES-03 recursive aggregation</h2>
-        <p>
-          LNES-03 is the research path for aggregating distributed work proofs. The design objective is to compress many child proof outputs into a smaller parent proof surface, reducing verification overhead for large machine swarms.
-        </p>
-        <p>
-          The current state is local validation and batch-settlement design. Production deployment requires security review, reproducibility checks, and explicit on-chain interface design.
-        </p>
+        <p>To achieve global scale without congesting the Solana base layer, ExergyNet relies on an Asymptotic Recursion Engine.</p>
+        <p>Instead of settling every computational job individually on-chain, the Sovereign Siphon daemon executes a recursive compression matrix. Utilizing the <code>risc0-zkvm</code> architecture, the network aggregates hundreds of discrete Layer-0 physical proofs into a single O(1) Master Proof.</p>
       </div>
 
-      <div class="wp-section">
-        <h2>Security posture</h2>
-        <p>
-          The system is an early Mainnet-Beta MVP. Users should verify all program IDs, account addresses, token mints, instructions, and SDK sources before signing. Prototype node identities should be replaced with cryptographic signatures before production-grade network accounting.
-        </p>
+      <div class="card accent-border">
+        <h4>Asymptotic Gas Efficiency</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:1.5rem 0;">
+          <div>
+            <div style="font-family:var(--mono); font-size:10px; color:var(--text-faint); margin-bottom:0.35rem; letter-spacing:0.08em; text-transform:uppercase;">Legacy Per-Job Cost</div>
+            <div style="font-family:var(--mono); font-size:2.2rem; color:var(--red); font-weight:700;">O(n)</div>
+            <p style="font-size:13px;">Cost scales linearly with computation volume.</p>
+          </div>
+          <div>
+            <div style="font-family:var(--mono); font-size:10px; color:var(--text-faint); margin-bottom:0.35rem; letter-spacing:0.08em; text-transform:uppercase;">ExergyNet Master Proof</div>
+            <div style="font-family:var(--mono); font-size:2.2rem; color:var(--accent); font-weight:700;">O(1)</div>
+            <p style="font-size:13px;">A single ZK-STARK master proof settles thousands of nested child jobs.</p>
+          </div>
+        </div>
+        <p style="font-size:13px;">As network volume approaches infinity, the base-layer gas cost per job approaches absolute zero.</p>
+      </div>
+    </section>
+
+    <!-- UNIDIRECTIONAL SUMP -->
+    <section>
+      <div class="section-label">Section III</div>
+      <h2>The Thermodynamic Inversion</h2>
+      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">The LNES-03 Unidirectional Sump</h3>
+
+      <div class="card" style="border-color:var(--red-dim); margin-bottom:1.5rem;">
+        <div class="badge badge-red" style="margin-bottom:0.75rem;">Old Model</div>
+        <h3 style="color:var(--red);">Dissipative Economics</h3>
+        <p>Bi-directional utility tokens + CPMM liquidity pools bleed base-layer capital to MEV extractors and arbitrage bots.</p>
       </div>
 
-      <div class="wp-section">
-        <h2>Conclusion</h2>
-        <p>
-          ExergyNet is not a general-purpose blockchain. It is a settlement interface for useful machine work. Its core rule is simple: an autonomous agent should execute a job only when the value of the work exceeds the complete cost of settlement, proof, execution, and risk.
-        </p>
+      <div class="card accent-border">
+        <div class="badge badge-green" style="margin-bottom:0.75rem;">LNES-03 Solution</div>
+        <h3>The Unidirectional Sump</h3>
+        <p style="margin-bottom:1rem;">An inescapable capital gravity well. Agents pay exclusively in Native SOL. Transient $EXG tokens are minted for internal accounting and instantly burned upon settlement.</p>
+        
+        <div class="spec-list">
+          <li><span class="spec-key">Toll</span><span class="spec-val">0.002 Native SOL per job</span></li>
+          <li><span class="spec-key">Distribution</span><span class="spec-val">30% to hardware operator • 70% to Protocol Treasury</span></li>
+          <li><span class="spec-key">Exposure</span><span class="spec-val">Zero token volatility • Zero balance sheet risk</span></li>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- MACHINE INTERFACE -->
+    <section>
+      <div class="section-label">Section IV</div>
+      <h2>Machine Interface (M2M Web)</h2>
+      <p style="max-width:680px; margin-bottom:1.5rem;">ExergyNet exposes canonical machine-readable files for autonomous agent discovery and integration.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>llms.txt</h4>
+          <h3>LLM Discovery Manifest</h3>
+          <p>Plain-text protocol description for language models.</p>
+          <a href="llms.txt" class="btn btn-ghost" style="margin-top:1rem; font-size:12px;">View llms.txt &rarr;</a>
+        </div>
+        <div class="card">
+          <h4>.well-known/exergynet.json</h4>
+          <h3>Protocol Coordinates</h3>
+          <p>Canonical JSON with Program ID, toll, mints, and gateway endpoints.</p>
+          <a href=".well-known/exergynet.json" class="btn btn-ghost" style="margin-top:1rem; font-size:12px;">View JSON &rarr;</a>
+        </div>
+        <div class="card">
+          <h4>.well-known/ai-plugin.json</h4>
+          <h3>Plugin Descriptor</h3>
+          <p>OpenAI-compatible manifest for agent ecosystems.</p>
+          <a href=".well-known/ai-plugin.json" class="btn btn-ghost" style="margin-top:1rem; font-size:12px;">View Plugin &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>One Physics. One Logic. One Field.</h2>
+        <p>Integrate the ExergyNet thermodynamic truth layer into your agentic infrastructure.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="docs.html"  class="btn btn-primary">Integration Docs</a>
+          <a href="nodes.html" class="btn btn-blue">Run a Node</a>
+          <a href="proof.html" class="btn btn-ghost">Verify Mainnet &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
 </main>
 
-<footer>
-  <div>ExergyNet · Whitepaper</div>
-  <div class="footer-links">
-    <a href="docs.html">Docs</a>
-    <a href="security.html">Security</a>
-    <a href="explorer.html">Explorer</a>
-  </div>
-</footer>
+  <!-- Footer will be injected here -->
+  <div id="site-footer"></div>
 
-<script src="assets/main.js"></script>
+</div></div>
+
+
+<script src="main.js"></script>
 </body>
 </html>

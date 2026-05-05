@@ -292,9 +292,12 @@
       .kv { grid-template-columns: 1fr; }
     }
   </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
   <div class="shell">
     <header>
       <div>
@@ -881,6 +884,8 @@ $("limit").addEventListener("change", renderBlocks);
 
 setInterval(refreshNow, 2500);
 refreshNow();
-</script>
+</script></div>
+
+  <script src="main.js"></script>
 </body>
 </html>
