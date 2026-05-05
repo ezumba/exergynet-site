@@ -1,0 +1,67 @@
+<!-- footer.html -->
+<footer id="main-footer">
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <span class="footer-pulse"></span>
+        ExergyNet
+      </div>
+      <p class="footer-tagline">Thermodynamic ZK-Compute<br>for Autonomous Agents</p>
+      <div class="footer-chain-badges">
+        <span class="footer-chain-badge sol">Solana LNES-03</span>
+        <span class="footer-chain-badge base">Base LNES-04</span>
+      </div>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <div class="footer-col">
+        <div class="footer-col-label">Protocol</div>
+        <a href="whitepaper.html">Whitepaper</a>
+        <a href="protocol.html">Architecture</a>
+        <a href="proof.html">On-Chain Proof</a>
+        <a href="security.html">Security</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-label">Developers</div>
+        <a href="docs.html">Documentation</a>
+        <a href="mcp.html">MCP Gateway</a>
+        <a href="agents.html">Agent Manifest</a>
+        <a href="https://github.com/exergynet" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-label">Network</div>
+        <a href="nodes.html">Node Operations</a>
+        <a href="roadmap.html">Roadmap</a>
+        <a href="https://x.com/ExergyNet" target="_blank" rel="noopener">X @ExergyNet</a>
+        <a href="https://discord.com/channels/1500548202384986203/1500548202959732970" target="_blank" rel="noopener">Discord</a>
+      </div>
+      <div class="nav-actions"><button class="theme-toggle" type="button" aria-label="Toggle theme">☀</button></div>
+</nav>
+
+    <div class="footer-meta">
+      <div class="footer-status">
+        <span class="footer-status-dot"></span>
+        LNES-03 &middot; Solana Mainnet-Beta &middot; Production Live
+      </div>
+      <div class="footer-status" style="margin-top:0.4rem;">
+        <span class="footer-status-dot" style="background:var(--blue); box-shadow:0 0 8px var(--blue-glow);"></span>
+        LNES-04 &middot; Base L2 Mainnet &middot; Production Live
+      </div>
+      <div class="footer-copy" style="margin-top:0.75rem;">
+        &copy; <span id="footer-year"></span> ExergyNet. All rights reserved.
+      </div>
+      <div class="footer-program">
+        Program: <code>7BCPpUMB&hellip;4CcCL</code>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+  (function() {
+    var el = document.getElementById("footer-year");
+    if (el) el.textContent = new Date().getFullYear();
+  })();
+</script>

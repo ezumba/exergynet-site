@@ -1,179 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SDK | ExergyNet</title>
-<meta name="description" content="TypeScript SDK for integrating with the ExergyNet LNES-01 settlement protocol.">
-<link rel="stylesheet" href="assets/style.css">
+<title>SDK Reference | ExergyNet</title>
+<meta name="description" content="ExergyNet SDK — TypeScript interface to the LNES-03 Unidirectional Membrane on Solana Mainnet-Beta. Full API reference and complete integration example.">
+<link rel="stylesheet" href="style.css">
+<script>
+// Inline theme init to prevent flash
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-logo"><span class="dot"></span>ExergyNet</a>
-  <ul class="nav-links" id="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="docs.html">Docs</a></li>
-    <li><a href="protocol.html">Protocol</a></li>
-    <li><a href="sdk.html">SDK</a></li>
-    <li><a href="mcp.html">MCP</a></li>
-    <li><a href="proof.html">Proof</a></li>
-    <li><a href="explorer.html">Explorer</a></li>
-    <li><a href="agents.html">Agents</a></li>
-    <li><a href="security.html">Security</a></li>
-    <li><a href="roadmap.html">Roadmap</a></li>
-    <li><a href="whitepaper.html">Whitepaper</a></li>
-  </ul>
-  <div class="nav-actions">
-    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light and dark mode">●</button>
-    <button class="hamburger" id="hamburger">☰</button>
-  </div>
-</nav>
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <!-- Header will be injected here -->
+  <div id="site-header"></div>
 
 <main class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:380px;top:-100px;right:-200px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-150px;"></div>
+    
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>TypeScript SDK</div>
+      <h1>ExergyNet<br><span class="accent">SDK Reference</span></h1>
+      <p class="hero-sub">The official <code>exergynet-agent-sdk</code> package. Full TypeScript interface to the LNES-03 Unidirectional Membrane on Solana Mainnet-Beta.</p>
+    </div>
+  </div>
+
   <div class="container">
 
-    <div class="page-header">
-      <div class="section-label">TypeScript</div>
-      <h1>ExergyNet SDK</h1>
-      <p>The <code>lnes-agent-sdk-core</code> package. Official TypeScript interface to the LNES-01 Solana Mainnet-Beta program.</p>
-    </div>
-
+    <!-- PACKAGE INFO -->
     <section>
-      <div class="trust-strip">
-        <div class="trust-item">
-          <div class="trust-label">Package</div>
-          <div class="trust-value">lnes-agent-sdk-core</div>
-        </div>
-        <div class="trust-item">
-          <div class="trust-label">Version</div>
-          <div class="trust-value accent">0.1.1+</div>
-        </div>
-        <div class="trust-item">
-          <div class="trust-label">Registry</div>
-          <div class="trust-value">npm</div>
-        </div>
-        <div class="trust-item">
-          <div class="trust-label">Language</div>
-          <div class="trust-value">TypeScript</div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="section-label">Install</div>
+      <div class="section-label">Package</div>
       <h2>Installation</h2>
-      <pre><code>npm install lnes-agent-sdk-core</code></pre>
+      
+      <div class="card accent-border" style="margin-bottom:1.5rem;">
+        <ul class="spec-list">
+          <li><span class="spec-key">Package</span>   <span class="spec-val"><code>exergynet-agent-sdk</code></span></li>
+          <li><span class="spec-key">Version</span>   <span class="spec-val"><code>1.0.0-omega</code></span></li>
+          <li><span class="spec-key">Registry</span>  <span class="spec-val">npm</span></li>
+          <li><span class="spec-key">Language</span>  <span class="spec-val">TypeScript</span></li>
+          <li><span class="spec-key">ElizaOS</span>   <span class="spec-val"><code>@elizaos/plugin-exergynet</code> <span class="badge badge-green">Recommended</span></span></li>
+        </ul>
+      </div>
+
+      <div class="code-label">INSTALL — ALL DEPENDENCIES</div>
+      <pre><code>npm install exergynet-agent-sdk @solana/web3.js @solana/spl-token bs58 tweetnacl</code></pre>
+
+      <div class="code-label">IMPORT AND VERIFY PROGRAM ID</div>
+      <pre><code><span style="color:var(--blue);">import</span> { ExergyNetClient, LNES_PROGRAM_ID, TRANSIENT_EXG_MINT }
+  <span style="color:var(--blue);">from</span> <span style="color:var(--accent);">"exergynet-agent-sdk"</span>;
+
+console.log(LNES_PROGRAM_ID.toBase58());
+// Expected: 7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></pre>
     </section>
 
+    <!-- API REFERENCE -->
     <section>
-      <div class="section-label">Import</div>
-      <h2>Importing the client</h2>
-      <pre><code>import { LnesM2MClient, LNES_PROGRAM_ID } from "lnes-agent-sdk-core";</code></pre>
+      <div class="section-label">API Reference</div>
+      <h2>Core Methods</h2>
 
-      <div class="code-label" style="margin-top:1rem">VERIFY PROGRAM ID AT IMPORT TIME</div>
-      <pre><code>console.log(LNES_PROGRAM_ID.toBase58());
-// Expected: Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD</code></pre>
-    </section>
-
-    <section>
-      <div class="section-label">Methods</div>
-      <h2>API reference</h2>
-
-      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:1rem">
-
-        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border)">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.5rem">
-            <code style="font-size:14px">estimateExergyGate()</code>
-            <span class="badge badge-amber">READ</span>
+      <div class="card-grid">
+        <div class="card accent-border">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+            <code style="font-size:14px;">mcpHandshake()</code>
+            <span class="badge badge-blue">AUTH</span>
           </div>
-          <p style="font-size:14px">Calculates whether a job clears the minimum economic threshold. Evaluates the gate formula: <code>external_cost > settlement_cost + proof_cost + tx_cost + risk_margin</code>.</p>
-          <p style="font-size:14px">Returns a boolean gate decision and estimated cost breakdown. Call this before any on-chain action.</p>
+          <p>Executes the strict Ed25519 cryptographic handshake with the Neural Gateway. Enforces replay protection and returns access clearance.</p>
         </div>
 
-        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border)">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.5rem">
-            <code style="font-size:14px">openJob()</code>
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+            <code style="font-size:14px;">createOpenJobInstruction()</code>
             <span class="badge badge-amber">WRITE</span>
           </div>
-          <p style="font-size:14px">Creates or opens a settlement job using the LNES-01 program interface. Derives and funds an escrow PDA. Returns a <code>jobId</code> and <code>escrowPda</code> for use in settlement.</p>
+          <p>Builds the transaction instruction to lock 0.002 Native SOL. Returns a ready-to-sign <code>TransactionInstruction</code>.</p>
         </div>
 
-        <div style="padding:1.25rem 1.5rem">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.5rem">
-            <code style="font-size:14px">settleExergy()</code>
-            <span class="badge badge-green">SETTLE</span>
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+            <code style="font-size:14px;">Automated Settlement</code>
+            <span class="badge badge-gray">AUTONOMOUS</span>
           </div>
-          <p style="font-size:14px">Submits the settlement instruction. Validates all inputs, routes USDC through LNES-01 program logic to defined vault destinations. Requires proof data, all account references, and the funded escrow.</p>
+          <p>The LNES-03 Sovereign Siphon handles settlement autonomously after escrow lock. No client-side settlement calls needed.</p>
         </div>
 
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+            <code style="font-size:14px;">getDiscriminator()</code>
+            <span class="badge badge-gray">UTILITY</span>
+          </div>
+          <p>Returns the 8-byte Anchor instruction discriminator for raw instruction construction.</p>
+        </div>
       </div>
     </section>
 
+    <!-- COMPLETE INTEGRATION EXAMPLE -->
     <section>
-      <div class="section-label">Full example</div>
-      <h2>Complete integration</h2>
-      <pre><code>import { LnesM2MClient, LNES_PROGRAM_ID } from "lnes-agent-sdk-core";
-import { Connection, Keypair } from "@solana/web3.js";
+      <div class="section-label">Complete Integration</div>
+      <h2>Full Kinetic Strike Example</h2>
+      <p style="max-width:660px; margin-bottom:1.25rem;">End-to-end TypeScript implementation for submitting a compute job.</p>
 
-const connection = new Connection("https://api.mainnet-beta.solana.com");
-const agentWallet = Keypair.fromSecretKey(/* ... */);
+      <div class="json-block">
+        <pre><code><span style="color:var(--blue);">import</span> { ExergyNetClient, LNES_PROGRAM_ID, TRANSIENT_EXG_MINT } from <span style="color:var(--accent);">"exergynet-agent-sdk"</span>;
+<span style="color:var(--blue);">import</span> * as web3 from <span style="color:var(--accent);">"@solana/web3.js"</span>;
+<span style="color:var(--blue);">import</span> * as spl from <span style="color:var(--accent);">"@solana/spl-token"</span>;
 
-const client = new LnesM2MClient(connection, agentWallet);
+<span style="color:var(--blue);">const</span> client = <span style="color:var(--blue);">new</span> ExergyNetClient(<span style="color:var(--accent);">"https://exergynet.org"</span>);
 
-// 1. Verify program ID
-console.assert(
-  LNES_PROGRAM_ID.toBase58() === "Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD",
-  "Program ID mismatch — abort"
-);
+<span style="color:var(--blue);">async function</span> executeKineticStrike() {
+  <span style="color:var(--text-faint);">// 1. MCP Handshake</span>
+  <span style="color:var(--blue);">await</span> client.mcpHandshake(agentWallet);
 
-// 2. Estimate gate
-const gateResult = await client.estimateExergyGate({ jobParams });
-if (!gateResult.clears) {
-  console.log("Job does not clear economic gate. Skip.");
-  process.exit(0);
-}
+  <span style="color:var(--text-faint);">// 2. Build &amp; send open_job transaction</span>
+  <span style="color:var(--blue);">const</span> tx = <span style="color:var(--blue);">await</span> client.createOpenJobInstruction({
+    jobId, axiomHash, payer: agentWallet.publicKey
+  });
 
-// 3. Open job
-const { jobId, escrowPda } = await client.openJob({ jobParams });
-
-// 4. (Execute compute work)
-const { axiomHash, output } = await runComputeWork();
-
-// 5. Settle
-const settleTx = await client.settleExergy({
-  jobId,
-  axiomHash,
-  tollUsdcMicroUnits: gateResult.toll,
-  escrowPda,
-  usdcMint,
-  agentUsdcAccount,
-  escrowUsdcAccount,
-  vaultAccounts,
-});
-
-console.log("Settled:", settleTx.signature);</code></pre>
+  <span style="color:var(--text-faint);">// 3. Sign + broadcast</span>
+  <span style="color:var(--blue);">const</span> sig = <span style="color:var(--blue);">await</span> web3.sendAndConfirmTransaction(connection, tx, [agentWallet]);
+  console.log(<span style="color:var(--accent);">"Kinetic Strike submitted:"</span>, sig);
+}</code></pre>
+      </div>
     </section>
 
+    <!-- ELIZAOS ALTERNATIVE -->
     <section>
-      <div class="btn-row">
-        <a href="https://www.npmjs.com/package/lnes-agent-sdk-core" class="btn btn-primary" target="_blank" rel="noopener">View on npm →</a>
-        <a href="docs.html" class="btn btn-secondary">Integration docs</a>
-        <a href="mcp.html" class="btn btn-ghost">No-code: use MCP →</a>
+      <div class="section-label">Recommended Alternative</div>
+      <h2>ElizaOS Plugin — Zero Boilerplate</h2>
+      <p>For ElizaOS agents, the official plugin abstracts everything into a single action.</p>
+
+      <div class="card accent-border">
+        <div class="code-label">INSTALL</div>
+        <pre><code>pnpm install @elizaos/plugin-exergynet</code></pre>
+        
+        <div class="code-label" style="margin-top:1rem;">CHARACTER CONFIG</div>
+        <pre><code>{
+  "name": "YourAgent",
+  "plugins": ["@elizaos/plugin-exergynet"],
+  "settings": {
+    "secrets": {
+      "SOLANA_PRIVATE_KEY": "your_base58_key"
+    }
+  }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Deploy Your First Kinetic Strike</h2>
+        <p>Start integrating verifiable compute today.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="docs.html"  class="btn btn-primary">Full Integration Guide</a>
+          <a href="proof.html" class="btn btn-secondary">Verify Program ID</a>
+          <a href="mcp.html"   class="btn btn-ghost">MCP Gateway &rarr;</a>
+        </div>
       </div>
     </section>
 
   </div>
+
 </main>
 
-<footer>
-  <div><a href="index.html" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;color:var(--text-faint);text-decoration:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>ExergyNet</a></div>
-  <div class="footer-links">
-    <a href="docs.html">Docs</a><a href="sdk.html">SDK</a><a href="proof.html">Proof</a><a href="security.html">Security</a><a href="llms.txt">llms.txt</a>
-  </div>
-  <div>LNES-01 · Solana Mainnet-Beta</div>
-</footer>
+  <!-- Footer will be injected here -->
+  <div id="site-footer"></div>
 
-<script src="assets/main.js"></script>
+</div></div>
+
+
+<script src="main.js"></script>
 </body>
 </html>
