@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy Node Setup | ExergyNet</title>
+<meta name="description" content="Super simple instructions to connect your computer and start earning with ExergyNet.">
+<link rel="stylesheet" href="style.css">
+<script>
+// Inline theme init to prevent flash
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <!-- Header will be injected here -->
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+    
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Super Easy Setup</div>
+      <h1>Connect Your Computer<br><span class="accent">in 4 Simple Steps</span></h1>
+      <p class="hero-sub">No experience needed. Just download and run. Your computer will start earning while you sleep.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- PROMINENT DOWNLOAD BUTTON -->
+    <div style="text-align:center; margin:3rem 0 4rem;">
+      <a href="install.sh" 
+         download="exergynet_setup.sh"
+         class="btn btn-primary" 
+         style="font-size: 1.35rem; padding: 20px 48px; border-radius: 9999px; box-shadow: 0 0 40px var(--accent-glow);">
+        🚀 START EASY SETUP<br>
+        <span style="font-size:0.95rem; opacity:0.9;">(Download Installer)</span>
+      </a>
+    </div>
+
+    <p style="text-align:center; color:var(--text-faint); margin-bottom:3rem;">
+      This is the official, safe installer made by the ExergyNet team.
+    </p>
+
+    <!-- SIMPLE STEPS -->
+    <section>
+      <div class="section-label">After downloading</div>
+      <h2>Just 3 more easy steps</h2>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>1. Open the file</h4>
+          <p>Double-click the downloaded file or right-click → Open.</p>
+        </div>
+        <div class="card">
+          <h4>2. Follow the prompts</h4>
+          <p>The installer will guide you. Just click “Yes” when asked.</p>
+        </div>
+        <div class="card accent-border">
+          <h4>3. Wait for confirmation</h4>
+          <p>You’ll see “✅ Node is running” — you’re done!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- REASSURANCE -->
+    <section class="cta-section" style="border-top:1px solid var(--border); margin-top:3rem;">
+      <div class="container">
+        <h2>Your computer is now earning</h2>
+        <p style="max-width:600px; margin:0 auto 2rem;">It will quietly help AI agents and earn real money (SOL or USDC) automatically.</p>
+        
+        <div class="btn-row" style="justify-content:center;">
+          <a href="https://discord.gg/EXERGYNET" target="_blank" class="btn btn-secondary">Need Help? Join Discord</a>
+          <a href="nodes.html" class="btn btn-ghost">Full Detailed Guide</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <!-- Footer will be injected here -->
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

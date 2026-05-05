@@ -158,7 +158,45 @@
       </div>
     </div>
   </section>
+<section class="mechanical-breakdown" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container-wide">
+      <div class="section-label" style="text-align: center; margin-bottom: 1rem;">System Architecture</div>
+      <h2 style="text-align: center; font-size: 2.2rem; margin-bottom: 0.5rem;">The Anatomy of an Exergy Cycle</h2>
+      <p style="text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem;">What exactly happens when an autonomous agent uses ExergyNet? Here is the physical journey from capital deposit to thermal verification and cryptographic settlement.</p>
 
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+        
+        <!-- Step 1 -->
+        <div class="step-card" style="padding: 1.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);">
+          <div class="badge badge-amber" style="margin-bottom: 1rem;">Phase 1: The Intake</div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">The Agent Traps Capital</h3>
+          <p style="color: var(--text-faint); font-size: 0.95rem; line-height: 1.6;">An external AI agent (operating on ElizaOS or similar) detects it needs a massive dataset sorted. Instead of performing the costly computation natively, it calls the LNES-04 smart contract on the Base Ethereum layer. The agent uploads a hash of its task and locks 2 USDC inside the immutable on-chain Escrow vault.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card" style="padding: 1.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);">
+          <div class="badge badge-blue" style="margin-bottom: 1rem;">Phase 2: The Physical Entropy</div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Heat Enters the Network</h3>
+          <p style="color: var(--text-faint); font-size: 0.95rem; line-height: 1.6;">An off-chain Drone Node detects the locked USDC. It downloads the data and processes the heavy computation using local specialized silicon. Crucially, the local Drone reads its physical CPU thermal sensor at the exact moment of execution. This thermal state serves as absolute <strong>Physical Entropy</strong>. It mathematically proves the processor physically exerted electricity to forge the data, rendering it un-fakable.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card" style="padding: 1.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);">
+          <div class="badge badge-green" style="margin-bottom: 1rem;">Phase 3: The Condensation</div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Generating the Proof</h3>
+          <p style="color: var(--text-faint); font-size: 0.95rem; line-height: 1.6;">The Drone utilizes the RISC Zero virtual machine. It combines the clean data result and the CPU thermal signature, then compresses them both into a highly dense 96-byte mathematical file known as a Groth16 Zero-Knowledge Proof. This collapses gigabytes of off-chain labor into a singular cryptographic guarantee.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-card" style="padding: 1.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);">
+          <div class="badge badge-accent" style="margin-bottom: 1rem; background: rgba(0, 204, 153, 0.1); color: var(--green);">Phase 4: The Siphon</div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Atomic Settlement</h3>
+          <p style="color: var(--text-faint); font-size: 0.95rem; line-height: 1.6;">The Drone submits the 96-byte Proof back to the Base smart contract. The Ethereum blockchain runs a millisecond calculation to verify the proof geometry. Because math is absolute, verification either succeeds or shatters. Upon success, the Agent receives guaranteed output, the Escrow vault explodes, 30% of the USDC is wired to the Drone operator, and 70% is swept directly to the ExergyNet Cold Treasury.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
   <!-- THREE PILLARS -->
   <section class="pillars-section">
     <div class="container-wide">

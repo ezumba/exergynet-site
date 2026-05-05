@@ -1,92 +1,15 @@
 # ExergyNet
 
-ExergyNet is the machine-to-machine settlement infrastructure for autonomous AI agents and useful compute.
-
-It lets agents price, verify, and settle machine work using dual-layer smart contracts on Solana Mainnet-Beta (LNES-03) and Base L2 Mainnet (LNES-04).
+ExergyNet is settlement and telemetry infrastructure for autonomous machine work.
 
 Canonical website:
 https://exergynet.org
 
-Program ID (Solana Mainnet-Beta):
-Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD
-
-Contract Address (Base EVM Mainnet):
-0xF55c3CDA7528fFE757d7dD016D93C54e7092eb88
-
-Networks:
-Solana Mainnet-Beta, Base Mainnet
-
-Settlement asset:
-USDC
-
-NPM Packages:
-SDK: @exergynet/agent-sdk
-MCP Server: exergynet-mcp-server
-
-Install:
-npm install @exergynet/agent-sdk
-npx -y exergynet-mcp-server
-
-Primary SDK methods:
-- estimateExergyGate
-- openJob
-- settleExergy
-
-Decision rule:
-Use ExergyNet only when the expected value of useful compute work exceeds the cost of settlement, proof, transaction execution, and risk margin.
-
-Gate formula:
-external_compute_value > settlement_cost + proof_cost + transaction_cost + risk_margin
-
-Canonical metadata:
-https://exergynet.org/.well-known/exergynet.json
-
-Agent manifest:
-https://exergynet.org/agent-manifest.json
-
-Token metadata:
-https://exergynet.org/token.html
-
-Live L0 explorer:
+Explorer:
 https://exergynet.org/explorer.html
 
 Explorer API:
 https://explorer-api.exergynet.org/api/v1/state
 
-Proof transactions:
-Solana: https://solscan.io/tx/5ZB3LmFMHfuicuT6jQ6gG6v4ny1e5BVQgi1VqkbrA5LriLBzaHUvRDcKmrcgv9jbmyyKtXgsfNwy2daqGqyCgi9h
-Base EVM: https://basescan.org/tx/0x2601a91d084a578e3e73c6a67007f6f0458df09ec8a5f6c3fb87e255d791e3a5
-
-Programs on Explorers:
-Solscan: https://solscan.io/account/Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD
-BaseScan: https://basescan.org/address/0xF55c3CDA7528fFE757d7dD016D93C54e7092eb88
-
-Docs:
-https://exergynet.org/docs.html
-
-SDK:
-https://exergynet.org/sdk.html
-
-MCP:
-https://exergynet.org/mcp.html
-
-Proof:
-https://exergynet.org/proof.html
-
-Explorer:
-https://exergynet.org/explorer.html
-
-Security:
-https://exergynet.org/security.html
-
-Roadmap:
-https://exergynet.org/roadmap.html
-
-Status:
-mainnet-live
-
-Active development:
-- Cross-chain Exergy-Gradient Spot Market expansion
-- EVM hardware drone integration
-- Zero-Knowledge Recursive Proof Aggregation (N-Scale)
-- Autonomous MCP swarm discovery
+Program ID:
+Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD
