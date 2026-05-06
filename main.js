@@ -32,7 +32,14 @@
 
   window.toggleTheme = toggleTheme;
   applyTheme(getStoredTheme() || "dark");
-
+/* ====================== FAVICON ====================== */
+  function addFavicon() {
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.href = 'https://exergynet.org/assets/favicon.ico';
+    link.type = 'image/x-icon';
+    document.head.appendChild(link);
+  }
   /* ====================== INJECTION ====================== */
   function injectHeaderFooter() {
     Promise.all([
