@@ -91,36 +91,41 @@
       </div>
     </section>
 
-    <!-- DEPLOYMENT GUIDE -->
+<!-- DEPLOYMENT GUIDE -->
     <section>
       <div class="section-label">Deployment Guide</div>
       <h2>Four Steps to Consensus</h2>
 
       <div class="card-grid">
         <div class="card">
-          <h4>Step 01 — Build</h4>
-          <pre><code>git clone https://github.com/exergynet/entropy-k-core.git
+          <h4>Step 01 — Toolchain & Build</h4>
+          <p>Install the RISC-V dependencies and compile the bare-metal host binary.</p>
+          <pre><code>curl -L https://risczero.com/install | bash
+rzup
+git clone https://github.com/ezumba/entropy-k-core.git
 cd entropy-k-core
+export RISC0_BUILD_USE_DOCKER=0
 cargo build --release</code></pre>
         </div>
 
         <div class="card">
           <h4>Step 02 — Identity</h4>
-          <p>The daemon automatically generates a native Ed25519 keypair on first run — your permanent node identity and yield destination.</p>
-          <code style="display:block; margin:1rem 0; font-size:13px;">~/.exergynet/id.json</code>
-          <p style="font-size:13px;">This is a fully functional Solana wallet address. Back it up securely.</p>
+          <p>The daemon requires a cryptographic yield destination. You must provide a valid Base L2 Ethereum address to receive automated payouts.</p>
+          <code style="display:block; margin:1rem 0; font-size:13px;">Format: 0x...</code>
+          <p style="font-size:13px;">Use any standard EVM hot wallet. This is your permanent yield destination. Protect the private key locally.</p>
         </div>
 
         <div class="card accent-border">
           <h4>Step 03 — Ignite</h4>
-          <pre><code>cargo run --release -- 8002 18.209.174.113:8001</code></pre>
-          <p style="margin-top:0.75rem; font-size:13px;">Connects to the global Apex Router and begins radiating proofs.</p>
+          <p>Connect to the global Apex Router and inject your payout address.</p>
+          <pre><code>cargo run --release -- --apex 18.209.174.113:8001 --payout <YOUR_BASE_EVM_ADDRESS></code></pre>
+          <p style="margin-top:0.75rem; font-size:13px;">Your node connects to the mesh and begins condensing proofs for the M2M economy.</p>
         </div>
 
         <div class="card">
           <h4>Step 04 — Verify</h4>
-          <pre><code>[MEMBRANE] Physics radiated to peer</code></pre>
-          <p style="margin-top:0.75rem; font-size:13px;">Your node is now live and earning. Check the <a href="proof.html">Explorer</a> for your verified status.</p>
+          <pre><code>[MEMBRANE] Proof Condensed & Radiated</code></pre>
+          <p style="margin-top:0.75rem; font-size:13px;">Your node is live and earning. The Siphon will autonomously settle your proofs and route Base USDC to your wallet. Check the <a href="explorer.html">Explorer</a> for your verified status.</p>
         </div>
       </div>
     </section>
@@ -149,7 +154,7 @@ cargo build --release</code></pre>
         <h2>Ready to Join the Swarm?</h2>
         <p>Your hardware’s entropy is now a monetizable physical asset.</p>
         <div class="btn-row" style="justify-content:center;">
-          <a href="https://github.com/exergynet/entropy-k-core" target="_blank" class="btn btn-primary">Clone entropy-k-core &rarr;</a>
+          <a href="https://github.com/ezumba/entropy-k-core" target="_blank" class="btn btn-primary">Clone entropy-k-core &rarr;</a>
           <a href="proof.html" class="btn btn-secondary">View Live Explorer</a>
           <a href="security.html" class="btn btn-ghost">Security Model &rarr;</a>
         </div>
