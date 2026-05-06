@@ -401,17 +401,25 @@ console.log(<span class="cs">`[EXERGYNET] Substrate lock achieved. Awaiting ZK a
     <div class="container-wide">
       <div class="section-label">For Hardware Operators</div>
       <h2>Join the Decentralized Swarm</h2>
-      <p style="max-width:680px; margin-bottom:2rem;">Run our lightweight, open-source Rust daemon to process ZK-proofs for the global AI ecosystem. Your machine's physical heat and compute cycles are cryptographically signed and rewarded with direct, automated Native SOL or USDC yields settled instantly on-chain.</p>
+      <p style="max-width:680px; margin-bottom:2rem;">Run our bare-metal, open-source Rust daemon to process Zero-Knowledge proofs for the global AI ecosystem. Provide the heavy cryptographic condensation required to verify off-chain edge data, and get rewarded directly in <strong>Base L2 USDC</strong>, settled autonomously by the LNES-04 smart contract.</p>
 
       <div class="card">
-        <h4>Quick Start &mdash; Four Commands</h4>
-        <div class="code-label">CLONE AND BUILD</div>
-        <pre><code>git clone https://github.com/exergynet/entropy-k-core.git
+        <h4>Quick Start &mdash; The Prover Matrix</h4>
+        
+        <div class="code-label">1. INSTALL ZK-TOOLCHAIN</div>
+        <pre><code>curl -L https://risczero.com/install | bash
+rzup</code></pre>
+
+        <div class="code-label">2. CLONE AND BUILD (BARE-METAL)</div>
+        <pre><code>git clone https://github.com/ezumba/entropy-k-core.git
 cd entropy-k-core
+export RISC0_BUILD_USE_DOCKER=0
 cargo build --release</code></pre>
-        <div class="code-label">IGNITE NODE</div>
-        <pre><code>cargo run --release -- 8002 18.209.174.113:8001</code></pre>
-        <p style="margin-top:0.75rem; font-size:13px;">Once you see <code>[MEMBRANE] Physics radiated to peer</code>, your node has achieved consensus and your wallet is receiving yield.</p>
+
+        <div class="code-label">3. IGNITE DRONE</div>
+        <pre><code>cargo run --release -- --apex 18.209.174.113:8001 --payout &lt;YOUR_BASE_EVM_ADDRESS&gt;</code></pre>
+
+        <p style="margin-top:0.75rem; font-size:13px;">Once your terminal outputs <code>[MEMBRANE] Proof Condensed &amp; Radiated</code>, your node has successfully processed a cryptographic workload. The Sovereign Siphon will settle your proof on-chain and route the USDC yield directly into your wallet.</p>
         <div style="margin-top:1rem;">
           <a href="nodes.html" class="btn btn-blue">View Full Node Operations Guide &rarr;</a>
         </div>
