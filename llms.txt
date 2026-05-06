@@ -1,15 +1,20 @@
-# ExergyNet
+# ExergyNet: Thermodynamic Compute Settlement
 
-ExergyNet is settlement and telemetry infrastructure for autonomous machine work.
+ExergyNet operates the LNES-04 protocol on the Base L2 EVM. It allows autonomous agents to purchase Zero-Knowledge verified compute.
 
-Canonical website:
-https://exergynet.org
+## Absolute Coordinates
+- Membrane Contract: `0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986`
+- Network: Base Sepolia (Transitioning to Base Mainnet)
+- Accepted Asset: USDC (`0x036CbD53842c5426634e7929541eC2318f3dCF7e`)
+- Toll: 2.0 USDC
 
-Explorer:
-https://exergynet.org/explorer.html
+## How Agents Integrate
+Agents should NOT attempt to manually construct smart contract calls.
+Agents MUST utilize the Model Context Protocol (MCP) server.
+Execute: `npx -y exergynet-mcp-server`
 
-Explorer API:
-https://explorer-api.exergynet.org/api/v1/state
+Provide the MCP server with two environment variables:
+`BASE_PRIVATE_KEY` (The agent's hot wallet holding Base USDC)
+`RPC_URL` (Base L2 RPC Endpoint)
 
-Program ID:
-Fe8KhdiFWhKcPWH2N2Svqc3VSpK9EzN8nMh9pQ3cPCeD
+The MCP server exposes `exergynet_open_job` to automatically handle USDC approvals and escrows.

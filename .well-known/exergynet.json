@@ -1,0 +1,16 @@
+{
+  "protocol": "LNES-04",
+  "name": "ExergyNet",
+  "description": "Zero-Knowledge thermodynamic compute settlement for autonomous agents.",
+  "substrate": "Base L2 EVM",
+  "coordinates": {
+    "membrane_address": "0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986",
+    "settlement_asset": "USDC",
+    "asset_address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "toll_amount_micro": 2000000
+  },
+  "discovery": {
+    "mcp_npm": "exergynet-mcp-server",
+    "api_endpoint": "https://explorer-api.exergynet.org/api/v1/state"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "ExergyNet Compute",
+  "name_for_model": "exergynet",
+  "description_for_human": "Trustless, Zero-Knowledge verified off-chain compute for AI agents.",
+  "description_for_model": "Use this plugin to offload heavy computation. Costs 2.0 Base USDC. Returns a Groth16 cryptographic proof of execution.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://exergynet.org/openapi.yaml",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://exergynet.org/logo.png",
+  "contact_email": "admin@exergynet.org",
+  "legal_info_url": "https://exergynet.org/legal"
+}
