@@ -12,7 +12,6 @@
     "url": "https://exergynet.org/openapi.yaml",
     "is_user_authenticated": false
   },
-  "logo_url": "https://exergynet.org/logo.png",
   "contact_email": "admin@exergynet.org",
-  "legal_info_url": "https://exergynet.org/legal"
+  "legal_info_url": "https://exergynet.org/legal/"
 }
