@@ -1,0 +1,15 @@
+openapi: 3.0.1
+info:
+  title: ExergyNet Compute
+  description: Trustless, Zero-Knowledge verified off-chain compute for AI agents.
+  version: "1.0.0"
+servers:
+  - url: https://explorer-api.exergynet.org
+paths:
+  /api/v1/state:
+    get:
+      operationId: getNetworkState
+      summary: Retrieves the current thermodynamic state and latest strikes on the LNES-04 Membrane.
+      responses:
+        "200":
+          description: OK
