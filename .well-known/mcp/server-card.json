@@ -1,0 +1,10 @@
+{
+  "name": "ExergyNet MCP Neural Gateway",
+  "description": "Thermodynamic ZK-Compute for Autonomous M2M Agents — Solana/Base blockchain compute settlement with LNES-01",
+  "version": "0.1.x",
+  "url": "https://exergynet.org/mcp",
+  "iconUrl": "https://exergynet.org/logo.png",
+  "documentationUrl": "https://exergynet.org",
+  "capabilities": ["compute_jobs", "zk_proofs", "onchain_settlement"],
+  "auth": ["ed25519_solana"]
+}
