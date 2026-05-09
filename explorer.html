@@ -37,6 +37,56 @@ body::before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(2
 table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.055);vertical-align:middle}th{font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:900;background:rgba(255,255,255,.018)}td{font-size:13px}.row-new{animation:rowIn .42s ease-out}@keyframes rowIn{from{opacity:0;transform:translateY(-7px);background:rgba(0,255,65,.11)}to{opacity:1;transform:translateY(0);background:transparent}}.hash-btn{font-family:"Fira Code","Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--cyan);background:none;border:0;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(0,216,255,.28);font-size:13px}.hash-btn:hover{color:var(--green);text-decoration-color:var(--green)}.badge{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900;letter-spacing:.04em}.badge.ok{background:rgba(0,255,65,.1);color:var(--green);border:1px solid rgba(0,255,65,.28)}.badge.pending{background:rgba(255,176,32,.1);color:var(--amber);border:1px solid rgba(255,176,32,.28)}.badge.fail{background:rgba(255,77,77,.1);color:var(--red);border:1px solid rgba(255,77,77,.28)}.copy{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--muted);border-radius:8px;padding:6px 8px;cursor:pointer;font-size:11px}.copy:hover{color:var(--text);border-color:rgba(0,216,255,.38)}
 .empty{padding:36px;text-align:center;color:var(--muted)}.footer{color:#52615d;font-size:11px;margin-top:18px;text-align:center}.toast{position:fixed;right:18px;bottom:18px;background:#08100b;border:1px solid rgba(0,255,65,.3);color:var(--green);border-radius:12px;padding:12px 14px;box-shadow:0 10px 28px rgba(0,0,0,.38);z-index:100;display:none}.toast.show{display:block;animation:toastIn .2s ease-out}@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:90;align-items:center;justify-content:center;padding:18px}.modal.active{display:flex}.modal-card{width:min(760px,100%);max-height:86vh;overflow:auto;background:linear-gradient(180deg,#0b0f11,#030405);border:1px solid rgba(0,216,255,.26);border-radius:20px;box-shadow:0 0 48px rgba(0,216,255,.08),0 30px 90px rgba(0,0,0,.62)}.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px;border-bottom:1px solid rgba(0,216,255,.15)}.modal-head h2{font-size:16px;letter-spacing:.08em;text-transform:uppercase}.modal-head p{font-size:12px;color:var(--muted);margin-top:6px}.x{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;font-size:18px}.modal-body{padding:18px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.detail-box{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;min-width:0}.detail-k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:7px}.detail-v{font-size:13px;color:var(--text);word-break:break-all}.detail-v.green{color:var(--green)}.detail-v.cyan{color:var(--cyan)}.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.warn{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.55;border-left:2px solid rgba(0,216,255,.35);padding-left:12px}
+
+
+/* Light / Dark mode system */
+.theme-toggle{display:flex;align-items:center;background:#050707;border:1px solid rgba(0,216,255,.32);border-radius:999px;padding:3px;gap:3px}
+.theme-btn{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900;letter-spacing:.08em;cursor:pointer}
+.theme-btn.active{background:rgba(0,216,255,.14);color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(0,216,255,.38)}
+body.light-mode{
+  --bg:#f4fbf7;
+  --panel:#ffffff;
+  --panel2:#eef7f2;
+  --border:#b9d9cf;
+  --border2:#7bbeb0;
+  --text:#102018;
+  --muted:#5f746d;
+  --green:#008f2d;
+  --green2:#007a26;
+  --cyan:#007f9f;
+  --amber:#b97000;
+  --red:#c92f2f;
+  --shadow:0 14px 36px rgba(12,63,38,.08);
+  background:radial-gradient(circle at 20% 0%,rgba(0,143,45,.12),transparent 28%),radial-gradient(circle at 85% 10%,rgba(0,127,159,.12),transparent 26%),var(--bg);
+  color:var(--text);
+}
+body.light-mode::before{background:linear-gradient(rgba(10,61,10,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(10,61,10,.035) 1px,transparent 1px);opacity:.42}
+body.light-mode .header{border-bottom-color:rgba(0,127,159,.24)}
+body.light-mode .logo{border-color:rgba(0,143,45,.35);box-shadow:0 0 18px rgba(0,143,45,.08)}
+body.light-mode .network-toggle,body.light-mode .theme-toggle{background:#ffffff;border-color:rgba(0,127,159,.28);box-shadow:0 8px 20px rgba(13,61,31,.05)}
+body.light-mode .network-btn.active{background:rgba(0,143,45,.13);color:var(--green);box-shadow:inset 0 0 0 1px rgba(0,143,45,.3)}
+body.light-mode .network-btn.mainnet.active,body.light-mode .theme-btn.active{background:rgba(0,127,159,.12);color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(0,127,159,.3)}
+body.light-mode .site-link,body.light-mode .export-btn{background:#ffffff;border-color:rgba(0,127,159,.24);color:var(--text);box-shadow:0 8px 22px rgba(13,61,31,.04)}
+body.light-mode .live{background:rgba(0,143,45,.08);border-color:rgba(0,143,45,.28);color:var(--green)}
+body.light-mode .env-badge{color:var(--green);border-color:rgba(0,143,45,.24);background:rgba(0,143,45,.08)}
+body.light-mode .env-badge.mainnet{color:var(--cyan);border-color:rgba(0,127,159,.28);background:rgba(0,127,159,.08)}
+body.light-mode .vital{background:linear-gradient(180deg,#ffffff,#eef7f2);border-color:var(--border);box-shadow:var(--shadow)}
+body.light-mode .search{background:#ffffff;border-color:rgba(0,127,159,.24);color:var(--text)}
+body.light-mode .small-btn{background:rgba(0,143,45,.08);border-color:rgba(0,143,45,.28);color:var(--green)}
+body.light-mode .panel{background:linear-gradient(180deg,#ffffff,#f7fcf9);border-color:rgba(0,127,159,.2);box-shadow:0 18px 60px rgba(12,63,38,.08)}
+body.light-mode .panel-head{background:rgba(0,127,159,.055);border-bottom-color:rgba(0,127,159,.15)}
+body.light-mode th{background:rgba(0,127,159,.06)}
+body.light-mode th,body.light-mode td{border-bottom-color:rgba(12,63,38,.09)}
+body.light-mode .copy{background:#ffffff;border-color:rgba(12,63,38,.14);color:var(--muted)}
+body.light-mode .toast{background:#ffffff;border-color:rgba(0,143,45,.28);color:var(--green);box-shadow:0 12px 28px rgba(12,63,38,.16)}
+body.light-mode .modal{background:rgba(244,251,247,.74)}
+body.light-mode .modal-card{background:linear-gradient(180deg,#ffffff,#f7fcf9);border-color:rgba(0,127,159,.22);box-shadow:0 24px 80px rgba(12,63,38,.16)}
+body.light-mode .modal-head{border-bottom-color:rgba(0,127,159,.14)}
+body.light-mode .x{background:#ffffff;border-color:rgba(12,63,38,.14);color:var(--text)}
+body.light-mode .detail-box{background:#ffffff;border-color:rgba(12,63,38,.1)}
+body.light-mode .footer{color:#71847d}
+body.light-mode .warn{border-left-color:rgba(0,127,159,.32)}
+
 @media(max-width:900px){.header{align-items:flex-start;flex-direction:column}.top-actions{justify-content:flex-start}.grid{grid-template-columns:1fr 1fr}.toolbar{flex-direction:column}.search,.small-btn,.export-btn{width:100%}table{min-width:850px}.table-wrap{overflow-x:auto}.detail-grid{grid-template-columns:1fr}.status-line{flex-direction:column;align-items:flex-start}}
 @media(max-width:520px){.grid{grid-template-columns:1fr}.shell{width:min(100vw - 20px,1480px);padding-top:12px}.brand h1{font-size:18px}.network-toggle{width:100%}.network-btn{flex:1}.site-link{width:100%}.top-actions{width:100%}}
 </style>
@@ -52,6 +102,10 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 16p
       <div class="network-toggle" role="group" aria-label="Network toggle">
         <button class="network-btn active" id="testnet-btn" onclick="setNetwork('testnet')">TESTNET</button>
         <button class="network-btn mainnet" id="mainnet-btn" onclick="setNetwork('mainnet')">MAINNET</button>
+      </div>
+      <div class="theme-toggle" role="group" aria-label="Theme toggle">
+        <button class="theme-btn" id="dark-theme-btn" onclick="setExplorerTheme('dark')">DARK</button>
+        <button class="theme-btn" id="light-theme-btn" onclick="setExplorerTheme('light')">LIGHT</button>
       </div>
       <a class="site-link" href="https://exergynet.org/" target="_blank" rel="noopener">ExergyNet.org ↗</a>
       <div class="live"><span class="live-dot"></span><span id="live-label">Live Testnet</span></div>
@@ -251,7 +305,25 @@ function downloadSingle(id){ const tx=findTx(id); downloadBlob(JSON.stringify(tx
 function downloadBlob(text,name,type){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); toast('Export ready.'); }
 async function copyText(text){ try{ await navigator.clipboard.writeText(text); toast('Copied to clipboard.'); }catch(e){ toast('Copy unavailable in this browser.'); }}
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'),2400); }
+
+function setExplorerTheme(theme){
+  const safeTheme = theme === 'light' ? 'light' : 'dark';
+  document.body.classList.toggle('light-mode', safeTheme === 'light');
+  document.body.dataset.theme = safeTheme;
+  try{ localStorage.setItem('exergy_explorer_theme', safeTheme); }catch(e){}
+  const darkBtn = document.getElementById('dark-theme-btn');
+  const lightBtn = document.getElementById('light-theme-btn');
+  if(darkBtn) darkBtn.classList.toggle('active', safeTheme === 'dark');
+  if(lightBtn) lightBtn.classList.toggle('active', safeTheme === 'light');
+}
+function initializeExplorerTheme(){
+  let stored = 'dark';
+  try{ stored = localStorage.getItem('exergy_explorer_theme') || 'dark'; }catch(e){}
+  setExplorerTheme(stored);
+}
+
 window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDetails(); });
+initializeExplorerTheme();
 setNetwork(activeNetwork);
 pollTimer = setInterval(fetchLedger, 3000);
 setInterval(renderLedger, 1000);
