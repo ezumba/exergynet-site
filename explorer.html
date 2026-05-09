@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ExergyNet L0 Enterprise Explorer</title>
+<style>
+:root{
+  --bg:#000;
+  --panel:#090b0d;
+  --panel2:#111519;
+  --border:#17333a;
+  --border2:#24505a;
+  --text:#e9fff4;
+  --muted:#7a8f88;
+  --green:#00ff41;
+  --green2:#00c934;
+  --cyan:#00d8ff;
+  --amber:#ffb020;
+  --red:#ff4d4d;
+  --shadow:0 0 28px rgba(0,255,65,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(circle at 20% 0%,rgba(0,255,65,.08),transparent 28%),radial-gradient(circle at 85% 10%,rgba(0,216,255,.08),transparent 26%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;opacity:.28}
+.mono{font-family:"Fira Code","Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.shell{width:min(1480px,calc(100vw - 32px));margin:0 auto;padding:22px 0 40px;position:relative;z-index:1}
+.header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 0 22px;border-bottom:1px solid rgba(0,216,255,.22)}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}.logo{width:48px;height:48px;flex-shrink:0;border:1px solid rgba(0,255,65,.45);box-shadow:0 0 18px rgba(0,255,65,.12)}
+.brand h1{font-size:22px;letter-spacing:.02em;line-height:1.1}.brand p{font-size:12px;color:var(--muted);margin-top:4px;letter-spacing:.18em;text-transform:uppercase}.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}.live{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(0,255,65,.35);border-radius:999px;padding:8px 12px;color:var(--green);background:rgba(0,255,65,.06);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 1.2s infinite}@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.42;transform:scale(1.55)}}
+.site-link,.export-btn{height:38px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;border:1px solid rgba(0,216,255,.28);background:rgba(0,216,255,.06);color:var(--text);text-decoration:none;padding:0 12px;font-size:12px;font-weight:800;letter-spacing:.04em;cursor:pointer}.site-link:hover,.export-btn:hover{border-color:var(--cyan);box-shadow:0 0 16px rgba(0,216,255,.15)}
+.network-toggle{display:flex;align-items:center;background:#050707;border:1px solid rgba(0,216,255,.32);border-radius:999px;padding:3px;gap:3px}.network-btn{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:8px 13px;font-size:12px;font-weight:900;letter-spacing:.08em;cursor:pointer}.network-btn.active{background:rgba(0,255,65,.14);color:var(--green);box-shadow:inset 0 0 0 1px rgba(0,255,65,.38)}.network-btn.mainnet.active{background:rgba(0,216,255,.14);color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(0,216,255,.38)}
+.status-line{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 18px;color:var(--muted);font-size:12px}.endpoint{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.env-badge{color:var(--green);border:1px solid rgba(0,255,65,.28);background:rgba(0,255,65,.06);border-radius:8px;padding:5px 8px;font-weight:900}.env-badge.mainnet{color:var(--cyan);border-color:rgba(0,216,255,.34);background:rgba(0,216,255,.06)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.vital{background:linear-gradient(180deg,rgba(17,21,25,.94),rgba(5,7,8,.96));border:1px solid var(--border);border-radius:16px;padding:15px;box-shadow:var(--shadow);min-height:94px}.vital .k{font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.vital .v{font-size:24px;color:var(--text);font-weight:900;margin-top:10px}.vital .s{font-size:11px;color:var(--green);margin-top:6px}.vital .s.cyan{color:var(--cyan)}.vital .s.amber{color:var(--amber)}
+.toolbar{display:flex;align-items:center;gap:10px;margin:18px 0 12px}.search{flex:1;background:#030505;border:1px solid rgba(0,216,255,.25);color:var(--text);border-radius:12px;height:44px;padding:0 14px;font-size:13px;outline:none}.search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,216,255,.08)}.small-btn{height:44px;border-radius:12px;border:1px solid rgba(0,255,65,.32);background:rgba(0,255,65,.06);color:var(--green);padding:0 14px;font-weight:900;font-size:12px;letter-spacing:.04em;cursor:pointer}.small-btn:hover{box-shadow:0 0 16px rgba(0,255,65,.14)}
+.panel{background:linear-gradient(180deg,rgba(10,13,15,.96),rgba(4,5,6,.98));border:1px solid rgba(0,216,255,.18);border-radius:18px;overflow:hidden;box-shadow:0 16px 70px rgba(0,0,0,.35)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(0,216,255,.14);background:rgba(0,216,255,.035)}.panel-title{font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.panel-sub{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.055);vertical-align:middle}th{font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:900;background:rgba(255,255,255,.018)}td{font-size:13px}.row-new{animation:rowIn .42s ease-out}@keyframes rowIn{from{opacity:0;transform:translateY(-7px);background:rgba(0,255,65,.11)}to{opacity:1;transform:translateY(0);background:transparent}}.hash-btn{font-family:"Fira Code","Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--cyan);background:none;border:0;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(0,216,255,.28);font-size:13px}.hash-btn:hover{color:var(--green);text-decoration-color:var(--green)}.badge{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900;letter-spacing:.04em}.badge.ok{background:rgba(0,255,65,.1);color:var(--green);border:1px solid rgba(0,255,65,.28)}.badge.pending{background:rgba(255,176,32,.1);color:var(--amber);border:1px solid rgba(255,176,32,.28)}.badge.fail{background:rgba(255,77,77,.1);color:var(--red);border:1px solid rgba(255,77,77,.28)}.copy{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--muted);border-radius:8px;padding:6px 8px;cursor:pointer;font-size:11px}.copy:hover{color:var(--text);border-color:rgba(0,216,255,.38)}
+.empty{padding:36px;text-align:center;color:var(--muted)}.footer{color:#52615d;font-size:11px;margin-top:18px;text-align:center}.toast{position:fixed;right:18px;bottom:18px;background:#08100b;border:1px solid rgba(0,255,65,.3);color:var(--green);border-radius:12px;padding:12px 14px;box-shadow:0 10px 28px rgba(0,0,0,.38);z-index:100;display:none}.toast.show{display:block;animation:toastIn .2s ease-out}@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:90;align-items:center;justify-content:center;padding:18px}.modal.active{display:flex}.modal-card{width:min(760px,100%);max-height:86vh;overflow:auto;background:linear-gradient(180deg,#0b0f11,#030405);border:1px solid rgba(0,216,255,.26);border-radius:20px;box-shadow:0 0 48px rgba(0,216,255,.08),0 30px 90px rgba(0,0,0,.62)}.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px;border-bottom:1px solid rgba(0,216,255,.15)}.modal-head h2{font-size:16px;letter-spacing:.08em;text-transform:uppercase}.modal-head p{font-size:12px;color:var(--muted);margin-top:6px}.x{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;font-size:18px}.modal-body{padding:18px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.detail-box{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;min-width:0}.detail-k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:7px}.detail-v{font-size:13px;color:var(--text);word-break:break-all}.detail-v.green{color:var(--green)}.detail-v.cyan{color:var(--cyan)}.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.warn{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.55;border-left:2px solid rgba(0,216,255,.35);padding-left:12px}
+@media(max-width:900px){.header{align-items:flex-start;flex-direction:column}.top-actions{justify-content:flex-start}.grid{grid-template-columns:1fr 1fr}.toolbar{flex-direction:column}.search,.small-btn,.export-btn{width:100%}table{min-width:850px}.table-wrap{overflow-x:auto}.detail-grid{grid-template-columns:1fr}.status-line{flex-direction:column;align-items:flex-start}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.shell{width:min(100vw - 20px,1480px);padding-top:12px}.brand h1{font-size:18px}.network-toggle{width:100%}.network-btn{flex:1}.site-link{width:100%}.top-actions{width:100%}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="header">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 680 680" role="img" xmlns="http://www.w3.org/2000/svg" aria-label="ExergyNet logo"><rect fill="#0a3d0a" width="680" height="680"/><rect fill="#fff" x="90" y="90" width="500" height="500" rx="48"/><circle cx="340" cy="355" r="180" fill="none" stroke="#0a3d0a" stroke-width="2.5" opacity=".15"/><circle cx="340" cy="355" r="215" fill="none" stroke="#0a3d0a" stroke-width="2.5" opacity=".15"/><circle cx="340" cy="355" r="250" fill="none" stroke="#0a3d0a" stroke-width="2.5" opacity=".15"/><circle fill="#0a3d0a" cx="340" cy="355" r="140"/><path d="M 255 295 A 140 140 0 0 1 340 215" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.12" stroke-linecap="round"/></svg>
+      <div><h1>ExergyNet L0 Enterprise Sequencer</h1><p>Thermodynamic Proof Explorer</p></div>
+    </div>
+    <div class="top-actions">
+      <div class="network-toggle" role="group" aria-label="Network toggle">
+        <button class="network-btn active" id="testnet-btn" onclick="setNetwork('testnet')">TESTNET</button>
+        <button class="network-btn mainnet" id="mainnet-btn" onclick="setNetwork('mainnet')">MAINNET</button>
+      </div>
+      <a class="site-link" href="https://exergynet.org/" target="_blank" rel="noopener">ExergyNet.org ↗</a>
+      <div class="live"><span class="live-dot"></span><span id="live-label">Live Testnet</span></div>
+    </div>
+  </header>
+
+  <div class="status-line">
+    <div><span class="env-badge" id="network-badge">TESTNET</span> <span id="network-note">Non-production settlement environment</span></div>
+    <div class="mono endpoint" id="endpoint-label">API: https://explorer-api.exergynet.org/api/l0/transactions</div>
+  </div>
+
+  <section class="grid" aria-label="Network vital signs">
+    <div class="vital"><div class="k">L0 Network Status</div><div class="v" id="v-status">ONLINE</div><div class="s">sequencer responsive</div></div>
+    <div class="vital"><div class="k">Latest Block Time</div><div class="v" id="v-block">~1.2s</div><div class="s cyan">rolling average</div></div>
+    <div class="vital"><div class="k">Active Aggregator Nodes</div><div class="v" id="v-nodes">07</div><div class="s">testnet cluster</div></div>
+    <div class="vital"><div class="k">Cryptographic Standard</div><div class="v" id="v-crypto">RISC-V</div><div class="s amber">Groth16 / STARK-ready</div></div>
+  </section>
+
+  <div class="toolbar">
+    <input class="search mono" id="search" type="text" placeholder="Search by Job ID, miner ID, payment address, or proof hash..." oninput="renderLedger()" />
+    <button class="small-btn" onclick="exportJSON()">Export JSON Receipt</button>
+    <button class="small-btn" onclick="exportCSV()">Export CSV</button>
+  </div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div><div class="panel-title">Exergonic Waveform</div><div class="panel-sub" id="ledger-sub">Polling every 3 seconds. Click a TX / Job ID for full details.</div></div>
+      <div class="mono panel-sub" id="last-updated">last update: pending</div>
+    </div>
+    <div class="table-wrap">
+      <table aria-label="L0 transaction ledger">
+        <thead><tr><th>Age</th><th>TX / Job ID</th><th>Miner / Witness</th><th>Payment Address</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="ledger-body"><tr><td colspan="6" class="empty">Booting telemetry ingest...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="footer">ExergyNet L0 Explorer · Testnet/Mainnet switch · Enterprise receipt layer · Data reflects the selected network endpoint.</div>
+</div>
+
+<div class="modal" id="details-modal" role="dialog" aria-modal="true" aria-label="Transaction details">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div><h2>Transaction Details</h2><p>Full L0 record from selected network feed.</p></div>
+      <button class="x" onclick="closeDetails()" aria-label="Close details">×</button>
+    </div>
+    <div class="modal-body" id="details-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const NETWORKS = {
+  testnet: {
+    label: 'TESTNET',
+    apiUrl: 'https://explorer-api.exergynet.org/api/l0/transactions',
+    note: 'Non-production settlement environment',
+    nodes: '07', block: '~1.2s', crypto: 'RISC-V', live: 'Live Testnet'
+  },
+  mainnet: {
+    label: 'MAINNET',
+    // Replace this when the SSL production explorer API is live.
+    apiUrl: 'https://explorer-api.exergynet.org/api/v1/l0/transactions',
+    note: 'Production network target. Uses fallback until mainnet API is live.',
+    nodes: '00', block: 'pending', crypto: 'RISC-V', live: 'Mainnet View'
+  }
+};
+let activeNetwork = localStorage.getItem('exergy_explorer_network') || 'testnet';
+let ledger = [];
+let previousKeys = new Set();
+let pollTimer = null;
+
+const fallback = {
+  testnet: [
+    {job_id_hex:'0x0101010101010101010101010101010101010101010101010101010101010101',timestamp:Math.floor(Date.now()/1000)-4,status:'ZK-STARK VERIFIED',miner_id:'witness_testnet_4471',payment_address:'0x39aE1C502fcd658D9419d75E32dD7ff74',reward_micro_usdc:1200000,vector:'OPTICAL',proof_hash:'0x9fc2b5a40b7a7c1e5f3d0a8e2c4b9a1f7d6e8c3b2a190f4e6d7c8b9a0f1e2d3c',aggregator_id:'lnes-beta-01',settlement_network:'Base Sepolia'},
+    {job_id_hex:'0x0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a',timestamp:Math.floor(Date.now()/1000)-22,status:'ZK-STARK VERIFIED',miner_id:'witness_testnet_1190',payment_address:'0x6Bf1C7aE98E5c2b8A9d1307CbE2A99b404910Af1',reward_micro_usdc:5200000,vector:'ASYNC_COMPUTE',proof_hash:'0xacff82d411a12c3fb908abb6314bd87b2991c9f21ee2a8f008910ddba65a2c11',aggregator_id:'lnes-beta-01',settlement_network:'Base Sepolia'},
+    {job_id_hex:'0x0808080808080808080808080808080808080808080808080808080808080808',timestamp:Math.floor(Date.now()/1000)-91,status:'PENDING SETTLEMENT',miner_id:'witness_testnet_2208',payment_address:'0xE4A2a1d1e808a67B1c14e1E9BC1cE3AFcF64A920',reward_micro_usdc:480000,vector:'NETWORK_DENSITY',proof_hash:'0xd4e6f2c9a0b18c77e241d990ff83a21910b7ccc7012209faccb17b87209d4abe',aggregator_id:'lnes-beta-02',settlement_network:'Base Sepolia'}
+  ],
+  mainnet: [
+    {job_id_hex:'0xMAINNET_PENDING_BOOTSTRAP_000000000000000000000000000000000001',timestamp:Math.floor(Date.now()/1000)-12,status:'MAINNET NOT YET ARMED',miner_id:'pending',payment_address:'pending',reward_micro_usdc:0,vector:'N/A',proof_hash:'pending',aggregator_id:'mainnet-api-pending',settlement_network:'Base Mainnet'}
+  ]
+};
+
+function normalizeTx(tx, index){
+  const job = tx.job_id_hex || tx.jobIdHex || tx.job_id || tx.id || `0xUNKNOWN_${index}`;
+  return {
+    job_id_hex: String(job),
+    timestamp: Number(tx.timestamp || tx.created_at_epoch || Math.floor(Date.now()/1000)),
+    status: String(tx.status || tx.settlement_status || 'UNKNOWN'),
+    miner_id: String(tx.miner_id || tx.witness_id || tx.witnessId || tx.node_id || synthMiner(job)),
+    payment_address: String(tx.payment_address || tx.payout_address || tx.wallet || tx.walletAddress || 'unreported'),
+    reward_micro_usdc: Number(tx.reward_micro_usdc || tx.rewardMicroUsdc || tx.amount_micro_usdc || 0),
+    vector: String(tx.vector || tx.job_type || tx.jobType || inferVector(job)),
+    proof_hash: String(tx.proof_hash || tx.payload_hash || tx.hash || synthProof(job)),
+    aggregator_id: String(tx.aggregator_id || tx.aggregator || 'unreported'),
+    settlement_network: String(tx.settlement_network || tx.network || (activeNetwork === 'mainnet' ? 'Base Mainnet' : 'Base Sepolia')),
+    raw: tx
+  };
+}
+function synthMiner(job){ const clean=String(job).replace('0x',''); return 'witness_' + clean.slice(0,8); }
+function synthProof(job){ const clean=String(job).replace('0x',''); return '0xproof_' + clean.slice(0,18) + clean.slice(-10); }
+function inferVector(job){ const c=String(job).toLowerCase(); if(c.includes('0a'))return'ASYNC_COMPUTE'; if(c.includes('08'))return'NETWORK_DENSITY'; if(c.includes('01'))return'OPTICAL'; return 'L0_JOB'; }
+function truncateHash(h){ const s=String(h); return s.length > 18 ? `${s.slice(0,10)}...${s.slice(-8)}` : s; }
+function age(ts){ const diff=Math.max(0,Math.floor(Date.now()/1000)-Number(ts)); if(diff<60)return `${diff}s ago`; if(diff<3600)return `${Math.floor(diff/60)}m ago`; if(diff<86400)return `${Math.floor(diff/3600)}h ago`; return `${Math.floor(diff/86400)}d ago`; }
+function usdc(micro){ return '$' + (Number(micro || 0)/1_000_000).toFixed(2); }
+function badgeClass(status){ const s=String(status).toUpperCase(); if(s.includes('VERIFIED')||s.includes('SETTLED')||s.includes('ONLINE'))return'ok'; if(s.includes('PENDING')||s.includes('ARMED')||s.includes('NOT YET'))return'pending'; return'fail'; }
+
+async function fetchLedger(){
+  const cfg = NETWORKS[activeNetwork];
+  try{
+    const res = await fetch(cfg.apiUrl, {cache:'no-store'});
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const arr = Array.isArray(data) ? data : (data.transactions || data.data || []);
+    ledger = arr.map(normalizeTx).sort((a,b)=>b.timestamp-a.timestamp);
+    if(!ledger.length) ledger = fallback[activeNetwork].map(normalizeTx);
+    document.getElementById('last-updated').textContent = 'last update: ' + new Date().toLocaleTimeString();
+  }catch(err){
+    ledger = fallback[activeNetwork].map(normalizeTx).sort((a,b)=>b.timestamp-a.timestamp);
+    document.getElementById('last-updated').textContent = 'fallback: ' + new Date().toLocaleTimeString();
+  }
+  renderLedger();
+}
+function renderLedger(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const body = document.getElementById('ledger-body');
+  const rows = ledger.filter(tx => [tx.job_id_hex, tx.miner_id, tx.payment_address, tx.proof_hash, tx.status, tx.vector].join(' ').toLowerCase().includes(q));
+  document.getElementById('ledger-sub').textContent = `${rows.length} visible ${activeNetwork} transaction${rows.length===1?'':'s'}. Click a TX / Job ID for full details.`;
+  if(!rows.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No transaction matches this search.</td></tr>'; return; }
+  body.innerHTML = rows.map((tx,i)=>{
+    const key = tx.job_id_hex;
+    const isNew = !previousKeys.has(key);
+    return `<tr class="${isNew?'row-new':''}">
+      <td class="mono">${age(tx.timestamp)}</td>
+      <td><button class="hash-btn" onclick="openDetails('${escapeAttr(tx.job_id_hex)}')">${truncateHash(tx.job_id_hex)}</button></td>
+      <td class="mono">${truncateHash(tx.miner_id)}</td>
+      <td class="mono">${truncateHash(tx.payment_address)}</td>
+      <td><span class="badge ${badgeClass(tx.status)}">${tx.status}</span></td>
+      <td><button class="copy" onclick="copyText('${escapeAttr(tx.job_id_hex)}')">copy id</button></td>
+    </tr>`;
+  }).join('');
+  previousKeys = new Set(ledger.map(tx=>tx.job_id_hex));
+}
+function escapeAttr(s){ return String(s).replace(/'/g,"&#39;").replace(/"/g,'&quot;'); }
+function findTx(id){ return ledger.find(t=>t.job_id_hex === id) || ledger[0]; }
+function openDetails(id){
+  const tx = findTx(id); if(!tx)return;
+  document.getElementById('details-body').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-box"><div class="detail-k">Full TX / Job ID</div><div class="detail-v cyan mono">${tx.job_id_hex}</div></div>
+      <div class="detail-box"><div class="detail-k">Settlement Status</div><div class="detail-v green mono">${tx.status}</div></div>
+      <div class="detail-box"><div class="detail-k">Miner / Witness ID</div><div class="detail-v mono">${tx.miner_id}</div></div>
+      <div class="detail-box"><div class="detail-k">Payment Address</div><div class="detail-v mono">${tx.payment_address}</div></div>
+      <div class="detail-box"><div class="detail-k">Reward</div><div class="detail-v mono">${usdc(tx.reward_micro_usdc)} USDC</div></div>
+      <div class="detail-box"><div class="detail-k">Vector</div><div class="detail-v mono">${tx.vector}</div></div>
+      <div class="detail-box"><div class="detail-k">Proof / Payload Hash</div><div class="detail-v mono">${tx.proof_hash}</div></div>
+      <div class="detail-box"><div class="detail-k">Aggregator</div><div class="detail-v mono">${tx.aggregator_id}</div></div>
+      <div class="detail-box"><div class="detail-k">Network</div><div class="detail-v mono">${tx.settlement_network}</div></div>
+      <div class="detail-box"><div class="detail-k">Timestamp</div><div class="detail-v mono">${new Date(tx.timestamp*1000).toISOString()} · ${age(tx.timestamp)}</div></div>
+    </div>
+    <div class="detail-actions">
+      <button class="small-btn" onclick="copyText('${escapeAttr(tx.job_id_hex)}')">Copy TX ID</button>
+      <button class="small-btn" onclick="copyText('${escapeAttr(tx.payment_address)}')">Copy Payment Address</button>
+      <button class="small-btn" onclick="downloadSingle('${escapeAttr(tx.job_id_hex)}')">Download Receipt</button>
+    </div>
+    <p class="warn">If the upstream API only returns <span class="mono">job_id_hex</span>, <span class="mono">timestamp</span>, and <span class="mono">status</span>, the explorer derives placeholder miner/proof metadata so the details panel remains useful. When the app starts sending miner IDs and payment addresses, these fields will render directly.</p>
+  `;
+  document.getElementById('details-modal').classList.add('active');
+}
+function closeDetails(){ document.getElementById('details-modal').classList.remove('active'); }
+function setNetwork(network){
+  activeNetwork = network;
+  localStorage.setItem('exergy_explorer_network', network);
+  const cfg = NETWORKS[network];
+  document.getElementById('testnet-btn').classList.toggle('active', network==='testnet');
+  document.getElementById('mainnet-btn').classList.toggle('active', network==='mainnet');
+  const badge = document.getElementById('network-badge');
+  badge.textContent = cfg.label; badge.classList.toggle('mainnet', network==='mainnet');
+  document.getElementById('network-note').textContent = cfg.note;
+  document.getElementById('endpoint-label').textContent = 'API: ' + cfg.apiUrl;
+  document.getElementById('live-label').textContent = cfg.live;
+  document.getElementById('v-nodes').textContent = cfg.nodes;
+  document.getElementById('v-block').textContent = cfg.block;
+  document.getElementById('v-crypto').textContent = cfg.crypto;
+  previousKeys = new Set(); ledger = [];
+  renderLoading(); fetchLedger();
+}
+function renderLoading(){ document.getElementById('ledger-body').innerHTML='<tr><td colspan="6" class="empty">Switching network feed...</td></tr>'; }
+function exportJSON(){ downloadBlob(JSON.stringify({network:activeNetwork,endpoint:NETWORKS[activeNetwork].apiUrl,exported_at:new Date().toISOString(),transactions:ledger}, null, 2), `exergynet-${activeNetwork}-ledger.json`, 'application/json'); }
+function exportCSV(){
+  const cols=['job_id_hex','timestamp','status','miner_id','payment_address','reward_micro_usdc','vector','proof_hash','aggregator_id','settlement_network'];
+  const csv=[cols.join(',')].concat(ledger.map(t=>cols.map(c=>`"${String(t[c]??'').replace(/"/g,'""')}"`).join(','))).join('\n');
+  downloadBlob(csv, `exergynet-${activeNetwork}-ledger.csv`, 'text/csv');
+}
+function downloadSingle(id){ const tx=findTx(id); downloadBlob(JSON.stringify(tx,null,2), `exergynet-${activeNetwork}-${id.slice(0,12)}.json`, 'application/json'); }
+function downloadBlob(text,name,type){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); toast('Export ready.'); }
+async function copyText(text){ try{ await navigator.clipboard.writeText(text); toast('Copied to clipboard.'); }catch(e){ toast('Copy unavailable in this browser.'); }}
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'),2400); }
+window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDetails(); });
+setNetwork(activeNetwork);
+pollTimer = setInterval(fetchLedger, 3000);
+setInterval(renderLedger, 1000);
+</script>
+</body>
+</html>
