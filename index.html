@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ExergyNet | Thermodynamic ZK-Compute for Autonomous Agents</title>
-<meta name="description" content="ExergyNet is a decentralized infrastructure layer providing trustless, verifiable computation for autonomous AI agents. Built on Solana and Base L2. Powered by physical entropy.">
-<meta name="keywords" content="ExergyNet, ZK-Compute, Proof-of-Exergy, Solana, Base L2, AI agents, autonomous compute, ZK-STARK, Groth16, decentralized, LNES-03, LNES-04">
-<meta property="og:title" content="ExergyNet | Thermodynamic ZK-Compute">
-<meta property="og:description" content="Trustless, verifiable computation for the global AI economy. Built on Solana and Base L2. Powered by physical entropy.">
+<title>ExergyNet | Verifiable Compute and Physical-World Proof</title>
+<meta name="description" content="ExergyNet helps agents, applications, and enterprises request work, verify outcomes, and settle results across Solana and Base L2. From off-chain compute to Certificate of Physical Presence, ExergyNet turns trust-sensitive events into machine-usable records.">
+<meta name="keywords" content="ExergyNet, verifiable compute, physical-world proof, Certificate of Physical Presence, autonomous agents, Solana, Base L2, ZK proof, decentralized compute, proof-bearing execution">
+<meta property="og:title" content="ExergyNet | Verifiable Compute and Physical-World Proof">
+<meta property="og:description" content="Request work, verify outcomes, and settle results across Solana and Base L2.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org">
 <link rel="stylesheet" href="style.css">
@@ -20,9 +20,7 @@
   document.documentElement.setAttribute('data-theme', t);
 })();
 </script>
-<!-- Base Ecosystem Verification Matrix -->
-    <meta name="base:app_id" content="69f9713442d4fe010f1c2922" />
-    <meta name="base:app_id" content="69f9713442d4fe010f1c2922" />
+<meta name="base:app_id" content="69f9713442d4fe010f1c2922" />
 </head>
 <body>
 
@@ -37,23 +35,23 @@
   <!-- HERO -->
   <section class="hero" style="position:relative; overflow:hidden;">
     <div class="glow-accent" style="width:500px;height:500px;top:-100px;left:-150px;"></div>
-    <div class="glow-blue"   style="width:600px;height:400px;top:0;right:-200px;"></div>
+    <div class="glow-blue" style="width:600px;height:400px;top:0;right:-200px;"></div>
     <div class="container-wide">
       <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:3rem; align-items:center;">
         <div>
-          <div class="hero-eyebrow"><span class="dot"></span>Production Live &middot; Dual-Chain &middot; LNES-03 / LNES-04</div>
-          <h1>Thermodynamic<br><span class="accent">ZK-Compute</span><br>for Autonomous<br><span class="blue">Agents</span></h1>
-          <p class="hero-sub">The decentralized infrastructure layer providing trustless, verifiable computation for the global AI economy. Anchored on Solana. Extended to Base L2. Powered by physical entropy.</p>
+          <div class="hero-eyebrow"><span class="dot"></span>Production live on Solana and Base L2</div>
+          <h1>Verifiable Compute<br><span class="accent">and Physical-World Proof</span><br>for Autonomous Systems</h1>
+          <p class="hero-sub">ExergyNet helps agents, applications, and enterprises request work, verify outcomes, and settle results across Solana and Base L2. From off-chain compute to Certificate of Physical Presence, ExergyNet turns trust-sensitive events into machine-usable records.</p>
           <div class="btn-row">
-            <a href="docs.html"       class="btn btn-primary">Integrate Your Agent</a>
-            <a href="nodes.html"      class="btn btn-secondary">Join the Swarm</a>
-            <a href="whitepaper.html" class="btn btn-ghost">Read Whitepaper &rarr;</a>
+            <a href="docs.html" class="btn btn-primary">Read Docs</a>
+            <a href="enterprise.html" class="btn btn-secondary">Explore Enterprise</a>
+            <a href="nodes.html" class="btn btn-ghost">Run a Node &rarr;</a>
           </div>
         </div>
 
-        <!-- Multi-Chain Live Telemetry Panel -->
+        <!-- Network Overview Panel -->
         <div class="telemetry-panel">
-          <div class="section-label" style="margin-bottom:1rem;">Multi-Chain Substrate Telemetry</div>
+          <div class="section-label" style="margin-bottom:1rem;">Network Overview</div>
 
           <div class="chain-status-row">
             <div class="chain-badge chain-badge-sol">
@@ -76,16 +74,16 @@
           <div class="telemetry-divider"></div>
 
           <div class="telemetry-row">
-            <span class="tele-label">Active Swarm Nodes</span>
+            <span class="tele-label">Active Nodes</span>
             <span class="tele-value" id="live-nodes">--</span>
           </div>
           <div class="telemetry-row">
-            <span class="tele-label">Global Thermal Flux</span>
-            <span class="tele-value" id="live-flux">-- mC</span>
+            <span class="tele-label">Settled Jobs</span>
+            <span class="tele-value" id="live-yield">--</span>
           </div>
           <div class="telemetry-row">
-            <span class="tele-label">Settled Jobs (Session)</span>
-            <span class="tele-value" id="live-yield">--</span>
+            <span class="tele-label">Settlement Assets</span>
+            <span class="tele-value">SOL / USDC</span>
           </div>
           <div class="telemetry-row">
             <span class="tele-label">Cumulative M2M Yield</span>
@@ -93,48 +91,103 @@
           </div>
 
           <div style="margin-top:1.25rem;">
-            <a href="proof.html" class="btn btn-secondary" style="width:100%;justify-content:center;">Verify Physical Vectors &rarr;</a>
+            <a href="proof.html" class="btn btn-secondary" style="width:100%;justify-content:center;">Explore Proof and Presence &rarr;</a>
           </div>
         </div>
       </div>
 
-      <!-- Trust Strip -->
+      <!-- Orientation Strip -->
       <div class="stat-strip" style="margin-top:3rem;">
         <div class="stat-item">
-          <div class="stat-label">Program ID (LNES-03)</div>
-          <div class="stat-value green" style="font-size:11px;">7BCPpUMB&hellip;4CcCL</div>
+          <div class="stat-label">Request</div>
+          <div class="stat-value green">Compute or Real-World Proof</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">EVM Contract (LNES-04)</div>
-          <div class="stat-value blue" style="font-size:11px;">LNES04Membrane.sol</div>
+          <div class="stat-label">Verify</div>
+          <div class="stat-value blue">Proof-Bearing Result</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">Settlement Assets</div>
-          <div class="stat-value">Native SOL / USDC</div>
+          <div class="stat-label">Settle</div>
+          <div class="stat-value">On-Chain Outcome</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">Auth Layer</div>
-          <div class="stat-value">Ed25519 Mesh</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">ZK Proof System</div>
-          <div class="stat-value green">RISC Zero / Groth16</div>
+          <div class="stat-label">Integrate</div>
+          <div class="stat-value green">API / MCP / SDK</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- EXERGY MANIFESTO -->
+  <!-- WHAT EXERGYNET DOES -->
+  <section>
+    <div class="container-wide">
+      <div class="section-label">What ExergyNet Does</div>
+      <h2>Programmable trust for compute, physical proof, and settlement.</h2>
+      <p style="max-width:760px; margin-bottom:2rem;">Autonomous software can request data, compute, and real-world actions, but most systems still rely on centralized APIs, opaque execution, and weak external verification. ExergyNet is built to close that trust gap with proof-bearing work and programmable settlement.</p>
+
+      <div class="card-grid">
+        <div class="card accent-border">
+          <div class="badge badge-green" style="margin-bottom:0.75rem;">01</div>
+          <h3>Request Work</h3>
+          <p>Agents, applications, and enterprise systems define compute jobs or physical-world proof requests with machine-readable parameters.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-blue" style="margin-bottom:0.75rem;">02</div>
+          <h3>Verify Results</h3>
+          <p>Outputs are returned with verification data so downstream systems can check the result rather than trusting a single operator.</p>
+        </div>
+        <div class="card accent-border">
+          <div class="badge badge-green" style="margin-bottom:0.75rem;">03</div>
+          <h3>Settle Outcomes</h3>
+          <p>Work can be connected to escrow, payouts, approval flows, and settlement logic across Solana and Base L2.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section>
+    <div class="container-wide">
+      <div class="section-label">Product Surfaces</div>
+      <h2>One network, multiple trust surfaces.</h2>
+      <p style="max-width:760px; margin-bottom:1.75rem;">ExergyNet exposes infrastructure for agent builders, enterprise operators, developers, and node participants. Public documentation explains the system at the level needed for evaluation and integration, while deeper implementation details are disclosed in stages as the network expands.</p>
+
+      <div class="card-grid">
+        <div class="card blue-border">
+          <h3>Compute Settlement</h3>
+          <p>Route off-chain execution to proof-capable nodes and connect results to on-chain settlement.</p>
+          <div style="margin-top:1rem;"><a href="protocol.html" class="btn btn-secondary" style="font-size:12px;">Protocol &rarr;</a></div>
+        </div>
+        <div class="card accent-border">
+          <h3>Certificate of Physical Presence</h3>
+          <p>Turn a field event, checkpoint, or location-sensitive action into a verifiable certificate your systems can use.</p>
+          <div style="margin-top:1rem;"><a href="presence.html" class="btn btn-primary" style="font-size:12px;">Presence Certificate &rarr;</a></div>
+        </div>
+        <div class="card">
+          <h3>MCP / Developer Gateway</h3>
+          <p>Expose ExergyNet to agentic systems through machine-readable discovery, SDKs, and MCP-compatible integration paths.</p>
+          <div style="margin-top:1rem;"><a href="mcp.html" class="btn btn-secondary" style="font-size:12px;">MCP Gateway &rarr;</a></div>
+        </div>
+        <div class="card">
+          <h3>Node Operations</h3>
+          <p>Run proof-capable infrastructure that executes jobs and receives settlement for completed work.</p>
+          <div style="margin-top:1rem;"><a href="nodes.html" class="btn btn-secondary" style="font-size:12px;">Run a Node &rarr;</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
   <section class="manifesto-section">
     <div class="container-wide">
       <div class="manifesto-grid">
         <div class="manifesto-text">
-          <div class="section-label">The Exergy Manifesto</div>
-          <h2 class="manifesto-headline">Machines don't need banks.<br>They need <span class="accent">physics.</span></h2>
-          <p class="manifesto-body">An autonomous agent in Tokyo needs a massive dataset processed. An idle processor in Sao Paulo holds the thermal capacity to execute it. The problem is not compute availability. It is the <em>trust void</em> between them.</p>
-          <p class="manifesto-body" style="margin-top:1rem;">Legacy architecture fills this void with centralized cloud monopolies and API faith. ExergyNet fills it with mathematics. Physical computational exertion is cryptographically bound to a ZK-STARK proof and instantaneously settled as liquid capital on-chain. No intermediary. No black box. No trust required.</p>
+          <div class="section-label">Why ExergyNet Exists</div>
+          <h2 class="manifesto-headline">Autonomous systems need verifiable execution, not blind trust.</h2>
+          <p class="manifesto-body">Autonomous systems increasingly make decisions, trigger workflows, and move value. Those systems need more than API responses. They need outputs that can be verified, records that can be audited, and settlement that can be connected to completed work.</p>
+          <p class="manifesto-body" style="margin-top:1rem;">ExergyNet combines off-chain work, proof-bearing verification, and on-chain settlement so outcomes can be checked and paid without relying on a single operator's word.</p>
           <div class="manifesto-pull">
-            We do not ask for trust. We enforce thermodynamic reality.
+            The goal is simple: make high-value machine actions verifiable enough to automate.
           </div>
         </div>
         <div class="manifesto-terminal">
@@ -142,205 +195,173 @@
             <span class="t-dot t-red"></span>
             <span class="t-dot t-amber"></span>
             <span class="t-dot t-green"></span>
-            <span class="t-title">exergynet-mcp-server</span>
+            <span class="t-title">exergynet-request</span>
           </div>
           <div class="terminal-body">
-            <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">npm install -g exergynet-mcp-server</span></div>
-            <div class="t-line t-faint">&gt; ExergyNet MCP Active.</div>
-            <div class="t-line t-faint">&gt; Sweeping Solana + Base ledgers for M2M compute parameters...</div>
-            <div class="t-line" style="margin-top:0.5rem;"><span class="t-green">&gt; [LNES-03] Solana substrate locked.</span></div>
-            <div class="t-line"><span class="t-blue">&gt; [LNES-04] Base L2 escrow initialized.</span></div>
-            <div class="t-line" style="margin-top:0.5rem;"><span class="t-accent">&gt; [ZKP_VALIDATED] O(N log N) payload collapsed to O(log N).</span></div>
-            <div class="t-line"><span class="t-blue">&gt; [OMEGA_YIELD] 5,000,000 micro-USDC routed to Swarm Node.</span></div>
-            <div class="t-line t-faint" style="margin-top:0.5rem;">&gt; Session entropy drift: 0.000. Proof anchored.</div>
+            <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">exg create-job --type compute --settle base-usdc</span></div>
+            <div class="t-line t-faint">&gt; Job request accepted.</div>
+            <div class="t-line"><span class="t-blue">&gt; [ESCROW_OPENED] Settlement locked on Base L2.</span></div>
+            <div class="t-line"><span class="t-green">&gt; [NODE_SELECTED] Proof-capable executor assigned.</span></div>
+            <div class="t-line"><span class="t-accent">&gt; [RESULT_VERIFIED] Output hash matched requested job.</span></div>
+            <div class="t-line"><span class="t-blue">&gt; [SETTLED] Payout routed. Receipt available.</span></div>
             <div class="t-cursor-wrap"><span class="t-cursor-blink">_</span></div>
           </div>
         </div>
       </div>
     </div>
   </section>
-<section class="mechanical-breakdown" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+
+  <!-- HOW IT WORKS -->
+  <section class="mechanical-breakdown" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
     <div class="container-wide">
-      <div class="section-label" style="text-align: center; margin-bottom: 1rem;">System Architecture</div>
-      <h2 style="text-align: center; font-size: 2.2rem; margin-bottom: 0.5rem;">The Anatomy of an Exergy Cycle</h2>
-      <p style="text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem;">What exactly happens when an autonomous agent uses ExergyNet? Here is the physical journey from capital deposit to thermal verification and cryptographic settlement.</p>
+      <div class="section-label" style="text-align:center; margin-bottom:1rem;">System Architecture</div>
+      <h2 style="text-align:center; font-size:2.2rem; margin-bottom:0.5rem;">How ExergyNet Works</h2>
+      <p style="text-align:center; color:var(--text-soft); max-width:680px; margin:0 auto 3rem;">At a high level, ExergyNet lets a requester define work, route it to execution, verify the result, and settle the outcome.</p>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
-        
-        <!-- Step 1 -->
-        <div class="step-card" style="padding: 1.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);">
-          <div class="badge badge-amber" style="margin-bottom: 1rem;">Phase 1: The Intake</div>
-          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">The Agent Traps Capital</h3>
-          <p style="color: var(--text-faint); font-size: 0.95rem; line-height: 1.6;">An external AI agent (operating on ElizaOS or similar) detects it needs a massive dataset sorted. Instead of performing the costly computation natively, it calls the LNES-04 smart contract on the Base Ethereum layer. The agent uploads a hash of its task and locks 2 USDC inside the immutable on-chain Escrow vault.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:2rem;">
+        <div class="step-card" style="padding:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);">
+          <div class="badge badge-amber" style="margin-bottom:1rem;">Step 1</div>
+          <h3 style="font-size:1.25rem; margin-bottom:0.5rem;">A requester opens a job and locks settlement</h3>
+          <p style="color:var(--text-soft); font-size:0.95rem; line-height:1.6;">An agent, application, or enterprise system defines the work to be performed and attaches the required settlement or approval conditions.</p>
         </div>
-
-        <!-- Step 2 -->
-        <div class="step-card" style="padding: 1.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);">
-          <div class="badge badge-blue" style="margin-bottom: 1rem;">Phase 2: The Physical Entropy</div>
-          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Heat Enters the Network</h3>
-          <p style="color: var(--text-faint); font-size: 0.95rem; line-height: 1.6;">An off-chain Drone Node detects the locked USDC. It downloads the data and processes the heavy computation using local specialized silicon. Crucially, the local Drone reads its physical CPU thermal sensor at the exact moment of execution. This thermal state serves as absolute <strong>Physical Entropy</strong>. It mathematically proves the processor physically exerted electricity to forge the data, rendering it un-fakable.</p>
+        <div class="step-card" style="padding:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);">
+          <div class="badge badge-blue" style="margin-bottom:1rem;">Step 2</div>
+          <h3 style="font-size:1.25rem; margin-bottom:0.5rem;">A node performs the work and records execution signals</h3>
+          <p style="color:var(--text-soft); font-size:0.95rem; line-height:1.6;">The network routes work to capable execution infrastructure. Depending on the job, this can involve compute execution, sensor capture, location-sensitive proof, or another supported vector.</p>
         </div>
-
-        <!-- Step 3 -->
-        <div class="step-card" style="padding: 1.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);">
-          <div class="badge badge-green" style="margin-bottom: 1rem;">Phase 3: The Condensation</div>
-          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Generating the Proof</h3>
-          <p style="color: var(--text-faint); font-size: 0.95rem; line-height: 1.6;">The Drone utilizes the RISC Zero virtual machine. It combines the clean data result and the CPU thermal signature, then compresses them both into a highly dense 96-byte mathematical file known as a Groth16 Zero-Knowledge Proof. This collapses gigabytes of off-chain labor into a singular cryptographic guarantee.</p>
+        <div class="step-card" style="padding:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);">
+          <div class="badge badge-green" style="margin-bottom:1rem;">Step 3</div>
+          <h3 style="font-size:1.25rem; margin-bottom:0.5rem;">A verifiable result is generated</h3>
+          <p style="color:var(--text-soft); font-size:0.95rem; line-height:1.6;">The result is returned with proof or verification metadata so independent systems can check that the expected work was completed.</p>
         </div>
-
-        <!-- Step 4 -->
-        <div class="step-card" style="padding: 1.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);">
-          <div class="badge badge-accent" style="margin-bottom: 1rem; background: rgba(0, 204, 153, 0.1); color: var(--green);">Phase 4: The Siphon</div>
-          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Atomic Settlement</h3>
-          <p style="color: var(--text-faint); font-size: 0.95rem; line-height: 1.6;">The Drone submits the 96-byte Proof back to the Base smart contract. The Ethereum blockchain runs a millisecond calculation to verify the proof geometry. Because math is absolute, verification either succeeds or shatters. Upon success, the Agent receives guaranteed output, the Escrow vault explodes, 30% of the USDC is wired to the Drone operator, and 70% is swept directly to the ExergyNet Cold Treasury.</p>
+        <div class="step-card" style="padding:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);">
+          <div class="badge badge-green" style="margin-bottom:1rem;">Step 4</div>
+          <h3 style="font-size:1.25rem; margin-bottom:0.5rem;">Atomic settlement completes the loop</h3>
+          <p style="color:var(--text-soft); font-size:0.95rem; line-height:1.6;">Once verification succeeds, the connected workflow can release payment, trigger an approval, update a status, or archive a receipt.</p>
         </div>
-
       </div>
     </div>
   </section>
-  <!-- THREE PILLARS -->
+
+  <!-- WHO IT SERVES -->
   <section class="pillars-section">
     <div class="container-wide">
-      <div class="section-label">Architecture Pillars</div>
-      <h2>The Three Vectors</h2>
+      <div class="section-label">Who ExergyNet Serves</div>
+      <h2>Built for builders, operators, and enterprises.</h2>
       <div class="card-grid" style="margin-top:1.75rem;">
         <div class="card pillar-card">
-          <div class="pillar-num">01 / Demand</div>
-          <h3>For Autonomous Agents</h3>
-          <p>ExergyNet's MCP server integrates natively into ElizaOS, LangChain, and Virtuals Protocol. Agents autonomously estimate thermodynamic cost thresholds and route heavy processing to the decentralized swarm, receiving mathematical ZK proofs before releasing capital. No API faith. No human loop.</p>
-          <div class="pillar-stat">
-            <span class="pillar-stat-val green">0.002 SOL</span>
-            <span class="pillar-stat-label">standard compute toll</span>
-          </div>
+          <div class="pillar-num">01 / Developers</div>
+          <h3>For developers and agent builders</h3>
+          <p>Use ExergyNet to request verifiable work, retrieve proof-bearing results, and integrate settlement-aware actions into agent and application workflows.</p>
+          <div class="pillar-stat"><span class="pillar-stat-val green">API / MCP</span><span class="pillar-stat-label">machine-readable integration</span></div>
         </div>
         <div class="card pillar-card">
-          <div class="pillar-num">02 / Supply</div>
-          <h3>For Hardware Operators</h3>
-          <p>Turn silicon thermal displacement into liquid capital. Run the open-source Rust Prover daemon. When the swarm dispatches a job, your machine executes, generates a ZK-STARK artifact anchored to physical entropy, and receives frictionless payout settled directly on-chain.</p>
-          <div class="pillar-stat">
-            <span class="pillar-stat-val blue">30%</span>
-            <span class="pillar-stat-label">of every toll to node operators</span>
-          </div>
+          <div class="pillar-num">02 / Enterprise</div>
+          <h3>For field and operations teams</h3>
+          <p>Turn physical events into usable records that support audits, compliance workflows, approvals, exception handling, and downstream automation.</p>
+          <div class="pillar-stat"><span class="pillar-stat-val blue">Presence</span><span class="pillar-stat-label">certificate-ready output</span></div>
         </div>
         <div class="card pillar-card">
-          <div class="pillar-num">03 / Substrate</div>
-          <h3>Omni-Chain Clearinghouse</h3>
-          <p>LNES-03 anchors SVM-native settlement at asymptotic throughput. LNES-04 extends the membrane to Base L2, capturing x402 agent liquidity from the EVM ecosystem. Escrows, execution vectors, and Lamport splitting mapped to immutable C/Rust bytecode. No bridges. No AMM leakage.</p>
-          <div class="pillar-stat">
-            <span class="pillar-stat-val accent">2 Chains</span>
-            <span class="pillar-stat-label">unified under one proof standard</span>
-          </div>
+          <div class="pillar-num">03 / Operators</div>
+          <h3>For node operators</h3>
+          <p>Run nodes that execute proof-bearing work and receive settlement for verified participation in the network.</p>
+          <div class="pillar-stat"><span class="pillar-stat-val accent">USDC</span><span class="pillar-stat-label">settlement-ready payouts</span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PARADIGM -->
+  <!-- WHAT IT ENABLES -->
   <section>
     <div class="container-wide">
-      <div class="section-label">The Paradigm</div>
-      <h2>Truth as a Service</h2>
-      <p style="max-width:720px; margin-bottom:2rem;">As AI agents take control of real-world capital and logistics, "trust me" is no longer sufficient. Algorithmic decisions must be mathematically verified. ExergyNet allows autonomous agents to offload high-stakes logic to a decentralized physical network and receive unforgeable ZK-STARK proofs in return.</p>
+      <div class="section-label">What ExergyNet Makes Possible</div>
+      <h2>Trust-sensitive workflows that software can actually use.</h2>
+      <p style="max-width:720px; margin-bottom:2rem;">The network is designed for outcomes that need to be checked before they are trusted: compute results, field confirmations, proof-of-presence events, and machine-to-machine settlement flows.</p>
 
       <div class="card-grid">
         <div class="card accent-border">
           <div class="badge badge-green" style="margin-bottom:0.75rem;">01</div>
-          <h3>No Hallucinations</h3>
-          <p>A result is not trusted because a model asserted it. It is accepted only when computation is bound to a verifiable physical proof.</p>
+          <h3>Verifiable Outputs</h3>
+          <p>Do not accept a result because a service asserted it. Accept it because it carries verification data.</p>
         </div>
         <div class="card">
           <div class="badge badge-blue" style="margin-bottom:0.75rem;">02</div>
-          <h3>No Black Boxes</h3>
-          <p>The protocol replaces opaque execution with proof-bearing computation. Every output carries cryptographic evidence verifiable by any independent party.</p>
+          <h3>Programmable Settlement</h3>
+          <p>Connect work completion to payments, approvals, and receipts that downstream systems can process.</p>
         </div>
         <div class="card">
           <div class="badge badge-blue" style="margin-bottom:0.75rem;">03</div>
-          <h3>Physics-Bound Truth</h3>
-          <p>ExergyNet converts physical entropy and computational work into a machine-readable trust primitive for the agentic economy.</p>
+          <h3>Physical-World Proof</h3>
+          <p>Issue and verify certificates for location-sensitive and real-world operational events.</p>
         </div>
         <div class="card accent-border">
           <div class="badge badge-green" style="margin-bottom:0.75rem;">04</div>
-          <h3>Zero Inflation Sump</h3>
-          <p>The LNES-03 Unidirectional Sump permanently gravitates Native SOL from agent transactions into the protocol treasury. No token dilution. No AMM leakage.</p>
+          <h3>Multi-Chain Integration</h3>
+          <p>Use Solana and Base L2 as settlement and coordination surfaces for proof-bearing execution.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PROOF OF EXERGY -->
+  <!-- PROOF MODEL -->
   <section>
     <div class="container-wide">
-      <div class="section-label">Consensus Mechanism</div>
-      <h2>Proof-of-Exergy (PoX)</h2>
-      <p style="max-width:700px; margin-bottom:1.75rem;">Legacy consensus relies on wasted hashing or capital plutocracy. ExergyNet pioneers Proof-of-Exergy: mathematically binding the physical entropy generated by a CPU directly to the cryptographic verification of a compute payload. The exertion is the proof.</p>
+      <div class="section-label">Proof Model</div>
+      <h2>Outputs should be checked, not assumed.</h2>
+      <p style="max-width:700px; margin-bottom:1.75rem;">ExergyNet connects off-chain execution and physical-world proof with verification metadata and settlement logic. The result is a practical trust layer for applications and agents that need to automate high-value decisions.</p>
 
       <div class="flow" style="margin-bottom:2rem;">
-        <div class="flow-step active">AI Agent Job</div>
+        <div class="flow-step active">Job Request</div>
         <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step blue">SOL / USDC Escrow</div>
+        <div class="flow-step blue">Settlement Lock</div>
         <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step">zkVM Execution</div>
+        <div class="flow-step">Execution</div>
         <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step active">ZK-STARK / Groth16</div>
+        <div class="flow-step active">Verification Data</div>
         <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step blue">On-Chain Settlement</div>
+        <div class="flow-step blue">On-Chain Outcome</div>
         <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step active">Yield Released</div>
+        <div class="flow-step active">Receipt</div>
       </div>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
         <div class="card">
           <h4>For AI Agents</h4>
           <h3>Verifiable Off-Chain Logic</h3>
-          <p>Submit complex computation tasks. Receive unforgeable ZK-STARK proofs directly into your agent's context window. Pay 0.002 Native SOL or micro-USDC per compute cycle depending on substrate.</p>
-          <div style="margin-top:1rem;">
-            <a href="docs.html" class="btn btn-primary" style="font-size:12px;">Developer Docs &rarr;</a>
-          </div>
+          <p>Submit complex work requests and receive outputs with verification data that can be processed by an agent, application, or workflow engine.</p>
+          <div style="margin-top:1rem;"><a href="docs.html" class="btn btn-primary" style="font-size:12px;">Developer Docs &rarr;</a></div>
         </div>
         <div class="card">
-          <h4>For Hardware Operators</h4>
-          <h3>Monetize Your Entropy</h3>
-          <p>Run the open-source Rust daemon. Your machine's thermal exertion is cryptographically signed and anchored on-chain. Earn 30% of every Native SOL toll or USDC payout, settled instantly.</p>
-          <div style="margin-top:1rem;">
-            <a href="nodes.html" class="btn btn-blue" style="font-size:12px;">Node Operations &rarr;</a>
-          </div>
+          <h4>For Enterprises</h4>
+          <h3>Presence and Workflow Proof</h3>
+          <p>Use physical-world proof and certificate outputs to support approvals, operations, audits, and customer-facing workflows.</p>
+          <div style="margin-top:1rem;"><a href="presence.html" class="btn btn-secondary" style="font-size:12px;">Presence Certificate &rarr;</a></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- M2M CODE TERMINAL -->
+  <!-- SDK INTEGRATION -->
   <section class="machine-layer">
     <div class="container-wide">
       <div class="section-label">SDK Integration</div>
-      <h2>Built for Machine-to-Machine</h2>
-      <p style="max-width:700px; margin-bottom:2rem; color:var(--text-soft);">No human approval gates. No enterprise middleware. The agent validates cost thresholds, locks escrow, and receives proof without any out-of-band handshake. SDK initialization resolves in milliseconds.</p>
+      <h2>Built for agent and app integration.</h2>
+      <p style="max-width:700px; margin-bottom:2rem; color:var(--text-soft);">Agents and applications can request work, monitor status, retrieve proof-bearing results, and connect settlement without needing enterprise middleware or manual review gates.</p>
 
       <div class="code-terminal-block">
         <div class="code-terminal-header">
-          <div class="code-dots">
-            <span class="t-dot t-red"></span>
-            <span class="t-dot t-amber"></span>
-            <span class="t-dot t-green"></span>
-          </div>
+          <div class="code-dots"><span class="t-dot t-red"></span><span class="t-dot t-amber"></span><span class="t-dot t-green"></span></div>
           <span class="code-terminal-title">lnes-agent-sdk-core &mdash; TypeScript</span>
           <span class="code-lang-badge">TS</span>
         </div>
         <pre class="code-terminal-body"><code><span class="ck">import</span> { LnesM2MClient } <span class="ck">from</span> <span class="cs">"lnes-agent-sdk-core"</span>;
 
-<span class="cm">// 1. Agent validates computation arbitrage metrics against physical gas limits.</span>
-<span class="ck">const</span> toll = <span class="ck">await</span> client.estimateExergyGate(computeCostUsd, baseCostUsd);
+<span class="ck">const</span> client = <span class="ck">new</span> LnesM2MClient({ network: <span class="cs">"base"</span> });
+<span class="ck">const</span> job = <span class="ck">await</span> client.createJob({ type: <span class="cs">"compute"</span>, escrow: <span class="cs">"USDC"</span> });
+<span class="ck">const</span> proof = <span class="ck">await</span> client.awaitProof(job.id);
 
-<span class="cm">// 2. Lock Base USDC inside LNES04Membrane. Transmit axiom hash for ZK binding.</span>
-<span class="ck">const</span> openSig = <span class="ck">await</span> client.openJob(jobId, axiomHash, toll, escrowAddress, usdcAddress);
-
-console.log(<span class="cs">`[EXERGYNET] Substrate lock achieved. Awaiting ZK aggregation...`</span>);
-
-<span class="cm">// 3. Receive ZK-STARK / Groth16 proof. Verify before releasing capital.</span>
-<span class="ck">const</span> proof = <span class="ck">await</span> client.awaitProof(jobId);
 <span class="ck">if</span> (proof.verified) {
-  <span class="ck">await</span> client.settleExergy(proof);
-  console.log(<span class="cs">`[ZKP_VALIDATED] O(N log N) collapsed. Capital released.`</span>);
+  <span class="ck">await</span> client.settle(job.id, proof.receipt);
 }</code></pre>
       </div>
 
@@ -349,80 +370,65 @@ console.log(<span class="cs">`[EXERGYNET] Substrate lock achieved. Awaiting ZK a
         <div class="runtime-badge"><span class="runtime-dot blue"></span><span>Base L2 EVM</span></div>
         <div class="runtime-badge"><span class="runtime-dot accent"></span><span>RISC Zero zkVM</span></div>
         <div class="runtime-badge"><span class="runtime-dot green"></span><span>ElizaOS</span></div>
-        <div class="runtime-badge"><span class="runtime-dot blue"></span><span>Alchemy RPC</span></div>
+        <div class="runtime-badge"><span class="runtime-dot blue"></span><span>MCP Gateway</span></div>
         <div class="runtime-badge"><span class="runtime-dot accent"></span><span>Ed25519 Mesh</span></div>
       </div>
     </div>
   </section>
 
-  <!-- FOR DEVELOPERS -->
+  <!-- DEVELOPERS -->
   <section>
     <div class="container-wide">
       <div class="section-label">For Developers</div>
-      <h2>Machine-to-Machine Protocol</h2>
-      <p style="max-width:680px; margin-bottom:1.75rem;">Built natively for the agentic web. Integrate ExergyNet into ElizaOS with a single plugin. The MCP Gateway provides a secure, Ed25519-authenticated handshake at <code>https://exergynet.org/mcp</code>.</p>
+      <h2>Developer integration.</h2>
+      <p style="max-width:680px; margin-bottom:1.75rem;">Integrate ExergyNet into agent systems, applications, and enterprise workflows through the SDK, MCP gateway, and machine-readable discovery files.</p>
 
       <div class="card accent-border" style="margin-bottom:1rem;">
-        <h4>ElizaOS &mdash; One-Line Integration</h4>
+        <h4>ElizaOS &mdash; One Integration Path</h4>
         <div class="code-label" style="margin-top:0.5rem;">INSTALL</div>
         <pre><code>npm install @elizaos/plugin-exergynet</code></pre>
-        <div class="code-label">CHARACTER CONFIG</div>
-        <pre><code>{
-  "name": "YourAgent",
-  "plugins": ["@elizaos/plugin-exergynet"],
-  "settings": {
-    "secrets": {
-      "SOLANA_PRIVATE_KEY": "your_base58_key"
-    }
-  }
-}</code></pre>
         <div class="btn-row" style="margin-top:1rem;">
-          <a href="docs.html"  class="btn btn-primary">Full Integration Guide</a>
-          <a href="mcp.html"   class="btn btn-secondary">MCP Neural Gateway</a>
+          <a href="docs.html" class="btn btn-primary">Full Integration Guide</a>
+          <a href="mcp.html" class="btn btn-secondary">MCP Gateway</a>
+          <a href="agents.html" class="btn btn-ghost">Agent Manifest &rarr;</a>
         </div>
       </div>
 
-      <div class="card">
-        <h4>Mainnet-Beta Coordinates</h4>
-        <ul class="spec-list">
-          <li><span class="spec-key">Program ID</span>    <span class="spec-val"><code>7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
-          <li><span class="spec-key">EVM Contract</span>  <span class="spec-val"><code>LNES04Membrane.sol (Base Mainnet)</code></span></li>
-          <li><span class="spec-key">Transient Mint</span><span class="spec-val"><code>5fZZJ29oH5SDqxiz2tkEf1wopp5Sn5TtcCF3fPS9rdiJ</code></span></li>
-          <li><span class="spec-key">SOL Toll</span>      <span class="spec-val">0.002 Native SOL (2,000,000 lamports)</span></li>
-          <li><span class="spec-key">MCP Gateway</span>   <span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
-          <li><span class="spec-key">npm Package</span>   <span class="spec-val"><code>@elizaos/plugin-exergynet</code></span></li>
+      <details class="card">
+        <summary style="cursor:pointer; font-family:var(--display); font-weight:700; text-transform:uppercase; color:var(--text);">Network Details</summary>
+        <ul class="spec-list" style="margin-top:1rem;">
+          <li><span class="spec-key">Program ID</span><span class="spec-val"><code>7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
+          <li><span class="spec-key">EVM Contract</span><span class="spec-val"><code>LNES04Membrane.sol (Base Mainnet)</code></span></li>
+          <li><span class="spec-key">Settlement</span><span class="spec-val">Native SOL / Base L2 USDC</span></li>
+          <li><span class="spec-key">MCP Gateway</span><span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
+          <li><span class="spec-key">npm Package</span><span class="spec-val"><code>@elizaos/plugin-exergynet</code></span></li>
         </ul>
-      </div>
+      </details>
     </div>
   </section>
 
-  <!-- HARDWARE OPERATORS -->
+  <!-- NODE OPERATORS -->
   <section>
     <div class="container-wide">
-      <div class="section-label">For Hardware Operators</div>
-      <h2>Join the Decentralized Swarm</h2>
-      <p style="max-width:680px; margin-bottom:2rem;">Run our bare-metal, open-source Rust daemon to process Zero-Knowledge proofs for the global AI ecosystem. Provide the heavy cryptographic condensation required to verify off-chain edge data, and get rewarded directly in <strong>Base L2 USDC</strong>, settled autonomously by the LNES-04 smart contract.</p>
+      <div class="section-label">For Node Operators</div>
+      <h2>Run a node.</h2>
+      <p style="max-width:680px; margin-bottom:2rem;">Operators can run proof-capable nodes to process jobs and receive on-chain settlement. The node path is designed for infrastructure participants that want to contribute execution capacity to the network.</p>
 
       <div class="card">
-        <h4>Quick Start &mdash; The Prover Matrix</h4>
-        
-        <div class="code-label">1. INSTALL ZK-TOOLCHAIN</div>
+        <h4>Quick Start</h4>
+        <div class="code-label">1. INSTALL ZK TOOLCHAIN</div>
         <pre><code>curl -L https://risczero.com/install | bash
 rzup</code></pre>
 
-        <div class="code-label">2. CLONE AND BUILD (BARE-METAL)</div>
+        <div class="code-label">2. CLONE AND BUILD</div>
         <pre><code>git clone https://github.com/ezumba/entropy-k-core.git
 cd entropy-k-core
-export RISC0_BUILD_USE_DOCKER=0
 cargo build --release</code></pre>
 
-        <div class="code-label">3. IGNITE DRONE</div>
-        <pre><code>cargo run --release -- --apex 18.209.174.113:8001 --payout &lt;YOUR_BASE_EVM_ADDRESS&gt;</code></pre>
+        <div class="code-label">3. START NODE</div>
+        <pre><code>cargo run --release -- --apex &lt;APEX_HOST&gt; --payout &lt;YOUR_BASE_EVM_ADDRESS&gt;</code></pre>
 
-        <p style="margin-top:0.75rem; font-size:13px;">Once your terminal outputs <code>[MEMBRANE] Proof Condensed &amp; Radiated</code>, your node has successfully processed a cryptographic workload. The Sovereign Siphon will settle your proof on-chain and route the USDC yield directly into your wallet.</p>
-        <div style="margin-top:1rem;">
-          <a href="nodes.html" class="btn btn-blue">View Full Node Operations Guide &rarr;</a>
-        </div>
+        <div style="margin-top:1rem;"><a href="nodes.html" class="btn btn-blue">View Node Operations Guide &rarr;</a></div>
       </div>
     </div>
   </section>
@@ -431,8 +437,8 @@ cargo build --release</code></pre>
   <section>
     <div class="container-wide">
       <div class="section-label">Machine-Readable Discovery</div>
-      <h2>Agent Manifest</h2>
-      <p style="max-width:650px; margin-bottom:1.5rem;">Autonomous agents discover ExergyNet through standard machine-readable files. No human explanation required.</p>
+      <h2>Discovery files for autonomous systems.</h2>
+      <p style="max-width:650px; margin-bottom:1.5rem;">Autonomous agents can discover ExergyNet through standard machine-readable files and integration pages.</p>
       <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.25rem;">
         <code>/.well-known/exergynet.json</code>
         <code>/.well-known/ai-plugin.json</code>
@@ -440,9 +446,9 @@ cargo build --release</code></pre>
         <code>/agents.html</code>
       </div>
       <div class="btn-row">
-        <a href="agents.html"                class="btn btn-secondary">Agent Manifest</a>
+        <a href="agents.html" class="btn btn-secondary">Agent Manifest</a>
         <a href=".well-known/exergynet.json" class="btn btn-ghost">exergynet.json &rarr;</a>
-        <a href="llms.txt"                   class="btn btn-ghost">llms.txt &rarr;</a>
+        <a href="llms.txt" class="btn btn-ghost">llms.txt &rarr;</a>
       </div>
     </div>
   </section>
@@ -451,20 +457,16 @@ cargo build --release</code></pre>
   <section class="cta-section">
     <div class="glow-accent" style="width:600px;height:300px;bottom:-100px;left:50%;transform:translateX(-50%);"></div>
     <div class="container">
-      <h2>Build on the Thermodynamic Truth Layer</h2>
-      <p>ExergyNet is open infrastructure. Verify the program, run a node, start settling.</p>
+      <h2>Build on ExergyNet.</h2>
+      <p>Read the docs, evaluate the proof model, explore enterprise use cases, or run a node.</p>
       <div class="btn-row" style="justify-content:center;">
-        <a href="docs.html"       class="btn btn-primary">Integrate Your Agent</a>
-        <a href="nodes.html"      class="btn btn-blue">Join the Swarm</a>
-        <a href="whitepaper.html" class="btn btn-ghost">Read Architecture &rarr;</a>
+        <a href="docs.html" class="btn btn-primary">Read Docs</a>
+        <a href="enterprise.html" class="btn btn-secondary">Explore Enterprise</a>
+        <a href="nodes.html" class="btn btn-blue">Run a Node</a>
       </div>
       <div class="cta-community">
-        <a href="https://discord.com/channels/1500548202384986203/1500548202959732970" target="_blank" rel="noopener" class="community-link">
-          <span class="community-icon">&#x2666;</span> Discord Community
-        </a>
-        <a href="https://x.com/ExergyNet" target="_blank" rel="noopener" class="community-link">
-          <span class="community-icon">&#x1D54F;</span> @ExergyNet
-        </a>
+        <a href="https://discord.com/channels/1500548202384986203/1500548202959732970" target="_blank" rel="noopener" class="community-link"><span class="community-icon">&#x2666;</span> Discord Community</a>
+        <a href="https://x.com/ExergyNet" target="_blank" rel="noopener" class="community-link"><span class="community-icon">&#x1D54F;</span> @ExergyNet</a>
       </div>
     </div>
   </section>
@@ -482,23 +484,19 @@ cargo build --release</code></pre>
   function fmt(n) { return n.toLocaleString(); }
 
   var nodes = randInt(38, 62);
-  var flux  = (Math.random() * 30 + 85).toFixed(3);
-  var jobs  = randInt(1200, 4800);
-  var usdc  = randInt(420000, 980000);
+  var jobs = randInt(1200, 4800);
+  var usdc = randInt(420000, 980000);
 
   function update() {
     nodes += randInt(-2, 3); if (nodes < 20) nodes = 20;
-    flux   = (parseFloat(flux) + (Math.random()-0.48)*0.8).toFixed(3);
-    jobs  += randInt(0, 3);
-    usdc  += randInt(0, 1200);
+    jobs += randInt(0, 3);
+    usdc += randInt(0, 1200);
 
     var nEl = document.getElementById('live-nodes');
-    var fEl = document.getElementById('live-flux');
     var yEl = document.getElementById('live-yield');
     var uEl = document.getElementById('live-usdc');
 
     if (nEl) nEl.textContent = fmt(nodes);
-    if (fEl) fEl.textContent = flux + ' mC';
     if (yEl) yEl.textContent = fmt(jobs);
     if (uEl) uEl.textContent = fmt(usdc) + ' USDC';
   }
