@@ -31,7 +31,7 @@ body::before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(2
 .site-link,.export-btn{height:38px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;border:1px solid rgba(0,216,255,.28);background:rgba(0,216,255,.06);color:var(--text);text-decoration:none;padding:0 12px;font-size:12px;font-weight:800;letter-spacing:.04em;cursor:pointer}.site-link:hover,.export-btn:hover{border-color:var(--cyan);box-shadow:0 0 16px rgba(0,216,255,.15)}
 .network-toggle{display:flex;align-items:center;background:#050707;border:1px solid rgba(0,216,255,.32);border-radius:999px;padding:3px;gap:3px}.network-btn{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:8px 13px;font-size:12px;font-weight:900;letter-spacing:.08em;cursor:pointer}.network-btn.active{background:rgba(0,255,65,.14);color:var(--green);box-shadow:inset 0 0 0 1px rgba(0,255,65,.38)}.network-btn.mainnet.active{background:rgba(0,216,255,.14);color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(0,216,255,.38)}
 .status-line{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 18px;color:var(--muted);font-size:12px}.endpoint{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.env-badge{color:var(--green);border:1px solid rgba(0,255,65,.28);background:rgba(0,255,65,.06);border-radius:8px;padding:5px 8px;font-weight:900}.env-badge.mainnet{color:var(--cyan);border-color:rgba(0,216,255,.34);background:rgba(0,216,255,.06)}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.vital{background:linear-gradient(180deg,rgba(17,21,25,.94),rgba(5,7,8,.96));border:1px solid var(--border);border-radius:16px;padding:15px;box-shadow:var(--shadow);min-height:94px}.vital .k{font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.vital .v{font-size:24px;color:var(--text);font-weight:900;margin-top:10px}.vital .s{font-size:11px;color:var(--green);margin-top:6px}.vital .s.cyan{color:var(--cyan)}.vital .s.amber{color:var(--amber)}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:18px 0}.vital{background:linear-gradient(180deg,rgba(17,21,25,.94),rgba(5,7,8,.96));border:1px solid var(--border);border-radius:16px;padding:15px;box-shadow:var(--shadow);min-height:94px}.vital .k{font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.vital .v{font-size:24px;color:var(--text);font-weight:900;margin-top:10px}.vital .s{font-size:11px;color:var(--green);margin-top:6px}.vital .s.cyan{color:var(--cyan)}.vital .s.amber{color:var(--amber)}
 .toolbar{display:flex;align-items:center;gap:10px;margin:18px 0 12px}.search{flex:1;background:#030505;border:1px solid rgba(0,216,255,.25);color:var(--text);border-radius:12px;height:44px;padding:0 14px;font-size:13px;outline:none}.search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,216,255,.08)}.small-btn{height:44px;border-radius:12px;border:1px solid rgba(0,255,65,.32);background:rgba(0,255,65,.06);color:var(--green);padding:0 14px;font-weight:900;font-size:12px;letter-spacing:.04em;cursor:pointer}.small-btn:hover{box-shadow:0 0 16px rgba(0,255,65,.14)}
 .panel{background:linear-gradient(180deg,rgba(10,13,15,.96),rgba(4,5,6,.98));border:1px solid rgba(0,216,255,.18);border-radius:18px;overflow:hidden;box-shadow:0 16px 70px rgba(0,0,0,.35)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(0,216,255,.14);background:rgba(0,216,255,.035)}.panel-title{font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.panel-sub{font-size:12px;color:var(--muted)}
 table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.055);vertical-align:middle}th{font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:900;background:rgba(255,255,255,.018)}td{font-size:13px}.row-new{animation:rowIn .42s ease-out}@keyframes rowIn{from{opacity:0;transform:translateY(-7px);background:rgba(0,255,65,.11)}to{opacity:1;transform:translateY(0);background:transparent}}.hash-btn{font-family:"Fira Code","Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--cyan);background:none;border:0;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(0,216,255,.28);font-size:13px}.hash-btn:hover{color:var(--green);text-decoration-color:var(--green)}.badge{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900;letter-spacing:.04em}.badge.ok{background:rgba(0,255,65,.1);color:var(--green);border:1px solid rgba(0,255,65,.28)}.badge.pending{background:rgba(255,176,32,.1);color:var(--amber);border:1px solid rgba(255,176,32,.28)}.badge.fail{background:rgba(255,77,77,.1);color:var(--red);border:1px solid rgba(255,77,77,.28)}.copy{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--muted);border-radius:8px;padding:6px 8px;cursor:pointer;font-size:11px}.copy:hover{color:var(--text);border-color:rgba(0,216,255,.38)}
@@ -122,10 +122,12 @@ body.light-mode .warn{border-left-color:rgba(0,127,159,.32)}
     <div class="vital"><div class="k">Latest Block Time</div><div class="v" id="v-block">~1.2s</div><div class="s cyan">rolling average</div></div>
     <div class="vital"><div class="k">Active Aggregator Nodes</div><div class="v" id="v-nodes">07</div><div class="s">testnet cluster</div></div>
     <div class="vital"><div class="k">Cryptographic Standard</div><div class="v" id="v-crypto">RISC-V</div><div class="s amber">Groth16 / STARK-ready</div></div>
+    <div class="vital"><div class="k">Total Proofs Ingested</div><div class="v" id="v-proofs">--</div><div class="s">lifetime verified</div></div>
+    <div class="vital"><div class="k">Avg Block Interval</div><div class="v" id="v-interval">--</div><div class="s cyan">seconds between proofs</div></div>
   </section>
 
   <div class="toolbar">
-    <input class="search mono" id="search" type="text" placeholder="Search by Job ID, miner ID, payment address, or proof hash..." oninput="renderLedger()" />
+    <input class="search mono" id="search" type="text" placeholder="Search by Job ID, miner ID, payment address, or proof hash..." oninput="_currentPage=1;renderLedger()" />
     <button class="small-btn" onclick="exportJSON()">Export JSON Receipt</button>
     <button class="small-btn" onclick="exportCSV()">Export CSV</button>
   </div>
@@ -140,6 +142,11 @@ body.light-mode .warn{border-left-color:rgba(0,127,159,.32)}
         <thead><tr><th>Age</th><th>TX / Job ID</th><th>Miner / Witness</th><th>Payment Address</th><th>Status</th><th>Action</th></tr></thead>
         <tbody id="ledger-body"><tr><td colspan="6" class="empty">Booting telemetry ingest...</td></tr></tbody>
       </table>
+    </div>
+    <div id="pagination-bar" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid rgba(0,216,255,.14);font-size:12px;color:var(--muted);">
+      <button id="pg-prev" onclick="changePage(-1)" style="height:34px;padding:0 14px;border-radius:9px;border:1px solid rgba(0,216,255,.28);background:rgba(0,216,255,.06);color:var(--text);font-size:12px;font-weight:800;cursor:pointer;">← Prev</button>
+      <span id="pg-label">Page 1</span>
+      <button id="pg-next" onclick="changePage(1)" style="height:34px;padding:0 14px;border-radius:9px;border:1px solid rgba(0,216,255,.28);background:rgba(0,216,255,.06);color:var(--text);font-size:12px;font-weight:800;cursor:pointer;">Next →</button>
     </div>
   </section>
 
@@ -233,8 +240,17 @@ function renderLedger(){
   const body = document.getElementById('ledger-body');
   const rows = ledger.filter(tx => [tx.job_id_hex, tx.miner_id, tx.payment_address, tx.proof_hash, tx.status, tx.vector].join(' ').toLowerCase().includes(q));
   document.getElementById('ledger-sub').textContent = `${rows.length} visible ${activeNetwork} transaction${rows.length===1?'':'s'}. Click a TX / Job ID for full details.`;
-  if(!rows.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No transaction matches this search.</td></tr>'; return; }
-  body.innerHTML = rows.map((tx,i)=>{
+  if(!rows.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No transaction matches this search.</td></tr>';
+    document.getElementById('pg-label').textContent = 'Page 0 / 0';
+    return; }
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  if (_currentPage > totalPages) _currentPage = totalPages;
+  const start = (_currentPage - 1) * PAGE_SIZE;
+  const pageRows = rows.slice(start, start + PAGE_SIZE);
+  document.getElementById('pg-label').textContent = `Page ${_currentPage} / ${totalPages} · ${rows.length} total`;
+  document.getElementById('pg-prev').disabled = _currentPage <= 1;
+  document.getElementById('pg-next').disabled = _currentPage >= totalPages;
+  body.innerHTML = pageRows.map((tx,i)=>{
     const key = tx.job_id_hex;
     const isNew = !previousKeys.has(key);
     return `<tr class="${isNew?'row-new':''}">
@@ -269,6 +285,7 @@ function openDetails(id){
       <button class="small-btn" onclick="copyText('${escapeAttr(tx.job_id_hex)}')">Copy TX ID</button>
       <button class="small-btn" onclick="copyText('${escapeAttr(tx.payment_address)}')">Copy Payment Address</button>
       <button class="small-btn" onclick="downloadSingle('${escapeAttr(tx.job_id_hex)}')">Download Receipt</button>
+      <a class="small-btn" href="https://basescan.org/address/0xbd1e790f6040fa62797671b84a50025a0133109c" target="_blank" rel="noopener" style="text-decoration:none;background:rgba(0,255,65,.08);border-color:rgba(0,255,65,.35);color:var(--green)">♥ Support ExergyNet</a>
     </div>
     <p class="warn">If the upstream API only returns <span class="mono">job_id_hex</span>, <span class="mono">timestamp</span>, and <span class="mono">status</span>, the explorer derives placeholder miner/proof metadata so the details panel remains useful. When the app starts sending miner IDs and payment addresses, these fields will render directly.</p>
   `;
@@ -335,6 +352,41 @@ initializeExplorerTheme();
 setNetwork(activeNetwork);
 pollTimer = setInterval(fetchLedger, 3000);
 setInterval(renderLedger, 1000);
+
+// ── STATS POLLING — every 15s independent of ledger fetch ──
+let _lastBlockTimes = [];
+async function pollStats() {
+  try {
+    const r = await fetch('https://explorer-api.exergynet.org/api/l0/stats');
+    const s = await r.json();
+    document.getElementById('v-nodes').textContent = String(s.active_nodes ?? '--');
+    document.getElementById('v-proofs').textContent = (s.total_proofs_ingested ?? '--').toLocaleString();
+    if (s.latest_block_time_ms) {
+      document.getElementById('v-block').textContent = new Date(s.latest_block_time_ms).toLocaleTimeString();
+      _lastBlockTimes.push(s.latest_block_time_ms);
+      if (_lastBlockTimes.length > 10) _lastBlockTimes.shift();
+      if (_lastBlockTimes.length > 1) {
+        const diffs = _lastBlockTimes.slice(1).map((t,i) => t - _lastBlockTimes[i]);
+        const avg = Math.round(diffs.reduce((a,b) => a+b, 0) / diffs.length / 1000);
+        document.getElementById('v-interval').textContent = avg + 's';
+      }
+    }
+  } catch(e) {}
+}
+pollStats();
+setInterval(pollStats, 15000);
+
+// ── PAGINATION ──────────────────────────────────────────────
+let _currentPage = 1;
+const PAGE_SIZE = 10;
+
+function changePage(dir) {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const filtered = ledger.filter(tx => [tx.job_id_hex, tx.miner_id, tx.payment_address, tx.proof_hash, tx.status, tx.vector].join(' ').toLowerCase().includes(q));
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  _currentPage = Math.max(1, Math.min(totalPages, _currentPage + dir));
+  renderLedger();
+}
 </script>
 </body>
 </html>
