@@ -168,10 +168,10 @@ const NETWORKS = {
   },
   mainnet: {
     label: 'MAINNET',
-    // Replace this when the SSL production explorer API is live.
     apiUrl: 'https://explorer-api.exergynet.org/api/l0/transactions',
-    note: 'Production network target. Uses fallback until mainnet API is live.',
-    nodes: '00', block: 'pending', crypto: 'RISC-V', live: 'Mainnet View'
+    statsUrl: 'https://explorer-api.exergynet.org/api/l0/stats',
+    note: 'Production network — Base Mainnet L2 thermodynamic membrane.',
+    nodes: '...', block: '...', crypto: 'RISC-V', live: 'Mainnet View'
   }
 };
 let activeNetwork = localStorage.getItem('exergy_explorer_network') || 'testnet';
@@ -185,9 +185,7 @@ const fallback = {
     {job_id_hex:'0x0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a',timestamp:Math.floor(Date.now()/1000)-22,status:'ZK-STARK VERIFIED',miner_id:'witness_testnet_1190',payment_address:'0x6Bf1C7aE98E5c2b8A9d1307CbE2A99b404910Af1',reward_micro_usdc:5200000,vector:'ASYNC_COMPUTE',proof_hash:'0xacff82d411a12c3fb908abb6314bd87b2991c9f21ee2a8f008910ddba65a2c11',aggregator_id:'lnes-beta-01',settlement_network:'Base Sepolia'},
     {job_id_hex:'0x0808080808080808080808080808080808080808080808080808080808080808',timestamp:Math.floor(Date.now()/1000)-91,status:'PENDING SETTLEMENT',miner_id:'witness_testnet_2208',payment_address:'0xE4A2a1d1e808a67B1c14e1E9BC1cE3AFcF64A920',reward_micro_usdc:480000,vector:'NETWORK_DENSITY',proof_hash:'0xd4e6f2c9a0b18c77e241d990ff83a21910b7ccc7012209faccb17b87209d4abe',aggregator_id:'lnes-beta-02',settlement_network:'Base Sepolia'}
   ],
-  mainnet: [
-    {job_id_hex:'0xMAINNET_PENDING_BOOTSTRAP_000000000000000000000000000000000001',timestamp:Math.floor(Date.now()/1000)-12,status:'MAINNET NOT YET ARMED',miner_id:'pending',payment_address:'pending',reward_micro_usdc:0,vector:'N/A',proof_hash:'pending',aggregator_id:'mainnet-api-pending',settlement_network:'Base Mainnet'}
-  ]
+  mainnet: []
 };
 
 function normalizeTx(tx, index){
@@ -293,6 +291,16 @@ function setNetwork(network){
   document.getElementById('v-crypto').textContent = cfg.crypto;
   previousKeys = new Set(); ledger = [];
   renderLoading(); fetchLedger();
+  // Fetch live stats for mainnet
+  const cfg2 = NETWORKS[network];
+  if (cfg2.statsUrl) {
+    fetch(cfg2.statsUrl).then(r => r.json()).then(s => {
+      document.getElementById('v-nodes').textContent = String(s.active_nodes ?? '--');
+      document.getElementById('v-block').textContent = s.latest_block_time_ms
+        ? new Date(s.latest_block_time_ms).toLocaleTimeString()
+        : '--';
+    }).catch(() => {});
+  }
 }
 function renderLoading(){ document.getElementById('ledger-body').innerHTML='<tr><td colspan="6" class="empty">Switching network feed...</td></tr>'; }
 function exportJSON(){ downloadBlob(JSON.stringify({network:activeNetwork,endpoint:NETWORKS[activeNetwork].apiUrl,exported_at:new Date().toISOString(),transactions:ledger}, null, 2), `exergynet-${activeNetwork}-ledger.json`, 'application/json'); }
