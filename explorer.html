@@ -87,6 +87,7 @@ body.light-mode .detail-box{background:#ffffff;border-color:rgba(12,63,38,.1)}
 body.light-mode .footer{color:#71847d}
 body.light-mode .warn{border-left-color:rgba(0,127,159,.32)}
 
+@media(max-width:1200px){.grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:900px){.header{align-items:flex-start;flex-direction:column}.top-actions{justify-content:flex-start}.grid{grid-template-columns:1fr 1fr}.toolbar{flex-direction:column}.search,.small-btn,.export-btn{width:100%}table{min-width:850px}.table-wrap{overflow-x:auto}.detail-grid{grid-template-columns:1fr}.status-line{flex-direction:column;align-items:flex-start}}
 @media(max-width:520px){.grid{grid-template-columns:1fr}.shell{width:min(100vw - 20px,1480px);padding-top:12px}.brand h1{font-size:18px}.network-toggle{width:100%}.network-btn{flex:1}.site-link{width:100%}.top-actions{width:100%}}
 </style>
@@ -285,9 +286,9 @@ function openDetails(id){
       <button class="small-btn" onclick="copyText('${escapeAttr(tx.job_id_hex)}')">Copy TX ID</button>
       <button class="small-btn" onclick="copyText('${escapeAttr(tx.payment_address)}')">Copy Payment Address</button>
       <button class="small-btn" onclick="downloadSingle('${escapeAttr(tx.job_id_hex)}')">Download Receipt</button>
-      <a class="small-btn" href="https://basescan.org/address/0xbd1e790f6040fa62797671b84a50025a0133109c" target="_blank" rel="noopener" style="text-decoration:none;background:rgba(0,255,65,.08);border-color:rgba(0,255,65,.35);color:var(--green)">♥ Support ExergyNet</a>
+      <a class="small-btn" href="https://basescan.org/address/0xbd1e790f6040fa62797671b84a50025a0133109c" target="_blank" rel="noopener" style="text-decoration:none;background:rgba(255,176,32,.10);border-color:rgba(255,176,32,.45);color:var(--amber);letter-spacing:.04em;">♥ Support ExergyNet</a>
     </div>
-    <p class="warn">If the upstream API only returns <span class="mono">job_id_hex</span>, <span class="mono">timestamp</span>, and <span class="mono">status</span>, the explorer derives placeholder miner/proof metadata so the details panel remains useful. When the app starts sending miner IDs and payment addresses, these fields will render directly.</p>
+    <p class="warn" style="color:var(--muted);font-size:11px;border-left-color:rgba(255,176,32,.35);">ExergyNet L0 · Base Mainnet · ZK-STARK verified compute settlement · <a href="https://exergynet.org" style="color:var(--amber);text-decoration:none;" target="_blank">exergynet.org</a></p>
   `;
   document.getElementById('details-modal').classList.add('active');
 }
