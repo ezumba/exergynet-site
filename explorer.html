@@ -230,12 +230,54 @@ async function fetchLedger(){
     ledger = arr.map(normalizeTx).sort((a,b)=>b.timestamp-a.timestamp);
     if(!ledger.length) ledger = fallback[activeNetwork].map(normalizeTx);
     document.getElementById('last-updated').textContent = 'last update: ' + new Date().toLocaleTimeString();
+    updateAdvancedVitals();
   }catch(err){
     ledger = fallback[activeNetwork].map(normalizeTx).sort((a,b)=>b.timestamp-a.timestamp);
     document.getElementById('last-updated').textContent = 'fallback: ' + new Date().toLocaleTimeString();
   }
   renderLedger();
 }
+function updateAdvancedVitals() {
+    if (!ledger || ledger.length === 0) return;
+    
+    // Calculate Total Reward
+    let totalReward = 0;
+    ledger.forEach(tx => {
+        totalReward += Number(tx.reward_micro_usdc || 0);
+    });
+    const formattedReward = (totalReward / 1000000).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    const rewardEl = document.getElementById('v-reward');
+    if (rewardEl) rewardEl.textContent = formattedReward;
+
+    // Calculate Average Block Time & Hashrate
+    if (ledger.length > 1) {
+        let totalTimeDiff = 0;
+        let validDiffs = 0;
+        // Sort ascending by timestamp to calculate diffs properly
+        const sortedLedger = [...ledger].sort((a,b) => a.timestamp - b.timestamp);
+        
+        for (let i = 1; i < sortedLedger.length; i++) {
+            const diff = sortedLedger[i].timestamp - sortedLedger[i-1].timestamp;
+            // Ignore massive gaps (e.g. server restarts) to keep averages accurate
+            if (diff > 0 && diff < 3600) { 
+                totalTimeDiff += diff;
+                validDiffs++;
+            }
+        }
+        
+        if (validDiffs > 0) {
+            const avgTimeSecs = (totalTimeDiff / validDiffs).toFixed(1);
+            const avgEl = document.getElementById('v-avg-time');
+            if (avgEl) avgEl.textContent = avgTimeSecs + 's';
+            
+            // Calculate a synthetic network hashrate proxy based on block velocity
+            const hashrateEl = document.getElementById('v-hashrate');
+            const proxyRate = (1000 / avgTimeSecs).toFixed(0);
+            if (hashrateEl) hashrateEl.textContent = proxyRate + ' KH/s equivalent';
+        }
+    }
+}
+
 function renderLedger(){
   const q = document.getElementById('search').value.trim().toLowerCase();
   const body = document.getElementById('ledger-body');
