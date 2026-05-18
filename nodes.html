@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Node Operations | ExergyNet</title>
-<meta name="description" content="Join the ExergyNet decentralized swarm. Run the entropy-k-core daemon, process ZK-STARK proofs, earn Native SOL yields.">
+<meta name="description" content="Join the ExergyNet decentralized swarm. Run the LNES-03 Desktop Prover or entropy-k-core daemon, process ZK-STARK proofs, earn USDC on Base and Native SOL yields.">
 <link rel="stylesheet" href="style.css">
 <script>
-// Inline theme init to prevent flash
 (function(){
   var t = localStorage.getItem('exg-theme');
   if (!t) {
@@ -23,7 +22,6 @@
 
 <div class="site-wrap">
 
-  <!-- Header will be injected here -->
   <div id="site-header"></div>
 
 <main class="page">
@@ -32,73 +30,193 @@
   <div class="page-header">
     <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
     <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
-    
     <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Node Operator Guide</div>
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Node Operator Guide · LNES-06 v1.2</div>
       <h1>Turn Your Hardware into a<br><span class="accent">Thermodynamic Oracle</span></h1>
-      <p class="hero-sub">The ExergyNet physical mesh is powered by independent hardware operators worldwide. Run the entropy-k-core daemon, provide Zero-Knowledge compute for autonomous AI agents, earn automated Native SOL yields.</p>
+      <p class="hero-sub">The ExergyNet physical mesh is powered by independent hardware operators worldwide. Run the LNES-03 Desktop Prover or entropy-k-core daemon, provide Zero-Knowledge compute for autonomous AI agents, earn USDC on Base and Native SOL yields.</p>
     </div>
   </div>
 
   <div class="container">
 
+    <!-- NODE TYPES -->
+    <section>
+      <div class="section-label">Two Operator Paths</div>
+      <h2>Choose Your Node Type</h2>
+      <p style="max-width:720px; margin-bottom:1.75rem;">ExergyNet supports two distinct node archetypes. The Desktop Prover runs natively on Windows, macOS, or Linux with a one-click GUI installer. The entropy-k-core daemon targets server and headless deployments. Both types settle rewards in USDC on Base Mainnet.</p>
+
+      <div class="card-grid">
+        <div class="card accent-border" style="position:relative; overflow:hidden;">
+          <div style="position:absolute;top:0;right:0;background:var(--accent);color:#000;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:.08em;">RECOMMENDED</div>
+          <div class="badge badge-green" style="margin-bottom:0.75rem; margin-top:0.5rem;">Desktop · GUI</div>
+          <h3>LNES-03 Desktop Prover</h3>
+          <p>Native Tauri desktop app for Windows, macOS, and Linux. One-click install. Connects to the Apex Router, compresses RISC Zero STARK proofs, and settles USDC rewards automatically. No Rust toolchain required.</p>
+          <a href="lnes06.html" class="btn btn-primary" style="margin-top:1rem; font-size:12px;">Download &amp; Command Center &darr;</a>
+        </div>
+        <div class="card">
+          <div class="badge badge-blue" style="margin-bottom:0.75rem;">Headless · Server</div>
+          <h3>entropy-k-core Daemon</h3>
+          <p>Compiled Rust binary for Linux, Ubuntu 22.04/24.04, or WSL2. Full RISC-V ZK pipeline. Intended for server operators and advanced deployments.</p>
+          <a href="#daemon-guide" class="btn btn-blue" style="margin-top:1rem; font-size:12px;">Build Guide &darr;</a>
+        </div>
+      </div>
+    </section>
+
     <!-- ECONOMICS -->
     <section>
       <div class="section-label">The Economics</div>
-      <h2>Atomic SOL Yields</h2>
-      <p style="max-width:680px; margin-bottom:1.75rem;">ExergyNet operates on a transparent, base-layer economic model. When an external AI agent requests a verified computation, it locks a Native SOL toll into the LNES-03 Membrane on Solana. Once your node successfully processes the math and broadcasts the cryptographic proof, the smart contract settles the transaction atomically.</p>
+      <h2>Dual-Network Yields</h2>
+      <p style="max-width:720px; margin-bottom:1.75rem;">ExergyNet settles operator rewards across two networks. Base Mainnet USDC is the primary and recommended settlement layer for all new node deployments. The Solana SOL path remains active for legacy operators on the ElizaOS integration track.</p>
 
+      <!-- BASE USDC PRIMARY -->
+      <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
+        <span class="badge badge-green">Primary</span>
+        <h3 style="margin:0; font-size:1rem;">Base Mainnet · USDC Yields</h3>
+      </div>
       <div class="card accent-border" style="margin-bottom:1.5rem;">
-        <h4>Yield Fracture Formula</h4>
-        <div class="flow">
-          <div class="flow-step blue">0.002 SOL locked</div>
+        <h4>Yield Model — Base / USDC</h4>
+        <div class="flow" style="margin-bottom:1rem;">
+          <div class="flow-step blue">x402 Sensor Call or Compute Job</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step active">30% Node Yield (USDC)</div>
+          <div class="flow-arrow">+</div>
+          <div class="flow-step">70% Protocol Treasury</div>
+        </div>
+        <p style="font-size:14px;">Rewards are denominated in USDC and settled on Base Mainnet (eip155:8453). The Sovereign Siphon routes your share to the EVM payout wallet you specify at launch. No lockups. No intermediaries.</p>
+      </div>
+
+      <div class="card-grid" style="margin-bottom:2rem;">
+        <div class="card">
+          <h4>Sensor Yield (per call)</h4>
+          <div style="font-family:var(--mono); font-size:2.1rem; color:var(--accent); font-weight:700; margin:0.5rem 0;">~0.0009 USDC</div>
+          <p style="font-size:13px;">30% of the 0.003 USDC x402 sensor toll. Earned per verified magnetometer or network density call delivered to an AI agent.</p>
+        </div>
+        <div class="card">
+          <h4>Compute Yield (per job)</h4>
+          <div style="font-family:var(--mono); font-size:2.1rem; color:var(--accent); font-weight:700; margin:0.5rem 0;">Variable USDC</div>
+          <p style="font-size:13px;">Set by the job poster at submission. Example desktop compute jobs show 0.18 USDC per completed STARK proof. Higher complexity jobs carry higher bounties.</p>
+        </div>
+        <div class="card">
+          <h4>Settlement Finality</h4>
+          <div style="font-family:var(--mono); font-size:2.1rem; color:var(--blue); font-weight:700; margin:0.5rem 0;">&lt; 2s</div>
+          <p style="font-size:13px;">Base Mainnet block time. USDC credited to your EVM wallet after <code>POST /api/compute/settle</code> is confirmed by the L0 sequencer.</p>
+        </div>
+      </div>
+
+      <!-- SOLANA SECONDARY -->
+      <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
+        <span class="badge badge-gray">Active</span>
+        <h3 style="margin:0; font-size:1rem;">Solana Mainnet-Beta · Native SOL Yields (Legacy)</h3>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h4>Yield Fracture Formula — Solana / SOL</h4>
+        <div class="flow" style="margin-bottom:1rem;">
+          <div class="flow-step blue">0.002 SOL locked in LNES-03 Membrane</div>
           <div class="flow-arrow">&rarr;</div>
           <div class="flow-step active">30% Node Yield</div>
           <div class="flow-arrow">+</div>
           <div class="flow-step">70% Protocol Treasury</div>
         </div>
-        <p style="margin-top:1rem; font-size:14px;">30% of every toll is routed directly to your node's Solana wallet. Instant settlement. No lockups. No intermediaries.</p>
-      </div>
-
-      <div class="card-grid">
-        <div class="card">
-          <h4>Per-Job Yield</h4>
-          <div style="font-family:var(--mono); font-size:2.1rem; color:var(--accent); font-weight:700; margin:0.5rem 0;">0.0006 SOL</div>
-          <p style="font-size:13px;">Earned per successfully verified ZK-STARK proof. Settled instantly on Solana.</p>
-        </div>
-        <div class="card">
-          <h4>Settlement Speed</h4>
-          <div style="font-family:var(--mono); font-size:2.1rem; color:var(--blue); font-weight:700; margin:0.5rem 0;">&lt; 400ms</div>
-          <p style="font-size:13px;">Solana finality ensures atomic payout from proof to wallet.</p>
+        <div class="card-grid" style="margin-top:1rem;">
+          <div class="card" style="background:var(--surface2);">
+            <h4>Per-Job Yield</h4>
+            <div style="font-family:var(--mono); font-size:2.1rem; color:var(--accent); font-weight:700; margin:0.5rem 0;">0.0006 SOL</div>
+            <p style="font-size:13px;">Earned per successfully verified ZK-STARK proof. Settled atomically on Solana.</p>
+          </div>
+          <div class="card" style="background:var(--surface2);">
+            <h4>Settlement Speed</h4>
+            <div style="font-family:var(--mono); font-size:2.1rem; color:var(--blue); font-weight:700; margin:0.5rem 0;">&lt; 400ms</div>
+            <p style="font-size:13px;">Solana finality. Atomic payout from proof to wallet. No manual claim required.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- SYSTEM REQUIREMENTS -->
-    <section>
-      <div class="section-label">Hardware Requirements</div>
-      <h2>System Specifications</h2>
-      <p style="max-width:600px; margin-bottom:1.5rem;">Minimum specifications to reliably participate in the physical mesh.</p>
+    <!-- DESKTOP PROVER GUIDE -->
+    <section id="desktop-prover">
+      <div class="section-label">Path A · Recommended</div>
+      <h2>LNES-03 Desktop Prover — Setup Guide</h2>
+      <p style="max-width:700px; margin-bottom:1.5rem;">The Desktop Prover is a Tauri-based native application. It handles the full RISC Zero STARK compression pipeline with no Rust toolchain required. Download, install, enter your EVM payout wallet, and you are contributing to the mesh.</p>
 
-      <div class="card">
+      <div class="card-grid" style="margin-bottom:1.5rem;">
+        <div class="card accent-border">
+          <h4>Step 01 — Download</h4>
+          <p>Visit the Command Center to download the Desktop Prover for your platform.</p>
+          <ul class="spec-list" style="margin-top:1rem;">
+            <li><span class="spec-key">Windows</span><span class="spec-val">.exe installer or .msi package</span></li>
+            <li><span class="spec-key">macOS / Linux</span><span class="spec-val">Build from source (see daemon guide)</span></li>
+            <li><span class="spec-key">Version</span><span class="spec-val">v1.2.0</span></li>
+          </ul>
+          <a href="lnes06.html" class="btn btn-primary" style="margin-top:1.25rem; font-size:12px; display:inline-block;">Command Center &amp; Downloads ↗</a>
+        </div>
+        <div class="card">
+          <h4>Step 02 — Identity</h4>
+          <p>On first launch, enter your EVM payout address. This is your permanent USDC yield destination on Base Mainnet. Any standard EVM wallet is accepted.</p>
+          <code style="display:block; margin:1rem 0; font-size:13px;">Format: 0x...</code>
+          <p style="font-size:13px;">Protect your private key locally. ExergyNet never holds or requests your key — only your public payout address is required.</p>
+        </div>
+        <div class="card accent-border">
+          <h4>Step 03 — Ignite</h4>
+          <p>The Desktop Prover connects to the global Apex Router automatically.</p>
+          <ul class="spec-list" style="margin:1rem 0;">
+            <li><span class="spec-key">Apex Router</span><span class="spec-val"><code>18.209.174.113:8001</code></span></li>
+            <li><span class="spec-key">Prover Port</span><span class="spec-val">TCP 8003 (local listen)</span></li>
+            <li><span class="spec-key">ZK Backend</span><span class="spec-val">RISC Zero STARK</span></li>
+          </ul>
+          <p style="font-size:13px;">The Prover listens on TCP 8003, receives relayed mobile witness payloads, compresses proofs, and submits settlement to the L0 Sequencer.</p>
+        </div>
+        <div class="card">
+          <h4>Step 04 — Verify</h4>
+          <pre><code>[MEMBRANE] Proof Condensed &amp; Radiated</code></pre>
+          <p style="margin-top:0.75rem; font-size:13px;">You are live and earning. The Sovereign Siphon settles proofs and routes USDC to your wallet. Check the <a href="explorer.html">Explorer</a> for your verified node status.</p>
+        </div>
+      </div>
+
+      <!-- DESKTOP PROVER OPERATING MODEL -->
+      <div class="card accent-border">
+        <h4>Desktop Prover — Compute Settlement Flow</h4>
+        <div class="flow" style="flex-direction:column; align-items:flex-start; gap:0.75rem; margin:1.5rem 0;">
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <span class="badge badge-blue">01</span>
+            <span><strong>Listen</strong> — Prover opens TCP 8003 and awaits mobile witness payloads relayed by the L0 Router via <code>POST /api/relay/payload</code>.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <span class="badge badge-gray">02</span>
+            <span><strong>Prove</strong> — Receives sensor data package. Runs RISC Zero STARK compression. Generates a cryptographic output hash.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <span class="badge badge-gray">03</span>
+            <span><strong>Upload</strong> — Proof artifact uploaded to distributed storage. Settlement payload assembled locally.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <span class="badge badge-green">04</span>
+            <span><strong>Settle</strong> — <code>POST /api/compute/settle</code> submitted to L0 Sequencer with proof hash and your payout address. L0 records <code>ZK-STARK VERIFIED</code> and credits USDC reward.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DAEMON GUIDE (HEADLESS) -->
+    <section id="daemon-guide">
+      <div class="section-label">Path B · Advanced</div>
+      <h2>entropy-k-core Daemon — Build Guide</h2>
+      <p style="max-width:680px; margin-bottom:1.5rem;">For server operators and headless Linux deployments. Requires Rust 1.75+ and the RISC Zero toolchain. Recommended for operators targeting high throughput or custom infrastructure.</p>
+
+      <!-- SYSTEM REQUIREMENTS -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h4>System Requirements</h4>
         <ul class="spec-list">
           <li><span class="spec-key">OS</span><span class="spec-val">Linux (Ubuntu 22.04/24.04 recommended) or WSL2</span></li>
           <li><span class="spec-key">CPU</span><span class="spec-val">Modern multi-core x86_64 processor</span></li>
           <li><span class="spec-key">RAM</span><span class="spec-val">8 GB minimum <span class="badge badge-amber">16 GB+ recommended</span></span></li>
-          <li><span class="spec-key">Dependencies</span><span class="spec-val">Rust 1.75+, standard build tools</span></li>
-          <li><span class="spec-key">Network</span><span class="spec-val">Stable broadband with outbound TCP access</span></li>
+          <li><span class="spec-key">Dependencies</span><span class="spec-val">Rust 1.75+, standard build tools, rzup</span></li>
+          <li><span class="spec-key">Network</span><span class="spec-val">Stable broadband with outbound TCP access on ports 8001 and 8003</span></li>
         </ul>
       </div>
-    </section>
-
-<!-- DEPLOYMENT GUIDE -->
-    <section>
-      <div class="section-label">Deployment Guide</div>
-      <h2>Four Steps to Consensus</h2>
 
       <div class="card-grid">
         <div class="card">
-          <h4>Step 01 — Toolchain & Build</h4>
+          <h4>Step 01 — Toolchain &amp; Build</h4>
           <p>Install the RISC-V dependencies and compile the bare-metal host binary.</p>
           <pre><code>curl -L https://risczero.com/install | bash
 rzup
@@ -110,7 +228,7 @@ cargo build --release</code></pre>
 
         <div class="card">
           <h4>Step 02 — Identity</h4>
-          <p>The daemon requires a cryptographic yield destination. You must provide a valid Base L2 Ethereum address to receive automated payouts.</p>
+          <p>Provide a valid Base L2 EVM address to receive automated USDC payouts on Base Mainnet.</p>
           <code style="display:block; margin:1rem 0; font-size:13px;">Format: 0x...</code>
           <p style="font-size:13px;">Use any standard EVM hot wallet. This is your permanent yield destination. Protect the private key locally.</p>
         </div>
@@ -118,14 +236,16 @@ cargo build --release</code></pre>
         <div class="card accent-border">
           <h4>Step 03 — Ignite</h4>
           <p>Connect to the global Apex Router and inject your payout address.</p>
-          <pre><code>cargo run --release -- --apex 18.209.174.113:8001 --payout <YOUR_BASE_EVM_ADDRESS></code></pre>
-          <p style="margin-top:0.75rem; font-size:13px;">Your node connects to the mesh and begins condensing proofs for the M2M economy.</p>
+          <pre><code>cargo run --release -- \
+  --apex 18.209.174.113:8001 \
+  --payout &lt;YOUR_BASE_EVM_ADDRESS&gt;</code></pre>
+          <p style="margin-top:0.75rem; font-size:13px;">Your node joins the mesh and begins condensing proofs for the M2M economy.</p>
         </div>
 
         <div class="card">
           <h4>Step 04 — Verify</h4>
-          <pre><code>[MEMBRANE] Proof Condensed & Radiated</code></pre>
-          <p style="margin-top:0.75rem; font-size:13px;">Your node is live and earning. The Siphon will autonomously settle your proofs and route Base USDC to your wallet. Check the <a href="explorer.html">Explorer</a> for your verified status.</p>
+          <pre><code>[MEMBRANE] Proof Condensed &amp; Radiated</code></pre>
+          <p style="margin-top:0.75rem; font-size:13px;">Your node is live and earning. The Sovereign Siphon settles proofs and routes USDC to your wallet. Check the <a href="explorer.html">Explorer</a> for your verified status.</p>
         </div>
       </div>
     </section>
@@ -134,16 +254,20 @@ cargo build --release</code></pre>
     <section>
       <div class="section-label">Cryptographic Architecture</div>
       <h2>Your Node Identity</h2>
-      <p style="max-width:680px; margin-bottom:1.5rem;">ExergyNet uses the same Ed25519 curve as Solana. Your node’s keypair is a native Solana wallet — no bridges, no wrapping.</p>
+      <p style="max-width:680px; margin-bottom:1.5rem;">ExergyNet nodes authenticate to the Apex Router using a local keypair generated on first run. Your EVM payout address on Base Mainnet receives USDC yields. Your node public key is embedded in every proof you submit — it is your unforgeable identity on the mesh.</p>
 
       <div class="card-grid">
         <div class="card">
           <h4>Keypair Genesis</h4>
-          <p>Generated automatically on first run and stored locally.</p>
+          <p>Generated automatically on first run and stored locally. Never transmitted. Your private key never leaves your machine.</p>
         </div>
         <div class="card">
-          <h4>Yield Destination</h4>
-          <p>Every proof includes your public key. SOL is routed directly to this address.</p>
+          <h4>USDC Yield Destination</h4>
+          <p>Every proof includes your EVM payout address. USDC is routed directly to this address by the L0 Sequencer on Base Mainnet (eip155:8453).</p>
+        </div>
+        <div class="card">
+          <h4>SOL Yield (Legacy Path)</h4>
+          <p>ElizaOS-path operators retain their Solana Ed25519 keypair as the native yield destination. SOL is routed directly with no bridging or wrapping required.</p>
         </div>
       </div>
     </section>
@@ -152,20 +276,19 @@ cargo build --release</code></pre>
     <section class="cta-section" style="border-top:1px solid var(--border);">
       <div class="container">
         <h2>Ready to Join the Swarm?</h2>
-        <p>Your hardware’s entropy is now a monetizable physical asset.</p>
+        <p>Your hardware's entropy is a monetizable physical asset. USDC on Base. ZK-STARK verified.</p>
         <div class="btn-row" style="justify-content:center;">
-          <a href="https://github.com/ezumba/entropy-k-core" target="_blank" class="btn btn-primary">Clone entropy-k-core &rarr;</a>
-          <a href="proof.html" class="btn btn-secondary">View Live Explorer</a>
-          <a href="security.html" class="btn btn-ghost">Security Model &rarr;</a>
+          <a href="lnes06.html"                                class="btn btn-primary">Command Center &amp; Downloads ↗</a>
+          <a href="https://github.com/ezumba/entropy-k-core" target="_blank" class="btn btn-secondary">Clone entropy-k-core &rarr;</a>
+          <a href="explorer.html"                             class="btn btn-blue">Live Explorer</a>
+          <a href="security.html"                             class="btn btn-ghost">Security Model &rarr;</a>
         </div>
       </div>
     </section>
 
   </div>
-
 </main>
 
-  <!-- Footer will be injected here -->
   <div id="site-footer"></div>
 
 </div>
