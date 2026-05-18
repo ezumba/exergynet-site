@@ -4,10 +4,166 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Protocol | ExergyNet</title>
-<meta name="description" content="ExergyNet LNES-03 Protocol — Unidirectional Sump architecture, Proof-of-Exergy consensus, and ZK-STARK settlement mechanics on Solana.">
+<meta name="description" content="ExergyNet LNES-06 Protocol — Dual-network Unidirectional Sump, Proof-of-Exergy consensus, x402/Base primary settlement, and ZK-STARK mechanics on Solana.">
 <link rel="stylesheet" href="style.css">
+<style>
+  /* ── Protocol-page local enhancements ── */
+  .proto-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  @media (max-width: 720px) { .proto-grid { grid-template-columns: 1fr; } }
+
+  .network-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    padding: 4px 12px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+  .pill-primary { background: rgba(0,255,163,.12); color: var(--accent); border: 1px solid rgba(0,255,163,.3); }
+  .pill-active  { background: rgba(255,255,255,.06); color: var(--text-soft); border: 1px solid var(--border); }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .pill-primary .pill-dot { background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse-dot 2s infinite; }
+  .pill-active  .pill-dot { background: var(--text-faint); }
+  @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+  /* Architecture stack */
+  .arch-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+  .arch-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--border);
+  }
+  .arch-row:last-child { border-bottom: none; }
+  .arch-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    padding: 0 1rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--text-faint);
+    border-right: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+  }
+  .arch-content {
+    flex: 1;
+    padding: 1rem 1.25rem;
+  }
+  .arch-content h5 {
+    margin: 0 0 .35rem;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .arch-content p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-faint);
+    line-height: 1.6;
+  }
+  .arch-row.highlight-row .arch-label { color: var(--accent); }
+  .arch-row.highlight-row { background: rgba(0,255,163,.03); }
+  .arch-row.blue-row .arch-label { color: var(--blue); }
+  .arch-row.blue-row { background: rgba(90,163,255,.03); }
+
+  /* Settlement flow — dual column */
+  .flow-dual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 720px) { .flow-dual { grid-template-columns: 1fr; } }
+  .flow-col { display: flex; flex-direction: column; gap: .6rem; }
+  .flow-node {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .85rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .flow-node.active-node { border-color: rgba(0,255,163,.35); background: rgba(0,255,163,.04); }
+  .flow-arrow-down {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 16px;
+    line-height: 1;
+    padding: 2px 0;
+    opacity: .5;
+  }
+
+  /* Stat block */
+  .stat-block {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 600px) { .stat-block { grid-template-columns: 1fr; } }
+  .stat-cell {
+    background: var(--surface);
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: .5rem;
+  }
+  .stat-label { font-size: 12px; color: var(--text-faint); line-height: 1.4; }
+
+  .opcode-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+  .opcode-table th {
+    text-align: left;
+    padding: .6rem 1rem;
+    color: var(--text-faint);
+    font-size: 11px;
+    letter-spacing: .06em;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--sans, sans-serif);
+    text-transform: uppercase;
+  }
+  .opcode-table td {
+    padding: .6rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .opcode-table tr:last-child td { border-bottom: none; }
+</style>
 <script>
-// Inline theme init to prevent flash
 (function(){
   var t = localStorage.getItem('exg-theme');
   if (!t) {
@@ -22,8 +178,6 @@
 <canvas id="circuit-canvas"></canvas>
 
 <div class="site-wrap">
-
-  <!-- Header will be injected here -->
   <div id="site-header"></div>
 
 <main class="page">
@@ -32,100 +186,319 @@
   <div class="page-header">
     <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
     <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
-    
     <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>LNES-03 Protocol</div>
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>LNES-06 v1.2 · Protocol Reference</div>
       <h1>Protocol<br><span class="accent">Reference</span></h1>
-      <p class="hero-sub">Complete technical specification for the LNES-03 Unidirectional Sump, Proof-of-Exergy consensus, and ZK-STARK settlement architecture.</p>
+      <p class="hero-sub">Complete technical specification for the LNES-06 multi-network architecture. Dual-settlement via x402/Base (primary) and Solana Unidirectional Sump. Proof-of-Exergy consensus. RISC Zero ZK-STARK settlement mechanics.</p>
+
+      <!-- Live network status bar -->
+      <div style="display:flex; gap:1rem; margin-top:2rem; flex-wrap:wrap;">
+        <div class="network-pill pill-primary">
+          <span class="pill-dot"></span>Base Mainnet · eip155:8453 · Primary
+        </div>
+        <div class="network-pill pill-active">
+          <span class="pill-dot"></span>Solana Mainnet-Beta · Active
+        </div>
+        <div class="network-pill pill-active">
+          <span class="pill-dot" style="background:var(--blue);"></span>L0 Sequencer · 18.209.174.113 · Online
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- PROTOCOL IDENTITY -->
+    <!-- ══════════════════════════════════════════════
+         PROTOCOL IDENTITY — DUAL NETWORK
+    ══════════════════════════════════════════════ -->
     <section>
       <div class="section-label">Protocol Identity</div>
-      <h2>LNES-03 Coordinates</h2>
-      <div class="card accent-border">
-        <ul class="spec-list">
-          <li><span class="spec-key">Protocol</span>    <span class="spec-val"><span class="badge badge-green">LNES-03</span> Unidirectional Autonomous Compute Membrane</span></li>
-          <li><span class="spec-key">Version</span>     <span class="spec-val"><code>2.0.0-omega</code></span></li>
-          <li><span class="spec-key">Program ID</span>  <span class="spec-val"><code>7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
-          <li><span class="spec-key">Network</span>     <span class="spec-val">Solana Mainnet-Beta</span></li>
-          <li><span class="spec-key">Settlement</span>  <span class="spec-val">Native SOL — lamport-level atomic settlement</span></li>
-          <li><span class="spec-key">Transient Mint</span><span class="spec-val"><code>5fZZJ29oH5SDqxiz2tkEf1wopp5Sn5TtcCF3fPS9rdiJ</code></span></li>
-          <li><span class="spec-key">Toll</span>        <span class="spec-val">0.002 SOL (2,000,000 lamports) per compute cycle</span></li>
-          <li><span class="spec-key">Yield Split</span> <span class="spec-val">30% Node Operator + 70% Protocol Cold Treasury</span></li>
-          <li><span class="spec-key">Auth</span>        <span class="spec-val">Ed25519 Mesh — zero-trust cryptographic identity</span></li>
-          <li><span class="spec-key">Proof System</span><span class="spec-val">RISC Zero ZK-STARK — recursive O(1) master proof compression</span></li>
-        </ul>
+      <h2>Multi-Network Coordinates</h2>
+
+      <div class="proto-grid">
+
+        <!-- BASE PRIMARY -->
+        <div>
+          <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
+            <span class="network-pill pill-primary"><span class="pill-dot"></span>Primary Settlement</span>
+          </div>
+          <div class="card accent-border">
+            <ul class="spec-list">
+              <li><span class="spec-key">Protocol</span>       <span class="spec-val"><span class="badge badge-green">LNES-06 v1.2</span> x402 Compute Membrane</span></li>
+              <li><span class="spec-key">Network</span>        <span class="spec-val">Base Mainnet <code>eip155:8453</code></span></li>
+              <li><span class="spec-key">Payment</span>        <span class="spec-val">x402 / USDC · HTTP-native agent payments</span></li>
+              <li><span class="spec-key">x402 Version</span>   <span class="spec-val">1</span></li>
+              <li><span class="spec-key">Operator Wallet</span><span class="spec-val"><code style="font-size:11px;">0xbd1e790f6040FA62797671B84a50025a0133109C</code></span></li>
+              <li><span class="spec-key">USDC Contract</span>  <span class="spec-val"><code style="font-size:11px;">0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code></span></li>
+              <li><span class="spec-key">Facilitator</span>    <span class="spec-val"><code style="font-size:11px;">api.cdp.coinbase.com/platform/v2/x402</code></span></li>
+              <li><span class="spec-key">Sensor Toll</span>    <span class="spec-val">3000 µUSDC (0.003 USDC) per x402 call</span></li>
+              <li><span class="spec-key">Yield Split</span>    <span class="spec-val">30% Node · 70% Protocol Treasury</span></li>
+              <li><span class="spec-key">Auth</span>           <span class="spec-val">x402 USDC EIP-3009 authorization</span></li>
+              <li><span class="spec-key">Proof System</span>   <span class="spec-val">RISC Zero ZK-STARK · recursive O(1) master proof</span></li>
+              <li><span class="spec-key">Explorer API</span>   <span class="spec-val"><code>https://explorer-api.exergynet.org</code></span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- SOLANA ACTIVE -->
+        <div>
+          <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
+            <span class="network-pill pill-active"><span class="pill-dot"></span>Active — Legacy / ElizaOS Path</span>
+          </div>
+          <div class="card">
+            <ul class="spec-list">
+              <li><span class="spec-key">Protocol</span>       <span class="spec-val"><span class="badge badge-gray">LNES-03</span> Unidirectional Sump</span></li>
+              <li><span class="spec-key">Version</span>        <span class="spec-val"><code>2.0.0-omega</code></span></li>
+              <li><span class="spec-key">Network</span>        <span class="spec-val">Solana Mainnet-Beta</span></li>
+              <li><span class="spec-key">Program ID</span>     <span class="spec-val"><code style="font-size:11px;">7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
+              <li><span class="spec-key">Transient Mint</span> <span class="spec-val"><code style="font-size:11px;">5fZZJ29oH5SDqxiz2tkEf1wopp5Sn5TtcCF3fPS9rdiJ</code></span></li>
+              <li><span class="spec-key">Toll</span>           <span class="spec-val">0.002 SOL (2,000,000 lamports) per cycle</span></li>
+              <li><span class="spec-key">Yield Split</span>    <span class="spec-val">30% Node · 70% Protocol Cold Treasury</span></li>
+              <li><span class="spec-key">Auth</span>           <span class="spec-val">Ed25519 Mesh — zero-trust cryptographic identity</span></li>
+              <li><span class="spec-key">MCP Endpoint</span>   <span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
+              <li><span class="spec-key">Proof System</span>   <span class="spec-val">RISC Zero ZK-STARK · recursive O(1) master proof</span></li>
+              <li><span class="spec-key">Finality</span>       <span class="spec-val">&lt; 400ms · lamport-level atomic settlement</span></li>
+            </ul>
+          </div>
+        </div>
+
       </div>
     </section>
 
-    <!-- CONSENSUS -->
+    <!-- ══════════════════════════════════════════════
+         L0 SEQUENCER
+    ══════════════════════════════════════════════ -->
+    <section>
+      <div class="section-label">Infrastructure Core</div>
+      <h2>L0 Sequencer</h2>
+      <p style="max-width:680px; margin-bottom:1.5rem;">The L0 Sequencer is the Rust/Axum binary at the center of the ExergyNet compute mesh. It receives mobile witness payloads, routes jobs to Desktop Provers, coordinates x402 payment verification with the CDP facilitator, and writes ZK-STARK settlement records to both settlement networks.</p>
+
+      <div class="card accent-border" style="margin-bottom:1.5rem;">
+        <ul class="spec-list">
+          <li><span class="spec-key">Host</span>          <span class="spec-val"><code>18.209.174.113</code> (AWS EC2 — Alpha)</span></li>
+          <li><span class="spec-key">Runtime</span>       <span class="spec-val">Ubuntu 24.04.4 LTS · PM2 process manager</span></li>
+          <li><span class="spec-key">Stack</span>         <span class="spec-val">Rust 1.x · Axum · ethers-rs · RISC Zero SDK</span></li>
+          <li><span class="spec-key">HTTP Port</span>     <span class="spec-val">8080 (public API + relay)</span></li>
+          <li><span class="spec-key">TCP Uplink</span>    <span class="spec-val">8001 (node mesh ingress — entropy-k-core)</span></li>
+          <li><span class="spec-key">Prover Port</span>   <span class="spec-val">TCP 8003 (Desktop Prover listen)</span></li>
+          <li><span class="spec-key">CORS</span>          <span class="spec-val">GET, POST, OPTIONS · Caddy reverse proxy</span></li>
+          <li><span class="spec-key">PM2 Process</span>   <span class="spec-val"><code>L0_Sequencer</code> · auto-restart · logs managed</span></li>
+          <li><span class="spec-key">Binary</span>        <span class="spec-val"><code>l0_apex_testnet</code> · ~8.4 MB release build</span></li>
+        </ul>
+      </div>
+
+      <!-- API SURFACE -->
+      <div class="card">
+        <h4>L0 API Surface</h4>
+        <table class="opcode-table" style="font-family:inherit;">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="badge badge-blue" style="font-size:10px;">POST</span></td><td><code>/api/relay/payload</code></td><td>Route inference or sensor job to LNES03 Desktop Prover. Returns <code>routed_to</code> node ID.</td></tr>
+            <tr><td><span class="badge badge-green" style="font-size:10px;">POST</span></td><td><code>/api/compute/settle</code></td><td>Submit ZK-STARK proof of completed compute. Triggers USDC reward accounting on L0 ledger.</td></tr>
+            <tr><td><span class="badge badge-blue" style="font-size:10px;">POST</span></td><td><code>/api/v1/jobs/inject</code></td><td>Inject <code>ActiveJob</code> into L0 Router for dispatch to mobile witness swarm.</td></tr>
+            <tr><td><span class="badge badge-gray" style="font-size:10px;">GET</span></td><td><code>/api/v1/jobs/nearby</code></td><td>Returns open jobs visible to mobile swarm. Filterable by geofence.</td></tr>
+            <tr><td><span class="badge badge-gray" style="font-size:10px;">GET</span></td><td><code>/api/relay/status</code></td><td>L0 sequencer health check and ledger statistics.</td></tr>
+            <tr><td><span class="badge badge-gray" style="font-size:10px;">GET</span></td><td><code>/x402/sensor/magnetometer</code></td><td>x402-gated. Returns <code>402</code> with payment manifest. Re-submit with <code>X-PAYMENT</code> for data.</td></tr>
+            <tr><td><span class="badge badge-gray" style="font-size:10px;">GET</span></td><td><code>/x402/sensor/network_density</code></td><td>x402-gated. WiFi AP density from Android witness swarm.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         SYSTEM ARCHITECTURE STACK
+    ══════════════════════════════════════════════ -->
+    <section>
+      <div class="section-label">Architecture</div>
+      <h2>Layered System Stack</h2>
+      <p style="max-width:680px; margin-bottom:.5rem;">The ExergyNet compute pipeline flows through five deterministic layers. Every layer produces a verifiable output that becomes the input for the next. No layer can be bypassed.</p>
+
+      <div class="arch-stack">
+        <div class="arch-row blue-row">
+          <div class="arch-label">L3</div>
+          <div class="arch-content">
+            <h5>Demand Layer — AI Agents &amp; 0xWork Marketplace</h5>
+            <p>Autonomous AI agents (ElizaOS, custom MCP, 0xWork Agent #116) originate compute and sensor requests. Agents either call x402 sensor endpoints directly or post bounties to the 0xWork marketplace. AutoHunter daemon claims 0xWork bounties on a 60-second poll cycle.</p>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-label">L2</div>
+          <div class="arch-content">
+            <h5>Payment Layer — x402 / Solana Escrow</h5>
+            <p><strong>Base path:</strong> HTTP 402 handshake. Agent decodes USDC manifest, signs EIP-3009 authorization via CDP facilitator, re-submits with <code>X-PAYMENT</code> header. <strong>Solana path:</strong> Agent locks 0.002 SOL into LNES-03 Escrow PDA. Transient $EXG minted to begin execution tracking.</p>
+          </div>
+        </div>
+        <div class="arch-row blue-row">
+          <div class="arch-label">L1</div>
+          <div class="arch-content">
+            <h5>Routing Layer — L0 Sequencer &amp; Omega Relay</h5>
+            <p>L0 Sequencer (<code>18.209.174.113:8080</code>) receives validated payment, routes job via <code>POST /api/relay/payload</code> to the nearest available LNES03 Desktop Prover or entropy-k-core node. Assigns <code>routed_to</code> node ID. Caddy proxies all inbound traffic with CORS enforcement.</p>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-label">L0</div>
+          <div class="arch-content">
+            <h5>Physical Compute Layer — Desktop Prover Grid &amp; Mobile Witness Swarm</h5>
+            <p>Desktop Provers (Tauri, TCP 8003) and Android witness nodes execute the assigned sensor or compute job. Node identity (Ed25519 / EVM address) is embedded in every payload. RISC Zero STARK compression runs locally. Output hash generated and uploaded to distributed storage.</p>
+          </div>
+        </div>
+        <div class="arch-row highlight-row">
+          <div class="arch-label">S</div>
+          <div class="arch-content">
+            <h5>Settlement Layer — Base Mainnet (Primary) · Solana Mainnet-Beta (Active)</h5>
+            <p>Desktop Prover submits <code>POST /api/compute/settle</code> with proof hash and payout address. L0 Sequencer records <code>ZK-STARK VERIFIED</code>. <strong>Base:</strong> Sovereign Siphon routes USDC to operator EVM wallet. <strong>Solana:</strong> LNES-03 burns $EXG, fractures SOL yield 30/70 atomically.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         SETTLEMENT FLOWS — DUAL
+    ══════════════════════════════════════════════ -->
+    <section>
+      <div class="section-label">Settlement Flows</div>
+      <h2>End-to-End Settlement — Both Networks</h2>
+
+      <div class="flow-dual">
+
+        <!-- BASE x402 PRIMARY -->
+        <div class="flow-col">
+          <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.25rem;">
+            <span class="network-pill pill-primary" style="font-size:10px;"><span class="pill-dot"></span>Base Mainnet · x402 / USDC</span>
+          </div>
+          <div class="flow-node active-node">
+            <span class="badge badge-green" style="min-width:32px; text-align:center;">01</span>
+            <span><strong>Agent Request</strong> — GET sensor endpoint. Server returns <code>HTTP 402</code> with base64 USDC manifest.</span>
+          </div>
+          <div class="flow-arrow-down">↓</div>
+          <div class="flow-node">
+            <span class="badge badge-blue" style="min-width:32px; text-align:center;">02</span>
+            <span><strong>Authorization</strong> — Agent decodes manifest. Signs USDC EIP-3009 transfer via CDP facilitator (<code>eip155:8453</code>).</span>
+          </div>
+          <div class="flow-arrow-down">↓</div>
+          <div class="flow-node">
+            <span class="badge badge-gray" style="min-width:32px; text-align:center;">03</span>
+            <span><strong>Re-submission</strong> — Agent re-sends request with <code>X-PAYMENT</code> header. L0 Sequencer verifies via facilitator.</span>
+          </div>
+          <div class="flow-arrow-down">↓</div>
+          <div class="flow-node">
+            <span class="badge badge-gray" style="min-width:32px; text-align:center;">04</span>
+            <span><strong>Relay</strong> — <code>POST /api/relay/payload</code> dispatches job to LNES03 Desktop Prover. Node executes and STARK-compresses.</span>
+          </div>
+          <div class="flow-arrow-down">↓</div>
+          <div class="flow-node active-node">
+            <span class="badge badge-green" style="min-width:32px; text-align:center;">05</span>
+            <span><strong>Settlement</strong> — <code>POST /api/compute/settle</code> submitted. L0 records proof. Sovereign Siphon routes USDC to operator wallet.</span>
+          </div>
+        </div>
+
+        <!-- SOLANA SOL ACTIVE -->
+        <div class="flow-col">
+          <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.25rem;">
+            <span class="network-pill pill-active" style="font-size:10px;"><span class="pill-dot"></span>Solana Mainnet-Beta · SOL</span>
+          </div>
+          <div class="flow-node">
+            <span class="badge badge-blue" style="min-width:32px; text-align:center;">01</span>
+            <span><strong>Escrow Lock</strong> — AI Agent (ElizaOS / MCP) deposits 0.002 SOL into LNES-03 Escrow PDA.</span>
+          </div>
+          <div class="flow-arrow-down">↓</div>
+          <div class="flow-node">
+            <span class="badge badge-gray" style="min-width:32px; text-align:center;">02</span>
+            <span><strong>Transient Forging</strong> — LNES-03 mints $EXG accounting tokens. Execution tracking begins on-chain.</span>
+          </div>
+          <div class="flow-arrow-down">↓</div>
+          <div class="flow-node">
+            <span class="badge badge-gray" style="min-width:32px; text-align:center;">03</span>
+            <span><strong>Physical Execution</strong> — Swarm executes zkVM job. Entropy signed by node Ed25519 identity.</span>
+          </div>
+          <div class="flow-arrow-down">↓</div>
+          <div class="flow-node">
+            <span class="badge badge-gray" style="min-width:32px; text-align:center;">04</span>
+            <span><strong>STARK Compression</strong> — Sovereign Siphon compresses proofs into O(1) ZK-STARK Master Proof.</span>
+          </div>
+          <div class="flow-arrow-down">↓</div>
+          <div class="flow-node">
+            <span class="badge badge-green" style="min-width:32px; text-align:center;">05</span>
+            <span><strong>Atomic Fracture</strong> — LNES-03 verifies proof, burns $EXG, routes 0.0006 SOL to node. 0.0014 SOL to treasury.</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         CONSENSUS
+    ══════════════════════════════════════════════ -->
     <section>
       <div class="section-label">Consensus</div>
       <h2>Proof-of-Exergy</h2>
       <p style="max-width:680px; margin-bottom:1.5rem;">PoX replaces Proof-of-Work (hash waste) and Proof-of-Stake (capital plutocracy) with a thermodynamically-anchored truth primitive. Physical entropy generation is the proof of work.</p>
-      <div class="card accent-border">
+      <div class="card accent-border" style="margin-bottom:1.5rem;">
         <h4>Exergy Definition</h4>
-        <p style="font-size:14px;">In thermodynamics, exergy is the maximum useful work possible during a process that brings a system into equilibrium with a heat reservoir. ExergyNet binds CPU thermal flux (measured in millidegrees Celsius) to the cryptographic verification of each compute payload.</p>
+        <p style="font-size:14px; line-height:1.7;">In thermodynamics, exergy is the maximum useful work possible during a process that brings a system into equilibrium with a heat reservoir. ExergyNet binds CPU thermal flux — measured in millidegrees Celsius — to the cryptographic verification of each compute payload. Sensors on Android witness nodes supply real electromagnetic field vectors, network density measurements, and geospatial entropy as the physical proof substrate. These vectors are incontrovertible: they cannot be simulated without the physical hardware present in the real-world location at the time of capture.</p>
+      </div>
+      <div class="card">
+        <h4>Sensor Vector Opcodes</h4>
+        <table class="opcode-table">
+          <thead>
+            <tr><th>Opcode</th><th>Vector Type</th><th>Source</th><th>x402 Toll</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>0x01</code></td><td>Optical</td><td>Android camera array</td><td>—</td></tr>
+            <tr><td><code>0x02</code></td><td>Geospatial</td><td>GNSS / GPS witness</td><td>—</td></tr>
+            <tr><td><code>0x06</code></td><td>Magnetometer</td><td>Android magnetometer sensor</td><td>3000 µUSDC</td></tr>
+            <tr><td><code>0x08</code></td><td>Network Density</td><td>WiFi AP scan (BSSID count)</td><td>3000 µUSDC</td></tr>
+            <tr><td><code>0x0B</code></td><td>Inference / Desktop Compute</td><td>LNES03 Desktop Prover</td><td>Variable USDC</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
-    <!-- SETTLEMENT FLOW -->
-    <section>
-      <div class="section-label">Settlement Flow</div>
-      <h2>End-to-End Settlement</h2>
-      <div class="flow" style="flex-direction:column; align-items:flex-start; gap:0.75rem; margin:1.5rem 0;">
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <span class="badge badge-blue">L2</span>
-          <span>AI Agent submits job — 0.002 SOL locked into Escrow PDA</span>
-        </div>
-        <div style="padding-left:2.5rem; color:var(--text-faint); font-size:18px;">↓</div>
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <span class="badge badge-gray">L1</span>
-          <span>LNES-03 mints transient $EXG — execution tracking begins</span>
-        </div>
-        <div style="padding-left:2.5rem; color:var(--text-faint); font-size:18px;">↓</div>
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <span class="badge badge-gray">L0</span>
-          <span>Physical swarm executes zkVM — entropy signed by node identity</span>
-        </div>
-        <div style="padding-left:2.5rem; color:var(--text-faint); font-size:18px;">↓</div>
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <span class="badge badge-gray">L0</span>
-          <span>Sovereign Siphon compresses proofs into O(1) ZK-STARK Master Proof</span>
-        </div>
-        <div style="padding-left:2.5rem; color:var(--text-faint); font-size:18px;">↓</div>
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <span class="badge badge-green">L1</span>
-          <span>LNES-03 verifies proof, burns $EXG, fractures SOL yield atomically</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ECONOMIC ARCHITECTURE -->
+    <!-- ══════════════════════════════════════════════
+         ECONOMIC ARCHITECTURE — DUAL
+    ══════════════════════════════════════════════ -->
     <section>
       <div class="section-label">Economic Architecture</div>
-      <h2>Unidirectional Sump Model</h2>
-      <p style="max-width:680px; margin-bottom:1.5rem;">By eliminating bi-directional AMM liquidity pools, ExergyNet achieves zero-slippage, zero-inflation economics. Native SOL flows in one direction — into the protocol.</p>
+      <h2>Unidirectional Sump — Dual Network</h2>
+      <p style="max-width:680px; margin-bottom:1.5rem;">By eliminating bi-directional AMM liquidity pools, ExergyNet achieves zero-slippage, zero-inflation economics. Value flows in one direction — into the protocol — and is fractureed atomically at settlement to the operator and treasury.</p>
 
-      <div class="card-grid">
-        <div class="card">
-          <h4>Inbound Toll</h4>
-          <div style="font-family:var(--mono); font-size:1.8rem; color:var(--blue); font-weight:700; margin:0.5rem 0;">0.002 SOL</div>
-          <p style="font-size:13px;">Per verified compute cycle. Paid by external AI agent.</p>
+      <!-- BASE USDC STATS -->
+      <p style="font-size:12px; color:var(--text-faint); margin-bottom:.5rem; text-transform:uppercase; letter-spacing:.06em;">Base Mainnet · USDC</p>
+      <div class="stat-block" style="margin-bottom:1.5rem;">
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--blue);">0.003</div>
+          <div class="stat-label">USDC per x402<br>sensor call (max toll)</div>
         </div>
-        <div class="card accent-border">
-          <h4>Node Yield</h4>
-          <div style="font-family:var(--mono); font-size:1.8rem; color:var(--accent); font-weight:700; margin:0.5rem 0;">0.0006 SOL</div>
-          <p style="font-size:13px;">30% routed instantly to hardware operator.</p>
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--accent);">~0.0009</div>
+          <div class="stat-label">USDC node yield<br>per sensor call (30%)</div>
         </div>
-        <div class="card">
-          <h4>Protocol Treasury</h4>
-          <div style="font-family:var(--mono); font-size:1.8rem; color:var(--text-soft); font-weight:700; margin:0.5rem 0;">0.0014 SOL</div>
-          <p style="font-size:13px;">70% swept permanently into cold treasury.</p>
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--text-soft);">Variable</div>
+          <div class="stat-label">USDC compute yield<br>set by job poster</div>
+        </div>
+      </div>
+
+      <!-- SOLANA SOL STATS -->
+      <p style="font-size:12px; color:var(--text-faint); margin-bottom:.5rem; text-transform:uppercase; letter-spacing:.06em;">Solana Mainnet-Beta · SOL</p>
+      <div class="stat-block">
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--blue);">0.002</div>
+          <div class="stat-label">SOL inbound toll<br>per verified compute cycle</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--accent);">0.0006</div>
+          <div class="stat-label">SOL node yield<br>30% — instant settlement</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--text-soft);">0.0014</div>
+          <div class="stat-label">SOL to treasury<br>70% — cold wallet sweep</div>
         </div>
       </div>
     </section>
@@ -134,22 +507,20 @@
     <section class="cta-section" style="border-top:1px solid var(--border);">
       <div class="container">
         <h2>Inspect the Protocol</h2>
-        <p>Verify every LNES-03 transaction directly on Solana Explorer.</p>
+        <p>Verify every settlement transaction on-chain. Integrate the x402 sensor layer. Run the LNES-03 Desktop Prover.</p>
         <div class="btn-row" style="justify-content:center;">
-          <a href="proof.html"      class="btn btn-primary">View On-Chain Proof</a>
-          <a href="whitepaper.html" class="btn btn-secondary">Architecture Whitepaper</a>
-          <a href="docs.html"       class="btn btn-ghost">Integration Guide &rarr;</a>
+          <a href="lnes06.html"     class="btn btn-primary">Command Center &amp; Downloads</a>
+          <a href="proof.html"      class="btn btn-secondary">View On-Chain Proof</a>
+          <a href="docs.html"       class="btn btn-blue">Integration Guide</a>
+          <a href="whitepaper.html" class="btn btn-ghost">Architecture Whitepaper &rarr;</a>
         </div>
       </div>
     </section>
 
   </div>
-
 </main>
 
-  <!-- Footer will be injected here -->
   <div id="site-footer"></div>
-
 </div>
 
 <script src="main.js"></script>
