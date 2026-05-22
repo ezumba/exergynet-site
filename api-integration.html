@@ -64,7 +64,7 @@
 .mb-get  { background: rgba(0,232,135,0.15); color: var(--accent); }
 .mb-post { background: rgba(255,184,48,0.15); color: var(--amber); }
 
-.docs-main { padding: 56px 64px; max-width: 900px; }
+.docs-main { padding: 56px 64px; max-width: 900px; min-width: 0; overflow-wrap: break-word; }
 
 .docs-section { margin-bottom: 80px; scroll-margin-top: calc(var(--nav-h) + 24px); }
 
@@ -189,7 +189,7 @@
 .flow-step:not(:last-child)::after { content:''; position:absolute; left:21px; top:52px; bottom:0; width:2px; background:var(--border); }
 .flow-step-num { display:flex; justify-content:center; padding-top:8px; z-index:1; }
 .flow-num-circle { width:36px; height:36px; border-radius:50%; border:1.5px solid var(--accent); background:rgba(0,232,135,0.08); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:12px; font-weight:700; color:var(--accent); flex-shrink:0; }
-.flow-step-content { padding:4px 0 36px 20px; }
+.flow-step-content { padding:4px 0 36px 20px; min-width:0; overflow-wrap:break-word; word-break:break-word; }
 .flow-step-label { font-family:var(--mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
 .flow-step-title { font-family:var(--display); font-size:18px; font-weight:700; color:var(--text); margin-bottom:8px; }
 .flow-step-body  { font-size:14px; color:var(--text-soft); line-height:1.75; }
