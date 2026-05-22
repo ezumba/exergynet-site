@@ -5,109 +5,97 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>API Integration Docs — ExergyNet Developer Portal</title>
 <meta name="description" content="Complete B2B integration reference for the ExergyNet decentralized compute network. Connect your biotech SaaS to ZK-verified pharmaceutical simulation in four steps.">
-<script>(function(){ const t=localStorage.getItem('md-theme')||'dark'; document.documentElement.setAttribute('data-theme',t); })();</script>
-</head>
-<body class="page-body">
-
-<div id="header-mount"></div>
-
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 <style>
-/* ════════════════════════════════════════════════
-   DOCS LAYOUT
-════════════════════════════════════════════════ */
+/* ═══ API DOCS PAGE-SPECIFIC CSS ═══
+   Uses ExergyNet design tokens (style.css)
+   --accent=green, --blue=blue, --red=danger, --text/--text-soft=white/dim
+*/
+
 .docs-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
-  min-height: calc(100vh - var(--nav-h, 64px));
+  min-height: calc(100vh - var(--nav-h));
   max-width: 1400px;
   margin: 0 auto;
   gap: 0;
 }
 
-/* ── Sidebar ── */
 .docs-sidebar {
   position: sticky;
-  top: var(--nav-h, 64px);
-  height: calc(100vh - var(--nav-h, 64px));
+  top: var(--nav-h);
+  height: calc(100vh - var(--nav-h));
   overflow-y: auto;
   border-right: 1px solid var(--border);
-  background: var(--bg-one);
+  background: var(--bg-surface);
   padding: 32px 0;
   flex-shrink: 0;
 }
 .docs-sidebar::-webkit-scrollbar { width: 4px; }
 .docs-sidebar::-webkit-scrollbar-track { background: transparent; }
-.docs-sidebar::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+.docs-sidebar::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
 
 .sidebar-section { margin-bottom: 28px; padding: 0 20px; }
 .sidebar-section-label {
   font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--white-dim); opacity: 0.5;
+  text-transform: uppercase; color: var(--text-soft); opacity: 0.5;
   margin-bottom: 10px; display: block;
 }
 .sidebar-links { list-style: none; display: flex; flex-direction: column; gap: 2px; }
 .sidebar-links a {
   display: flex; align-items: center; gap: 8px;
   font-family: var(--mono); font-size: 12px; letter-spacing: 0.02em;
-  color: var(--white-dim); text-decoration: none; padding: 6px 10px;
-  border-radius: 4px; transition: all var(--transition, 0.22s ease);
+  color: var(--text-soft); text-decoration: none; padding: 6px 10px;
+  border-radius: 4px; transition: all 0.15s ease;
   border-left: 2px solid transparent;
 }
-.sidebar-links a:hover { color: var(--teal); background: var(--teal-ghost); border-left-color: var(--teal); }
-.sidebar-links a.active { color: var(--teal); background: var(--teal-ghost); border-left-color: var(--teal); }
+.sidebar-links a:hover { color: var(--accent); background: var(--accent-dim); border-left-color: var(--accent); }
+.sidebar-links a.active { color: var(--accent); background: var(--accent-dim); border-left-color: var(--accent); }
 .sidebar-links a .method-badge {
   font-size: 9px; letter-spacing: 0.06em; padding: 2px 5px; border-radius: 2px;
   font-weight: 700; flex-shrink: 0;
 }
-.mb-get  { background: rgba(0,224,168,0.15); color: var(--teal); }
-.mb-post { background: rgba(245,158,11,0.15); color: var(--amber); }
+.mb-get  { background: rgba(0,232,135,0.15); color: var(--accent); }
+.mb-post { background: rgba(255,184,48,0.15); color: var(--amber); }
 
-/* ── Main content ── */
-.docs-main {
-  padding: 56px 64px;
-  max-width: 900px;
-}
+.docs-main { padding: 56px 64px; max-width: 900px; }
 
-/* ── Section anchors ── */
-.docs-section {
-  margin-bottom: 80px;
-  scroll-margin-top: calc(var(--nav-h, 64px) + 24px);
-}
+.docs-section { margin-bottom: 80px; scroll-margin-top: calc(var(--nav-h) + 24px); }
 
-/* ── Typography ── */
 .docs-h1 {
   font-family: var(--display); font-size: clamp(28px,3vw,42px);
-  font-weight: 800; letter-spacing: -0.03em; color: var(--white);
+  font-weight: 800; letter-spacing: -0.03em; color: var(--text);
   margin-bottom: 16px; line-height: 1.1;
 }
-.docs-h1 em { font-style: normal; color: var(--teal); }
+.docs-h1 em { font-style: normal; color: var(--accent); }
 .docs-h2 {
   font-family: var(--display); font-size: 24px; font-weight: 700;
-  letter-spacing: -0.02em; color: var(--white); margin-bottom: 16px;
+  letter-spacing: -0.02em; color: var(--text); margin-bottom: 16px;
   padding-bottom: 12px; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; gap: 12px;
 }
 .docs-h3 {
   font-family: var(--mono); font-size: 13px; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--white-dim); margin-bottom: 12px;
+  color: var(--text-soft); margin-bottom: 12px;
 }
-.docs-body {
-  font-size: 15px; color: var(--white-dim); line-height: 1.85;
-  margin-bottom: 20px;
-}
-.docs-body a { color: var(--teal); text-decoration: none; }
+.docs-body { font-size: 15px; color: var(--text-soft); line-height: 1.85; margin-bottom: 20px; }
+.docs-body a { color: var(--accent); text-decoration: none; }
 .docs-body a:hover { text-decoration: underline; }
-.docs-body strong { color: var(--white); }
+.docs-body strong { color: var(--text); }
 
-/* Section tag */
 .docs-tag {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--teal); margin-bottom: 10px;
-  display: block;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block;
 }
 
-/* ── Code blocks ── */
+/* Code blocks */
 .code-block {
   background: #020810; border: 1px solid var(--border);
   border-radius: var(--radius); overflow: hidden;
@@ -120,170 +108,149 @@
 }
 .code-lang {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--white-dim); opacity: 0.5;
+  text-transform: uppercase; color: var(--text-soft); opacity: 0.5;
 }
 .code-copy-btn {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--white-dim); background: transparent;
+  text-transform: uppercase; color: var(--text-soft); background: transparent;
   border: 1px solid var(--border); border-radius: 3px; padding: 3px 8px;
-  cursor: pointer; transition: all var(--transition, 0.22s ease);
+  cursor: pointer; transition: all 0.15s ease;
 }
-.code-copy-btn:hover { color: var(--teal); border-color: var(--teal); }
-.code-copy-btn.copied { color: var(--teal); border-color: var(--teal); }
+.code-copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.code-copy-btn.copied { color: var(--accent); border-color: var(--accent); }
 .code-body { padding: 20px; overflow-x: auto; }
 .code-body pre {
   font-family: var(--mono); font-size: 12px; line-height: 1.9;
   color: #c9d8ed; margin: 0; white-space: pre;
 }
-/* Syntax tokens */
-.ck { color: #8BACC8; }          /* key */
-.cs { color: #00E0A8; }          /* string */
-.cn { color: #F59E0B; }          /* number */
-.cc { color: #5A6B8A; }          /* comment */
-.cf { color: #7B5CF6; }          /* function / keyword */
-.co { color: #FF4D6D; }          /* operator */
-.cm { color: #60A5FA; }          /* method */
+/* Syntax tokens — override style.css globals for code blocks */
+.code-block .ck { color: #8BACC8; }
+.code-block .cs { color: #00E0A8; }
+.code-block .cn { color: #F59E0B; }
+.code-block .cc { color: #5A6B8A; }
+.code-block .cf { color: #7B5CF6; }
+.code-block .co { color: #FF4D6D; }
+.code-block .cm { color: #60A5FA; }
 
-/* Inline code */
-code {
-  font-family: var(--mono); font-size: 12px;
-  background: rgba(0,224,168,0.08); color: var(--teal);
-  padding: 2px 6px; border-radius: 3px; border: 1px solid rgba(0,224,168,0.15);
-}
+[data-theme="light"] .code-block { background: #f8fafc; }
+[data-theme="light"] .code-body pre { color: #2d4a6e; }
+[data-theme="light"] .code-block .cs { color: #007a5e; }
+[data-theme="light"] .code-block .cn { color: #c27a00; }
+[data-theme="light"] .code-block .ck { color: #3a5a8c; }
+[data-theme="light"] .code-block .cc { color: #8ba0b5; }
+[data-theme="light"] .code-block .cf { color: #5a3fcc; }
 
-/* ── Endpoint cards ── */
-.endpoint-card {
-  border: 1px solid var(--border); border-radius: var(--radius);
-  overflow: hidden; margin-bottom: 32px;
-}
+/* Endpoint cards */
+.endpoint-card { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 32px; }
 .endpoint-header {
   display: flex; align-items: center; gap: 14px;
-  padding: 16px 20px; background: var(--bg-two);
+  padding: 16px 20px; background: var(--bg-card);
   border-bottom: 1px solid var(--border);
 }
 .ep-method {
   font-family: var(--mono); font-size: 11px; font-weight: 700;
-  letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px;
-  flex-shrink: 0;
+  letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px; flex-shrink: 0;
 }
-.ep-get  { background: rgba(0,224,168,0.15); color: var(--teal); border: 1px solid rgba(0,224,168,0.3); }
-.ep-post { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
-.ep-url {
-  font-family: var(--mono); font-size: 13px; color: var(--white);
-  word-break: break-all;
-}
-.ep-desc { padding: 16px 20px; font-size: 14px; color: var(--white-dim); line-height: 1.7; border-bottom: 1px solid var(--border); }
+.ep-get  { background: rgba(0,232,135,0.15); color: var(--accent); border: 1px solid rgba(0,232,135,0.3); }
+.ep-post { background: rgba(255,184,48,0.15); color: var(--amber); border: 1px solid rgba(255,184,48,0.3); }
+.ep-url  { font-family: var(--mono); font-size: 13px; color: var(--text); word-break: break-all; }
+.ep-desc { padding: 16px 20px; font-size: 14px; color: var(--text-soft); line-height: 1.7; border-bottom: 1px solid var(--border); }
 .ep-body { padding: 20px; }
-.ep-body-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white-dim); opacity: 0.5; margin-bottom: 8px; display: block; }
+.ep-body-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-soft); opacity: 0.5; margin-bottom: 8px; display: block; }
 
-/* ── Compute matrix table ── */
+/* Compute matrix */
 .matrix-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
-.matrix-table thead tr { background: var(--bg-two); }
-.matrix-table th { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); padding: 12px 16px; text-align: left; font-weight: 400; border-bottom: 1px solid var(--border); }
+.matrix-table thead tr { background: var(--bg-card); }
+.matrix-table th { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-soft); padding: 12px 16px; text-align: left; font-weight: 400; border-bottom: 1px solid var(--border); }
 .matrix-table td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .matrix-table tr:last-child td { border-bottom: none; }
-.matrix-table tr:hover td { background: var(--bg-two); }
-.sim-name { color: var(--white); font-weight: 500; }
-.sim-id { font-family: var(--mono); font-size: 11px; color: var(--teal); }
+.matrix-table tr:hover td { background: var(--bg-card); }
+.sim-name { color: var(--text); font-weight: 500; }
 .class-chip { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; border: 1px solid; }
-.cl-light  { color: var(--teal);   border-color: rgba(0,224,168,0.3);  background: rgba(0,224,168,0.08); }
-.cl-medium { color: var(--amber);  border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.08); }
-.cl-heavy  { color: var(--danger); border-color: rgba(255,77,109,0.3); background: rgba(255,77,109,0.08); }
-.circuit-chip { font-family: var(--mono); font-size: 11px; color: var(--violet); }
-.multiplier { font-family: var(--mono); font-size: 12px; color: var(--white-dim); }
+.cl-light  { color: var(--accent); border-color: rgba(0,232,135,0.3);  background: rgba(0,232,135,0.08); }
+.cl-medium { color: var(--amber);  border-color: rgba(255,184,48,0.3); background: rgba(255,184,48,0.08); }
+.cl-heavy  { color: var(--red);    border-color: rgba(255,90,90,0.3);  background: rgba(255,90,90,0.08); }
+.circuit-chip { font-family: var(--mono); font-size: 11px; color: var(--blue); }
+.multiplier   { font-family: var(--mono); font-size: 12px; color: var(--text-soft); }
 
-/* ── Info / warning boxes ── */
-.info-box {
-  padding: 16px 20px; border-radius: var(--radius); margin-bottom: 20px;
-  border-left: 3px solid; font-size: 14px; line-height: 1.75;
-}
+/* Info boxes */
+.info-box { padding: 16px 20px; border-radius: var(--radius); margin-bottom: 20px; border-left: 3px solid; font-size: 14px; line-height: 1.75; }
 .info-box-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; font-weight: 700; display: block; }
-.info-note    { border-left-color: var(--teal);   background: rgba(0,224,168,0.05);   color: var(--white-dim); }
-.info-note .info-box-label { color: var(--teal); }
-.info-warn    { border-left-color: var(--amber);  background: rgba(245,158,11,0.05);  color: var(--white-dim); }
-.info-warn .info-box-label { color: var(--amber); }
-.info-critical{ border-left-color: var(--danger); background: rgba(255,77,109,0.05); color: var(--white-dim); }
-.info-critical .info-box-label { color: var(--danger); }
+.info-note     { border-left-color: var(--accent); background: rgba(0,232,135,0.05); color: var(--text-soft); }
+.info-note .info-box-label     { color: var(--accent); }
+.info-warn     { border-left-color: var(--amber);  background: rgba(255,184,48,0.05); color: var(--text-soft); }
+.info-warn .info-box-label     { color: var(--amber); }
+.info-critical { border-left-color: var(--red);    background: rgba(255,90,90,0.05); color: var(--text-soft); }
+.info-critical .info-box-label { color: var(--red); }
 
-/* ── Flow steps ── */
+/* Flow steps */
 .flow-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 32px; }
 .flow-step { display: grid; grid-template-columns: 44px 1fr; gap: 0; position: relative; }
 .flow-step:not(:last-child)::after { content:''; position:absolute; left:21px; top:52px; bottom:0; width:2px; background:var(--border); }
 .flow-step-num { display:flex; justify-content:center; padding-top:8px; z-index:1; }
-.flow-num-circle { width:36px; height:36px; border-radius:50%; border:1.5px solid var(--teal); background:rgba(0,224,168,0.08); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:12px; font-weight:700; color:var(--teal); flex-shrink:0; }
+.flow-num-circle { width:36px; height:36px; border-radius:50%; border:1.5px solid var(--accent); background:rgba(0,232,135,0.08); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:12px; font-weight:700; color:var(--accent); flex-shrink:0; }
 .flow-step-content { padding:4px 0 36px 20px; }
-.flow-step-label { font-family:var(--mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--teal); margin-bottom:4px; }
-.flow-step-title { font-family:var(--display); font-size:18px; font-weight:700; color:var(--white); margin-bottom:8px; }
-.flow-step-body  { font-size:14px; color:var(--white-dim); line-height:1.75; }
+.flow-step-label { font-family:var(--mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
+.flow-step-title { font-family:var(--display); font-size:18px; font-weight:700; color:var(--text); margin-bottom:8px; }
+.flow-step-body  { font-size:14px; color:var(--text-soft); line-height:1.75; }
 
-/* ── Economic flow visual ── */
+/* Economic flow */
 .econ-flow { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center; gap:0; margin-bottom:32px; }
-.econ-node { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; text-align:center; }
-.econ-node-label { font-family:var(--mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--white-dim); margin-bottom:6px; }
+.econ-node { background:var(--bg-card-2); border:1px solid var(--border); border-radius:var(--radius); padding:16px; text-align:center; }
+.econ-node-label { font-family:var(--mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-soft); margin-bottom:6px; }
 .econ-node-val { font-family:var(--display); font-size:22px; font-weight:800; }
-.econ-node-sub { font-size:11px; color:var(--white-dim); margin-top:4px; font-family:var(--mono); }
-.econ-node.retail .econ-node-val { color:var(--teal); }
+.econ-node-sub { font-size:11px; color:var(--text-soft); margin-top:4px; font-family:var(--mono); }
+.econ-node.retail    .econ-node-val { color:var(--accent); }
 .econ-node.wholesale .econ-node-val { color:var(--amber); }
-.econ-node.prover .econ-node-val { color:var(--violet); }
-.econ-arrow { font-family:var(--mono); font-size:18px; color:var(--border-bright); padding:0 8px; text-align:center; }
+.econ-node.prover    .econ-node-val { color:var(--blue); }
+.econ-arrow { font-family:var(--mono); font-size:18px; color:var(--border-mid); padding:0 8px; text-align:center; }
 
-/* ── Error codes ── */
+/* Error table */
 .error-table { width:100%; border-collapse:collapse; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
-.error-table th { font-family:var(--mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--white-dim); padding:12px 16px; background:var(--bg-two); border-bottom:1px solid var(--border); text-align:left; font-weight:400; }
+.error-table th { font-family:var(--mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-soft); padding:12px 16px; background:var(--bg-card); border-bottom:1px solid var(--border); text-align:left; font-weight:400; }
 .error-table td { padding:12px 16px; font-size:13px; border-bottom:1px solid var(--border); }
 .error-table tr:last-child td { border-bottom:none; }
 .err-code { font-family:var(--mono); font-weight:700; }
-.err-4xx { color:var(--amber); }
-.err-5xx { color:var(--danger); }
-.err-2xx { color:var(--teal); }
-.err-msg { color:var(--white-dim); }
-.err-fix { font-size:12px; color:var(--white-dim); opacity:0.7; }
+.err-4xx  { color:var(--amber); }
+.err-5xx  { color:var(--red); }
+.err-msg  { color:var(--text-soft); }
+.err-fix  { font-size:12px; color:var(--text-soft); opacity:0.7; }
 
-/* ── SDK install block ── */
-.install-tabs { display:flex; gap:2px; margin-bottom:-1px; }
-.install-tab { font-family:var(--mono); font-size:11px; letter-spacing:0.06em; padding:8px 16px; background:var(--bg-two); border:1px solid var(--border); border-bottom:none; cursor:pointer; color:var(--white-dim); border-radius:4px 4px 0 0; transition:all var(--transition); }
-.install-tab.active { background:var(--bg-card); color:var(--teal); border-color:var(--border); border-bottom:1px solid var(--bg-card); z-index:1; }
+/* Auth rows */
+.auth-row { display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--bg-card); border:1px solid var(--border); border-radius:4px; margin-bottom:12px; font-family:var(--mono); font-size:12px; }
+.auth-key { color:var(--text-soft); min-width:120px; }
+.auth-val { color:var(--accent); word-break:break-all; }
 
-/* ── Auth header display ── */
-.auth-row { display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--bg-two); border:1px solid var(--border); border-radius:4px; margin-bottom:12px; font-family:var(--mono); font-size:12px; }
-.auth-key { color:var(--white-dim); min-width:120px; }
-.auth-val { color:var(--teal); word-break:break-all; }
-
-/* ── Page hero ── */
+/* Hero */
 .docs-hero { padding:60px 0 40px; border-bottom:1px solid var(--border); margin-bottom:60px; }
 .docs-hero-badges { display:flex; gap:8px; flex-wrap:wrap; margin-top:20px; }
-.docs-badge { font-family:var(--mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; padding:4px 10px; border-radius:2px; border:1px solid; }
-.db-live    { color:var(--teal);   border-color:rgba(0,224,168,0.3);  background:rgba(0,224,168,0.08); }
-.db-base    { color:#0052FF;        border-color:rgba(0,82,255,0.3);   background:rgba(0,82,255,0.08); }
-.db-zk      { color:var(--violet); border-color:rgba(123,92,246,0.3); background:rgba(123,92,246,0.08); }
-.db-usdc    { color:#2775CA;        border-color:rgba(39,117,202,0.3); background:rgba(39,117,202,0.08); }
 
-/* ── Divider ── */
+/* Divider */
 .docs-divider { border:none; border-top:1px solid var(--border); margin:60px 0; }
 
-/* ── Response example ── */
+/* Response status */
 .resp-status { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12px; margin-bottom:12px; }
-.rs-200 { color:var(--teal); }
+.rs-200 { color:var(--accent); }
 .rs-400 { color:var(--amber); }
-.rs-500 { color:var(--danger); }
+.rs-500 { color:var(--red); }
 .rs-dot { width:8px; height:8px; border-radius:50%; background:currentColor; }
 
-/* ── Prover identity section ── */
+/* Prover identity grid */
 .identity-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
-.identity-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
-.identity-card.wrong { border-color:rgba(255,77,109,0.3); }
-.identity-card.correct { border-color:rgba(0,224,168,0.3); }
+.identity-card { background:var(--bg-card-2); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+.identity-card.wrong   { border-color:rgba(255,90,90,0.3); }
+.identity-card.correct { border-color:rgba(0,232,135,0.3); }
 .identity-card-label { font-family:var(--mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
-.identity-card.wrong .identity-card-label { color:var(--danger); }
-.identity-card.correct .identity-card-label { color:var(--teal); }
+.identity-card.wrong   .identity-card-label { color:var(--red); }
+.identity-card.correct .identity-card-label { color:var(--accent); }
 
-/* ── CTA ── */
-.docs-cta { margin-top:80px; padding:40px; background:rgba(0,224,168,0.04); border:1px solid rgba(0,224,168,0.2); border-radius:var(--radius); text-align:center; }
-.docs-cta-title { font-family:var(--display); font-size:26px; font-weight:800; color:var(--white); margin-bottom:12px; }
-.docs-cta-body  { font-size:15px; color:var(--white-dim); margin-bottom:24px; }
+/* CTA */
+.docs-cta { margin-top:80px; padding:40px; background:rgba(0,232,135,0.04); border:1px solid rgba(0,232,135,0.2); border-radius:var(--radius); text-align:center; }
+.docs-cta-title { font-family:var(--display); font-size:26px; font-weight:800; color:var(--text); margin-bottom:12px; }
+.docs-cta-body  { font-size:15px; color:var(--text-soft); margin-bottom:24px; }
 .docs-cta-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 
-/* ── Mobile ── */
+/* Mobile */
 @media (max-width:900px) {
   .docs-layout { grid-template-columns:1fr; }
   .docs-sidebar { display:none; }
@@ -296,20 +263,14 @@ code {
   .matrix-table-wrap { overflow-x:auto; }
   .matrix-table { min-width:560px; }
 }
-
-/* Light mode adjustments */
-[data-theme="light"] .code-block { background:#f8fafc; }
-[data-theme="light"] .code-body pre { color:#2d4a6e; }
-[data-theme="light"] .cs { color:#007a5e; }
-[data-theme="light"] .cn { color:#c27a00; }
-[data-theme="light"] .ck { color:#3a5a8c; }
-[data-theme="light"] .cc { color:#8ba0b5; }
-[data-theme="light"] .cf { color:#5a3fcc; }
 </style>
+</head>
+<body>
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
+  <div id="site-header"></div>
+  <main class="page">
 
-<!-- ═══════════════════════════════════════════
-     TWO-COLUMN DOCS LAYOUT
-═══════════════════════════════════════════ -->
 <div class="docs-layout">
 
   <!-- SIDEBAR -->
@@ -367,7 +328,7 @@ code {
   </aside>
 
   <!-- MAIN CONTENT -->
-  <main class="docs-main">
+  <div class="docs-main">
 
     <!-- HERO -->
     <div class="docs-hero">
@@ -375,17 +336,17 @@ code {
       <h1 class="docs-h1">B2B Integration<br><em>API Reference</em></h1>
       <p class="docs-body">Connect your biotech SaaS to ZK-verified pharmaceutical compute in four steps. ExergyNet separates data mass from cryptographic proof — heavy files stay in S3, mathematical truth settles on Base L2.</p>
       <div class="docs-hero-badges">
-        <span class="docs-badge db-live">L0 Router Live</span>
-        <span class="docs-badge db-base">Base L2 · LNES-04</span>
-        <span class="docs-badge db-zk">ZK-STARK Verified</span>
-        <span class="docs-badge db-usdc">USDC Settlement</span>
+        <span class="badge badge-green">L0 Router Live</span>
+        <span class="badge badge-blue">Base L2 · LNES-04</span>
+        <span class="badge badge-blue">ZK-STARK Verified</span>
+        <span class="badge badge-green">USDC Settlement</span>
       </div>
     </div>
 
-    <!-- ═══ SECTION 1: OVERVIEW ═══ -->
+    <!-- 01: OVERVIEW -->
     <section class="docs-section" id="overview">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">01</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">01</span>
         The Thermodynamic Pipeline
       </h2>
       <p class="docs-body">ExergyNet operates on one physical axiom: <strong>electricity cost is the only irreducible cost of computation.</strong> All other cloud pricing — corporate margins, hardware depreciation, profit extraction — is eliminated by routing work to a global swarm of prover nodes that compete on electricity price alone.</p>
@@ -427,10 +388,10 @@ code {
       </div>
     </section>
 
-    <!-- ═══ SECTION 2: ECONOMICS ═══ -->
+    <!-- 02: ECONOMICS -->
     <section class="docs-section" id="economics">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">02</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">02</span>
         Economic Architecture
       </h2>
       <p class="docs-body">The retail and wholesale capital flows are <strong>strictly decoupled</strong>. Your SaaS treasury and the ExergyNet escrow are separate financial rails. Never mix them.</p>
@@ -485,18 +446,16 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 
     <hr class="docs-divider">
 
-    <!-- ═══ SECTION 3: QUICK START ═══ -->
+    <!-- 03: QUICK START -->
     <section class="docs-section" id="quickstart">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">03</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">03</span>
         Quick Start
       </h2>
       <p class="docs-body">Full integration from a cold start. Assumes Node.js backend and a funded Base L2 surplus agent wallet.</p>
-
       <div class="code-block">
         <div class="code-header"><span class="code-lang">JavaScript — Full Integration</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
         <div class="code-body"><pre><span class="cf">import</span> { ExergyNetClient } <span class="cf">from</span> <span class="cs">"@exergynet/agent-sdk"</span>;
-<span class="cf">import</span> { createHash } <span class="cf">from</span> <span class="cs">"crypto"</span>;
 <span class="cf">import</span> fs <span class="cf">from</span> <span class="cs">"fs"</span>;
 
 <span class="cc">// ── 1. Initialize SDK with your surplus agent wallet ──</span>
@@ -508,72 +467,45 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 });
 
 <span class="cf">async function</span> <span class="cm">runSimulation</span>(filePath, simulationType) {
-
   <span class="cc">// ── 2. Get wholesale cost estimate ──</span>
   <span class="cf">const</span> fileBuffer = fs.<span class="cm">readFileSync</span>(filePath);
   <span class="cf">const</span> fileStat   = fs.<span class="cm">statSync</span>(filePath);
 
-  <span class="cf">const</span> estimate = <span class="cf">await</span> <span class="cm">fetch</span>(
-    <span class="cs">"https://explorer-api.exergynet.org/api/v1/estimate"</span>,
-    {
-      method: <span class="cs">"POST"</span>,
-      headers: { <span class="cs">"Content-Type"</span>: <span class="cs">"application/json"</span> },
-      body: <span class="cm">JSON.stringify</span>({
-        simulation_type: simulationType,
-        blueprint_data: {
-          file_size_bytes: fileStat.size,
-          molecular_weight: <span class="cn">820</span>,
-          atom_count: <span class="cn">90</span>,
-        },
-      }),
-    }
-  ).<span class="cm">then</span>(r => r.<span class="cm">json</span>());
-
-  console.<span class="cm">log</span>(<span class="cs">`Wholesale: $${(estimate.wholesale_usdc_micro_units / <span class="cn">1_000_000</span>).<span class="cm">toFixed</span>(<span class="cn">2</span>)}`</span>);
+  <span class="cf">const</span> estimate = <span class="cf">await</span> <span class="cm">fetch</span>(<span class="cs">"https://explorer-api.exergynet.org/api/v1/estimate"</span>, {
+    method: <span class="cs">"POST"</span>,
+    headers: { <span class="cs">"Content-Type"</span>: <span class="cs">"application/json"</span> },
+    body: <span class="cm">JSON.stringify</span>({
+      simulation_type: simulationType,
+      blueprint_data: { file_size_bytes: fileStat.size, molecular_weight: <span class="cn">820</span>, atom_count: <span class="cn">90</span> },
+    }),
+  }).<span class="cm">then</span>(r => r.<span class="cm">json</span>());
 
   <span class="cc">// ── 3. Upload compound file ──</span>
   <span class="cf">const</span> formData = <span class="cf">new</span> <span class="cm">FormData</span>();
   formData.<span class="cm">append</span>(<span class="cs">"file"</span>, <span class="cf">new</span> <span class="cm">Blob</span>([fileBuffer]), <span class="cs">"compound.sdf"</span>);
-
-  <span class="cf">const</span> upload = <span class="cf">await</span> <span class="cm">fetch</span>(
-    <span class="cs">"https://explorer-api.exergynet.org/api/v1/compute/upload"</span>,
-    { method: <span class="cs">"POST"</span>, body: formData }
-  ).<span class="cm">then</span>(r => r.<span class="cm">json</span>());
-
-  <span class="cf">const</span> blueprintId = upload.blueprint_id;     <span class="cc">// "UPLOAD-31EE488C"</span>
-  <span class="cf">const</span> sha256Hash  = upload.sha256_hash;      <span class="cc">// "31ee488c13189e..."</span>
+  <span class="cf">const</span> upload = <span class="cf">await</span> <span class="cm">fetch</span>(<span class="cs">"https://explorer-api.exergynet.org/api/v1/compute/upload"</span>,
+    { method: <span class="cs">"POST"</span>, body: formData }).<span class="cm">then</span>(r => r.<span class="cm">json</span>());
 
   <span class="cc">// ── 4. Lock wholesale toll in escrow ──</span>
-  <span class="cf">const</span> jobId = <span class="cm">generateJobId</span>(blueprintId);
-  <span class="cf">const</span> jobIdBytes    = <span class="cm">hexToBytes</span>(jobId);
-  <span class="cf">const</span> sha256Bytes   = <span class="cm">hexToBytes</span>(sha256Hash);
-
   <span class="cf">const</span> signature = <span class="cf">await</span> client.<span class="cm">openJob</span>(
-    jobIdBytes,
-    sha256Bytes,
+    <span class="cm">hexToBytes</span>(upload.blueprint_id),
+    <span class="cm">hexToBytes</span>(upload.sha256_hash),
     estimate.wholesale_usdc_micro_units
   );
 
-  console.<span class="cm">log</span>(<span class="cs">`Escrow opened: ${signature}`</span>);
-
   <span class="cc">// ── 5. Poll for ZK-STARK proof ──</span>
-  <span class="cf">const</span> result = <span class="cf">await</span> <span class="cm">pollForProof</span>(jobId);
+  <span class="cf">const</span> result = <span class="cf">await</span> <span class="cm">pollForProof</span>(upload.blueprint_id);
   console.<span class="cm">log</span>(<span class="cs">`Proof: ${result.proof_hash}`</span>);
-  console.<span class="cm">log</span>(<span class="cs">`Results: ${result.result_s3_url}`</span>);
-
   <span class="cf">return</span> result;
 }
 
-<span class="cc">// ── Polling helper ──</span>
 <span class="cf">async function</span> <span class="cm">pollForProof</span>(jobId, maxAttempts = <span class="cn">60</span>, intervalMs = <span class="cn">15000</span>) {
   <span class="cf">for</span> (<span class="cf">let</span> i = <span class="cn">0</span>; i &lt; maxAttempts; i++) {
     <span class="cf">const</span> res = <span class="cf">await</span> <span class="cm">fetch</span>(
       <span class="cs">`https://explorer-api.exergynet.org/api/l0/transactions?job_id=${jobId}`</span>
     ).<span class="cm">then</span>(r => r.<span class="cm">json</span>());
-
     <span class="cf">if</span> (res.status === <span class="cs">"ZK-STARK VERIFIED"</span>) <span class="cf">return</span> res;
     <span class="cf">if</span> (res.status === <span class="cs">"FAILED"</span>) <span class="cf">throw new</span> <span class="cm">Error</span>(<span class="cs">`Job failed: ${res.error}`</span>);
-
     <span class="cf">await new</span> <span class="cm">Promise</span>(r => <span class="cm">setTimeout</span>(r, intervalMs));
   }
   <span class="cf">throw new</span> <span class="cm">Error</span>(<span class="cs">"Proof timeout after 15 minutes"</span>);
@@ -581,27 +513,16 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
       </div>
     </section>
 
-    <!-- ═══ SECTION: AUTH ═══ -->
+    <!-- 04: AUTH -->
     <section class="docs-section" id="authentication">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">04</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">04</span>
         Authentication
       </h2>
       <p class="docs-body">The ExergyNet L0 Router uses Ed25519 request signing. Every API call from your Surplus Agent Wallet must include a signature header derived from your Ed25519 private key.</p>
-
-      <div class="auth-row">
-        <span class="auth-key">X-Exergy-Wallet</span>
-        <span class="auth-val">0xYOUR_SURPLUS_AGENT_EVM_ADDRESS</span>
-      </div>
-      <div class="auth-row">
-        <span class="auth-key">X-Exergy-Sig</span>
-        <span class="auth-val">0xED25519_SIGNATURE_OF_REQUEST_BODY_HASH</span>
-      </div>
-      <div class="auth-row">
-        <span class="auth-key">X-Exergy-Nonce</span>
-        <span class="auth-val">Unix timestamp (must be within 60s of server time)</span>
-      </div>
-
+      <div class="auth-row"><span class="auth-key">X-Exergy-Wallet</span><span class="auth-val">0xYOUR_SURPLUS_AGENT_EVM_ADDRESS</span></div>
+      <div class="auth-row"><span class="auth-key">X-Exergy-Sig</span><span class="auth-val">0xED25519_SIGNATURE_OF_REQUEST_BODY_HASH</span></div>
+      <div class="auth-row"><span class="auth-key">X-Exergy-Nonce</span><span class="auth-val">Unix timestamp (must be within 60s of server time)</span></div>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">Python — Request Signing</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
         <div class="code-body"><pre><span class="cf">import</span> time, hashlib, os
@@ -609,13 +530,10 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 
 <span class="cf">def</span> <span class="cm">sign_request</span>(body_json: str, private_key_hex: str) -> <span class="cf">dict</span>:
     nonce = <span class="cf">str</span>(<span class="cf">int</span>(time.<span class="cm">time</span>()))
-    message = (nonce + body_json).<span class="cm">encode</span>()
-    body_hash = hashlib.sha256(message).<span class="cm">hexdigest</span>()
-
+    body_hash = hashlib.sha256((nonce + body_json).<span class="cm">encode</span>()).<span class="cm">hexdigest</span>()
     key_bytes = bytes.<span class="cm">fromhex</span>(private_key_hex.<span class="cm">replace</span>(<span class="cs">"0x"</span>, <span class="cs">""</span>))
     private_key = Ed25519PrivateKey.<span class="cm">from_private_bytes</span>(key_bytes)
     signature = <span class="cs">"0x"</span> + private_key.<span class="cm">sign</span>(body_hash.<span class="cm">encode</span>()).<span class="cm">hex</span>()
-
     <span class="cf">return</span> {
         <span class="cs">"X-Exergy-Wallet"</span>: os.environ[<span class="cs">"MD_SURPLUS_AGENT_WALLET"</span>],
         <span class="cs">"X-Exergy-Sig"</span>: signature,
@@ -627,65 +545,27 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 
     <hr class="docs-divider">
 
-    <!-- ═══ SECTION: COMPUTE MATRIX ═══ -->
+    <!-- 05: COMPUTE MATRIX -->
     <section class="docs-section" id="compute-matrix">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">05</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">05</span>
         Compute Vectors
       </h2>
       <p class="docs-body">Select the correct <code>simulation_type</code> string for your workload. Compute class determines which ELF circuit is used and the base USDC toll multiplier.</p>
-
       <div class="matrix-table-wrap">
         <table class="matrix-table">
           <thead>
-            <tr>
-              <th>Simulation</th>
-              <th>String ID</th>
-              <th>Class</th>
-              <th>ZK Circuit</th>
-              <th>Multiplier</th>
-            </tr>
+            <tr><th>Simulation</th><th>String ID</th><th>Class</th><th>ZK Circuit</th><th>Multiplier</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td class="sim-name">Temporal ADMET</td>
-              <td><code>TEMPORAL_ADMET</code></td>
-              <td><span class="class-chip cl-light">LIGHT</span></td>
-              <td><span class="circuit-chip">BCX-002-v1</span></td>
-              <td><span class="multiplier">1.0x</span></td>
-            </tr>
-            <tr>
-              <td class="sim-name">MDC Logic / FDA Audit</td>
-              <td><code>MDC_LOGIC</code></td>
-              <td><span class="class-chip cl-light">LIGHT</span></td>
-              <td><span class="circuit-chip">BCX-004-v1.2</span></td>
-              <td><span class="multiplier">1.0x</span></td>
-            </tr>
-            <tr>
-              <td class="sim-name">Molecular Dynamics</td>
-              <td><code>MOLECULAR_DYNAMICS</code></td>
-              <td><span class="class-chip cl-medium">MEDIUM</span></td>
-              <td><span class="circuit-chip">BCX-003-v1</span></td>
-              <td><span class="multiplier">3.0x</span></td>
-            </tr>
-            <tr>
-              <td class="sim-name">Virtual Screening</td>
-              <td><code>VIRTUAL_SCREENING</code></td>
-              <td><span class="class-chip cl-medium">MEDIUM</span></td>
-              <td><span class="circuit-chip">BCX-001-v1</span></td>
-              <td><span class="multiplier">3.0x</span></td>
-            </tr>
-            <tr>
-              <td class="sim-name">Encrypted Screening</td>
-              <td><code>ENCRYPTED_SCREENING</code></td>
-              <td><span class="class-chip cl-heavy">HEAVY</span></td>
-              <td><span class="circuit-chip">BCX-001-v1</span></td>
-              <td><span class="multiplier">10.0x</span></td>
-            </tr>
+            <tr><td class="sim-name">Temporal ADMET</td><td><code>TEMPORAL_ADMET</code></td><td><span class="class-chip cl-light">LIGHT</span></td><td><span class="circuit-chip">BCX-002-v1</span></td><td><span class="multiplier">1.0x</span></td></tr>
+            <tr><td class="sim-name">MDC Logic / FDA Audit</td><td><code>MDC_LOGIC</code></td><td><span class="class-chip cl-light">LIGHT</span></td><td><span class="circuit-chip">BCX-004-v1.2</span></td><td><span class="multiplier">1.0x</span></td></tr>
+            <tr><td class="sim-name">Molecular Dynamics</td><td><code>MOLECULAR_DYNAMICS</code></td><td><span class="class-chip cl-medium">MEDIUM</span></td><td><span class="circuit-chip">BCX-003-v1</span></td><td><span class="multiplier">3.0x</span></td></tr>
+            <tr><td class="sim-name">Virtual Screening</td><td><code>VIRTUAL_SCREENING</code></td><td><span class="class-chip cl-medium">MEDIUM</span></td><td><span class="circuit-chip">BCX-001-v1</span></td><td><span class="multiplier">3.0x</span></td></tr>
+            <tr><td class="sim-name">Encrypted Screening</td><td><code>ENCRYPTED_SCREENING</code></td><td><span class="class-chip cl-heavy">HEAVY</span></td><td><span class="circuit-chip">BCX-001-v1</span></td><td><span class="multiplier">10.0x</span></td></tr>
           </tbody>
         </table>
       </div>
-
       <div class="docs-section" id="density-penalty">
         <div class="info-box info-warn">
           <span class="info-box-label">// Density Penalty</span>
@@ -696,14 +576,13 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 
     <hr class="docs-divider">
 
-    <!-- ═══ SECTION: API ENDPOINTS ═══ -->
+    <!-- 06: API ENDPOINTS -->
     <section class="docs-section" id="ep-estimate">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">06</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">06</span>
         API Endpoints
       </h2>
 
-      <!-- ESTIMATE -->
       <div class="endpoint-card">
         <div class="endpoint-header">
           <span class="ep-method ep-post">POST</span>
@@ -718,8 +597,8 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
   <span class="ck">"simulation_type"</span>: <span class="cs">"ENCRYPTED_SCREENING"</span>,
   <span class="ck">"blueprint_data"</span>: {
     <span class="ck">"file_size_bytes"</span>: <span class="cn">5242880</span>,
-    <span class="ck">"molecular_weight"</span>: <span class="cn">820</span>,      <span class="cc">// &gt; 800 triggers 1.6x density penalty</span>
-    <span class="ck">"atom_count"</span>: <span class="cn">90</span>               <span class="cc">// &gt; 80 also triggers density penalty</span>
+    <span class="ck">"molecular_weight"</span>: <span class="cn">820</span>,  <span class="cc">// &gt; 800 triggers 1.6x density penalty</span>
+    <span class="ck">"atom_count"</span>: <span class="cn">90</span>           <span class="cc">// &gt; 80 also triggers density penalty</span>
   }
 }</pre></div>
           </div>
@@ -727,7 +606,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
           <div class="code-block">
             <div class="code-header"><span class="code-lang">JSON Response</span></div>
             <div class="code-body"><pre>{
-  <span class="ck">"wholesale_usdc_micro_units"</span>: <span class="cn">19200000</span>,   <span class="cc">// = $19.20 USDC</span>
+  <span class="ck">"wholesale_usdc_micro_units"</span>: <span class="cn">19200000</span>,  <span class="cc">// = $19.20 USDC</span>
   <span class="ck">"compute_class"</span>: <span class="cs">"HEAVY"</span>,
   <span class="ck">"network"</span>: <span class="cs">"base-mainnet"</span>,
   <span class="ck">"elf_circuit"</span>: <span class="cs">"BCX-001-v1"</span>,
@@ -740,19 +619,17 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
         </div>
       </div>
 
-      <!-- UPLOAD -->
       <div class="endpoint-card" id="ep-upload">
         <div class="endpoint-header">
           <span class="ep-method ep-post">POST</span>
           <span class="ep-url">https://explorer-api.exergynet.org/api/v1/compute/upload</span>
         </div>
-        <div class="ep-desc">Payload staging. Accepts multipart/form-data with a compound file. SHA-256 hashes the content, stores to the S3 sump, and returns a deterministic <code>blueprint_id</code>. Accepted formats: <code>.sdf</code> <code>.pdb</code> <code>.smi</code> <code>.mol2</code> <code>.json</code>. Max 512 MB.</div>
+        <div class="ep-desc">Payload staging. Accepts multipart/form-data. SHA-256 hashes the content, stores to S3 sump, returns a deterministic <code>blueprint_id</code>. Accepted: <code>.sdf</code> <code>.pdb</code> <code>.smi</code> <code>.mol2</code> <code>.json</code>. Max 512 MB.</div>
         <div class="ep-body">
           <span class="ep-body-label">Request — multipart/form-data</span>
           <div class="code-block" style="margin-bottom:16px">
             <div class="code-header"><span class="code-lang">cURL</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <div class="code-body"><pre>curl -X POST \
-  https://explorer-api.exergynet.org/api/v1/compute/upload \
+            <div class="code-body"><pre>curl -X POST https://explorer-api.exergynet.org/api/v1/compute/upload \
   -H <span class="cs">"X-Exergy-Wallet: 0xYOUR_WALLET"</span> \
   -H <span class="cs">"X-Exergy-Sig: 0xYOUR_SIGNATURE"</span> \
   -H <span class="cs">"X-Exergy-Nonce: 1716381600"</span> \
@@ -763,7 +640,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
             <div class="code-header"><span class="code-lang">JSON Response</span></div>
             <div class="code-body"><pre>{
   <span class="ck">"status"</span>: <span class="cs">"STAGED"</span>,
-  <span class="ck">"blueprint_id"</span>: <span class="cs">"UPLOAD-31EE488C"</span>,    <span class="cc">// Deterministic: UPLOAD-{sha256[:8]}</span>
+  <span class="ck">"blueprint_id"</span>: <span class="cs">"UPLOAD-31EE488C"</span>,
   <span class="ck">"sha256_hash"</span>: <span class="cs">"31ee488c13189e5fff18..."</span>,
   <span class="ck">"file_size"</span>: <span class="cn">5242880</span>,
   <span class="ck">"filename"</span>: <span class="cs">"compound_library.sdf"</span>,
@@ -773,7 +650,6 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
         </div>
       </div>
 
-      <!-- JOBS / OPEN -->
       <div class="endpoint-card" id="ep-jobs">
         <div class="endpoint-header">
           <span class="ep-method ep-post">POST</span>
@@ -798,17 +674,16 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
         </div>
       </div>
 
-      <!-- POLL -->
       <div class="endpoint-card" id="ep-poll">
         <div class="endpoint-header">
           <span class="ep-method ep-get">GET</span>
           <span class="ep-url">https://explorer-api.exergynet.org/api/l0/transactions?job_id={job_id_hex}</span>
         </div>
-        <div class="ep-desc">Proof retrieval. Poll at 15-second intervals until <code>status</code> returns <code>ZK-STARK VERIFIED</code>. Expected wait time: 3–15 minutes depending on compute class and current swarm load.</div>
+        <div class="ep-desc">Proof retrieval. Poll at 15-second intervals until <code>status</code> returns <code>ZK-STARK VERIFIED</code>. Expected wait: 3–15 minutes depending on compute class and current swarm load.</div>
         <div class="ep-body">
           <div class="resp-status rs-200"><span class="rs-dot"></span>Pending</div>
           <div class="code-block" style="margin-bottom:16px">
-            <div class="code-header"><span class="code-lang">JSON — Pending state</span></div>
+            <div class="code-header"><span class="code-lang">JSON — Pending</span></div>
             <div class="code-body"><pre>{
   <span class="ck">"job_id_hex"</span>: <span class="cs">"0xJOB_HEX_ID"</span>,
   <span class="ck">"status"</span>: <span class="cs">"COMPUTING"</span>,
@@ -818,95 +693,85 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
           </div>
           <div class="resp-status rs-200"><span class="rs-dot"></span>Verified</div>
           <div class="code-block">
-            <div class="code-header"><span class="code-lang">JSON — Verified state</span></div>
+            <div class="code-header"><span class="code-lang">JSON — Verified</span></div>
             <div class="code-body"><pre>{
   <span class="ck">"job_id_hex"</span>: <span class="cs">"0xJOB_HEX_ID"</span>,
   <span class="ck">"status"</span>: <span class="cs">"ZK-STARK VERIFIED"</span>,
-  <span class="ck">"proof_hash"</span>: <span class="cs">"0x874505af4b4fbd..."</span>,      <span class="cc">// Store for FDA audit trail</span>
-  <span class="ck">"result_s3_url"</span>: <span class="cs">"https://exergynet-results.s3.amazonaws.com/JOB_123_OUTPUT.json"</span>,
+  <span class="ck">"proof_hash"</span>: <span class="cs">"0x874505af4b4fbd..."</span>,    <span class="cc">// Store for FDA audit trail</span>
+  <span class="ck">"result_s3_url"</span>: <span class="cs">"https://exergynet-results.s3.amazonaws.com/JOB_123.json"</span>,
   <span class="ck">"miner_id"</span>: <span class="cs">"Node_DE_Alpha_07"</span>,
-  <span class="ck">"payment_address"</span>: <span class="cs">"0x71C...49b"</span>,           <span class="cc">// Prover's payout wallet</span>
+  <span class="ck">"payment_address"</span>: <span class="cs">"0x71C...49b"</span>,
   <span class="ck">"elapsed_seconds"</span>: <span class="cn">743</span>
 }</pre></div>
           </div>
           <div class="info-box info-note" style="margin-top:16px">
             <span class="info-box-label">// FDA Compliance</span>
-            Store <code>proof_hash</code> in your database alongside the simulation result. This is your immutable on-chain attestation that the computation was executed correctly. It can be verified by any party — including an FDA reviewer — by querying the LNES-04 Base L2 contract.
+            Store <code>proof_hash</code> in your database alongside the simulation result. This is your immutable on-chain attestation. It can be verified by any party — including an FDA reviewer — by querying the LNES-04 Base L2 contract.
           </div>
         </div>
       </div>
 
-      <!-- PROOF -->
       <div class="endpoint-card" id="ep-proof">
         <div class="endpoint-header">
           <span class="ep-method ep-get">GET</span>
           <span class="ep-url">https://explorer-api.exergynet.org/api/v1/jobs/{job_id}/proof</span>
         </div>
-        <div class="ep-desc">Returns the full Groth16/STARK receipt for a completed job. Use this to retrieve the raw proof bytes for on-chain verification or for inclusion in a regulatory submission package.</div>
+        <div class="ep-desc">Returns the full Groth16/STARK receipt for a completed job. Use this to retrieve the raw proof bytes for on-chain verification or inclusion in a regulatory submission package.</div>
       </div>
     </section>
 
     <hr class="docs-divider">
 
-    <!-- ═══ SECTION: SDK ═══ -->
+    <!-- 07: SDK -->
     <section class="docs-section" id="sdk-install">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">07</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">07</span>
         Agent SDK
       </h2>
       <p class="docs-body">The <code>@exergynet/agent-sdk</code> handles Ed25519 signing, Base L2 transaction construction, and smart contract interaction. It is the recommended integration path for production SaaS deployments.</p>
-
       <div class="code-block">
         <div class="code-header"><span class="code-lang">npm</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
         <div class="code-body"><pre>npm install @exergynet/agent-sdk</pre></div>
       </div>
-
       <div class="docs-h3" id="sdk-openjob">openJob()</div>
       <p class="docs-body">Atomic operation: constructs the Base L2 transaction, signs with your surplus agent wallet, broadcasts the <code>openJob</code> smart contract call, and emits the job to the prover swarm in a single call.</p>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">TypeScript</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
         <div class="code-body"><pre><span class="cf">const</span> signature: <span class="cf">string</span> = <span class="cf">await</span> client.<span class="cm">openJob</span>(
-  jobIdBytes:   Uint8Array,    <span class="cc">// 32-byte job identifier</span>
-  sha256Bytes:  Uint8Array,    <span class="cc">// SHA-256 hash of the uploaded file</span>
-  microUsdc:    <span class="cf">number</span>,       <span class="cc">// from /estimate endpoint</span>
+  jobIdBytes:  Uint8Array,  <span class="cc">// 32-byte job identifier</span>
+  sha256Bytes: Uint8Array,  <span class="cc">// SHA-256 hash of the uploaded file</span>
+  microUsdc:   <span class="cf">number</span>,     <span class="cc">// from /estimate endpoint</span>
 );
 <span class="cc">// Returns: Base L2 transaction signature</span>
 <span class="cc">// Effect:  Locks USDC in LNES-04 escrow</span>
 <span class="cc">// Event:   JobOpened emitted → broadcast to prover swarm</span></pre></div>
       </div>
-
       <div class="docs-h3" id="sdk-settle">settleExergy() — Siphon Daemon Only</div>
-      <p class="docs-body">Called automatically by the ExergyNet Siphon Daemon when a verified proof is detected on L0. <strong>Do not call this from your integration.</strong> It is documented here for transparency on the settlement flow.</p>
+      <p class="docs-body">Called automatically by the ExergyNet Siphon Daemon when a verified proof is detected on L0. <strong>Do not call this from your integration.</strong> Documented here for transparency on the settlement flow.</p>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">Solidity — LNES-04 Contract Interface</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="cc">// LNES-04 Contract: 0x5CFE075149776f4b3cca07a27D4fd85A60BA5e3f</span>
+        <div class="code-body"><pre><span class="cc">// LNES-04: 0x5CFE075149776f4b3cca07a27D4fd85A60BA5e3f</span>
 
 <span class="cf">function</span> <span class="cm">settleExergy</span>(
     bytes32 jobId,
-    address proverPaymentAddress,    <span class="cc">// Prover's EVM wallet</span>
+    address proverPaymentAddress,
     bytes32 proofHash
 ) <span class="cf">external</span> <span class="cf">onlySiphonDaemon</span> {
     uint256 escrow = escrows[jobId];
-
-    <span class="cc">// 30% to prover (electricity coverage)</span>
-    uint256 proverYield = (escrow * <span class="cn">30</span>) / <span class="cn">100</span>;
+    uint256 proverYield = (escrow * <span class="cn">30</span>) / <span class="cn">100</span>;  <span class="cc">// 30% → prover</span>
     USDC.<span class="cm">transfer</span>(proverPaymentAddress, proverYield);
-
-    <span class="cc">// 70% to EDT Architect Vault (architect tax)</span>
-    uint256 architectTax = escrow - proverYield;
-    USDC.<span class="cm">transfer</span>(EDT_VAULT, architectTax);
-
-    <span class="cf">emit</span> <span class="cm">ExergySettled</span>(jobId, proverPaymentAddress, proverYield, architectTax);
+    USDC.<span class="cm">transfer</span>(EDT_VAULT, escrow - proverYield); <span class="cc">// 70% → architect vault</span>
+    <span class="cf">emit</span> <span class="cm">ExergySettled</span>(jobId, proverPaymentAddress, proverYield);
 }</pre></div>
       </div>
     </section>
 
     <hr class="docs-divider">
 
-    <!-- ═══ SECTION: PROVER NETWORK ═══ -->
+    <!-- 08: PROVER NETWORK -->
     <section class="docs-section" id="prover-identity">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">08</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">08</span>
         Prover Network
       </h2>
       <p class="docs-body">ExergyNet is a permissionless DePIN. Any machine globally running <code>moleculogic_prover.py</code> can join the swarm, claim jobs, compute ZK-STARK proofs, and earn 30% USDC yield per verified computation.</p>
@@ -933,33 +798,20 @@ PAYMENT_ADDRESS = os.environ[<span class="cs">"PAYMENT_ADDRESS"</span>]</pre></d
       <div class="docs-h3" id="prover-setup">Prover Setup</div>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">.env.example</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="cc"># ExergyNet Prover Configuration</span>
-<span class="cc"># Copy to .env — DO NOT commit to version control</span>
+        <div class="code-body"><pre><span class="cc"># ExergyNet Prover Configuration — DO NOT commit to version control</span>
 
 MINER_ID=Node_YOURNAME_01
-<span class="cc"># Your unique prover identity (alphanumeric, no spaces)</span>
-
-PAYMENT_ADDRESS=0xYOUR_EVM_WALLET
-<span class="cc"># Base L2 compatible wallet for 30% USDC yield</span>
-<span class="cc"># MetaMask, Coinbase Wallet, or hardware wallet</span>
-
+PAYMENT_ADDRESS=0xYOUR_EVM_WALLET   <span class="cc"># Base L2 wallet for 30% USDC yield</span>
 PROVER_PRIVATE_KEY=0xYOUR_ED25519_PRIVATE_KEY
-<span class="cc"># Generate: python3 -c "from cryptography.hazmat.primitives.asymmetric.ed25519</span>
-<span class="cc"># import Ed25519PrivateKey; k=Ed25519PrivateKey.generate();</span>
-<span class="cc"># print('0x'+k.private_bytes_raw().hex())"</span>
-
 EXERGYNET_L0_URL=https://explorer-api.exergynet.org
 POLL_INTERVAL_SECONDS=30
 MAX_CONCURRENT_JOBS=2</pre></div>
       </div>
-
       <div class="code-block">
         <div class="code-header"><span class="code-lang">Shell</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="cc"># Install and run the prover</span>
-git clone https://github.com/exergynet/moleculogic-prover
+        <div class="code-body"><pre>git clone https://github.com/exergynet/moleculogic-prover
 cd moleculogic-prover
-cp .env.example .env
-<span class="cc"># Edit .env with your wallet</span>
+cp .env.example .env   <span class="cc"># edit with your wallet</span>
 pip install -r requirements.txt
 python3 moleculogic_prover.py</pre></div>
       </div>
@@ -968,122 +820,58 @@ python3 moleculogic_prover.py</pre></div>
       <table class="matrix-table">
         <thead><tr><th>Compute Class</th><th>Wholesale Toll</th><th>Prover Yield (30%)</th><th>Est. GPU Time</th></tr></thead>
         <tbody>
-          <tr>
-            <td><span class="class-chip cl-light">LIGHT</span></td>
-            <td style="font-family:var(--mono);color:var(--white)">$2.00 USDC</td>
-            <td style="font-family:var(--mono);color:var(--teal);font-weight:700">$0.60 USDC</td>
-            <td style="color:var(--white-dim)">5–15 min</td>
-          </tr>
-          <tr>
-            <td><span class="class-chip cl-medium">MEDIUM</span></td>
-            <td style="font-family:var(--mono);color:var(--white)">$8.00 USDC</td>
-            <td style="font-family:var(--mono);color:var(--teal);font-weight:700">$2.40 USDC</td>
-            <td style="color:var(--white-dim)">15–45 min</td>
-          </tr>
-          <tr>
-            <td><span class="class-chip cl-heavy">HEAVY</span></td>
-            <td style="font-family:var(--mono);color:var(--white)">$25.00 USDC</td>
-            <td style="font-family:var(--mono);color:var(--teal);font-weight:700">$7.50 USDC</td>
-            <td style="color:var(--white-dim)">45–120 min</td>
-          </tr>
+          <tr><td><span class="class-chip cl-light">LIGHT</span></td><td style="font-family:var(--mono);color:var(--text)">$2.00 USDC</td><td style="font-family:var(--mono);color:var(--accent);font-weight:700">$0.60 USDC</td><td style="color:var(--text-soft)">5–15 min</td></tr>
+          <tr><td><span class="class-chip cl-medium">MEDIUM</span></td><td style="font-family:var(--mono);color:var(--text)">$8.00 USDC</td><td style="font-family:var(--mono);color:var(--accent);font-weight:700">$2.40 USDC</td><td style="color:var(--text-soft)">15–45 min</td></tr>
+          <tr><td><span class="class-chip cl-heavy">HEAVY</span></td><td style="font-family:var(--mono);color:var(--text)">$25.00 USDC</td><td style="font-family:var(--mono);color:var(--accent);font-weight:700">$7.50 USDC</td><td style="color:var(--text-soft)">45–120 min</td></tr>
         </tbody>
       </table>
     </section>
 
     <hr class="docs-divider">
 
-    <!-- ═══ SECTION: ERROR CODES ═══ -->
+    <!-- 09: ERROR CODES -->
     <section class="docs-section" id="error-codes">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">09</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">09</span>
         Error Codes
       </h2>
       <table class="error-table">
         <thead><tr><th>HTTP</th><th>Code</th><th>Message</th><th>Resolution</th></tr></thead>
         <tbody>
-          <tr>
-            <td><span class="err-code err-4xx">400</span></td>
-            <td style="font-family:var(--mono);font-size:12px;color:var(--white-dim)">INVALID_FORMAT</td>
-            <td class="err-msg">Unsupported file format</td>
-            <td class="err-fix">Use .sdf, .pdb, .smi, .mol2, or .json</td>
-          </tr>
-          <tr>
-            <td><span class="err-code err-4xx">400</span></td>
-            <td style="font-family:var(--mono);font-size:12px;color:var(--white-dim)">DENSITY_OVERFLOW</td>
-            <td class="err-msg">MW or atom count exceeds HEAVY class limit</td>
-            <td class="err-fix">Fragment molecule or contact for custom pricing</td>
-          </tr>
-          <tr>
-            <td><span class="err-code err-4xx">401</span></td>
-            <td style="font-family:var(--mono);font-size:12px;color:var(--white-dim)">INVALID_SIGNATURE</td>
-            <td class="err-msg">Ed25519 signature verification failed</td>
-            <td class="err-fix">Check nonce is within 60s, verify key pair matches wallet</td>
-          </tr>
-          <tr>
-            <td><span class="err-code err-4xx">402</span></td>
-            <td style="font-family:var(--mono);font-size:12px;color:var(--white-dim)">INSUFFICIENT_ESCROW</td>
-            <td class="err-msg">USDC in escrow below estimate</td>
-            <td class="err-fix">Re-query /estimate and use returned micro_units value</td>
-          </tr>
-          <tr>
-            <td><span class="err-code err-4xx">404</span></td>
-            <td style="font-family:var(--mono);font-size:12px;color:var(--white-dim)">JOB_NOT_FOUND</td>
-            <td class="err-msg">Job ID not found on L0 Router</td>
-            <td class="err-fix">Verify job_id_hex format, confirm openJob transaction confirmed</td>
-          </tr>
-          <tr>
-            <td><span class="err-code err-4xx">413</span></td>
-            <td style="font-family:var(--mono);font-size:12px;color:var(--white-dim)">PAYLOAD_TOO_LARGE</td>
-            <td class="err-msg">File exceeds 512 MB upload limit</td>
-            <td class="err-fix">Split compound library into batches under 512 MB</td>
-          </tr>
-          <tr>
-            <td><span class="err-code err-5xx">503</span></td>
-            <td style="font-family:var(--mono);font-size:12px;color:var(--white-dim)">SWARM_UNAVAILABLE</td>
-            <td class="err-msg">No provers available for compute class</td>
-            <td class="err-fix">Retry after 60s; consider downgrading compute class</td>
-          </tr>
+          <tr><td><span class="err-code err-4xx">400</span></td><td style="font-family:var(--mono);font-size:12px;color:var(--text-soft)">INVALID_FORMAT</td><td class="err-msg">Unsupported file format</td><td class="err-fix">Use .sdf, .pdb, .smi, .mol2, or .json</td></tr>
+          <tr><td><span class="err-code err-4xx">400</span></td><td style="font-family:var(--mono);font-size:12px;color:var(--text-soft)">DENSITY_OVERFLOW</td><td class="err-msg">MW or atom count exceeds HEAVY class limit</td><td class="err-fix">Fragment molecule or contact for custom pricing</td></tr>
+          <tr><td><span class="err-code err-4xx">401</span></td><td style="font-family:var(--mono);font-size:12px;color:var(--text-soft)">INVALID_SIGNATURE</td><td class="err-msg">Ed25519 signature verification failed</td><td class="err-fix">Check nonce is within 60s, verify key pair matches wallet</td></tr>
+          <tr><td><span class="err-code err-4xx">402</span></td><td style="font-family:var(--mono);font-size:12px;color:var(--text-soft)">INSUFFICIENT_ESCROW</td><td class="err-msg">USDC in escrow below estimate</td><td class="err-fix">Re-query /estimate and use returned micro_units value</td></tr>
+          <tr><td><span class="err-code err-4xx">404</span></td><td style="font-family:var(--mono);font-size:12px;color:var(--text-soft)">JOB_NOT_FOUND</td><td class="err-msg">Job ID not found on L0 Router</td><td class="err-fix">Verify job_id_hex format, confirm openJob transaction confirmed</td></tr>
+          <tr><td><span class="err-code err-4xx">413</span></td><td style="font-family:var(--mono);font-size:12px;color:var(--text-soft)">PAYLOAD_TOO_LARGE</td><td class="err-msg">File exceeds 512 MB upload limit</td><td class="err-fix">Split compound library into batches under 512 MB</td></tr>
+          <tr><td><span class="err-code err-5xx">503</span></td><td style="font-family:var(--mono);font-size:12px;color:var(--text-soft)">SWARM_UNAVAILABLE</td><td class="err-msg">No provers available for compute class</td><td class="err-fix">Retry after 60s; consider downgrading compute class</td></tr>
         </tbody>
       </table>
     </section>
 
-    <!-- ═══ SECTION: CONTRACTS ═══ -->
+    <!-- 10: CONTRACTS -->
     <section class="docs-section" id="contracts">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">10</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">10</span>
         Smart Contracts
       </h2>
-      <div class="auth-row">
-        <span class="auth-key">LNES-04 Contract</span>
-        <span class="auth-val">0x5CFE075149776f4b3cca07a27D4fd85A60BA5e3f</span>
-      </div>
-      <div class="auth-row">
-        <span class="auth-key">Network</span>
-        <span class="auth-val">Base Mainnet (Chain ID: 8453)</span>
-      </div>
-      <div class="auth-row">
-        <span class="auth-key">Settlement Token</span>
-        <span class="auth-val">USDC — 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</span>
-      </div>
-      <div class="auth-row">
-        <span class="auth-key">Key Events</span>
-        <span class="auth-val">JobOpened(jobId, requester, microUsdc) · ExergySettled(jobId, prover, yield, tax)</span>
-      </div>
+      <div class="auth-row"><span class="auth-key">LNES-04 Contract</span><span class="auth-val">0x5CFE075149776f4b3cca07a27D4fd85A60BA5e3f</span></div>
+      <div class="auth-row"><span class="auth-key">Network</span><span class="auth-val">Base Mainnet (Chain ID: 8453)</span></div>
+      <div class="auth-row"><span class="auth-key">Settlement Token</span><span class="auth-val">USDC — 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</span></div>
+      <div class="auth-row"><span class="auth-key">Key Events</span><span class="auth-val">JobOpened(jobId, requester, microUsdc) · ExergySettled(jobId, prover, yield, tax)</span></div>
     </section>
 
-    <!-- ═══ SECTION: ALPHAFOLD ═══ -->
+    <!-- 11: ALPHAFOLD -->
     <section class="docs-section" id="alphafold">
       <h2 class="docs-h2">
-        <span style="color:var(--teal);font-size:16px;font-family:var(--mono)">11</span>
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">11</span>
         AlphaFold Bridge
       </h2>
       <p class="docs-body">ExergyNet's <code>ENCRYPTED_SCREENING</code> and <code>VIRTUAL_SCREENING</code> compute vectors are the execution layer for AlphaFold 3 structural outputs. AlphaFold maps the 3D target lock. ExergyNet runs the programmable key.</p>
-
       <div class="info-box info-note">
         <span class="info-box-label">// The AlphaFold 3 Gap</span>
         AlphaFold 3 excels at static spatial geometry but stops at temporal causal logic — it cannot simulate how a molecule behaves dynamically under fluctuating pH, ROS, or enzymatic concentrations. Upload your AlphaFold .pdb output to <code>/api/v1/compute/upload</code>, then call <code>/api/v1/alphafold/analyze</code> to detect binding pocket coordinates and run ADMET + contradiction screening before dispatching to the ExergyNet docking swarm.
       </div>
-
       <div class="code-block">
         <div class="code-header"><span class="code-lang">AlphaFold → ExergyNet Pipeline</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
         <div class="code-body"><pre><span class="cc"># 1. Export .pdb from alphafoldserver.com</span>
@@ -1094,100 +882,79 @@ upload = requests.<span class="cm">post</span>(
 )
 blueprint_id = upload.json()[<span class="cs">"blueprint_id"</span>]
 
-<span class="cc"># 3. Analyze binding pocket + run contradiction check</span>
+<span class="cc"># 3. Analyze binding pocket + contradiction check</span>
 analysis = requests.<span class="cm">post</span>(
     <span class="cs">"https://platform.metaldrug.com/api/v1/alphafold/analyze"</span>,
-    json={
-        <span class="cs">"blueprint_id"</span>: blueprint_id,
-        <span class="cs">"run_admet"</span>: <span class="cf">True</span>,
-        <span class="cs">"candidate_smiles"</span>: <span class="cs">"CC1=CC=C(C=C1)S(=O)(=O)N"</span>,
-    }
+    json={<span class="cs">"blueprint_id"</span>: blueprint_id, <span class="cs">"run_admet"</span>: <span class="cf">True</span>,
+          <span class="cs">"candidate_smiles"</span>: <span class="cs">"CC1=CC=C(C=C1)S(=O)(=O)N"</span>}
 )
-pocket = analysis.json()[<span class="cs">"pocket"</span>]   <span class="cc"># center_x/y/z, box dimensions</span>
 viable = analysis.json()[<span class="cs">"contradictions"</span>][<span class="cs">"viable"</span>]
 
 <span class="cf">if</span> viable:
-    <span class="cc"># 4. Dispatch to ExergyNet docking swarm</span>
     <span class="cf">await</span> client.<span class="cm">openJob</span>(job_id, sha256, micro_usdc)
 <span class="cf">else</span>:
     <span class="cf">print</span>(analysis.json()[<span class="cs">"contradictions"</span>][<span class="cs">"contradiction_flags"</span>])</pre></div>
       </div>
     </section>
 
-    <!-- FINAL CTA -->
+    <!-- CTA -->
     <div class="docs-cta">
       <div class="docs-cta-title">Ready to integrate?</div>
       <p class="docs-cta-body">Your first job is on Base Sepolia testnet — no real USDC required. Connect your surplus agent wallet, upload a compound file, and receive a ZK-STARK proof within 15 minutes.</p>
       <div class="docs-cta-actions">
-        <a class="btn-large btn-large-primary"   href="https://platform.metaldrug.com/login.html">Get API Access</a>
-        <a class="btn-large btn-large-secondary" href="https://exergynet.org"                    target="_blank">ExergyNet Explorer ↗</a>
+        <a class="btn btn-primary"   href="https://platform.metaldrug.com/login.html">Get API Access</a>
+        <a class="btn btn-secondary" href="https://exergynet.org" target="_blank">ExergyNet Explorer ↗</a>
       </div>
     </div>
 
-  </main>
-</div>
+  </div><!-- /.docs-main -->
+</div><!-- /.docs-layout -->
 
-<div id="footer-mount"></div>
+  </main>
+  <div id="site-footer"></div>
+</div><!-- /.site-wrap -->
 
 <script>
-// ── Component loader ──────────────────────────────────────
-async function loadComponent(url, mountId) {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(res.status);
-    document.getElementById(mountId).innerHTML = await res.text();
-    document.getElementById(mountId).querySelectorAll('script').forEach(s => {
-      const ns = document.createElement('script');
-      ns.textContent = s.textContent;
-      document.head.appendChild(ns);
-    });
-  } catch(e) { console.warn('Component load failed:', url, e); }
-}
-Promise.all([
-  loadComponent('header.html', 'header-mount'),
-  loadComponent('footer.html', 'footer-mount'),
-]).then(() => {
-  const saved = localStorage.getItem('md-theme') || 'dark';
-  const btn = document.getElementById('theme-toggle');
-  if (btn) btn.textContent = saved === 'dark' ? '☀' : '☾';
-});
-
-// ── Copy button ───────────────────────────────────────────
+// Copy button
 function copyCode(btn) {
-  const pre = btn.closest('.code-block').querySelector('pre');
-  navigator.clipboard.writeText(pre.innerText).then(() => {
+  var pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(function() {
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
   });
 }
 
-// ── Sidebar active link on scroll ────────────────────────
-const sections = document.querySelectorAll('.docs-section[id]');
-const sidebarLinks = document.querySelectorAll('.sidebar-links a');
+// Sidebar active on scroll
+document.addEventListener('DOMContentLoaded', function() {
+  var sections    = document.querySelectorAll('.docs-section[id]');
+  var sidebarLinks = document.querySelectorAll('.sidebar-links a');
 
-const scrollObs = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      sidebarLinks.forEach(a => a.classList.remove('active'));
-      const active = document.querySelector(`.sidebar-links a[href="#${entry.target.id}"]`);
-      if (active) active.classList.add('active');
-    }
-  });
-}, { rootMargin: '-20% 0px -70% 0px' });
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        sidebarLinks.forEach(function(a) { a.classList.remove('active'); });
+        var active = document.querySelector('.sidebar-links a[href="#' + entry.target.id + '"]');
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
 
-sections.forEach(s => scrollObs.observe(s));
+  sections.forEach(function(s) { obs.observe(s); });
 
-// ── Smooth scroll for sidebar links ──────────────────────
-sidebarLinks.forEach(a => {
-  a.addEventListener('click', e => {
-    const href = a.getAttribute('href');
-    if (href.startsWith('#')) {
-      e.preventDefault();
-      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  // Smooth scroll
+  sidebarLinks.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var href = a.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        var target = document.querySelector(href);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   });
 });
 </script>
+<script src="main.js"></script>
 </body>
 </html>
