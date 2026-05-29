@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Variables ────────────────────────────────────────────────────────── */
+:root {
+  --bg:          #0F172A;
+  --surface:     #1E293B;
+  --border:      #334155;
+  --border-dim:  #1E293B;
+  --teal:        #0D9488;
+  --teal-dark:   #0F766E;
+  --text:        #F8FAFC;
+  --text-muted:  #94A3B8;
+  --text-dim:    #475569;
+  --text-faint:  #334155;
+  --font-mono:   var(--font-mono, 'JetBrains Mono', 'Fira Code', 'Consolas', monospace);
+}
+
+/* ── Reset / Base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.en-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.en-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s, opacity 0.12s;
+  white-space: nowrap;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.en-btn:hover:not(:disabled) {
+  background: #293548;
+  color: #CBD5E1;
+  border-color: var(--text-dim);
+}
+
+.en-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.en-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.en-btn-primary {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+.en-btn-primary:hover:not(:disabled) {
+  background: var(--teal-dark);
+  border-color: var(--teal-dark);
+  color: #fff;
+}
+
+.en-btn-ghost {
+  background: transparent;
+  border-color: #283040;
+  color: #64748B;
+}
+
+.en-btn-ghost:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+/* ── Inputs ───────────────────────────────────────────────────────────────── */
+.en-input {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  background: #0F172A;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  line-height: 1.5;
+}
+
+.en-input::placeholder {
+  color: var(--text-faint);
+}
+
+.en-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+.en-input:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+/* Remove number input arrows */
+.en-input[type='number']::-webkit-inner-spin-button,
+.en-input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.en-input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* ── Tables ───────────────────────────────────────────────────────────────── */
+.en-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+}
+
+.en-table thead th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+  background: transparent;
+}
+
+.en-table tbody tr {
+  border-bottom: 1px solid var(--border-dim);
+  transition: background 0.1s;
+}
+
+.en-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.en-table tbody tr:hover {
+  background: rgba(13, 148, 136, 0.04);
+}
+
+.en-table tbody td {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  vertical-align: middle;
+}
+
+/* ── Code blocks ──────────────────────────────────────────────────────────── */
+.en-code {
+  display: block;
+  background: #0A1220;
+  border: 1px solid var(--border-dim);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #64748B;
+  overflow-x: auto;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 2;
+}
+
+/* ── Scrollbars ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+
+/* ── Selection ────────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(13, 148, 136, 0.3);
+  color: #fff;
+}
+
+/* ── RainbowKit overrides ─────────────────────────────────────────────────── */
+[data-rk] {
+  font-family: var(--font-mono) !important;
+}
+
+[data-rk] button {
+  font-family: var(--font-mono) !important;
+}
