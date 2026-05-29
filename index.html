@@ -21,6 +21,60 @@
 })();
 </script>
 <meta name="base:app_id" content="69f9713442d4fe010f1c2922" />
+<style>
+/* ── Hero Slider ── */
+.hero-slider { position: relative; overflow: hidden; }
+.hero-slides-track { display: flex; transition: transform 0.65s cubic-bezier(0.77,0,0.175,1); will-change: transform; }
+.hero-slide { min-width: 100%; position: relative; flex-shrink: 0; }
+
+/* Dot indicators */
+.hero-dots {
+  position: absolute; bottom: 1.75rem; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px; z-index: 20;
+}
+.hero-dot {
+  width: 8px; height: 8px; border-radius: 4px;
+  background: rgba(255,255,255,0.22); border: none; cursor: pointer;
+  padding: 0; transition: all 0.25s ease;
+}
+.hero-dot.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); width: 24px; }
+
+/* Arrow controls */
+.hero-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 20;
+  background: rgba(0,0,0,0.32); border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.65); width: 40px; height: 40px; border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 17px; transition: all 0.2s; backdrop-filter: blur(8px); line-height: 1;
+}
+.hero-arrow:hover { background: rgba(0,232,135,0.15); border-color: var(--accent); color: var(--accent); }
+.hero-arrow.prev { left: 1.25rem; }
+.hero-arrow.next { right: 1.25rem; }
+
+/* Vanguard slide styles */
+.vanguard-word {
+  background: linear-gradient(135deg, #4e9eff 20%, #00e887 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.vanguard-stat-strip { display: flex; gap: 1.75rem; margin: 1.25rem 0 1.5rem; flex-wrap: wrap; }
+.vanguard-stat-num {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 2.1rem;
+  font-weight: 700; color: var(--accent); line-height: 1;
+}
+.vanguard-stat-lbl {
+  font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--text-secondary); margin-top: 3px;
+}
+.vanguard-engine-card {
+  background: var(--bg-card); border: 1px solid var(--border-mid);
+  border-radius: 14px; padding: 1.5rem; position: relative; overflow: hidden;
+}
+.vanguard-engine-card::before {
+  content: ''; position: absolute; top: 0; right: 0; width: 220px; height: 220px;
+  background: radial-gradient(circle at top right, rgba(78,158,255,0.13), transparent 65%);
+  pointer-events: none;
+}
+</style>
 </head>
 <body>
 
@@ -32,7 +86,12 @@
 
 <main class="page">
 
-  <!-- HERO -->
+  <!-- HERO SLIDER -->
+  <div class="hero-slider" id="hero-slider">
+  <div class="hero-slides-track" id="hero-track">
+
+  <!-- Slide 1: Verifiable Compute -->
+  <div class="hero-slide">
   <section class="hero" style="position:relative; overflow:hidden;">
     <div class="glow-accent" style="width:500px;height:500px;top:-100px;left:-150px;"></div>
     <div class="glow-blue" style="width:600px;height:400px;top:0;right:-200px;"></div>
@@ -117,6 +176,94 @@
       </div>
     </div>
   </section>
+  </div><!-- /slide-1 -->
+
+  <!-- Slide 2: SEI Vanguard -->
+  <div class="hero-slide">
+  <section class="hero" style="position:relative; overflow:hidden;">
+    <div class="glow-blue" style="width:640px;height:520px;top:-80px;left:-120px;"></div>
+    <div class="glow-accent" style="width:520px;height:420px;top:20px;right:-180px;"></div>
+    <div class="container-wide">
+      <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:3rem; align-items:center;">
+        <div>
+          <div class="hero-eyebrow"><span class="dot" style="background:var(--accent);box-shadow:0 0 8px var(--accent);"></span>Enterprise-Grade AI Inference &middot; Zero Retention</div>
+          <h1 style="line-height:1.1; margin-bottom:0.5rem;">SEI <span class="vanguard-word">VANGUARD</span></h1>
+          <p style="font-size:0.95rem; color:var(--text-secondary); margin-bottom:1rem; font-family:'Barlow Condensed',sans-serif; letter-spacing:0.05em; text-transform:uppercase;">Deterministic Depth Gating &nbsp;&middot;&nbsp; Biological Reasoning Engine</p>
+          <p class="hero-sub">Five-times faster first-token delivery. No conversation retention. No third-party routing. Vanguard's depth-gating architecture routes each query through the minimal reasoning path &mdash; sovereign, verifiable, enclave-sealed.</p>
+          <div class="vanguard-stat-strip">
+            <div>
+              <div class="vanguard-stat-num">5&times;</div>
+              <div class="vanguard-stat-lbl">TTFT vs cloud LLMs</div>
+            </div>
+            <div>
+              <div class="vanguard-stat-num">0</div>
+              <div class="vanguard-stat-lbl">Data retained</div>
+            </div>
+            <div>
+              <div class="vanguard-stat-num">2</div>
+              <div class="vanguard-stat-lbl">Inference modes</div>
+            </div>
+            <div>
+              <div class="vanguard-stat-num">&infin;</div>
+              <div class="vanguard-stat-lbl">API scale</div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <a href="https://portal.exergynet.org/?mode=register" class="btn btn-primary">Get Started &rarr;</a>
+            <a href="vanguard.html" class="btn btn-secondary">Learn More</a>
+          </div>
+        </div>
+
+        <!-- Engine Status Panel -->
+        <div class="vanguard-engine-card">
+          <div class="section-label" style="margin-bottom:1rem;">Engine Capabilities</div>
+          <div class="telemetry-row">
+            <span class="tele-label">Architecture</span>
+            <span class="tele-value accent">Depth-Gating DDG</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="tele-label">Modes</span>
+            <span class="tele-value">General &nbsp;&middot;&nbsp; Biotech</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="tele-label">Enclave</span>
+            <span class="tele-value green">Zero-Retention SGX</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="tele-label">Compatibility</span>
+            <span class="tele-value blue">OpenAI-Compatible API</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="tele-label">Settlement</span>
+            <span class="tele-value">&micro;USDC / USDC</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="tele-label">Status</span>
+            <span class="tele-value green">OPERATIONAL</span>
+          </div>
+          <div class="telemetry-divider"></div>
+          <div style="margin-top:1.25rem;">
+            <a href="https://portal.exergynet.org/?mode=register" class="btn btn-primary" style="width:100%;justify-content:center;">Access Vanguard &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /slide-2 -->
+
+  </div><!-- /hero-slides-track -->
+
+  <!-- Arrows -->
+  <button class="hero-arrow prev" id="hero-prev" aria-label="Previous slide">&#8592;</button>
+  <button class="hero-arrow next" id="hero-next" aria-label="Next slide">&#8594;</button>
+
+  <!-- Dots -->
+  <div class="hero-dots" id="hero-dots">
+    <button class="hero-dot active" data-index="0" aria-label="Go to slide 1"></button>
+    <button class="hero-dot" data-index="1" aria-label="Go to slide 2"></button>
+  </div>
+
+  </div><!-- /hero-slider -->
 
   <!-- WHAT EXERGYNET DOES -->
   <section>
@@ -503,6 +650,42 @@ cargo build --release</code></pre>
 
   update();
   setInterval(update, 3500);
+})();
+
+// ── Hero Slider ──
+(function() {
+  var track  = document.getElementById('hero-track');
+  var dots   = document.querySelectorAll('#hero-dots .hero-dot');
+  var btnPrev = document.getElementById('hero-prev');
+  var btnNext = document.getElementById('hero-next');
+  var slider = document.getElementById('hero-slider');
+  var current = 0;
+  var total   = 2;
+  var timer;
+
+  function goTo(n) {
+    current = ((n % total) + total) % total;
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach(function(d, i) {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function startTimer() {
+    clearInterval(timer);
+    timer = setInterval(function() { goTo(current + 1); }, 7000);
+  }
+
+  btnPrev.addEventListener('click', function() { goTo(current - 1); startTimer(); });
+  btnNext.addEventListener('click', function() { goTo(current + 1); startTimer(); });
+  dots.forEach(function(d) {
+    d.addEventListener('click', function() { goTo(parseInt(d.getAttribute('data-index'), 10)); startTimer(); });
+  });
+
+  slider.addEventListener('mouseenter', function() { clearInterval(timer); });
+  slider.addEventListener('mouseleave', startTimer);
+
+  startTimer();
 })();
 </script>
 </body>
