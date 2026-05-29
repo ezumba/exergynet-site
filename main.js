@@ -83,8 +83,8 @@
         '</ul>' +
         '<div class="nav-actions">' +
           '<div class="nav-auth" style="display:flex;gap:6px;margin-right:6px;">' +
-            '<a href="/" class="btn btn-ghost" style="font-size:11px;padding:5px 13px;letter-spacing:0.06em;text-decoration:none;">Log In</a>' +
-            '<a href="/" class="btn btn-primary" style="font-size:11px;padding:5px 13px;letter-spacing:0.06em;text-decoration:none;">Sign Up \u2192</a>' +
+            '<a href="https://portal.exergynet.org/" class="btn btn-ghost" style="font-size:11px;padding:5px 13px;letter-spacing:0.06em;text-decoration:none;">Log In</a>' +
+            '<a href="https://portal.exergynet.org/?mode=register" class="btn btn-primary" style="font-size:11px;padding:5px 13px;letter-spacing:0.06em;text-decoration:none;">Sign Up \u2192</a>' +
           '</div>' +
           '<div class="nav-social">' +
             '<a href="https://x.com/ExergyNet" target="_blank" class="nav-social-link">&#x1D54F;</a>' +
