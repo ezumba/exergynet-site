@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vanguard Engine | ExergyNet — Enterprise AI Inference</title>
+<meta name="description" content="The Vanguard Neural Engine — Custom-compiled, bare-metal AI inference. 5x faster TTFT. Zero data retention. OpenAI-compatible drop-in.">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t=localStorage.getItem("exg-theme");
+  if(!t){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}
+  document.documentElement.setAttribute("data-theme",t);
+})();
+</script>
+<style>
+/* ── Vanguard page styles ── */
+.vanguard-hero{position:relative;padding:5.5rem 0 4rem;overflow:hidden;}
+.vanguard-hero .hero-eyebrow{border-color:rgba(78,158,255,0.30);color:var(--blue);background:var(--blue-dim);}
+.vanguard-hero .hero-eyebrow .dot{background:var(--blue);box-shadow:0 0 8px var(--blue);}
+.vanguard-word{display:block;font-size:clamp(3.5rem,9vw,7.5rem);line-height:0.9;letter-spacing:-0.03em;background:linear-gradient(135deg,var(--blue) 0%,var(--accent) 60%,#a0f7d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.vanguard-stat-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border-mid);border-radius:var(--radius-lg);overflow:hidden;margin-top:3rem;}
+.vanguard-stat-cell{background:var(--bg-card);padding:1.5rem 1.25rem;text-align:center;}
+.vanguard-stat-cell:hover{background:var(--bg-card-2);}
+.vanguard-stat-num{font-family:var(--display);font-size:2.4rem;font-weight:900;line-height:1;margin-bottom:0.35rem;}
+.vanguard-stat-num.accent{color:var(--accent);}
+.vanguard-stat-num.blue{color:var(--blue);}
+.vanguard-stat-label{font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-faint);line-height:1.5;}
+.silicon-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;padding:1.5rem;background:var(--bg-card);}
+.silicon-cell{aspect-ratio:1;border-radius:2px;background:var(--bg-card-2);}
+.silicon-cell.active{background:var(--accent);box-shadow:0 0 8px var(--accent-glow);}
+.silicon-cell.active-b{background:var(--blue);box-shadow:0 0 8px var(--blue-glow);}
+.silicon-cell.active-d{background:var(--accent-dark);}
+.silicon-cell.bypass{background:rgba(255,90,90,0.15);border:1px solid rgba(255,90,90,0.2);}
+.depth-gate{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.depth-lane{border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);}
+.depth-lane.vanguard{border-color:rgba(0,232,135,0.35);background:rgba(0,232,135,0.04);}
+.depth-lane.legacy{border-color:rgba(255,90,90,0.25);background:rgba(255,90,90,0.04);}
+.depth-lane-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.10em;margin-bottom:1rem;font-weight:700;}
+.depth-lane.vanguard .depth-lane-label{color:var(--accent);}
+.depth-lane.legacy .depth-lane-label{color:var(--red);}
+.depth-step{display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.7rem;border-radius:6px;font-size:12px;font-family:var(--mono);margin-bottom:0.4rem;}
+.depth-step.active-step{background:var(--accent-dim);color:var(--accent);}
+.depth-step.bypass-step{background:rgba(255,90,90,0.08);color:var(--red);opacity:0.55;text-decoration:line-through;text-decoration-color:rgba(255,90,90,0.5);}
+.depth-step.slow-step{background:var(--bg-card-2);color:var(--text-soft);}
+.depth-result{margin-top:0.9rem;padding:0.6rem 0.8rem;border-radius:6px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:0.06em;text-align:center;}
+.depth-result.fast{background:var(--accent-dim);color:var(--accent);}
+.depth-result.slow{background:rgba(255,90,90,0.1);color:var(--red);}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px;}
+.compare-table th{padding:0.9rem 1.25rem;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-faint);border-bottom:1px solid var(--border-mid);background:var(--bg-card-2);}
+.compare-table th.vanguard-col{color:var(--accent);background:rgba(0,232,135,0.06);}
+.compare-table td{padding:0.85rem 1.25rem;border-bottom:1px solid var(--border);vertical-align:middle;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table td:first-child{color:var(--text-soft);font-weight:500;}
+.compare-table td.good{color:var(--accent);font-weight:600;}
+.compare-table td.bad{color:var(--text-faint);}
+.compare-table td.mid{color:var(--amber);}
+.integration-step{display:flex;gap:1.25rem;align-items:flex-start;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--radius-lg);margin-bottom:1rem;}
+.integration-step:hover{border-color:rgba(0,232,135,0.3);background:var(--bg-card-2);}
+.step-num{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(0,232,135,0.2);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-body h4{margin-bottom:0.25rem;font-size:0.95rem;}
+.step-body p{font-size:13px;color:var(--text-soft);margin:0;}
+.cost-box{border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);text-align:center;}
+.cost-box.vanguard-box{border-color:rgba(0,232,135,0.35);background:rgba(0,232,135,0.04);}
+.cost-box-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-faint);margin-bottom:0.5rem;}
+.cost-box-val{font-family:var(--display);font-size:1.7rem;font-weight:800;line-height:1;margin-bottom:0.3rem;}
+@media(max-width:860px){.vanguard-stat-bar{grid-template-columns:repeat(2,1fr);}.depth-gate{grid-template-columns:1fr;}.silicon-grid{grid-template-columns:repeat(5,1fr);}.compare-table th:nth-child(3),.compare-table td:nth-child(3),.compare-table th:nth-child(4),.compare-table td:nth-child(4){display:none;}}
+@media(max-width:640px){.vanguard-word{font-size:3rem;}.vanguard-stat-num{font-size:1.9rem;}}
+</style>
+</head>
+<body>
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
+<div id="site-header"></div>
+<main class="page">
+
+<!-- ══ HERO ══ -->
+<div class="vanguard-hero">
+  <div class="glow-blue"   style="width:700px;height:500px;top:-200px;right:-250px;opacity:0.8;"></div>
+  <div class="glow-accent" style="width:500px;height:400px;bottom:-100px;left:-150px;opacity:0.6;"></div>
+  <div class="container">
+    <div class="hero-eyebrow" style="display:inline-flex;margin-bottom:1.5rem;">
+      <span class="dot"></span>Vanguard Neural Engine &middot; Enterprise AI Inference
+    </div>
+    <h1 style="line-height:1.0;margin-bottom:1.25rem;">
+      <span style="font-size:clamp(1.1rem,2.5vw,1.8rem);font-weight:400;color:var(--text-soft);display:block;margin-bottom:0.3rem;">Enterprise-Grade AI Inference.</span>
+      <span class="vanguard-word">VANGUARD</span>
+      <span style="font-size:clamp(1.1rem,2.5vw,1.8rem);font-weight:400;color:var(--text-soft);display:block;margin-top:0.4rem;">Built on Proprietary Silicon Geometry.</span>
+    </h1>
+    <p class="hero-sub" style="max-width:640px;">A custom-compiled, bare-metal inference architecture designed for high-stakes biomedical and corporate computation. We threw out the bloated commercial AI wrappers and built an engine that communicates directly with the GPU kernel.</p>
+    <div class="btn-row" style="margin-top:1.75rem;">
+      <a href="https://portal.exergynet.org/?mode=register" class="btn btn-primary">Deploy Vanguard &rarr;</a>
+      <a href="docs.html" class="btn btn-secondary">View API Docs</a>
+      <a href="mailto:systems@exergynet.org" class="btn btn-ghost">Enterprise Inquiry</a>
+    </div>
+    <div class="vanguard-stat-bar">
+      <div class="vanguard-stat-cell"><div class="vanguard-stat-num blue">5&times;</div><div class="vanguard-stat-label">Faster TTFT<br>vs legacy cloud</div></div>
+      <div class="vanguard-stat-cell"><div class="vanguard-stat-num accent">0</div><div class="vanguard-stat-label">Bytes retained<br>post-session</div></div>
+      <div class="vanguard-stat-cell"><div class="vanguard-stat-num blue">2</div><div class="vanguard-stat-label">Lines changed<br>to migrate</div></div>
+      <div class="vanguard-stat-cell"><div class="vanguard-stat-num accent">&infin;</div><div class="vanguard-stat-label">IP protection<br>hardware-enforced</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ══ THE PROBLEM ══ -->
+<section>
+  <div class="section-label">The Legacy AI Problem</div>
+  <h2>Your prompts are not just running inference.<br>They are running a surveillance stack.</h2>
+  <p style="max-width:680px;margin-bottom:1.75rem;">Every major cloud AI provider routes your inference calls through layers of moderation middleware, analytics trackers, logging pipelines, and shared tenancy infrastructure. You pay for their overhead in latency, cost, and IP exposure.</p>
+  <div class="card-grid">
+    <div class="card">
+      <div class="badge badge-red" style="margin-bottom:0.75rem;">Latency Tax</div>
+      <h3>Moderation Middleware</h3>
+      <p>Commercial APIs pass every token through content filters, safety classifiers, and rate-limit queues before a single GPU cycle is spent on your actual workload.</p>
+    </div>
+    <div class="card">
+      <div class="badge badge-red" style="margin-bottom:0.75rem;">IP Exposure</div>
+      <h3>Invisible Data Ingestion</h3>
+      <p>Your SMILES strings, IND drafts, and proprietary prompts flow through shared infrastructure that retains the right to train on your data unless you pay enterprise premiums.</p>
+    </div>
+    <div class="card">
+      <div class="badge badge-red" style="margin-bottom:0.75rem;">Cost Inflation</div>
+      <h3>Cloud Overhead Markup</h3>
+      <p>You are not paying for physics. You are paying for cloud margins, SRE teams, redundant infrastructure, and compliance overhead &mdash; bundled into every API call.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DEPTH GATING ══ -->
+<section>
+  <div class="section-label">Core Architecture</div>
+  <h2>Deterministic Depth Gating</h2>
+  <p style="max-width:680px;margin-bottom:1.75rem;">Vanguard evaluates prompt complexity at the physical hardware layer before allocating compute depth. Simple queries route through shallow neural paths. Complex multi-domain reasoning engages the full architecture. No bloated uniform-depth inference. No wasted GPU cycles. Pure exergonic efficiency.</p>
+
+  <div class="depth-gate" style="margin-bottom:1.5rem;">
+    <div class="depth-lane vanguard">
+      <div class="depth-lane-label">&#9670; Vanguard Engine</div>
+      <div class="depth-step active-step"><span>&#9889;</span>Kernel recv &rarr; Depth Gate eval</div>
+      <div class="depth-step active-step"><span>&#9670;</span>Complexity score &rarr; Layer selection</div>
+      <div class="depth-step bypass-step"><span>&#10007;</span>Moderation middleware</div>
+      <div class="depth-step bypass-step"><span>&#10007;</span>Analytics pipeline</div>
+      <div class="depth-step bypass-step"><span>&#10007;</span>Shared tenancy queue</div>
+      <div class="depth-step active-step"><span>&#9654;</span>Direct GPU kernel invocation</div>
+      <div class="depth-step active-step"><span>&#10003;</span>First token &rarr; client</div>
+      <div class="depth-result fast">TTFT: ~40ms avg &middot; 5&times; advantage</div>
+    </div>
+    <div class="depth-lane legacy">
+      <div class="depth-lane-label">&#10007; Legacy Cloud API</div>
+      <div class="depth-step slow-step"><span>&rarr;</span>API gateway ingress</div>
+      <div class="depth-step slow-step"><span>&rarr;</span>Rate limit check</div>
+      <div class="depth-step slow-step"><span>&rarr;</span>Content policy classifier</div>
+      <div class="depth-step slow-step"><span>&rarr;</span>Analytics &amp; logging</div>
+      <div class="depth-step slow-step"><span>&rarr;</span>Shared GPU queue</div>
+      <div class="depth-step slow-step"><span>&rarr;</span>Uniform-depth inference</div>
+      <div class="depth-step slow-step"><span>&rarr;</span>First token &rarr; client</div>
+      <div class="depth-result slow">TTFT: ~200&ndash;400ms &middot; overhead tax</div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);">
+      <span style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.10em;color:var(--text-faint);">Vanguard &middot; Silicon Geometry &middot; Adaptive Layer Activation Map</span>
+    </div>
+    <div class="silicon-grid">
+      <div class="silicon-cell active"></div><div class="silicon-cell active-b"></div><div class="silicon-cell active"></div><div class="silicon-cell bypass"></div><div class="silicon-cell active-d"></div><div class="silicon-cell bypass"></div><div class="silicon-cell active-b"></div><div class="silicon-cell active"></div>
+      <div class="silicon-cell active-b"></div><div class="silicon-cell active"></div><div class="silicon-cell bypass"></div><div class="silicon-cell active-d"></div><div class="silicon-cell active"></div><div class="silicon-cell active-b"></div><div class="silicon-cell active"></div><div class="silicon-cell bypass"></div>
+      <div class="silicon-cell bypass"></div><div class="silicon-cell active-d"></div><div class="silicon-cell active-b"></div><div class="silicon-cell active"></div><div class="silicon-cell bypass"></div><div class="silicon-cell active"></div><div class="silicon-cell active-d"></div><div class="silicon-cell active-b"></div>
+      <div class="silicon-cell active"></div><div class="silicon-cell bypass"></div><div class="silicon-cell active"></div><div class="silicon-cell active-b"></div><div class="silicon-cell active"></div><div class="silicon-cell bypass"></div><div class="silicon-cell active"></div><div class="silicon-cell active-d"></div>
+    </div>
+    <div style="padding:0.75rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:1.5rem;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text-faint);"><div style="width:10px;height:10px;border-radius:2px;background:var(--accent);"></div>Active layer</div>
+      <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text-faint);"><div style="width:10px;height:10px;border-radius:2px;background:var(--blue);"></div>Gated layer</div>
+      <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text-faint);"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,90,90,0.25);border:1px solid rgba(255,90,90,0.3);"></div>Bypassed (overhead eliminated)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ THREE PILLARS ══ -->
+<section class="pillars-section">
+  <div class="section-label">Vanguard Pillars</div>
+  <h2>Three reasons enterprises switch.</h2>
+  <div class="card-grid" style="margin-top:1.75rem;">
+
+    <div class="card accent-border pillar-card">
+      <div class="pillar-num">01 / ABSOLUTE IP SOVEREIGNTY</div>
+      <h3>Zero-Retention Hardware Enclave</h3>
+      <p>Your proprietary data &mdash; SMILES strings, IND drafts, corporate payrolls, clinical trial data &mdash; is processed inside a strict, stateless hardware enclave. The moment the connection closes, your data evaporates from VRAM. Physically and permanently.</p>
+      <ul class="spec-list" style="margin:1rem 0;">
+        <li><span class="spec-key">Prompt logging</span><span class="spec-val" style="color:var(--accent);">Disabled &middot; hardware-enforced</span></li>
+        <li><span class="spec-key">Training on user data</span><span class="spec-val" style="color:var(--accent);">Never</span></li>
+        <li><span class="spec-key">Vector DB ingestion</span><span class="spec-val" style="color:var(--accent);">None</span></li>
+        <li><span class="spec-key">Retention after close</span><span class="spec-val" style="color:var(--accent);">0 bytes &middot; VRAM purged</span></li>
+      </ul>
+      <div class="pillar-stat"><span class="pillar-stat-val accent">Zero</span><span class="pillar-stat-label">data retained per session</span></div>
+    </div>
+
+    <div class="card pillar-card">
+      <div class="pillar-num">02 / THE EXERGONIC COST ADVANTAGE</div>
+      <h3>Pay for Physics. Not Overhead.</h3>
+      <p>Because Vanguard minimizes thermodynamic waste at the silicon level, we do not pass exorbitant cloud overhead to our users. You get state-of-the-art reasoning at a fraction of incumbent API costs.</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0.75rem;align-items:center;margin:1.25rem 0;">
+        <div class="cost-box"><div class="cost-box-label">Legacy Cloud</div><div class="cost-box-val" style="color:var(--red);">$15&ndash;$60</div><div style="font-size:11px;color:var(--text-faint);">per 1M tokens</div></div>
+        <div style="font-family:var(--mono);color:var(--accent);font-size:1.5rem;text-align:center;">&rarr;</div>
+        <div class="cost-box vanguard-box"><div class="cost-box-label">Vanguard Engine</div><div class="cost-box-val" style="color:var(--accent);">$0.40</div><div style="font-size:11px;color:var(--text-faint);">per 1K tokens</div></div>
+      </div>
+      <ul class="spec-list">
+        <li><span class="spec-key">Computation speed</span><span class="spec-val" style="color:var(--accent);">5&times; TTFT advantage</span></li>
+        <li><span class="spec-key">Thermal footprint</span><span class="spec-val" style="color:var(--accent);">Minimized &middot; exergonic</span></li>
+        <li><span class="spec-key">Treasury savings</span><span class="spec-val" style="color:var(--accent);">Passed directly to you</span></li>
+      </ul>
+      <div class="pillar-stat"><span class="pillar-stat-val blue">97%</span><span class="pillar-stat-label">lower overhead vs frontier API</span></div>
+    </div>
+
+    <div class="card blue-border pillar-card">
+      <div class="pillar-num">03 / SEAMLESS INTEGRATION</div>
+      <h3>OpenAI-Compatible. Two Lines of Code.</h3>
+      <p>No new SDKs to learn. No architecture to rewrite. Vanguard is a 1:1 drop-in replacement for your current AI pipeline. Change two lines in your existing application.</p>
+      <div class="code-terminal-block" style="margin:1rem 0;">
+        <div class="code-terminal-header">
+          <div class="code-dots"><span class="t-dot t-red"></span><span class="t-dot t-amber"></span><span class="t-dot t-green"></span></div>
+          <span class="code-terminal-title">migration.py</span>
+          <span class="code-lang-badge">PY</span>
+        </div>
+        <pre class="code-terminal-body"><code><span class="cm"># Before &mdash; legacy provider</span>
+client = OpenAI(api_key=<span class="cs">"sk-..."</span>)
+
+<span class="cm"># After &mdash; Vanguard Engine</span>
+client = OpenAI(
+  api_key=<span class="cs">"sk-exergy-..."</span>,
+  base_url=<span class="cs">"https://api.exergynet.org/v1"</span>
+)
+<span class="cm"># All existing calls work unchanged.</span></code></pre>
+      </div>
+      <div class="pillar-stat"><span class="pillar-stat-val blue">2</span><span class="pillar-stat-label">lines changed &middot; zero downtime</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ COMPARISON TABLE ══ -->
+<section>
+  <div class="section-label">Provider Comparison</div>
+  <h2>Vanguard vs. the cloud AI stack.</h2>
+  <div class="card" style="padding:0;overflow:hidden;margin-top:1.5rem;">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="width:30%;">Capability</th>
+          <th class="vanguard-col">&#9670; Vanguard Engine</th>
+          <th>OpenAI / Anthropic</th>
+          <th>AWS Bedrock</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Time to First Token</td><td class="good">&#9679; ~40ms avg</td><td class="mid">~200&ndash;400ms</td><td class="bad">~300&ndash;600ms</td></tr>
+        <tr><td>Data retention after session</td><td class="good">&#9679; Zero &mdash; VRAM purged</td><td class="bad">Varies / opaque</td><td class="bad">30&ndash;90 day logs</td></tr>
+        <tr><td>Training on your data</td><td class="good">&#9679; Never &mdash; hardware enclave</td><td class="mid">Opt-out required</td><td class="mid">Opt-out required</td></tr>
+        <tr><td>Moderation middleware</td><td class="good">&#9679; Bypassed at kernel</td><td class="bad">Always active</td><td class="bad">Always active</td></tr>
+        <tr><td>OpenAI SDK compatible</td><td class="good">&#9679; 1:1 drop-in</td><td class="good">&#9679; Native</td><td class="mid">Partial</td></tr>
+        <tr><td>Cost per 1M tokens</td><td class="good">&#9679; $0.40 / 1K</td><td class="bad">$15&ndash;$60</td><td class="bad">$8&ndash;$40</td></tr>
+        <tr><td>Biomedical / IP workloads</td><td class="good">&#9679; Designed for this</td><td class="bad">Terms restrict sensitive data</td><td class="mid">BAA required</td></tr>
+        <tr><td>Analytics / prompt tracking</td><td class="good">&#9679; None</td><td class="bad">Extensive</td><td class="bad">CloudWatch logs</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══ USE CASES ══ -->
+<section>
+  <div class="section-label">Deployment Scenarios</div>
+  <h2>Built for high-stakes computation.</h2>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <div class="badge badge-green" style="margin-bottom:0.75rem;">Biomedical</div>
+      <h3>Drug Discovery Pipelines</h3>
+      <p>Run SMILES analysis, compound synthesis logic, and IND document generation through Vanguard with absolute certainty your proprietary scaffolds never leave your enclave.</p>
+    </div>
+    <div class="card">
+      <div class="badge badge-blue" style="margin-bottom:0.75rem;">Corporate Intelligence</div>
+      <h3>Confidential Document Processing</h3>
+      <p>M&amp;A memos, payroll data, and legal briefs processed at GPU speed with zero retention. Vanguard treats your most sensitive content as if it never existed once the session ends.</p>
+    </div>
+    <div class="card accent-border">
+      <div class="badge badge-green" style="margin-bottom:0.75rem;">Autonomous Agents</div>
+      <h3>Low-Latency AI Swarms</h3>
+      <p>Deploy agent pipelines that make dozens of inference calls per second. Vanguard's 5&times; TTFT advantage compounds across every node in your swarm &mdash; directly into operational throughput.</p>
+    </div>
+    <div class="card">
+      <div class="badge badge-blue" style="margin-bottom:0.75rem;">Financial Services</div>
+      <h3>Proprietary Model Integration</h3>
+      <p>Quantitative strategy logic, risk models, and trade rationale processed through a stateless enclave. No regulatory exposure from inference provider data policies.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ INTEGRATION ══ -->
+<section>
+  <div class="section-label">Getting Started</div>
+  <h2>Deploy in under 5 minutes.</h2>
+  <p style="max-width:640px;margin-bottom:2rem;color:var(--text-soft);">Vanguard speaks OpenAI's API protocol natively. Your existing codebase runs unchanged. Your first inference call is free.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
+    <div>
+      <div class="integration-step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <h4>Create your Vanguard account</h4>
+          <p>Sign up at <code>portal.exergynet.org</code> to receive your <code>sk-exergy-...</code> API key and $5 in trial compute credits.</p>
+        </div>
+      </div>
+      <div class="integration-step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <h4>Swap two lines in your code</h4>
+          <p>Point your OpenAI client at <code>https://api.exergynet.org/v1</code> and replace the API key. Nothing else changes.</p>
+        </div>
+      </div>
+      <div class="integration-step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <h4>Run your existing prompts at exergonic speed</h4>
+          <p>Your application continues working identically. Observe the latency drop on the first response. Your IP is now sovereign.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="code-terminal-block">
+        <div class="code-terminal-header">
+          <div class="code-dots"><span class="t-dot t-red"></span><span class="t-dot t-amber"></span><span class="t-dot t-green"></span></div>
+          <span class="code-terminal-title">vanguard-quickstart.py</span>
+          <span class="code-lang-badge">PY</span>
+        </div>
+        <pre class="code-terminal-body"><code><span class="ck">from</span> openai <span class="ck">import</span> OpenAI
+
+client = OpenAI(
+    api_key=<span class="cs">"sk-exergy-..."</span>,
+    base_url=<span class="cs">"https://api.exergynet.org/v1"</span>
+)
+
+<span class="cm"># Run your existing prompts at exergonic speed.</span>
+response = client.chat.completions.create(
+    model=<span class="cs">"vanguard-engine"</span>,
+    messages=[{
+        <span class="cs">"role"</span>:    <span class="cs">"user"</span>,
+        <span class="cs">"content"</span>: prompt
+    }]
+)
+
+<span class="ck">print</span>(response.choices[0].message.content)
+<span class="cm"># Your IP. Your enclave. Your inference.</span></code></pre>
+      </div>
+      <div style="margin-top:0.75rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+        <div class="flow-step" style="padding:0.5rem 0.9rem;font-size:11px;"><span style="color:var(--accent);margin-right:6px;">&#9670;</span>REST / SSE streaming</div>
+        <div class="flow-step" style="padding:0.5rem 0.9rem;font-size:11px;"><span style="color:var(--blue);margin-right:6px;">&#9670;</span>Python &middot; Node &middot; Rust</div>
+        <div class="flow-step" style="padding:0.5rem 0.9rem;font-size:11px;"><span style="color:var(--accent);margin-right:6px;">&#9670;</span>Any OpenAI SDK</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PULL QUOTE ══ -->
+<section>
+  <div class="card accent-border" style="padding:3rem 2.5rem;text-align:center;position:relative;overflow:hidden;">
+    <div class="glow-accent" style="width:400px;height:300px;top:-100px;left:50%;transform:translateX(-50%);opacity:0.5;"></div>
+    <div style="position:relative;z-index:1;">
+      <div class="section-label" style="justify-content:center;margin-bottom:1.25rem;">The Vanguard Principle</div>
+      <blockquote style="font-family:var(--display);font-size:clamp(1.3rem,3vw,2rem);font-weight:700;line-height:1.35;max-width:680px;margin:0 auto 1.5rem;color:var(--text);">
+        &ldquo;Stop paying for bloated infrastructure.<br>
+        <span style="color:var(--accent);">Pay only for the physics of intelligence.&rdquo;</span>
+      </blockquote>
+      <p style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-faint);text-transform:uppercase;">
+        ExergyNet &middot; Vanguard Neural Engine &middot; Thermodynamic AI Infrastructure
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section" style="border-top:1px solid var(--border);">
+  <div class="glow-blue"   style="width:600px;height:400px;top:-100px;left:50%;transform:translateX(-50%);opacity:0.6;"></div>
+  <div class="glow-accent" style="width:400px;height:300px;bottom:-50px;right:-100px;opacity:0.4;"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="hero-eyebrow" style="display:inline-flex;justify-content:center;margin-bottom:1.25rem;border-color:rgba(78,158,255,0.3);color:var(--blue);background:var(--blue-dim);">
+      <span class="dot" style="background:var(--blue);box-shadow:0 0 8px var(--blue);"></span>
+      Vanguard Engine &middot; Now in production
+    </div>
+    <h2>Your data is your moat.<br>Vanguard keeps the drawbridge up.</h2>
+    <p>Deploy enterprise-grade AI inference with absolute IP sovereignty. Free trial credits included. No enterprise sales call required.</p>
+    <div class="btn-row" style="justify-content:center;margin-top:2rem;">
+      <a href="https://portal.exergynet.org/?mode=register" class="btn btn-primary" style="font-size:15px;padding:0.85rem 2rem;">Start with Vanguard &rarr;</a>
+      <a href="docs.html" class="btn btn-secondary">API Documentation</a>
+      <a href="mailto:systems@exergynet.org" class="btn btn-ghost">Enterprise Inquiry</a>
+    </div>
+    <p style="margin-top:1.5rem;font-family:var(--mono);font-size:11px;color:var(--text-faint);">$5 trial credits on signup &middot; OpenAI-compatible &middot; No lock-in</p>
+  </div>
+</section>
+
+</div>
+</main>
+<div id="site-footer"></div>
+</div>
+<script src="main.js"></script>
+</body>
+</html>
