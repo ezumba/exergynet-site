@@ -107,6 +107,15 @@ async function initDb() {
       developer_id     TEXT NOT NULL,
       credited_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    CREATE TABLE IF NOT EXISTS oauth_accounts (
+      id               TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      developer_id     TEXT NOT NULL,
+      provider         TEXT NOT NULL,
+      provider_id      TEXT NOT NULL,
+      created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(provider, provider_id)
+    );
   `);
   console.log('[DB] Tables ready');
 }
@@ -499,6 +508,98 @@ app.post('/v1/chat/completions', async (req, res) => {
   }
   res.write('data: [DONE]\n\n');
   res.end();
+});
+
+// ── POST /auth/oauth ─ called server-side by NextAuth after OAuth sign-in ─────
+app.post('/auth/oauth', async (req, res) => {
+  const { provider, provider_id, email, name } = req.body || {};
+  if (!provider || !provider_id) {
+    return res.status(400).json({ error: 'provider and provider_id required' });
+  }
+
+  try {
+    // Check if this OAuth provider account already exists
+    const existing = await pool.query(
+      `SELECT d.id FROM oauth_accounts o
+         JOIN biological_developers d ON d.id = o.developer_id
+        WHERE o.provider = $1 AND o.provider_id = $2`,
+      [provider, String(provider_id)]
+    );
+    if (existing.rows.length > 0) {
+      // Returning user — issue fresh portal JWT
+      return res.json({ token: signToken(existing.rows[0].id), is_new_user: false });
+    }
+
+    // New OAuth sign-in — check if email already has an email/password account
+    let developerId = null;
+    let isNewUser   = true;
+
+    if (email) {
+      const emailMatch = await pool.query(
+        'SELECT id FROM biological_developers WHERE email = $1',
+        [email.toLowerCase().trim()]
+      );
+      if (emailMatch.rows.length > 0) {
+        // Link OAuth to existing account (no new API key needed)
+        developerId = emailMatch.rows[0].id;
+        isNewUser   = false;
+      }
+    }
+
+    let apiKey  = null;
+    let preview = null;
+    let note    = null;
+
+    if (!developerId) {
+      // Brand-new developer via OAuth — create account + generate API key
+      const oauthEmail    = email?.toLowerCase().trim()
+                          || (provider + ':' + String(provider_id) + '@oauth.local');
+      const randomPwd     = crypto.randomBytes(32).toString('hex');
+      const passwordHash  = await bcrypt.hash(randomPwd, SALT_ROUNDS);
+      apiKey              = generateApiKey();
+      const apiKeyHash    = await bcrypt.hash(apiKey, SALT_ROUNDS);
+      preview             = apiKeyPreview(apiKey);
+      note                = 'Your ExergyNet API key — save it immediately, it will never be shown again.';
+
+      const result = await pool.query(
+        `INSERT INTO biological_developers (id, email, password_hash, api_key_hash, api_key_preview)
+           VALUES (gen_random_uuid()::text, $1, $2, $3, $4) RETURNING id`,
+        [oauthEmail, passwordHash, apiKeyHash, preview]
+      );
+      developerId = result.rows[0].id;
+    }
+
+    // Link this OAuth provider to the developer account
+    await pool.query(
+      `INSERT INTO oauth_accounts (developer_id, provider, provider_id)
+         VALUES ($1, $2, $3) ON CONFLICT (provider, provider_id) DO NOTHING`,
+      [developerId, provider, String(provider_id)]
+    );
+
+    const token = signToken(developerId);
+    res.json({
+      token,
+      is_new_user: isNewUser,
+      ...(isNewUser && apiKey ? { api_key: apiKey, api_key_preview: preview, note } : {}),
+    });
+  } catch (err) {
+    // Race condition: concurrent insert on UNIQUE(provider, provider_id)
+    if (err.code === '23505') {
+      try {
+        const retry = await pool.query(
+          `SELECT d.id FROM oauth_accounts o
+             JOIN biological_developers d ON d.id = o.developer_id
+            WHERE o.provider = $1 AND o.provider_id = $2`,
+          [provider, String(provider_id)]
+        );
+        if (retry.rows.length > 0) {
+          return res.json({ token: signToken(retry.rows[0].id), is_new_user: false });
+        }
+      } catch (_) { /* fall through */ }
+    }
+    console.error('[auth/oauth]', err);
+    res.status(500).json({ error: 'OAuth sign-in failed' });
+  }
 });
 
 // ── GET /health ───────────────────────────────────────────────────────────────
