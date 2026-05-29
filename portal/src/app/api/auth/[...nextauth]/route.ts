@@ -40,9 +40,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     TwitterProvider({
-      clientId:     process.env.TWITTER_CLIENT_ID!,    // Consumer Key
-      clientSecret: process.env.TWITTER_CLIENT_SECRET!, // Consumer Secret
-      // version: '1.0a' is default — matches the credentials from X Developer Console
+      clientId:     process.env.TWITTER_CLIENT_ID!,
+      clientSecret: process.env.TWITTER_CLIENT_SECRET!,
+      version:      '2.0', // OAuth 2.0 PKCE — matches X Developer Console OAuth 2.0 credentials
     }),
   ],
 
