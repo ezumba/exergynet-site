@@ -1,0 +1,21 @@
+{
+  "name": "biological-proxy",
+  "version": "1.0.0",
+  "description": "ExergyNet developer portal backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.3",
+    "stripe": "^16.12.0"
+  }
+}
