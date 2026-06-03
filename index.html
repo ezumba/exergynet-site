@@ -257,10 +257,89 @@
   <button class="hero-arrow prev" id="hero-prev" aria-label="Previous slide">&#8592;</button>
   <button class="hero-arrow next" id="hero-next" aria-label="Next slide">&#8594;</button>
 
+
+    <!-- Slide 3: Ghost-Witness -->
+    <div class="hero-slide">
+    <section class="hero" style="position:relative; overflow:hidden;">
+      <div class="glow-accent" style="width:580px;height:480px;top:-60px;right:-160px;"></div>
+      <div class="glow-blue" style="width:500px;height:400px;top:40px;left:-140px;"></div>
+      <div class="container-wide">
+        <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:3rem; align-items:center;">
+          <div>
+            <div class="hero-eyebrow">
+              <span class="dot" style="background:var(--accent);box-shadow:0 0 8px var(--accent);"></span>
+              LNES-05 &middot; Ghost-Witness Protocol &middot; Base L2
+            </div>
+            <h1 style="line-height:1.0; margin-bottom:0.75rem;">
+              Your AI Agent<br>
+              <span class="accent">Should Not Be<br>Allowed to Lie.</span>
+            </h1>
+            <p class="hero-sub">Ghost-Witness detects logical contradictions in any AI agent conversation and generates a cryptographic Certificate of Logical Consistency &mdash; anchored permanently on Base L2. bash.005 USDC per audit. No subscription.</p>
+            <div class="btn-row">
+              <a href="mailto:intel@exergynet.org?subject=Ghost-Witness API Access" class="btn btn-primary">Get API Key &rarr;</a>
+              <a href="https://dt.portal.exergynet.org/intel/ghost-witness" class="btn btn-secondary">View Dashboard</a>
+              <a href="ghost-witness.html" class="btn btn-ghost">Learn More</a>
+            </div>
+          </div>
+
+          <div class="telemetry-panel">
+            <div class="section-label" style="margin-bottom:1rem;">Ghost-Witness &mdash; Live Audit</div>
+
+            <div class="chain-status-row">
+              <div class="chain-badge chain-badge-base">
+                <span class="chain-dot chain-dot-base"></span>
+                <span class="chain-name">LNES-05</span>
+                <span class="chain-tag">Base L2</span>
+              </div>
+              <span class="chain-status-val green">OPERATIONAL</span>
+            </div>
+
+            <div class="chain-status-row">
+              <div class="chain-badge chain-badge-sol">
+                <span class="chain-dot chain-dot-sol" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></span>
+                <span class="chain-name">Vanguard</span>
+                <span class="chain-tag">SGX</span>
+              </div>
+              <span class="chain-status-val green">SEALED</span>
+            </div>
+
+            <div class="telemetry-divider"></div>
+
+            <div class="telemetry-row">
+              <span class="tele-label">Audit Toll</span>
+              <span class="tele-value accent">bash.005 USDC</span>
+            </div>
+            <div class="telemetry-row">
+              <span class="tele-label">Avg. Audit Time</span>
+              <span class="tele-value green">&lt; 10 seconds</span>
+            </div>
+            <div class="telemetry-row">
+              <span class="tele-label">Settlement</span>
+              <span class="tele-value blue">Base L2 On-Chain</span>
+            </div>
+            <div class="telemetry-row">
+              <span class="tele-label">Detection Accuracy</span>
+              <span class="tele-value accent">99.9%</span>
+            </div>
+            <div class="telemetry-row">
+              <span class="tele-label">CLC Validity</span>
+              <span class="tele-value">&infin; Permanent</span>
+            </div>
+
+            <div style="margin-top:1.25rem;">
+              <a href="mailto:intel@exergynet.org?subject=Ghost-Witness API Access" class="btn btn-primary" style="width:100%;justify-content:center;">Start Auditing &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    </div>
+
   <!-- Dots -->
   <div class="hero-dots" id="hero-dots">
     <button class="hero-dot active" data-index="0" aria-label="Go to slide 1"></button>
     <button class="hero-dot" data-index="1" aria-label="Go to slide 2"></button>
+    <button class="hero-dot" data-index="2" aria-label="Go to slide 3"></button>
   </div>
 
   </div><!-- /hero-slider -->
@@ -660,7 +739,7 @@ cargo build --release</code></pre>
   var btnNext = document.getElementById('hero-next');
   var slider = document.getElementById('hero-slider');
   var current = 0;
-  var total   = 2;
+  var total   = 3;
   var timer;
 
   function goTo(n) {
