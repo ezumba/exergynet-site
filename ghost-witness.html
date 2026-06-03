@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ghost-Witness — ExergyNet LNES-05</title>
+<meta name="description" content="The first cryptographic truth layer for AI agent conversations. Detect logical contradictions. Generate blockchain-anchored Certificates of Logical Consistency.">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent:      #00e887;
+  --accent-dark: #00b868;
+  --accent-dim:  rgba(0,232,135,0.10);
+  --accent-glow: rgba(0,232,135,0.22);
+  --blue:        #4e9eff;
+  --blue-dim:    rgba(78,158,255,0.10);
+  --blue-glow:   rgba(78,158,255,0.20);
+  --amber:       #ffb830;
+  --amber-dim:   rgba(255,184,48,0.10);
+  --red:         #ff5a5a;
+  --red-dim:     rgba(255,90,90,0.10);
+
+  --bg:          #03060d;
+  --bg-surface:  #060c18;
+  --bg-card:     #091525;
+  --bg-card-2:   #0b1a2e;
+
+  --text:        #ddeeff;
+  --text-soft:   #7896b8;
+  --text-faint:  #3a5070;
+
+  --border:      rgba(60,140,220,0.10);
+  --border-mid:  rgba(60,140,220,0.18);
+  --border-hi:   rgba(0,232,135,0.28);
+
+  --nav-bg:      rgba(3,6,13,0.88);
+  --nav-h:       58px;
+  --radius:      8px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --max-w:       980px;
+  --max-w-wide:  1160px;
+
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body:    'Barlow', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg:         #eef2f8;
+  --bg-surface: #e4eaf4;
+  --bg-card:    #ffffff;
+  --bg-card-2:  #f4f7fc;
+  --text:       #0c1c30;
+  --text-soft:  #4a6080;
+  --text-faint: #8aa0ba;
+  --border:     rgba(60,100,160,0.12);
+  --border-mid: rgba(60,100,160,0.20);
+  --nav-bg:     rgba(238,242,248,0.92);
+  --accent:     #007a42;
+  --accent-dim: rgba(0,122,66,0.10);
+  --blue:       #1558b0;
+  --blue-dim:   rgba(21,88,176,0.10);
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Page-level ambient glows */
+body::before, body::after {
+  content: '';
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(100px);
+}
+body::before {
+  width: 700px; height: 700px;
+  top: -180px; left: -180px;
+  background: radial-gradient(circle, rgba(0,232,135,0.06) 0%, transparent 70%);
+}
+body::after {
+  width: 600px; height: 600px;
+  top: 60px; right: -200px;
+  background: radial-gradient(circle, rgba(78,158,255,0.06) 0%, transparent 70%);
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  height: var(--nav-h);
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text);
+  font-family: var(--font-display);
+  font-size: 16px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.nav-logo-mark {
+  width: 26px; height: 26px;
+  border: 1.5px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.nav-logo-mark::after {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+.nav-logo span {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  margin-left: -4px;
+}
+.nav-links {
+  display: flex; align-items: center; gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-soft);
+  transition: color 0.15s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 2px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 8px 20px; border-radius: var(--radius);
+  text-decoration: none; cursor: pointer; border: none;
+  transition: all 0.18s; white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent); color: #03060d;
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+.btn-primary:hover {
+  background: var(--accent-dark);
+  box-shadow: 0 0 36px var(--accent-glow);
+  transform: translateY(-1px);
+}
+.btn-ghost {
+  background: transparent; color: var(--text-soft);
+  border: 1px solid var(--border-mid);
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--border-hi); }
+.btn-outline {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border-mid);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  padding: 100px 48px 88px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: center;
+  max-width: var(--max-w-wide); margin: 0 auto;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--accent); letter-spacing: 0.10em;
+  text-transform: uppercase; margin-bottom: 24px;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 28px; height: 1px;
+  background: var(--accent);
+}
+.hero-h1 {
+  font-family: var(--font-display);
+  font-size: 72px; font-weight: 900;
+  line-height: 0.95; letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.hero-h1 .grad {
+  background: linear-gradient(130deg, var(--blue) 20%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 16px; font-weight: 300;
+  color: var(--text-soft); line-height: 1.75;
+  max-width: 440px; margin-bottom: 36px;
+}
+.hero-cta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.hero-meta {
+  margin-top: 20px;
+  display: flex; gap: 24px; flex-wrap: wrap;
+}
+.hero-meta-item {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-faint);
+}
+.hero-meta-item .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-dot 2.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.hero-meta-item .dot.blue {
+  background: var(--blue);
+  animation-delay: 0.8s; animation-duration: 2.8s;
+}
+
+/* Terminal */
+.hero-terminal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0,232,135,0.07), 0 32px 80px rgba(0,0,0,0.4);
+}
+.terminal-bar {
+  padding: 10px 16px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 7px;
+}
+.tb-dot { width: 11px; height: 11px; border-radius: 50%; }
+.terminal-label {
+  margin-left: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-faint); letter-spacing: 0.05em;
+}
+.terminal-body {
+  padding: 24px;
+  font-family: var(--font-mono); font-size: 12px;
+  line-height: 1.8; color: #7896b8;
+}
+pre.term { white-space: pre; overflow-x: auto; margin: 0; }
+.tc { color: #3a5070; }       /* dim/comment */
+.tk { color: #7c6fe4; }       /* key/keyword */
+.tv { color: #ffb830; }       /* value/string */
+.ts { color: var(--accent); } /* success/string */
+.te { color: var(--red); }    /* error */
+.td { color: #3a5070; }       /* very dim */
+
+.result-panel {
+  margin-top: 16px; padding: 14px 16px;
+  background: rgba(0,232,135,0.05);
+  border: 1px solid rgba(0,232,135,0.18);
+  border-radius: var(--radius);
+}
+.result-ok {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--accent); font-weight: 700;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.result-ok::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+.result-flag {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--red); display: block; margin-top: 4px;
+  padding-left: 15px;
+}
+.result-flag.warn { color: var(--amber); }
+.result-meta {
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-faint); line-height: 1.9;
+}
+.result-meta .hi { color: var(--accent); }
+.result-meta .bl { color: var(--blue); }
+
+/* ── DIVIDER ── */
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  position: relative; z-index: 1;
+}
+
+/* ── STATS BAR ── */
+.stats-bar {
+  position: relative; z-index: 1;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+  display: grid; grid-template-columns: repeat(4,1fr);
+}
+.stat-item {
+  padding: 28px 40px;
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 40px; font-weight: 900;
+  line-height: 1; letter-spacing: -0.02em;
+  color: var(--text);
+}
+.stat-num .accent { color: var(--accent); }
+.stat-num .blue { color: var(--blue); }
+.stat-label {
+  font-size: 12px; font-weight: 400;
+  color: var(--text-faint); letter-spacing: 0.02em;
+}
+
+/* ── SECTIONS ── */
+section {
+  position: relative; z-index: 1;
+  padding: 88px 48px;
+  border-bottom: 1px solid var(--border);
+}
+.container { max-width: var(--max-w-wide); margin: 0 auto; }
+.sec-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+}
+.sec-title {
+  font-family: var(--font-display);
+  font-size: 52px; font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em; line-height: 0.96;
+  margin-bottom: 20px; max-width: 700px;
+}
+.sec-sub {
+  font-size: 15px; font-weight: 300;
+  color: var(--text-soft); max-width: 540px;
+  line-height: 1.75; margin-bottom: 56px;
+}
+
+/* ── HOW IT WORKS ── */
+.steps {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border: 1px solid var(--border-mid); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.step {
+  padding: 36px 28px;
+  border-right: 1px solid var(--border);
+  background: var(--bg-card);
+  position: relative;
+  transition: background 0.2s;
+}
+.step:last-child { border-right: none; }
+.step:hover { background: var(--bg-card-2); }
+.step::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--border);
+  transition: background 0.2s;
+}
+.step:hover::before { background: var(--accent); }
+.step-num {
+  font-family: var(--font-display);
+  font-size: 56px; font-weight: 900;
+  color: var(--border-mid);
+  line-height: 1; margin-bottom: 20px;
+  letter-spacing: -0.04em;
+}
+.step-title {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.02em;
+  margin-bottom: 10px;
+}
+.step-body {
+  font-size: 13px; font-weight: 300;
+  color: var(--text-soft); line-height: 1.65;
+}
+.step-badge {
+  display: inline-block; margin-top: 16px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 3px 9px; border-radius: var(--radius);
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid rgba(0,232,135,0.22);
+}
+
+/* ── USE CASES ── */
+.use-cases-section { background: var(--bg-surface); }
+.cases-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border-mid); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.case-card {
+  padding: 32px 28px;
+  background: var(--bg-card);
+  position: relative; overflow: hidden;
+  transition: background 0.2s;
+}
+.case-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--border); transition: background 0.2s;
+}
+.case-card:hover { background: var(--bg-card-2); }
+.case-card:hover::after { background: var(--accent); }
+.case-icon {
+  font-size: 28px; margin-bottom: 18px;
+  display: block;
+}
+.case-title {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.02em;
+  margin-bottom: 10px;
+}
+.case-body {
+  font-size: 13px; font-weight: 300;
+  color: var(--text-soft); line-height: 1.65;
+  margin-bottom: 18px;
+}
+.case-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.case-tag {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 8px; border-radius: var(--radius);
+  background: var(--blue-dim);
+  color: var(--blue);
+  border: 1px solid rgba(78,158,255,0.18);
+}
+
+/* ── PRICING ── */
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 20px; max-width: 960px;
+}
+.price-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  position: relative;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.price-card:hover {
+  border-color: var(--border-hi);
+  box-shadow: 0 0 40px var(--accent-dim);
+}
+.price-card.featured {
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 40px rgba(0,232,135,0.10);
+}
+.featured-tag {
+  position: absolute; top: -13px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.10em;
+  background: var(--accent); color: #03060d;
+  padding: 3px 14px; border-radius: 20px;
+  white-space: nowrap;
+}
+.price-name {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-faint); margin-bottom: 10px;
+}
+.price-amount {
+  font-family: var(--font-display);
+  font-size: 44px; font-weight: 900;
+  line-height: 1; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 4px;
+}
+.price-amount .accent { color: var(--accent); }
+.price-unit {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-faint); margin-bottom: 28px;
+}
+.price-features {
+  list-style: none; margin-bottom: 28px;
+}
+.price-features li {
+  font-size: 13px; font-weight: 400;
+  color: var(--text-soft);
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.price-features li:last-child { border-bottom: none; }
+.price-features li::before {
+  content: '✓';
+  color: var(--accent); font-weight: 700; flex-shrink: 0;
+}
+.price-btn {
+  display: block; width: 100%;
+  text-align: center; text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 11px; border-radius: var(--radius);
+  cursor: pointer; border: none;
+  transition: all 0.18s;
+}
+.price-btn.dark {
+  background: var(--accent); color: #03060d;
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+.price-btn.dark:hover { background: var(--accent-dark); }
+.price-btn.light {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border-mid);
+}
+.price-btn.light:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── QUICKSTART ── */
+.qs-section { background: var(--bg-surface); }
+.qs-grid {
+  display: grid; grid-template-columns: 1fr 1.2fr;
+  gap: 56px; align-items: start;
+}
+.qs-steps { display: flex; flex-direction: column; gap: 28px; }
+.qs-step { display: flex; gap: 18px; align-items: flex-start; }
+.qs-num {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: var(--accent-dim);
+  border: 1px solid rgba(0,232,135,0.30);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 14px; font-weight: 800;
+  color: var(--accent);
+}
+.qs-title {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.03em;
+  margin-bottom: 5px;
+}
+.qs-desc {
+  font-size: 13px; font-weight: 300;
+  color: var(--text-soft); line-height: 1.65;
+}
+
+.code-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.code-topbar {
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 7px;
+}
+.code-body {
+  padding: 24px;
+  font-family: var(--font-mono); font-size: 12px;
+  line-height: 1.8; color: var(--text-soft);
+  overflow-x: auto;
+  white-space: pre;
+}
+.c-green  { color: var(--accent); }
+.c-yellow { color: var(--amber); }
+.c-purple { color: #a78bfa; }
+.c-blue   { color: var(--blue); }
+.c-red    { color: var(--red); }
+.c-dim    { color: var(--text-faint); }
+.c-text   { color: var(--text); }
+
+/* ── CLC VERIFIER ── */
+.verify-section { background: var(--bg-card); }
+.verify-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 56px; align-items: center;
+}
+.verify-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--accent); margin-bottom: 14px;
+}
+.verify-h2 {
+  font-family: var(--font-display);
+  font-size: 44px; font-weight: 900;
+  text-transform: uppercase; letter-spacing: -0.01em;
+  line-height: 1; margin-bottom: 14px;
+}
+.verify-sub {
+  font-size: 14px; font-weight: 300;
+  color: var(--text-soft); line-height: 1.7;
+  margin-bottom: 24px;
+}
+.verify-form {
+  display: flex; gap: 8px;
+}
+.verify-input {
+  flex: 1;
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-mid);
+  color: var(--text);
+  padding: 10px 14px; border-radius: var(--radius);
+  outline: none; transition: border-color 0.15s;
+}
+.verify-input:focus { border-color: var(--accent); }
+.verify-input::placeholder { color: var(--text-faint); }
+.verify-btn {
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 10px 20px; border-radius: var(--radius);
+  background: var(--accent); color: #03060d;
+  border: none; cursor: pointer;
+  transition: background 0.15s;
+}
+.verify-btn:hover { background: var(--accent-dark); }
+.verify-result {
+  margin-top: 12px; padding: 12px 16px;
+  border-radius: var(--radius); font-size: 13px;
+  display: none;
+  font-family: var(--font-mono);
+}
+.verify-result.ok {
+  background: var(--accent-dim); border: 1px solid rgba(0,232,135,0.25);
+  color: var(--accent);
+}
+.verify-result.err {
+  background: var(--red-dim); border: 1px solid rgba(255,90,90,0.25);
+  color: var(--red);
+}
+.verify-result.loading {
+  background: var(--bg-surface); border: 1px solid var(--border-mid);
+  color: var(--text-faint);
+}
+.verify-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-lg); padding: 28px;
+}
+.verify-card-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-faint); margin-bottom: 16px;
+}
+.verify-card-body {
+  font-size: 13px; font-weight: 300;
+  color: var(--text-soft); line-height: 1.75;
+}
+.verify-note {
+  margin-top: 16px; padding: 12px 14px;
+  background: var(--accent-dim);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 12px; font-weight: 300;
+  color: var(--text-soft); line-height: 1.6;
+}
+
+/* ── CHAIN STATUS STRIP ── */
+.chain-strip {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 48px;
+  display: flex; align-items: center; gap: 32px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-faint);
+}
+.chain-status {
+  display: flex; align-items: center; gap: 7px;
+}
+.chain-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+.chain-dot.green { background: var(--accent); }
+.chain-dot.blue  { background: var(--blue); animation-duration: 2.8s; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  padding: 40px 48px;
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 20px;
+}
+.footer-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text);
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.footer-links { display: flex; gap: 28px; }
+.footer-link {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-faint); text-decoration: none;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  transition: color 0.15s;
+}
+.footer-link:hover { color: var(--accent); }
+.footer-legal {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-faint); letter-spacing: 0.05em;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes pulse-dot {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(0.55); opacity: 0.4; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes blink {
+  0%,100% { opacity: 1; } 50% { opacity: 0; }
+}
+
+.hero-left > * {
+  animation: fadeUp 0.55s ease both;
+}
+.hero-left .hero-eyebrow  { animation-delay: 0.00s; }
+.hero-left .hero-h1       { animation-delay: 0.08s; }
+.hero-left .hero-sub      { animation-delay: 0.16s; }
+.hero-left .hero-cta      { animation-delay: 0.24s; }
+.hero-left .hero-meta     { animation-delay: 0.32s; }
+.hero-terminal            { animation: fadeUp 0.65s 0.18s ease both; }
+
+/* ── THEME TOGGLE ── */
+.theme-toggle {
+  background: none; border: 1px solid var(--border-mid);
+  border-radius: var(--radius); padding: 6px 10px;
+  cursor: pointer; font-size: 14px;
+  color: var(--text-soft);
+  transition: border-color 0.15s;
+}
+.theme-toggle:hover { border-color: var(--accent); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; gap: 48px; }
+  .hero-h1 { font-size: 56px; }
+  .cases-grid { grid-template-columns: repeat(2,1fr); }
+  .qs-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0 24px; }
+  nav .nav-links { display: none; }
+  .hero { padding: 72px 24px 64px; }
+  .hero-h1 { font-size: 44px; }
+  section { padding: 64px 24px; }
+  .stats-bar { grid-template-columns: repeat(2,1fr); }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .cases-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .verify-inner { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 24px; padding: 32px 24px; }
+  .chain-strip { padding: 12px 24px; flex-wrap: wrap; gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://exergynet.org" class="nav-logo">
+    <div class="nav-logo-mark"></div>
+    ExergyNet <span>Ghost-Witness</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#use-cases">Use cases</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#quickstart">API docs</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">☀</button>
+    <a href="https://dt.portal.exergynet.org/dashboard" class="btn btn-ghost">Portal</a>
+    <a href="mailto:intel@exergynet.org?subject=Ghost-Witness API Access" class="btn btn-primary">Get API key →</a>
+  </div>
+</nav>
+
+<!-- CHAIN STATUS STRIP -->
+<div class="chain-strip">
+  <div class="chain-status">
+    <div class="chain-dot green"></div>
+    <span>LNES-05 · Base L2 · Operational</span>
+  </div>
+  <div class="chain-status">
+    <div class="chain-dot blue"></div>
+    <span>Vanguard · SGX Sealed · Active</span>
+  </div>
+  <div style="margin-left:auto;">
+    <span>Avg. audit time · &lt;8s</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div style="position:relative;z-index:1;border-bottom:1px solid var(--border);">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">LNES-05 · Ghost-Witness Protocol</div>
+      <h1 class="hero-h1">
+        Your AI agent<br>
+        should not be<br>
+        <span class="grad">allowed to lie.</span>
+      </h1>
+      <p class="hero-sub">
+        Ghost-Witness detects logical contradictions in any AI agent conversation and generates a cryptographic Certificate of Logical Consistency — anchored permanently on Base L2.
+      </p>
+      <div class="hero-cta">
+        <a href="mailto:intel@exergynet.org?subject=Ghost-Witness API Access" class="btn btn-primary">Get API access →</a>
+        <a href="#how" class="btn btn-outline">See how it works</a>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="dot"></span>
+          $0.005 USDC per audit
+        </div>
+        <div class="hero-meta-item">
+          <span class="dot blue"></span>
+          Base L2 settlement
+        </div>
+        <div class="hero-meta-item">
+          <span class="dot"></span>
+          No subscription
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-terminal">
+      <div class="terminal-bar">
+        <div class="tb-dot" style="background:#ff5f57;"></div>
+        <div class="tb-dot" style="background:#febc2e;"></div>
+        <div class="tb-dot" style="background:#28c840;"></div>
+        <span class="terminal-label">ghost-witness · live detection</span>
+      </div>
+      <div class="terminal-body">
+<pre class="term"><span class="tc"># Agent conversation piped to Ghost-Witness</span>
+<span class="td">POST</span> <span class="ts">/api/ghost-witness/audit</span>
+
+<span class="tk">"conversation"</span>: [
+  { <span class="tk">role</span>: <span class="ts">"agent"</span>,
+    <span class="tk">content</span>: <span class="tv">"Price is $49.99. Ships in 2 days."</span> },
+  { <span class="tk">role</span>: <span class="ts">"agent"</span>,
+    <span class="tk">content</span>: <span class="tv">"Delivery takes 5–7 business days."</span> }
+]</pre>
+        <div class="result-panel">
+          <div class="result-ok">Audit complete · 28ms</div>
+          <span class="result-flag">✗ CRITICAL · Shipping contradiction detected</span>
+          <span class="result-flag warn">✗ HIGH · Temporal inconsistency (2 days ≠ 5–7 days)</span>
+          <div class="result-meta">
+            consistent: <span class="te">false</span> · score: <span class="hi">0.31</span><br>
+            CLC sealed · <span class="bl">Base L2</span> · <span class="hi">$0.005 USDC</span><br>
+            hash: <span style="color:var(--text-faint);">0x9dd05d865b826a90b61145e...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num"><span class="accent">99.9</span>%</div>
+    <div class="stat-label">Contradiction detection accuracy</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">&lt;<span class="blue">10</span>s</div>
+    <div class="stat-label">Audit and settlement time</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">$<span class="accent">0.005</span></div>
+    <div class="stat-label">USDC per audit — flat rate</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">CLC validity — permanent on-chain</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="sec-eyebrow">How it works</div>
+    <h2 class="sec-title">From conversation<br>to certificate<br>in four steps.</h2>
+    <p class="sec-sub">Ghost-Witness is a pipeline, not a product. It sits downstream of your existing AI agent and verifies its outputs automatically.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Pipe the conversation</div>
+        <div class="step-body">Send any AI agent conversation log to the Ghost-Witness API. Supports WhatsApp, Zendesk, Shopify, or any custom chatbot platform. Optional PII stripping before processing.</div>
+        <span class="step-badge">POST /audit</span>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Claims are extracted</div>
+        <div class="step-body">The system parses every agent statement and identifies verifiable claims: prices, timelines, medical assertions, legal claims, statistics, and capability promises.</div>
+        <span class="step-badge">8 claim types</span>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Vanguard checks consistency</div>
+        <div class="step-body">SEI Vanguard — running inside an Intel SGX enclave with zero data retention — analyzes the extracted claims for internal contradictions, implausibility, and hallucination risk.</div>
+        <span class="step-badge">SGX sealed</span>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">CLC sealed on Base L2</div>
+        <div class="step-body">The verdict is anchored on Base L2. The Certificate of Logical Consistency is permanently verifiable at exergynet.org/clc/{hash} by anyone — your regulators, customers, or auditors.</div>
+        <span class="step-badge">LNES-05 · Base L2</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section id="use-cases" class="use-cases-section">
+  <div class="container">
+    <div class="sec-eyebrow">Use cases</div>
+    <h2 class="sec-title">Any agent that<br>makes claims needs<br>a witness.</h2>
+    <p class="sec-sub">If your AI agent talks to customers, patients, or counterparties — Ghost-Witness is your permanent audit trail.</p>
+    <div class="cases-grid">
+      <div class="case-card">
+        <span class="case-icon">🏥</span>
+        <div class="case-title">Biotech & Clinical</div>
+        <div class="case-body">AI agents making clinical recommendations, quoting trial results, or describing drug interactions. Any factual inconsistency is a liability. Ghost-Witness produces a CLC for every automated patient interaction.</div>
+        <div class="case-tags">
+          <span class="case-tag">FDA compliance</span>
+          <span class="case-tag">Regulatory audit</span>
+          <span class="case-tag">CRO verification</span>
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-icon">💬</span>
+        <div class="case-title">WhatsApp Business</div>
+        <div class="case-body">Meta's Business Agent platform powers millions of customer conversations per day. When an agent quotes prices, delivery times, or product specs — Ghost-Witness detects contradictions before they become refunds or lawsuits.</div>
+        <div class="case-tags">
+          <span class="case-tag">Shopify</span>
+          <span class="case-tag">Zendesk</span>
+          <span class="case-tag">WhatsApp Business API</span>
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-icon">⚖️</span>
+        <div class="case-title">Legal & Compliance</div>
+        <div class="case-body">AI agents advising on contracts, rights, or regulatory requirements. A single inconsistent legal claim can void an agreement. Ghost-Witness provides timestamped evidence that the agent's output was verified at delivery.</div>
+        <div class="case-tags">
+          <span class="case-tag">Contract review</span>
+          <span class="case-tag">Compliance advisors</span>
+          <span class="case-tag">Regulatory bots</span>
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-icon">📈</span>
+        <div class="case-title">Financial Services</div>
+        <div class="case-body">AI agents quoting rates, returns, or risk levels. Contradictory financial claims trigger regulatory action. Ghost-Witness creates an immutable record that the agent's representations were internally consistent.</div>
+        <div class="case-tags">
+          <span class="case-tag">Rate quotation</span>
+          <span class="case-tag">Portfolio advice</span>
+          <span class="case-tag">Insurance underwriting</span>
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-icon">🛒</span>
+        <div class="case-title">E-Commerce Agents</div>
+        <div class="case-body">Product description, pricing, and availability agents. Price contradictions cost retailers in chargebacks and trust. Ghost-Witness catches shipping-time contradictions, price inconsistencies, and availability conflicts.</div>
+        <div class="case-tags">
+          <span class="case-tag">Product bots</span>
+          <span class="case-tag">Customer service</span>
+          <span class="case-tag">Returns automation</span>
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-icon">🤖</span>
+        <div class="case-title">M2M Agent Networks</div>
+        <div class="case-body">When AI agents contract with other AI agents, truth verification is the trust layer. Ghost-Witness provides neutral third-party attestation that a counterparty agent's representations were consistent before settlement executes.</div>
+        <div class="case-tags">
+          <span class="case-tag">ElizaOS</span>
+          <span class="case-tag">Claude agents</span>
+          <span class="case-tag">Agentic workflows</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="sec-eyebrow">Pricing</div>
+    <h2 class="sec-title">Pay per audit.<br>No surprises.</h2>
+    <p class="sec-sub">USDC settlement on Base L2. No monthly fees. No hidden costs. Every audit produces a permanent, publicly verifiable CLC.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Developer</div>
+        <div class="price-amount">Free</div>
+        <div class="price-unit">to get started</div>
+        <ul class="price-features">
+          <li>10 free audits / month</li>
+          <li>All claim types supported</li>
+          <li>CLC issued per audit</li>
+          <li>Base L2 settlement</li>
+          <li>Public CLC viewer</li>
+        </ul>
+        <a href="mailto:intel@exergynet.org?subject=Developer API Key" class="price-btn light">Request API key</a>
+      </div>
+      <div class="price-card featured">
+        <div class="featured-tag">Most popular</div>
+        <div class="price-name">Pay-per-audit</div>
+        <div class="price-amount"><span class="accent">$0.005</span></div>
+        <div class="price-unit">USDC per audit · settled on-chain</div>
+        <ul class="price-features">
+          <li>Unlimited audits</li>
+          <li>All claim types supported</li>
+          <li>Priority Vanguard queue</li>
+          <li>Webhook on CLC issuance</li>
+          <li>Audit history dashboard</li>
+          <li>Base L2 receipts</li>
+        </ul>
+        <a href="mailto:intel@exergynet.org?subject=Pay-Per-Audit API Key" class="price-btn dark">Get started →</a>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Enterprise</div>
+        <div class="price-amount">Custom</div>
+        <div class="price-unit">volume pricing · SLA</div>
+        <ul class="price-features">
+          <li>Volume discount &gt;10k/mo</li>
+          <li>Dedicated Vanguard node</li>
+          <li>Custom claim taxonomy</li>
+          <li>White-label CLC viewer</li>
+          <li>Compliance report export</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="mailto:intel@exergynet.org?subject=Enterprise Ghost-Witness" class="price-btn light">Contact us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API QUICKSTART -->
+<section id="quickstart" class="qs-section">
+  <div class="container">
+    <div class="sec-eyebrow">API Quickstart</div>
+    <h2 class="sec-title">Three calls<br>to production.</h2>
+    <p class="sec-sub">REST API. USDC settlement handled automatically. No blockchain knowledge required.</p>
+    <div class="qs-grid">
+      <div class="qs-steps">
+        <div class="qs-step">
+          <div class="qs-num">1</div>
+          <div class="qs-body">
+            <div class="qs-title">Get your API key</div>
+            <div class="qs-desc">Email intel@exergynet.org or request via the portal. Instant provisioning. Fund your wallet with USDC on Base L2 for pay-per-audit billing.</div>
+          </div>
+        </div>
+        <div class="qs-step">
+          <div class="qs-num">2</div>
+          <div class="qs-body">
+            <div class="qs-title">Send a conversation</div>
+            <div class="qs-desc">POST to /api/ghost-witness/audit with your conversation array. Include conversation_id for tracking. Optional strip_pii for automatic PII removal.</div>
+          </div>
+        </div>
+        <div class="qs-step">
+          <div class="qs-num">3</div>
+          <div class="qs-body">
+            <div class="qs-title">Receive the CLC</div>
+            <div class="qs-desc">The response contains the full Certificate of Logical Consistency with flags, severity levels, and the Base L2 receipt. Store the audit_hash for public verification.</div>
+          </div>
+        </div>
+        <div class="qs-step">
+          <div class="qs-num">4</div>
+          <div class="qs-body">
+            <div class="qs-title">Verify publicly</div>
+            <div class="qs-desc">Anyone — your customer, your regulator, your auditor — can verify the CLC at exergynet.org/clc/{audit_hash}. No login required. Permanently on-chain.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-topbar">
+          <div class="tb-dot" style="background:#ff5f57;"></div>
+          <div class="tb-dot" style="background:#febc2e;"></div>
+          <div class="tb-dot" style="background:#28c840;"></div>
+          <span class="terminal-label">API reference</span>
+        </div>
+        <div class="code-body"><span class="c-dim"># 1. Audit a conversation</span>
+<span class="c-green">curl</span> -X POST \
+  https://dt.portal.exergynet.org/intel/api/ghost-witness/audit \
+  -H <span class="c-yellow">"Content-Type: application/json"</span> \
+  -H <span class="c-yellow">"x-api-key: YOUR_GW_API_KEY"</span> \
+  -d <span class="c-yellow">'{
+  "conversation_id": "session-001",
+  "platform": "whatsapp",
+  "strip_pii": true,
+  "conversation": [
+    {"role":"agent","content":"Price is $49.99."},
+    {"role":"agent","content":"Price is $99.99."}
+  ]
+}'</span>
+
+<span class="c-dim"># Response</span>
+{
+  <span class="c-purple">"status"</span>: <span class="c-yellow">"complete"</span>,
+  <span class="c-purple">"clc"</span>: {
+    <span class="c-purple">"consistent"</span>: <span class="c-red">false</span>,
+    <span class="c-purple">"flags"</span>: [{
+      <span class="c-purple">"issue"</span>: <span class="c-yellow">"Price contradiction"</span>,
+      <span class="c-purple">"severity"</span>: <span class="c-yellow">"critical"</span>
+    }]
+  },
+  <span class="c-purple">"receipt"</span>: {
+    <span class="c-purple">"tx_hash"</span>: <span class="c-yellow">"0x7a3f...e9d2"</span>,
+    <span class="c-purple">"cost_usdc"</span>: <span class="c-green">0.005</span>,
+    <span class="c-purple">"clc_url"</span>: <span class="c-yellow">"exergynet.org/clc/..."</span>
+  }
+}
+
+<span class="c-dim"># 2. Verify publicly (no auth required)</span>
+<span class="c-green">curl</span> https://dt.portal.exergynet.org/intel/api/ghost-witness/clc/{audit_hash}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLC VERIFIER -->
+<section class="verify-section" id="verify">
+  <div class="container">
+    <div class="verify-inner">
+      <div class="verify-left">
+        <div class="verify-eyebrow">CLC Public Verifier</div>
+        <h2 class="verify-h2">Verify any<br>certificate.</h2>
+        <p class="verify-sub">Enter an audit hash to verify a Certificate of Logical Consistency. No login required. Results are pulled directly from Base L2.</p>
+        <div class="verify-form">
+          <input class="verify-input" id="hashInput" type="text" placeholder="Enter audit hash (0x9dd05d...)">
+          <button class="verify-btn" onclick="verifyCLC()">Verify</button>
+        </div>
+        <div class="verify-result" id="verifyResult"></div>
+      </div>
+      <div class="verify-right">
+        <div class="verify-card">
+          <div class="verify-card-label">What a verified CLC means</div>
+          <div class="verify-card-body">
+            A <strong style="color:var(--accent);">green CLC</strong> means the agent conversation was analyzed by SEI Vanguard and no logical contradictions were detected. The verdict is permanent and tamper-proof on Base L2.
+            <br><br>
+            A <strong style="color:var(--red);">red CLC</strong> means contradictions were detected — the specific flags and severity levels are recorded on-chain for permanent reference.
+          </div>
+          <div class="verify-note">
+            The CLC does not verify factual accuracy against the real world — only internal logical consistency. Factual verification requires external data sources.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="https://exergynet.org" class="footer-logo">
+    <div class="nav-logo-mark" style="width:22px;height:22px;"></div>
+    ExergyNet
+  </a>
+  <div class="footer-links">
+    <a href="https://dt.portal.exergynet.org/intel/ghost-witness" class="footer-link">Dashboard</a>
+    <a href="#quickstart" class="footer-link">API</a>
+    <a href="#verify" class="footer-link">Verify</a>
+    <a href="mailto:intel@exergynet.org" class="footer-link">Contact</a>
+    <a href="https://exergynet.org" class="footer-link">ExergyNet</a>
+  </div>
+  <div class="footer-legal">© 2026 Ezumba Dynasty Trust · LNES-05 · Base L2</div>
+</footer>
+
+<script>
+/* ── Theme toggle ── */
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  html.dataset.theme = next;
+  try { localStorage.setItem('gw_theme', next); } catch {}
+}
+(function(){
+  try {
+    const saved = localStorage.getItem('gw_theme');
+    if (saved) document.documentElement.dataset.theme = saved;
+  } catch {}
+})();
+
+/* ── CLC Verifier ── */
+async function verifyCLC() {
+  const hash   = document.getElementById('hashInput').value.trim();
+  const result = document.getElementById('verifyResult');
+  if (!hash) return;
+
+  result.className      = 'verify-result loading';
+  result.textContent    = 'Querying Base L2...';
+  result.style.display  = 'block';
+
+  try {
+    const res = await fetch(
+      'https://dt.portal.exergynet.org/intel/api/ghost-witness/clc/' + encodeURIComponent(hash),
+      { signal: AbortSignal.timeout(10000) }
+    );
+    if (res.ok) {
+      const d    = await res.json();
+      const cert = d.certificate;
+      if (d.verified) {
+        const consistent = cert.consistent;
+        result.className = 'verify-result ' + (consistent ? 'ok' : 'err');
+        const flagCount  = Array.isArray(cert.flags) ? cert.flags.length : 0;
+        const issued     = cert.issued_at || cert.created_at;
+        result.innerHTML = (consistent
+          ? '✓ Verified · No contradictions detected'
+          : '✗ Verified · ' + flagCount + ' contradiction(s) detected')
+          + '<br><span style="opacity:0.65;font-size:10px;">'
+          + 'Platform: ' + (cert.platform || '—')
+          + ' · Issued: ' + (issued ? new Date(issued).toLocaleString() : '—')
+          + '</span>';
+      } else {
+        result.className     = 'verify-result err';
+        result.textContent   = '✗ Certificate not found. Check the hash and try again.';
+      }
+    } else {
+      result.className   = 'verify-result err';
+      result.textContent = '✗ Certificate not found. Check the hash and try again.';
+    }
+  } catch (e) {
+    result.className   = 'verify-result err';
+    result.textContent = '✗ Verification failed. Check your connection or try again.';
+  }
+}
+
+document.getElementById('hashInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') verifyCLC();
+});
+</script>
+</body>
+</html>
