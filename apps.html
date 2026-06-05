@@ -20,6 +20,8 @@
   .app-badge.free { background:rgba(0,232,135,0.12); color:var(--accent); }
   .app-badge.subscription { background:rgba(96,165,250,0.14); color:var(--blue); }
   .app-badge.metered { background:rgba(245,158,11,0.14); color:#f59e0b; }
+  .app-featured { font-size:10px; font-weight:800; letter-spacing:.05em; padding:3px 9px; border-radius:99px; background:rgba(245,158,11,0.16); color:#f59e0b; margin-right:6px; }
+  .app-card.featured { border-color:rgba(245,158,11,0.45); }
   .app-name { font-size:1.15rem; font-weight:800; }
   .app-cat { font-size:11px; color:var(--text-faint); letter-spacing:.08em; text-transform:uppercase; margin:2px 0 .7rem; }
   .app-desc { font-size:13px; color:var(--text-soft); line-height:1.6; flex:1; }
@@ -92,10 +94,10 @@ function render(){
   const list = Object.values(APPS).filter(a => FILTER==='All' ? true : FILTER==='Free' ? a.tier==='free' : FILTER==='Subscription' ? a.tier==='subscription' : a.tier==='metered');
   if(!list.length){ grid.innerHTML='<p style="color:var(--text-faint)">No apps in this category yet.</p>'; return; }
   grid.innerHTML = list.map(a => `
-    <div class="app-card" onclick="preview('${esc(a.app_key)}')">
+    <div class="app-card${a.featured ? ' featured' : ''}" onclick="preview('${esc(a.app_key)}')">
       <div class="app-card-top">
         <div class="app-icon">${iconHtml(a)}</div>
-        <span class="app-badge ${esc(a.tier)}">${esc(priceBadge(a))}</span>
+        <div>${a.featured ? '<span class="app-featured">★ Featured</span>' : ''}<span class="app-badge ${esc(a.tier)}">${esc(priceBadge(a))}</span></div>
       </div>
       <div class="app-name">${esc(a.name)}</div>
       <div class="app-cat">${esc(a.category||'App')}</div>
@@ -128,15 +130,16 @@ function preview(key){
 }
 function gate(key){
   const a = APPS[key]; const name = a ? a.name : 'this app';
+  const nxt = encodeURIComponent('/intel/app/' + key);
   document.getElementById('preview-ov').classList.remove('open');
   document.getElementById('gate').innerHTML = `
     <button class="modal-x" onclick="closeModals()">&times;</button>
     <div class="hero-eyebrow" style="margin-bottom:1rem"><span class="dot"></span>Sign in to continue</div>
     <h2 style="font-size:1.5rem;margin-bottom:.5rem">Open ${esc(name)}</h2>
-    <p style="color:var(--text-soft);line-height:1.6;margin-bottom:1.5rem">Create a free ExergyNet account (or sign in) to launch ${esc(name)}. Identity and payments are handled by ExergyNet — your balance works across every app.</p>
+    <p style="color:var(--text-soft);line-height:1.6;margin-bottom:1.5rem">Create a free ExergyNet account (or sign in) to launch ${esc(name)}. Identity and payments are handled by ExergyNet — your balance works across every app. You'll land straight in ${esc(name)}.</p>
     <div style="display:flex;gap:10px;flex-direction:column">
-      <a href="${PORTAL}/?mode=register" class="btn btn-primary" style="justify-content:center">Create free account &rarr;</a>
-      <a href="${PORTAL}/" class="btn btn-ghost" style="justify-content:center">I already have an account</a>
+      <a href="${PORTAL}/?mode=register&next=${nxt}" class="btn btn-primary" style="justify-content:center">Create free account &rarr;</a>
+      <a href="${PORTAL}/?next=${nxt}" class="btn btn-ghost" style="justify-content:center">I already have an account</a>
     </div>`;
   document.getElementById('gate-ov').classList.add('open');
 }
