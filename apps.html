@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Store | ExergyNet</title>
+<meta name="description" content="The ExergyNet App Store — verifiable, on-chain-billed apps and agents. Browse free, subscription and pay-per-use apps running inside the ExergyNet OS.">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){ var t = localStorage.getItem('exg-theme'); if(!t){ t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } document.documentElement.setAttribute('data-theme', t); })();
+</script>
+<style>
+  .app-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(290px, 1fr)); gap:1.25rem; margin-top:2rem; }
+  .app-card { background:var(--bg-card, var(--bg-surface)); border:1px solid var(--border); border-radius:14px; padding:1.4rem; cursor:pointer; transition:border-color .15s, transform .15s; display:flex; flex-direction:column; min-height:230px; }
+  .app-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+  .app-card-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:.9rem; }
+  .app-icon { width:46px; height:46px; border-radius:11px; background:rgba(0,232,135,0.10); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--accent); overflow:hidden; flex-shrink:0; }
+  .app-icon img { width:100%; height:100%; object-fit:cover; }
+  .app-badge { font-size:10px; font-weight:700; letter-spacing:.04em; padding:4px 10px; border-radius:99px; white-space:nowrap; }
+  .app-badge.free { background:rgba(0,232,135,0.12); color:var(--accent); }
+  .app-badge.subscription { background:rgba(96,165,250,0.14); color:var(--blue); }
+  .app-badge.metered { background:rgba(245,158,11,0.14); color:#f59e0b; }
+  .app-name { font-size:1.15rem; font-weight:800; }
+  .app-cat { font-size:11px; color:var(--text-faint); letter-spacing:.08em; text-transform:uppercase; margin:2px 0 .7rem; }
+  .app-desc { font-size:13px; color:var(--text-soft); line-height:1.6; flex:1; }
+  .app-tags { display:flex; flex-wrap:wrap; gap:6px; margin:.9rem 0 1rem; }
+  .app-tag { font-size:10px; color:var(--text-faint); background:rgba(127,127,127,0.10); border:1px solid var(--border); border-radius:99px; padding:2px 9px; }
+  .app-open { width:100%; justify-content:center; font-size:12px; }
+  .app-filters { display:flex; gap:8px; flex-wrap:wrap; margin-top:1.5rem; }
+  .app-filter { font-size:12px; padding:6px 15px; border-radius:99px; border:1px solid var(--border); background:transparent; color:var(--text-soft); cursor:pointer; }
+  .app-filter.active { background:var(--accent); color:#04140f; border-color:var(--accent); font-weight:700; }
+  /* modal */
+  .modal-ov { position:fixed; inset:0; background:rgba(0,0,0,0.66); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; z-index:500; padding:20px; }
+  .modal-ov.open { display:flex; }
+  .modal { background:var(--bg-surface); border:1px solid var(--border); border-radius:16px; max-width:440px; width:100%; padding:2rem; position:relative; }
+  .modal-x { position:absolute; top:14px; right:16px; background:none; border:none; color:var(--text-faint); font-size:20px; cursor:pointer; }
+  .modal .app-icon { width:56px; height:56px; font-size:26px; margin-bottom:1rem; }
+  @media (max-width:560px){ .modal{ padding:1.5rem; } }
+</style>
+</head>
+<body>
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
+  <div id="site-header"></div>
+  <main class="page">
+
+    <div class="page-header" style="position:relative; overflow:hidden;">
+      <div class="glow-accent" style="width:500px;height:400px;top:-100px;right:-200px;"></div>
+      <div class="glow-blue" style="width:600px;height:350px;bottom:-150px;left:-150px;"></div>
+      <div class="container">
+        <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Live on ExergyNet</div>
+        <h1>The <span class="accent">App Store</span><br>for verifiable apps</h1>
+        <p class="hero-sub">Apps and agents that run inside the ExergyNet OS — billed on-chain, identity and payments handled for you. Browse freely; sign in to launch.</p>
+        <div class="app-filters" id="filters"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="grid" class="app-grid"><p style="color:var(--text-faint)">Loading apps…</p></div>
+      <p style="color:var(--text-faint); font-size:12px; margin:2rem 0 1rem;">Want to publish your app? <a href="https://portal.exergynet.org/dashboard/build" class="accent" style="color:var(--accent)">Build it here &rarr;</a></p>
+    </div>
+
+  </main>
+  <div id="site-footer"></div>
+</div>
+
+<!-- Preview modal -->
+<div class="modal-ov" id="preview-ov" onclick="if(event.target===this)closeModals()">
+  <div class="modal" id="preview"></div>
+</div>
+<!-- Auth gate modal -->
+<div class="modal-ov" id="gate-ov" onclick="if(event.target===this)closeModals()">
+  <div class="modal" id="gate"></div>
+</div>
+
+<script src="main.js"></script>
+<script>
+const PUBLIC_API = 'https://portal.exergynet.org/api/apps/public';
+const PORTAL = 'https://portal.exergynet.org';
+let APPS = {}, FILTER = 'All';
+const TIERLABEL = { free:'Free', subscription:'Subscription', metered:'Pay-per-use' };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function priceBadge(a){
+  if(a.tier==='subscription') return '$'+a.price_usd+'/mo';
+  if(a.tier==='metered') return (Number(a.usage_price_usd)>0?'$'+a.usage_price_usd+'/use':'Pay-per-use');
+  return 'Free';
+}
+function iconHtml(a){ return a.icon_url ? '<img src="'+esc(a.icon_url)+'" alt="">' : esc(a.icon||'▦'); }
+
+function render(){
+  const grid = document.getElementById('grid');
+  const list = Object.values(APPS).filter(a => FILTER==='All' ? true : FILTER==='Free' ? a.tier==='free' : FILTER==='Subscription' ? a.tier==='subscription' : a.tier==='metered');
+  if(!list.length){ grid.innerHTML='<p style="color:var(--text-faint)">No apps in this category yet.</p>'; return; }
+  grid.innerHTML = list.map(a => `
+    <div class="app-card" onclick="preview('${esc(a.app_key)}')">
+      <div class="app-card-top">
+        <div class="app-icon">${iconHtml(a)}</div>
+        <span class="app-badge ${esc(a.tier)}">${esc(priceBadge(a))}</span>
+      </div>
+      <div class="app-name">${esc(a.name)}</div>
+      <div class="app-cat">${esc(a.category||'App')}</div>
+      <p class="app-desc">${esc(a.description||'')}</p>
+      <div class="app-tags">${(a.tags||[]).slice(0,4).map(t=>'<span class="app-tag">'+esc(t)+'</span>').join('')}</div>
+      <button class="btn btn-secondary app-open" onclick="event.stopPropagation();gate('${esc(a.app_key)}')">Open &rarr;</button>
+    </div>`).join('');
+}
+function buildFilters(){
+  document.getElementById('filters').innerHTML = ['All','Free','Subscription','Pay-per-use'].map(f=>{
+    const v = f==='Pay-per-use'?'metered':f;
+    return '<button class="app-filter'+(FILTER===v?' active':'')+'" onclick="setFilter(\''+v+'\')">'+f+'</button>';
+  }).join('');
+}
+function setFilter(f){ FILTER=f; buildFilters(); render(); }
+function preview(key){
+  const a = APPS[key]; if(!a) return;
+  document.getElementById('preview').innerHTML = `
+    <button class="modal-x" onclick="closeModals()">&times;</button>
+    <div class="app-icon">${iconHtml(a)}</div>
+    <div class="app-name" style="font-size:1.4rem">${esc(a.name)}</div>
+    <div class="app-cat">${esc(a.category||'App')} &middot; ${esc(TIERLABEL[a.tier]||a.tier)}</div>
+    <p style="color:var(--text-soft);line-height:1.65;margin:1rem 0">${esc(a.description||'')}</p>
+    <div class="app-tags" style="margin-bottom:1.25rem">${(a.tags||[]).map(t=>'<span class="app-tag">'+esc(t)+'</span>').join('')}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <span class="app-badge ${esc(a.tier)}">${esc(priceBadge(a))}</span>
+      <button class="btn btn-primary" onclick="gate('${esc(a.app_key)}')">Open in ExergyNet &rarr;</button>
+    </div>`;
+  document.getElementById('preview-ov').classList.add('open');
+}
+function gate(key){
+  const a = APPS[key]; const name = a ? a.name : 'this app';
+  document.getElementById('preview-ov').classList.remove('open');
+  document.getElementById('gate').innerHTML = `
+    <button class="modal-x" onclick="closeModals()">&times;</button>
+    <div class="hero-eyebrow" style="margin-bottom:1rem"><span class="dot"></span>Sign in to continue</div>
+    <h2 style="font-size:1.5rem;margin-bottom:.5rem">Open ${esc(name)}</h2>
+    <p style="color:var(--text-soft);line-height:1.6;margin-bottom:1.5rem">Create a free ExergyNet account (or sign in) to launch ${esc(name)}. Identity and payments are handled by ExergyNet — your balance works across every app.</p>
+    <div style="display:flex;gap:10px;flex-direction:column">
+      <a href="${PORTAL}/?mode=register" class="btn btn-primary" style="justify-content:center">Create free account &rarr;</a>
+      <a href="${PORTAL}/" class="btn btn-ghost" style="justify-content:center">I already have an account</a>
+    </div>`;
+  document.getElementById('gate-ov').classList.add('open');
+}
+function closeModals(){ document.getElementById('preview-ov').classList.remove('open'); document.getElementById('gate-ov').classList.remove('open'); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModals(); });
+
+fetch(PUBLIC_API).then(r=>r.json()).then(d=>{
+  (d.apps||[]).forEach(a=>{ APPS[a.app_key]=a; });
+  buildFilters(); render();
+}).catch(()=>{ document.getElementById('grid').innerHTML='<p style="color:var(--text-faint)">Store is loading — try again shortly.</p>'; });
+</script>
+</body>
+</html>

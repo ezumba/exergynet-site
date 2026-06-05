@@ -1284,3 +1284,14 @@ tr:hover td { background: rgba(128,128,128,0.04); }
   .runtime-grid { grid-template-columns: 1fr 1fr; }
   .cta-community { gap: 1.25rem; }
 }
+
+/* App-store + hero mobile polish */
+@media (max-width: 768px) {
+  .hero-arrow { display: none !important; }
+  .telemetry-panel { width: 100%; }
+}
+@media (max-width: 480px) {
+  h1 { font-size: clamp(1.95rem, 8.5vw, 2.4rem) !important; }
+  .hero h1 br, .page-header h1 br { display: none; }
+  .app-grid { grid-template-columns: 1fr; }
+}
