@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Apps | ExergyNet</title>
+<meta name="description" content="Ship an app on the ExergyNet App Store. Account, API token, publish, review, the embedded SDK, billing, and the honest platform boundaries — the true external-developer guide.">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+  #guide{max-width:860px;margin:0 auto;line-height:1.65;font-size:15px}
+  #guide h1{font-size:1.9rem;margin:0 0 .4rem}
+  #guide h2{font-size:1.35rem;margin:2.2rem 0 .6rem;padding-top:1rem;border-top:1px solid var(--border,rgba(255,255,255,.08))}
+  #guide h3{font-size:1.08rem;margin:1.4rem 0 .4rem}
+  #guide p,#guide li{color:var(--text-soft,#aeb6c2)}
+  #guide a{color:var(--accent,#00e887)}
+  #guide code{background:rgba(127,127,127,.16);padding:1px 6px;border-radius:5px;font-size:.86em;font-family:ui-monospace,Menlo,monospace}
+  #guide pre{background:rgba(127,127,127,.10);border:1px solid var(--border,rgba(255,255,255,.08));border-radius:10px;padding:14px 16px;overflow:auto}
+  #guide pre code{background:none;padding:0}
+  #guide table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.92em}
+  #guide th,#guide td{border:1px solid var(--border,rgba(255,255,255,.10));padding:7px 10px;text-align:left;vertical-align:top}
+  #guide th{background:rgba(127,127,127,.10)}
+  #guide blockquote{border-left:3px solid var(--accent,#00e887);margin:1rem 0;padding:.3rem 0 .3rem 14px;color:var(--text-soft,#aeb6c2)}
+  #guide hr{border:none;border-top:1px solid var(--border,rgba(255,255,255,.08));margin:1.6rem 0}
+</style>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>App Store · External Developers</div>
+      <h1>Ship an App on<br><span class="accent">ExergyNet</span></h1>
+      <p class="hero-sub">The honest, end-to-end guide: account &rarr; API token &rarr; publish &rarr; review &rarr; the embedded SDK &rarr; billing. Verified against the live platform &mdash; including what the platform does <em>not</em> do.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="guide">Loading the developer guide&hellip;</div>
+  </div>
+
+</main>
+
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script>
+  fetch('developer-guide.md')
+    .then(function(r){ return r.text(); })
+    .then(function(md){ document.getElementById('guide').innerHTML = window.marked.parse(md); })
+    .catch(function(){ document.getElementById('guide').innerHTML = '<p>Could not load the guide. View it on <a href="https://github.com/ezumba/exergynet-site/blob/main/developer-guide.md">GitHub</a>.</p>'; });
+</script>
+<script src="main.js"></script>
+</body>
+</html>
