@@ -27,7 +27,6 @@
 .hero-slides-track { display: flex; transition: transform 0.65s cubic-bezier(0.77,0,0.175,1); will-change: transform; }
 .hero-slide { min-width: 100%; position: relative; flex-shrink: 0; }
 
-/* Dot indicators */
 .hero-dots {
   position: absolute; bottom: 1.75rem; left: 50%; transform: translateX(-50%);
   display: flex; gap: 8px; z-index: 20;
@@ -39,7 +38,6 @@
 }
 .hero-dot.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); width: 24px; }
 
-/* Arrow controls */
 .hero-arrow {
   position: absolute; top: 50%; transform: translateY(-50%); z-index: 20;
   background: rgba(0,0,0,0.32); border: 1px solid rgba(255,255,255,0.10);
@@ -51,20 +49,14 @@
 .hero-arrow.prev { left: 1.25rem; }
 .hero-arrow.next { right: 1.25rem; }
 
-/* Vanguard slide styles */
+/* ── Vanguard slide ── */
 .vanguard-word {
   background: linear-gradient(135deg, #4e9eff 20%, #00e887 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .vanguard-stat-strip { display: flex; gap: 1.75rem; margin: 1.25rem 0 1.5rem; flex-wrap: wrap; }
-.vanguard-stat-num {
-  font-family: 'Barlow Condensed', sans-serif; font-size: 2.1rem;
-  font-weight: 700; color: var(--accent); line-height: 1;
-}
-.vanguard-stat-lbl {
-  font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase;
-  color: var(--text-secondary); margin-top: 3px;
-}
+.vanguard-stat-num { font-family: 'Barlow Condensed', sans-serif; font-size: 2.1rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.vanguard-stat-lbl { font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-soft); margin-top: 3px; }
 .vanguard-engine-card {
   background: var(--bg-card); border: 1px solid var(--border-mid);
   border-radius: 14px; padding: 1.5rem; position: relative; overflow: hidden;
@@ -75,77 +67,25 @@
   pointer-events: none;
 }
 
-/* ── Hero two-column grid (replaces inline style) ── */
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 3rem;
-  align-items: center;
-}
+/* ── Hero two-column grid ── */
+.hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 3rem; align-items: center; }
 
-/* ── Mobile Hero: Responsive Repair ── */
+/* Mobile: single column, hide right panels */
 @media (max-width: 767px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  /* Hide the right-side telemetry / engine panels on phones.
-     Showing them stacked makes slides much taller and uneven. */
-  .hero-slide .telemetry-panel,
-  .hero-slide .vanguard-engine-card {
-    display: none !important;
-  }
-
-  /* Hide the bottom orientation stat-strips (Request/Verify/Settle/Integrate).
-     They differ between slides and cause height inconsistency in the track. */
-  .hero-slide .stat-strip {
-    display: none !important;
-  }
-
-  /* Scale the hero headline to fit a phone viewport */
-  .hero-slide h1 {
-    font-size: 2rem !important;
-    line-height: 1.2 !important;
-    margin-bottom: 0.75rem !important;
-  }
-
-  /* Slightly smaller sub-copy */
-  .hero-slide .hero-sub {
-    font-size: 0.9rem !important;
-    margin-bottom: 1.25rem !important;
-  }
-
-  /* Reduce vertical padding so the nav arrows/dots don't clip content */
-  .hero-slide section.hero {
-    padding-top: 2.5rem !important;
-    padding-bottom: 3.5rem !important;
-  }
-
-  /* Compact Vanguard stat strip (still visible on mobile) */
-  .vanguard-stat-strip { gap: 1rem !important; }
-  .vanguard-stat-num   { font-size: 1.6rem !important; }
-
-  /* Smaller nav arrows — pulled tight to viewport edges */
-  .hero-arrow {
-    width: 32px !important;
-    height: 32px !important;
-    font-size: 13px !important;
-  }
-  .hero-arrow.prev { left: 0.4rem !important; }
-  .hero-arrow.next { right: 0.4rem !important; }
-
-  /* Bump dots up slightly */
-  .hero-dots { bottom: 0.75rem !important; }
+  .hero-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .hero-panel { display: none; }
+  .hero-slide .stat-strip { display: none; }
+  .hero-slide section.hero { padding: 3rem 0 3.5rem; }
+  .hero-slide h1 { font-size: 2.1rem; line-height: 1.15; margin-bottom: 1rem; }
+  .hero-slide .hero-sub { font-size: 0.92rem; margin-bottom: 1.5rem; }
+  .vanguard-stat-strip { gap: 1rem; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+  .vanguard-stat-num { font-size: 1.6rem; }
+  .hero-dots { bottom: 0.6rem; }
 }
 
-/* ── Tablet: partial collapse at 768–1023px ── */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .hero-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-  .hero-slide h1 { font-size: 2.2rem !important; line-height: 1.15 !important; }
+  .hero-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .hero-slide h1 { font-size: 2.4rem; line-height: 1.1; }
 }
 </style>
 </head>
@@ -182,7 +122,7 @@
         </div>
 
         <!-- Network Overview Panel -->
-        <div class="telemetry-panel">
+        <div class="telemetry-panel hero-panel">
           <div class="section-label" style="margin-bottom:1rem;">Network Overview</div>
 
           <div class="chain-status-row">
@@ -288,7 +228,7 @@
         </div>
 
         <!-- Engine Status Panel -->
-        <div class="vanguard-engine-card">
+        <div class="vanguard-engine-card hero-panel">
           <div class="section-label" style="margin-bottom:1rem;">Engine Capabilities</div>
           <div class="telemetry-row">
             <span class="tele-label">Architecture</span>
@@ -346,7 +286,7 @@
             </div>
           </div>
 
-          <div class="telemetry-panel">
+          <div class="telemetry-panel hero-panel">
             <div class="section-label" style="margin-bottom:1rem;">Ghost-Witness &mdash; Live Audit</div>
 
             <div class="chain-status-row">

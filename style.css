@@ -924,11 +924,8 @@ tr:hover td { background: rgba(128,128,128,0.04); }
   .cta-section { padding: 4rem 0; }
 
   /* Hero two-column → single column */
-  .hero > .container-wide > div[style*="grid-template-columns"] {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 2rem !important;
-  }
+  .hero-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .hero-panel { display: none !important; }
 
   /* Flow → vertical */
   .flow { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
