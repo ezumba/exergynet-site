@@ -74,6 +74,73 @@
   background: radial-gradient(circle at top right, rgba(78,158,255,0.13), transparent 65%);
   pointer-events: none;
 }
+
+/* ── Mobile Hero: Responsive Repair ── */
+@media (max-width: 767px) {
+  /* Collapse the inline 2-column grid to a single column.
+     !important is required to override the inline style="" attribute. */
+  .hero-slide > section > .container-wide > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+
+  /* Hide the right-side telemetry / engine panels on phones.
+     Showing them stacked makes slides much taller and uneven. */
+  .hero-slide .telemetry-panel,
+  .hero-slide .vanguard-engine-card {
+    display: none !important;
+  }
+
+  /* Hide the bottom orientation stat-strips (Request/Verify/Settle/Integrate).
+     They differ between slides and cause height inconsistency in the track. */
+  .hero-slide .stat-strip {
+    display: none !important;
+  }
+
+  /* Scale the hero headline to fit a phone viewport */
+  .hero-slide h1 {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Slightly smaller sub-copy */
+  .hero-slide .hero-sub {
+    font-size: 0.9rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  /* Reduce vertical padding so the nav arrows/dots don't clip content */
+  .hero-slide section.hero {
+    padding-top: 2.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+
+  /* Compact Vanguard stat strip (still visible on mobile) */
+  .vanguard-stat-strip { gap: 1rem !important; }
+  .vanguard-stat-num   { font-size: 1.6rem !important; }
+
+  /* Smaller nav arrows — pulled tight to viewport edges */
+  .hero-arrow {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 13px !important;
+  }
+  .hero-arrow.prev { left: 0.4rem !important; }
+  .hero-arrow.next { right: 0.4rem !important; }
+
+  /* Bump dots up slightly */
+  .hero-dots { bottom: 0.75rem !important; }
+}
+
+/* ── Tablet: partial collapse at 768–1023px ── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-slide > section > .container-wide > div:first-child {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .hero-slide h1 { font-size: 2.2rem !important; line-height: 1.15 !important; }
+}
 </style>
 </head>
 <body>
