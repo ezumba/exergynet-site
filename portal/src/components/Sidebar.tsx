@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/analytics',    label: '▦ analytics',  exact: false },
   { href: '/dashboard/playground',   label: '▷ playground', exact: false },
   { href: '/dashboard/settlements',  label: '⊞ settlements',exact: false },
+  { href: '/dashboard/intel',         label: '⬡ app store',  exact: false },
 ] as const;
 
 export default function Sidebar() {
