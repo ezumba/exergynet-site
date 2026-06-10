@@ -75,13 +75,19 @@
   pointer-events: none;
 }
 
+/* ── Hero two-column grid (replaces inline style) ── */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 3rem;
+  align-items: center;
+}
+
 /* ── Mobile Hero: Responsive Repair ── */
 @media (max-width: 767px) {
-  /* Collapse the inline 2-column grid to a single column.
-     !important is required to override the inline style="" attribute. */
-  .hero-slide > section > .container-wide > div:first-child {
-    grid-template-columns: 1fr !important;
-    gap: 0 !important;
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
   /* Hide the right-side telemetry / engine panels on phones.
@@ -135,9 +141,9 @@
 
 /* ── Tablet: partial collapse at 768–1023px ── */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .hero-slide > section > .container-wide > div:first-child {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 1.5rem !important;
+  .hero-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
   }
   .hero-slide h1 { font-size: 2.2rem !important; line-height: 1.15 !important; }
 }
@@ -163,7 +169,7 @@
     <div class="glow-accent" style="width:500px;height:500px;top:-100px;left:-150px;"></div>
     <div class="glow-blue" style="width:600px;height:400px;top:0;right:-200px;"></div>
     <div class="container-wide">
-      <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:3rem; align-items:center;">
+      <div class="hero-grid">
         <div>
           <div class="hero-eyebrow"><span class="dot"></span>Production live on Solana and Base L2</div>
           <h1>Verifiable Compute<br><span class="accent">and Physical-World Proof</span><br>for Autonomous Systems</h1>
@@ -251,7 +257,7 @@
     <div class="glow-blue" style="width:640px;height:520px;top:-80px;left:-120px;"></div>
     <div class="glow-accent" style="width:520px;height:420px;top:20px;right:-180px;"></div>
     <div class="container-wide">
-      <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:3rem; align-items:center;">
+      <div class="hero-grid">
         <div>
           <div class="hero-eyebrow"><span class="dot" style="background:var(--accent);box-shadow:0 0 8px var(--accent);"></span>Enterprise-Grade AI Inference &middot; Zero Retention</div>
           <h1 style="line-height:1.1; margin-bottom:0.5rem;">SEI <span class="vanguard-word">VANGUARD</span></h1>
@@ -325,7 +331,7 @@
       <div class="glow-accent" style="width:580px;height:480px;top:-60px;right:-160px;"></div>
       <div class="glow-blue" style="width:500px;height:400px;top:40px;left:-140px;"></div>
       <div class="container-wide">
-        <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:3rem; align-items:center;">
+        <div class="hero-grid">
           <div>
             <div class="hero-eyebrow">
               <span class="dot" style="background:var(--accent);box-shadow:0 0 8px var(--accent);"></span>
