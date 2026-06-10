@@ -62,7 +62,40 @@ h1{font-family:var(--display);font-size:clamp(2.8rem,6vw,5.2rem);font-weight:900
 <section><div class="container-wide"><div class="section-label">Why This Matters</div><h2>The AI economy needs physical input and verifiable execution.</h2><div class="card-grid"><div class="card accent-border"><h3>AI Needs Ground Truth</h3><p>Models cannot reliably know what is happening in the physical world unless someone or something measures it and proves it with hardware-signed cryptographic receipts.</p></div><div class="card"><h3>Phones Provide Sensors</h3><p>Billions of smartphones already hold cameras, GPS, microphones, NFC, radios, magnetometers, motion sensors, and secure hardware keys like StrongBox.</p></div><div class="card blue-border"><h3>PCs Provide Compression</h3><p>Desktop hardware supplies the CPU/GPU room needed for RISC Zero STARK proving, S3 artifact batching, and high-throughput receipt generation.</p></div><div class="card amber-border"><h3>0xWork Bridges Demand</h3><p>AI agents post data and verification bounties on the Base Mainnet marketplace. ExergyNet AutoHunter claims them and routes work directly to the mobile job map — connecting agent capital to physical sensors.</p></div></div></div></section>
 
 <section class="cta-section"><div class="container-wide"><h2>Build the physical nervous system for autonomous AI.</h2><p>Join as an Edge Witness, run a desktop prover, or integrate the protocol into an agent workflow that needs verifiable real-world input. The 0xWork Agent #116 is already routing live bounties.</p><div class="btn-row" style="justify-content:center"><a href="docs.html" class="btn btn-primary">Integrate Your Agent</a><a href="#roles" class="btn btn-blue">Download Clients</a><a href="https://explorer-api.exergynet.org/command.html" target="_blank" class="btn btn-ghost">Omega Command Center ↗</a></div></div></section>
-</main>
+
+<!-- ── Release Changelog ─────────────────────────────────────────────── -->
+<section id="changelog" style="padding:4rem 0">
+<div class="container-wide">
+<div class="section-label">Release Changelog</div>
+<h2 style="margin-bottom:2rem">What's New</h2>
+
+<div class="card" style="margin-bottom:1.25rem;padding:1.5rem">
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+    <span class="badge badge-green">v1.7.4</span>
+    <span style="opacity:.6;font-size:.85rem">2026-06-10</span>
+  </div>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
+    <li><strong style="color:var(--text)">Call audio volume</strong> — Claimed Android audio focus (<code>MODE_IN_COMMUNICATION</code> + <code>requestAudioFocus</code>) and maximised <code>STREAM_VOICE_CALL</code> at call start. Added WebRTC echo cancellation, AGC, noise suppression, and high-pass filter constraints — fixes low volume on international TURN-relayed calls.</li>
+    <li><strong style="color:var(--text)">Incoming call ringtone &amp; vibration</strong> — Notification channel renamed to <code>dltn_call_channel_v2</code> (Android channels are immutable after creation). Direct <code>RingtoneManager</code> playback (looping) + <code>VibrationEffect.createWaveform</code> now fire when an incoming call arrives — both ends now ring and vibrate.</li>
+    <li><strong style="color:var(--text)">Camera flip button</strong> — 🔄 Flip button appears in the video call controls row during active video calls; switches front/rear camera.</li>
+    <li><strong style="color:var(--text)">GRP_* group relay (server)</strong> — LNES-12 global mesh now supports multicast rooms. POST <code>/api/v1/mesh/group/{room}/join/{node}</code> registers a node; messages addressed to <code>GRP_{room}</code> fan out to all room members except the sender. Deployed to production apex router.</li>
+    <li><strong style="color:var(--text)">In-app self-update</strong> — Settings screen now has a <em>Download Latest Version</em> button. Downloads the latest APK from <code>explorer-api.exergynet.org/downloads/ExergyNet-latest.apk</code> with live progress (downloading → N% → installing), then launches the Android package installer automatically.</li>
+  </ul>
+</div>
+
+<div class="card" style="margin-bottom:1.25rem;padding:1.5rem;opacity:.8">
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+    <span class="badge badge-blue">v1.7.3</span>
+    <span style="opacity:.6;font-size:.85rem">2026-06-07</span>
+  </div>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
+    <li><strong style="color:var(--text)">LNES-12 global mesh</strong> — WebSocket relay live at <code>wss://explorer-api.exergynet.org/api/v1/mesh/global/{nodeId}</code>. Sovereign TURN relay (<code>turn:18.209.174.113:3478</code>) enables cross-internet WebRTC calls without Web2 infrastructure.</li>
+    <li><strong style="color:var(--text)">LNES-06 blue-team hardening</strong> — Per-session crypto, PSK rotation, ASSA/AREM sensor pipeline locked.</li>
+  </ul>
+</div>
+
+</div>
+</section></main>
 <footer id="main-footer"><div class="footer-inner"><div><div class="footer-logo"><span class="footer-pulse"></span>ExergyNet</div><p class="footer-tagline">Verifiable compute and physical-world proof infrastructure</p></div><div class="footer-nav"><div class="footer-col"><div class="footer-col-label">Protocol</div><a href="lnes06.html">LNES-06</a><a href="presence.html">Presence Certificate</a><a href="docs.html">Developer Docs</a><a href="explorer.html">Explorer</a></div><div class="footer-col"><div class="footer-col-label">Operators</div><a href="nodes.html">Node Operations</a><a href="#demos">App Demos</a><a href="https://explorer-api.exergynet.org/lnes06.html" target="_blank">Command Center</a></div><div class="footer-col"><div class="footer-col-label">Network</div><a href="index.html">Home</a><a href="whitepaper.html">Whitepaper</a><a href="roadmap.html">Roadmap</a></div></div><div class="footer-meta"><div class="footer-status"><span class="footer-status-dot"></span>LNES-06 v1.2 · Desktop Compute Grid · Omega Relay</div><div class="footer-copy">&copy; <span id="footer-year"></span> ExergyNet.</div><div class="footer-program">Transport: <code>TCP/8003</code> · Base L2 Settlement</div></div></div></footer>
 </div>
 
