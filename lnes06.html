@@ -71,14 +71,26 @@ h1{font-family:var(--display);font-size:clamp(2.8rem,6vw,5.2rem);font-weight:900
 
 <div class="card" style="margin-bottom:1.25rem;padding:1.5rem">
   <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-    <span class="badge badge-green">v1.9.2</span>
+    <span class="badge badge-green">v1.9.3</span>
+    <span style="opacity:.6;font-size:.85rem">2026-06-11</span>
+  </div>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
+    <li><strong style="color:var(--text)">Call audio fix</strong> — Fixed no-audio issue where both parties could not hear each other after answering. ICE now falls back to TURN relay when direct UDP is blocked (NAT or AP isolation).</li>
+    <li><strong style="color:var(--text)">Audio focus hardened</strong> — Calls now request exclusive long-term audio focus, preventing other apps from interrupting call audio.</li>
+    <li><strong style="color:var(--text)">Notifications</strong> — Alerts for new jobs, nearby Ghost Drops, sealed drops (Base L2), missed calls, and dropped calls.</li>
+    <li><strong style="color:var(--text)">Mobile Data toggle</strong> — Settings toggle now correctly activates/deactivates kinetic roaming.</li>
+  </ul>
+</div>
+
+<div class="card" style="margin-bottom:1.25rem;padding:1.5rem;opacity:.85">
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+    <span class="badge badge-blue">v1.9.2</span>
     <span style="opacity:.6;font-size:.85rem">2026-06-11</span>
   </div>
   <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
     <li><strong style="color:var(--text)">Unrestricted calling</strong> — All users now have unlimited calling credits. No balance restrictions on any node.</li>
     <li><strong style="color:var(--text)">First-install color picker</strong> — New users see an accent color selection sheet on first launch to personalize their UI theme.</li>
     <li><strong style="color:var(--text)">Jobs + Pending sub-tabs</strong> — Pending moved out of the main nav bar and into a sub-tab under Jobs, freeing space for a cleaner 5-item nav.</li>
-    <li><strong style="color:var(--text)">Job Board &amp; Drop sheet</strong> — One-tap job posting from the Drops tab. BOUNTY and COMMERCE categories show the bounty fields and title the sheet "Post a Job" automatically.</li>
     <li><strong style="color:var(--text)">V3 APK signing</strong> — APK re-signed with <code>apksigner</code> (V1 + V2 + V3 schemes). Resolves "App not installed as package appears to be invalid" on Android 7+.</li>
   </ul>
 </div>
