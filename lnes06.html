@@ -71,7 +71,19 @@ h1{font-family:var(--display);font-size:clamp(2.8rem,6vw,5.2rem);font-weight:900
 
 <div class="card" style="margin-bottom:1.25rem;padding:1.5rem">
   <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-    <span class="badge badge-green">v2.0.0</span>
+    <span class="badge badge-green">v2.0.1</span>
+    <span style="opacity:.6;font-size:.85rem">2026-06-12</span>
+  </div>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
+    <li><strong style="color:var(--text)">ANR fix — group call no longer freezes</strong> — WebRTC PeerConnection init and camera negotiation for the 3rd participant was happening on the main thread, triggering an "App Not Responding" dialog. Moved to IO scope; group upgrade is now non-blocking.</li>
+    <li><strong style="color:var(--text)">"You" self-thumbnail restored</strong> — In group calls the self-preview tile (top-right) was black because the local video track lost its sink when the primary peer connection moved to peerSessions. Engine now routes the local renderer through peerSessions correctly.</li>
+    <li><strong style="color:var(--text)">Double-ring / two phone icons fixed</strong> — Incoming CALL_INVITE is now dropped when a call is already CONNECTED or CALLING. Eliminates phantom ring and dual phone icon in the status bar during active calls.</li>
+  </ul>
+</div>
+
+<div class="card" style="margin-bottom:1.25rem;padding:1.5rem;opacity:.85">
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+    <span class="badge badge-blue">v2.0.0</span>
     <span style="opacity:.6;font-size:.85rem">2026-06-12</span>
   </div>
   <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
