@@ -71,7 +71,18 @@ h1{font-family:var(--display);font-size:clamp(2.8rem,6vw,5.2rem);font-weight:900
 
 <div class="card" style="margin-bottom:1.25rem;padding:1.5rem">
   <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-    <span class="badge badge-green">v1.9.3</span>
+    <span class="badge badge-green">v1.9.4</span>
+    <span style="opacity:.6;font-size:.85rem">2026-06-12</span>
+  </div>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
+    <li><strong style="color:var(--text)">Cross-network call fix</strong> — Fixed "continued to ring after answering" on cross-network calls. Local IP invite now falls back to global TURN relay when TCP to private address fails.</li>
+    <li><strong style="color:var(--text)">4-second TCP timeout</strong> — Local connection attempt now times out in 4s instead of blocking indefinitely, making fallback instant.</li>
+  </ul>
+</div>
+
+<div class="card" style="margin-bottom:1.25rem;padding:1.5rem;opacity:.85">
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+    <span class="badge badge-blue">v1.9.3</span>
     <span style="opacity:.6;font-size:.85rem">2026-06-11</span>
   </div>
   <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
