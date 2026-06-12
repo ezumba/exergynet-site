@@ -71,7 +71,17 @@ h1{font-family:var(--display);font-size:clamp(2.8rem,6vw,5.2rem);font-weight:900
 
 <div class="card" style="margin-bottom:1.25rem;padding:1.5rem">
   <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-    <span class="badge badge-green">v1.9.5</span>
+    <span class="badge badge-green">v1.9.6</span>
+    <span style="opacity:.6;font-size:.85rem">2026-06-12</span>
+  </div>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
+    <li><strong style="color:var(--text)">ICE candidate buffering</strong> — WebRTC ICE candidates are now buffered when the WebSocket reconnects mid-call and flushed on reconnect. Fixes "connected but no audio/video" caused by dropped candidates during the reconnect window.</li>
+  </ul>
+</div>
+
+<div class="card" style="margin-bottom:1.25rem;padding:1.5rem;opacity:.85">
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+    <span class="badge badge-blue">v1.9.5</span>
     <span style="opacity:.6;font-size:.85rem">2026-06-12</span>
   </div>
   <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
