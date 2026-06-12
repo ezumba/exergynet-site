@@ -71,7 +71,18 @@ h1{font-family:var(--display);font-size:clamp(2.8rem,6vw,5.2rem);font-weight:900
 
 <div class="card" style="margin-bottom:1.25rem;padding:1.5rem">
   <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-    <span class="badge badge-green">v1.9.4</span>
+    <span class="badge badge-green">v1.9.5</span>
+    <span style="opacity:.6;font-size:.85rem">2026-06-12</span>
+  </div>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
+    <li><strong style="color:var(--text)">WebSocket reconnect hardened</strong> — Global mesh now reconnects on clean server-side closes (not just failures). Prevents nodes from silently going offline and missing call invites.</li>
+    <li><strong style="color:var(--text)">Group chat member picker fix</strong> — NodeBook contacts now load when the Create Group sheet opens, even if the NodeBook tab was never visited.</li>
+  </ul>
+</div>
+
+<div class="card" style="margin-bottom:1.25rem;padding:1.5rem;opacity:.85">
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+    <span class="badge badge-blue">v1.9.4</span>
     <span style="opacity:.6;font-size:.85rem">2026-06-12</span>
   </div>
   <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem;color:var(--text-soft)">
