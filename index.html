@@ -354,6 +354,80 @@
     </section>
     </div><!-- /slide-3 -->
 
+  <!-- Slide 4: ExergyNet App (Edge Witness) -->
+  <div class="hero-slide">
+  <section class="hero" style="position:relative; overflow:hidden;">
+    <div class="glow-accent" style="width:520px;height:480px;top:-90px;left:-140px;"></div>
+    <div class="glow-blue" style="width:600px;height:420px;top:10px;right:-190px;"></div>
+    <div class="container-wide">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-eyebrow"><span class="dot" style="background:var(--accent);box-shadow:0 0 8px var(--accent);"></span>Now on Mobile &middot; ExergyNet Edge Witness</div>
+          <h1>The Network,<br><span class="accent">In Your Pocket</span></h1>
+          <p class="hero-sub">Edge Witness brings the sovereign mesh to your phone &mdash; encrypted voice &amp; video that connects anywhere in the world, live audio Spaces, passive witness earning, and on-device proof capture. No middleman. No surveillance.</p>
+          <div class="btn-row">
+            <a href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk" class="btn btn-primary">&#x2B07; Download for Android</a>
+            <a href="#" class="btn btn-secondary" onclick="event.preventDefault();alert('The iOS app is coming soon. Android is available now.');">iOS &mdash; Coming Soon</a>
+          </div>
+        </div>
+
+        <!-- App Highlights Panel -->
+        <div class="telemetry-panel hero-panel">
+          <div class="section-label" style="margin-bottom:1rem;">App Highlights</div>
+          <div class="telemetry-row">
+            <span class="tele-label">Sovereign Calls</span>
+            <span class="tele-value accent">Voice &amp; Video</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="tele-label">Live Audio Spaces</span>
+            <span class="tele-value">Host &amp; Listen</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="tele-label">Passive Witness</span>
+            <span class="tele-value">Earn While Idle</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="tele-label">Physical Proof</span>
+            <span class="tele-value blue">On-Device Capture</span>
+          </div>
+          <div class="telemetry-divider"></div>
+          <div class="telemetry-row">
+            <span class="tele-label">Android</span>
+            <span class="tele-value accent">Available Now</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="tele-label">iOS</span>
+            <span class="tele-value">Coming Soon</span>
+          </div>
+          <div style="margin-top:1.25rem;">
+            <a href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk" class="btn btn-secondary" style="width:100%;justify-content:center;">&#x2B07; Get the Android App</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orientation Strip -->
+      <div class="stat-strip" style="margin-top:3rem;">
+        <div class="stat-item">
+          <div class="stat-label">Connect</div>
+          <div class="stat-value green">Encrypted Mesh Calls</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Gather</div>
+          <div class="stat-value blue">Live Audio Spaces</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Earn</div>
+          <div class="stat-value">Passive Witness Yield</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Prove</div>
+          <div class="stat-value green">Physical Presence</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /slide-4 -->
+
   </div><!-- /hero-slides-track -->
 
   <!-- Arrows -->
@@ -364,6 +438,7 @@
     <button class="hero-dot active" data-index="0" aria-label="Go to slide 1"></button>
     <button class="hero-dot" data-index="1" aria-label="Go to slide 2"></button>
     <button class="hero-dot" data-index="2" aria-label="Go to slide 3"></button>
+    <button class="hero-dot" data-index="3" aria-label="Go to slide 4"></button>
   </div>
 
   </div><!-- /hero-slider -->
@@ -763,7 +838,7 @@ cargo build --release</code></pre>
   var btnNext = document.getElementById('hero-next');
   var slider = document.getElementById('hero-slider');
   var current = 0;
-  var total   = 3;
+  var total   = track ? track.children.length : 4;
   var timer;
 
   function goTo(n) {
