@@ -256,6 +256,8 @@ main            { position: relative; z-index: 1; flex: 1; }
 }
 
 .nav-social { display: flex; gap: 2px; margin-right: 4px; }
+/* Auth links that live inside the mobile dropdown only (hidden on desktop). */
+.nav-auth-mobile { display: none; }
 
 .nav-social-link {
   width: 30px; height: 30px;
@@ -904,6 +906,11 @@ tr:hover td { background: rgba(128,128,128,0.04); }
 
   .hamburger  { display: flex; }
   .nav-social { display: none; }
+  /* Mobile: the top-bar Log In / Sign Up overflow the 375px bar and stretch the
+     whole page — move them into the dropdown menu instead. */
+  .nav-auth { display: none !important; }
+  .nav-auth-mobile { display: flex !important; gap: 10px; padding: 0.75rem 1.5rem; border-bottom: none; }
+  .nav-auth-mobile .btn { flex: 1; justify-content: center; }
 
   .container,
   .container-wide { padding: 0 1rem; }
