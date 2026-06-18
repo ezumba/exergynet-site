@@ -1,0 +1,86 @@
+// LNES-06 LiveKit token + Spaces moderation service — HARDENED build.
+// - /token            : role-aware join token. publish=0 → listener; else speaker/host.
+//                       When role=host, records the caller as the authoritative host for that room.
+// - /space/promote    : grant a listener publish rights. Caller must be the room's host.
+// - /space/demote     : revoke publish rights. Caller must be the room's host.
+//
+// Auth model: in-memory roomHosts map (room → hostIdentity). Host identity is set the first
+// time a token is issued with role=host for a given room. Promote/demote require ?caller=<identity>
+// and verify it matches the stored host. Map entries expire after 24 h to prevent unbounded growth.
+const { AccessToken, RoomServiceClient } = require('livekit-server-sdk');
+const http = require('http');
+
+const API_KEY    = 'exergynet';
+const API_SECRET = 'LNES06RHObridgeSecret2026exergynetSFU';
+const PORT       = 7890;
+const LK_HOST    = 'http://127.0.0.1:7880';
+
+const svc = new RoomServiceClient(LK_HOST, API_KEY, API_SECRET);
+
+// room → { identity: string, expiresAt: number }
+const roomHosts = new Map();
+const HOST_TTL_MS = 24 * 60 * 60 * 1000;
+
+function pruneExpiredHosts() {
+    const now = Date.now();
+    for (const [room, rec] of roomHosts) {
+        if (rec.expiresAt < now) roomHosts.delete(room);
+    }
+}
+setInterval(pruneExpiredHosts, 60 * 60 * 1000); // prune hourly
+
+function sendJson(res, code, obj) {
+    res.writeHead(code, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(obj));
+}
+
+http.createServer(async (req, res) => {
+    try {
+        const url = new URL(req.url, `http://localhost:${PORT}`);
+        const room     = url.searchParams.get('room');
+        const identity = url.searchParams.get('identity');
+
+        if (url.pathname === '/token') {
+            if (!room || !identity) { res.writeHead(400); res.end('missing room or identity'); return; }
+            const publish = url.searchParams.get('publish');
+            const role    = url.searchParams.get('role') || (publish === '0' ? 'listener' : 'speaker');
+            const canPublish = publish !== '0';
+
+            // Register the host the first time a host token is issued for this room.
+            if (role === 'host' && !roomHosts.has(room)) {
+                roomHosts.set(room, { identity, expiresAt: Date.now() + HOST_TTL_MS });
+            }
+
+            const at = new AccessToken(API_KEY, API_SECRET, { identity, metadata: JSON.stringify({ role }) });
+            at.addGrant({ roomJoin: true, room, canPublish, canSubscribe: true, canPublishData: true });
+            const token = await at.toJwt();
+            return sendJson(res, 200, { token, room, identity, role });
+        }
+
+        if (url.pathname === '/space/promote' || url.pathname === '/space/demote') {
+            if (!room || !identity) { res.writeHead(400); res.end('missing room or identity'); return; }
+
+            const caller = url.searchParams.get('caller');
+            if (!caller) { res.writeHead(401); res.end('caller required'); return; }
+
+            const hostRec = roomHosts.get(room);
+            if (!hostRec || hostRec.identity !== caller) {
+                res.writeHead(403); res.end('caller is not the host of this room'); return;
+            }
+            if (hostRec.expiresAt < Date.now()) {
+                roomHosts.delete(room);
+                res.writeHead(403); res.end('host session expired'); return;
+            }
+
+            const canPublish = url.pathname.endsWith('promote');
+            await svc.updateParticipant(room, identity, {
+                permission: { canPublish, canSubscribe: true, canPublishData: true },
+            });
+            return sendJson(res, 200, { ok: true, room, identity, canPublish });
+        }
+
+        res.writeHead(404); res.end();
+    } catch (e) {
+        res.writeHead(500); res.end(String((e && e.message) || e));
+    }
+}).listen(PORT, '127.0.0.1', () => console.log(`Token+Spaces service (hardened) on ${PORT}`));
