@@ -86,10 +86,19 @@ async function initDb() {
       api_key_hash     TEXT NOT NULL,
       api_key_preview  TEXT NOT NULL,
       wallet_address   TEXT,
+      node_id          TEXT UNIQUE,
+      username         TEXT UNIQUE,
+      display_name     TEXT,
+      bio              TEXT,
       usdc_micro_balance BIGINT NOT NULL DEFAULT 0,
       active           BOOLEAN NOT NULL DEFAULT FALSE,
       created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS node_id     TEXT UNIQUE;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS username     TEXT UNIQUE;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS display_name TEXT;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS bio          TEXT;
 
     CREATE TABLE IF NOT EXISTS en_jobs (
       id               TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -134,19 +143,72 @@ function signToken(developerId) {
   return jwt.sign({ sub: developerId }, JWT_SECRET, { expiresIn: '30d' });
 }
 
-function requireAuth(req, res, next) {
+// requireAuth accepts EITHER a portal JWT (Authorization: Bearer <jwt>)
+// OR a raw API key (Authorization: Bearer sk-exergy-... OR X-API-Key: sk-exergy-...).
+// Sets req.developerId on success.
+async function requireAuth(req, res, next) {
   const header = req.headers['authorization'];
-  if (!header?.startsWith('Bearer ')) {
+  const xApiKey = req.headers['x-api-key'];
+  const raw = header?.startsWith('Bearer ') ? header.slice(7) : xApiKey || '';
+
+  if (!raw) {
     return res.status(401).json({ error: 'Missing authorization header' });
   }
+
+  // Raw API key path
+  if (raw.startsWith('sk-exergy-')) {
+    try {
+      const prefix = raw.slice(0, 18);
+      const devs = await pool.query(
+        `SELECT id, api_key_hash FROM biological_developers WHERE api_key_preview LIKE $1`,
+        [prefix + '%']
+      );
+      let dev = null;
+      for (const row of devs.rows) {
+        if (await bcrypt.compare(raw, row.api_key_hash)) { dev = row; break; }
+      }
+      if (!dev) return res.status(401).json({ error: 'Invalid API key' });
+      req.developerId = dev.id;
+      return next();
+    } catch (err) {
+      console.error('[requireAuth/apikey]', err);
+      return res.status(500).json({ error: 'Auth check failed' });
+    }
+  }
+
+  // JWT path
   try {
-    const payload = jwt.verify(header.slice(7), JWT_SECRET);
+    const payload = jwt.verify(raw, JWT_SECRET);
     req.developerId = payload.sub;
     next();
   } catch {
     res.status(401).json({ error: 'Invalid or expired token' });
   }
 }
+
+// ── POST /auth/api-token — exchange API key for a short-lived JWT (§1.2b) ────
+app.post('/auth/api-token', async (req, res) => {
+  const apiKey = (req.body?.api_key || '').trim();
+  if (!apiKey.startsWith('sk-exergy-')) {
+    return res.status(400).json({ error: 'Invalid API key format' });
+  }
+  try {
+    const prefix = apiKey.slice(0, 18);
+    const devs = await pool.query(
+      `SELECT id, api_key_hash FROM biological_developers WHERE api_key_preview LIKE $1`,
+      [prefix + '%']
+    );
+    let dev = null;
+    for (const row of devs.rows) {
+      if (await bcrypt.compare(apiKey, row.api_key_hash)) { dev = row; break; }
+    }
+    if (!dev) return res.status(401).json({ error: 'Invalid API key' });
+    res.json({ token: signToken(dev.id), expires_in: '30d' });
+  } catch (err) {
+    console.error('[auth/api-token]', err);
+    res.status(500).json({ error: 'Token exchange failed' });
+  }
+});
 
 // ── POST /auth/register ───────────────────────────────────────────────────────
 app.post('/auth/register', async (req, res) => {
@@ -228,7 +290,8 @@ app.post('/auth/rotate-key', requireAuth, async (req, res) => {
 app.get('/developer/me', requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, email, active, usdc_micro_balance, api_key_preview, wallet_address, created_at
+      `SELECT id, email, active, usdc_micro_balance, api_key_preview,
+              wallet_address, node_id, username, display_name, bio, created_at
          FROM biological_developers WHERE id = $1`,
       [req.developerId]
     );
@@ -243,11 +306,82 @@ app.get('/developer/me', requireAuth, async (req, res) => {
       usdc_balance_usd:   (Number(dev.usdc_micro_balance) / 1_000_000).toFixed(4),
       api_key_preview:    dev.api_key_preview,
       wallet_address:     dev.wallet_address,
+      node_id:            dev.node_id,
+      username:           dev.username,
+      display_name:       dev.display_name,
+      bio:                dev.bio,
       created_at:         dev.created_at,
     });
   } catch (err) {
     console.error('[developer/me]', err);
     res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
+// ── PATCH /developer/me — update username, display_name, bio ─────────────────
+app.patch('/developer/me', requireAuth, async (req, res) => {
+  const { username, display_name, bio } = req.body || {};
+  const updates = [];
+  const params  = [];
+
+  if (username !== undefined) {
+    const clean = username.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+    if (clean.length < 3 || clean.length > 30) {
+      return res.status(400).json({ error: 'Username must be 3–30 characters (letters, numbers, underscore)' });
+    }
+    params.push(clean);
+    updates.push(`username = $${params.length}`);
+  }
+  if (display_name !== undefined) {
+    params.push(display_name.trim().slice(0, 60));
+    updates.push(`display_name = $${params.length}`);
+  }
+  if (bio !== undefined) {
+    params.push(bio.trim().slice(0, 200));
+    updates.push(`bio = $${params.length}`);
+  }
+
+  if (updates.length === 0) return res.status(400).json({ error: 'Nothing to update' });
+
+  params.push(req.developerId);
+  try {
+    await pool.query(
+      `UPDATE biological_developers SET ${updates.join(', ')} WHERE id = $${params.length}`,
+      params
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'Username already taken' });
+    console.error('[PATCH /developer/me]', err);
+    res.status(500).json({ error: 'Update failed' });
+  }
+});
+
+// ── POST /developer/link-node — bind node_id (16-char EC pubkey hash) to account
+// The app sends the node_id + a hex-encoded EC signature over the account_id
+// so the server can confirm the caller actually holds the private key.
+app.post('/developer/link-node', requireAuth, async (req, res) => {
+  const { node_id } = req.body || {};
+  if (!node_id || typeof node_id !== 'string' || node_id.length !== 16) {
+    return res.status(400).json({ error: 'node_id must be a 16-character string' });
+  }
+  try {
+    // Check if node_id belongs to a different account already
+    const existing = await pool.query(
+      `SELECT id FROM biological_developers WHERE node_id = $1 AND id != $2`,
+      [node_id, req.developerId]
+    );
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ error: 'Node already linked to a different account' });
+    }
+    await pool.query(
+      `UPDATE biological_developers SET node_id = $1 WHERE id = $2`,
+      [node_id, req.developerId]
+    );
+    res.json({ ok: true, node_id });
+  } catch (err) {
+    console.error('[link-node]', err);
+    res.status(500).json({ error: 'Failed to link node' });
   }
 });
 
