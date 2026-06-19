@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/playground',   label: '▷ playground', exact: false },
   { href: '/dashboard/settlements',  label: '⊞ settlements',exact: false },
   { href: '/dashboard/intel',         label: '⬡ app store',  exact: false },
+  { href: '/dashboard/aeris',         label: '◬ aeris',      exact: false },
 ] as const;
 
 export default function Sidebar() {
