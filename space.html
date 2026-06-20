@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Space · ExergyNet</title>
+<meta property="og:title" content="🎙️ Live Space on ExergyNet">
+<meta property="og:description" content="A live audio Space is happening now. Get the app to listen in.">
+<meta property="og:type" content="website">
+<style>
+  :root { --bg:#0D1117; --surface:#161B22; --border:#222a35; --text:#e6edf3; --muted:#8b949e; --teal:#00A884; --red:#e05252; --amber:#E0A23B; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .card { width:100%; max-width:440px; background:var(--surface); border:.5px solid var(--border); border-radius:22px; padding:30px 26px; box-shadow:0 20px 60px rgba(0,0,0,.4); }
+  .live { display:inline-flex; align-items:center; gap:8px; background:rgba(224,82,82,.14); color:var(--red); font-size:13px; font-weight:700; padding:6px 12px; border-radius:20px; letter-spacing:.5px; }
+  .live .dot { width:9px; height:9px; border-radius:50%; background:var(--red); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  h1 { font-size:26px; font-weight:800; margin:18px 0 6px; line-height:1.2; }
+  .sub { color:var(--muted); font-size:14px; margin-bottom:4px; }
+  .room { font-family:monospace; font-size:13px; color:var(--teal); word-break:break-all; margin-top:10px; padding:10px 12px; background:rgba(0,168,132,.08); border-radius:10px; }
+  .btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:15px; border-radius:14px; font-size:15px; font-weight:700; text-decoration:none; margin-top:12px; border:none; cursor:pointer; }
+  .btn-primary { background:var(--teal); color:#031b14; }
+  .btn-android { background:#3ddc84; color:#06251a; }
+  .btn-ios { background:#fff; color:#111; }
+  .btn-ghost { background:transparent; color:var(--muted); border:.5px solid var(--border); }
+  .divider { display:flex; align-items:center; gap:12px; color:var(--muted); font-size:12px; margin:22px 0 6px; }
+  .divider::before,.divider::after { content:''; flex:1; height:.5px; background:var(--border); }
+  .foot { text-align:center; color:var(--muted); font-size:12px; margin-top:22px; }
+  .speakers { display:flex; gap:-8px; margin:16px 0; justify-content:center; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <span class="live"><span class="dot"></span>LIVE SPACE</span>
+    <h1 id="title">A Space is live right now</h1>
+    <p class="sub">Hosted on the ExergyNet sovereign mesh — real-time audio, no middleman.</p>
+    <div class="room" id="room">Loading room…</div>
+
+    <a class="btn btn-primary" id="open-app" href="#">🎙️ Open in ExergyNet app</a>
+
+    <div class="divider">Don't have the app yet?</div>
+    <a class="btn btn-android" id="dl-android" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Download for Android</a>
+    <a class="btn btn-ios" id="dl-ios" href="#">⬇ Download for iOS (TestFlight)</a>
+    <a class="btn btn-ghost" id="copy" href="#">Copy invite link</a>
+
+    <p class="foot">After installing, reopen this link to join the Space as a listener. Raise your hand and the host can invite you up to speak.</p>
+  </div>
+
+<script>
+  // Parse /space/<roomId>?h=<hostId>  (also supports ?room=&h=)
+  var path = location.pathname.replace(/\/+$/,'');
+  var roomId = '';
+  var m = path.match(/\/space\/([^\/?#]+)/);
+  if (m) roomId = decodeURIComponent(m[1]);
+  var params = new URLSearchParams(location.search);
+  if (!roomId) roomId = params.get('room') || '';
+  var host = params.get('h') || '';
+
+  document.getElementById('room').textContent = roomId ? ('Room: ' + roomId) : 'No room specified';
+  if (roomId) {
+    // Custom-scheme deep link the installed app registers for.
+    var deep = 'exergynet://space/' + encodeURIComponent(roomId) + (host ? ('?h=' + encodeURIComponent(host)) : '');
+    document.getElementById('open-app').href = deep;
+  }
+
+  document.getElementById('copy').addEventListener('click', function(e){
+    e.preventDefault();
+    navigator.clipboard.writeText(location.href).then(function(){
+      e.target.textContent = 'Copied!';
+      setTimeout(function(){ e.target.textContent = 'Copy invite link'; }, 1500);
+    });
+  });
+
+  // iOS not shipped yet — disable gracefully.
+  document.getElementById('dl-ios').addEventListener('click', function(e){
+    e.preventDefault(); alert('iOS app is coming soon. Android is available now.');
+  });
+</script>
+</body>
+</html>
