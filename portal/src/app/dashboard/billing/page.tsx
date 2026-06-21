@@ -329,12 +329,20 @@ function StripeDepositRail({ onSuccess }: { onSuccess: () => void }) {
 export default function BillingPage() {
   const [dev, setDev] = useState<Developer | null>(null);
   const [activeRail, setActiveRail] = useState<'web3' | 'fiat'>('web3');
+  const [authed, setAuthed] = useState<boolean | null>(null);
 
   function refresh() {
-    developer.me().then(setDev).catch(() => {});
+    developer.me().then(d => { setDev(d); setAuthed(true); }).catch(() => { setAuthed(false); });
   }
 
   useEffect(() => { refresh(); }, []);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (authed === false) {
+      window.location.href = '/?redirect=/dashboard/billing';
+    }
+  }, [authed]);
 
   // Check for Stripe success redirect
   useEffect(() => {
