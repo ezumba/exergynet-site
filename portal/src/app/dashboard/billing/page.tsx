@@ -340,7 +340,7 @@ export default function BillingPage() {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (authed === false) {
-      window.location.href = '/?redirect=/dashboard/billing';
+      window.location.href = '/?next=/dashboard/billing';
     }
   }, [authed]);
 
