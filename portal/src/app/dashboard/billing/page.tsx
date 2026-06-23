@@ -335,6 +335,15 @@ export default function BillingPage() {
     developer.me().then(d => { setDev(d); setAuthed(true); }).catch(() => { setAuthed(false); });
   }
 
+  // Seed en_token from ?_t= param injected by Android in-app WebView
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get('_t');
+    if (t) {
+      localStorage.setItem('en_token', t);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
   useEffect(() => { refresh(); }, []);
 
   // Redirect to login if not authenticated
