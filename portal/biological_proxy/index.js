@@ -589,6 +589,45 @@ app.post('/api/deposit/claim', requireAuth, async (req, res) => {
   }
 });
 
+// ── POST /api/create-checkout-session ─────────────────────────────────────────
+app.post('/api/create-checkout-session', requireAuth, async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
+  const { amount_usd } = req.body ?? {};
+  if (!amount_usd || typeof amount_usd !== 'number' || amount_usd < 5) {
+    return res.status(400).json({ error: 'amount_usd must be a number >= 5' });
+  }
+  const portalUrl = (process.env.PORTAL_URL ?? 'https://portal.exergynet.org').replace(/\/$/, '');
+  const amountCents = Math.round(amount_usd * 100);
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          unit_amount: amountCents,
+          product_data: {
+            name: 'ExergyNet Compute Credits',
+            description: `$${amount_usd.toFixed(2)} USDC compute credit — ${Math.floor(amount_usd / 0.0004).toLocaleString()} tokens`,
+          },
+        },
+        quantity: 1,
+      }],
+      metadata: {
+        developer_id:      req.developerId,
+        usdc_amount_micro: String(Math.round(amount_usd * 1_000_000)),
+      },
+      success_url: `${portalUrl}/dashboard/billing?stripe=success`,
+      cancel_url:  `${portalUrl}/dashboard/billing?stripe=cancelled`,
+    });
+    console.log(`[STRIPE] checkout session ${session.id} for developer ${req.developerId} | $${amount_usd}`);
+    res.json({ url: session.url, session_id: session.id });
+  } catch (err) {
+    console.error('[STRIPE] create-checkout-session error:', err.message);
+    res.status(500).json({ error: 'Failed to create Stripe session' });
+  }
+});
+
 // ── POST /v1/chat/completions (SSE stub — validates API key) ──────────────────
 app.post('/v1/chat/completions', async (req, res) => {
   const apiKey = req.headers['authorization']?.replace('Bearer ', '') || '';

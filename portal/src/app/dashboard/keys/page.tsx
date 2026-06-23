@@ -99,7 +99,8 @@ export default function KeysPage() {
         </div>
       )}
 
-      {/* Current key preview */}
+      {/* Current key preview + rotation, combined so the rotate action sits right where
+          the key it affects is shown, instead of a separate card further down the page. */}
       <div className="en-card" style={{ marginBottom: 16 }}>
         <div style={{ fontSize: 10, color: '#475569', letterSpacing: '0.08em', marginBottom: 14 }}>
           CURRENT KEY
@@ -113,6 +114,7 @@ export default function KeysPage() {
             background: '#0F172A',
             borderRadius: 6,
             border: '1px solid #1E293B',
+            marginBottom: 14,
           }}
         >
           <span
@@ -130,6 +132,36 @@ export default function KeysPage() {
             preview · full key never stored
           </span>
         </div>
+
+        <div style={{ fontSize: 11, color: '#475569', marginBottom: 14, lineHeight: 1.7 }}>
+          Rotating immediately invalidates this key and generates a new one, shown exactly
+          once — store it securely before dismissing.
+        </div>
+
+        {error && (
+          <div style={{ background: '#2D0808', border: '1px solid #991B1B', borderRadius: 6, padding: '8px 12px', fontSize: 11, color: '#EF4444', marginBottom: 12 }}>
+            {error}
+          </div>
+        )}
+
+        {confirmed && !rotating && (
+          <div style={{ background: '#2D1D06', border: '1px solid #92400E', borderRadius: 6, padding: '8px 12px', fontSize: 11, color: '#D97706', marginBottom: 12 }}>
+            ⚠ This will invalidate your current API key immediately. Click rotate again to confirm.
+          </div>
+        )}
+
+        <button
+          className="en-btn"
+          style={{
+            background: confirmed ? '#EF4444' : '#1E293B',
+            color: confirmed ? 'white' : '#94A3B8',
+            border: `1px solid ${confirmed ? '#991B1B' : '#334155'}`,
+          }}
+          onClick={handleRotate}
+          disabled={rotating}
+        >
+          {rotating ? 'rotating…' : confirmed ? '⚠ confirm rotate key' : 'rotate api key'}
+        </button>
       </div>
 
       {/* Integration examples */}
@@ -190,42 +222,6 @@ const reader = res.body.getReader();
 // ... read SSE stream`}
           </pre>
         </div>
-      </div>
-
-      {/* Key rotation */}
-      <div className="en-card" style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 10, color: '#475569', letterSpacing: '0.08em', marginBottom: 14 }}>
-          KEY ROTATION
-        </div>
-        <div style={{ fontSize: 11, color: '#475569', marginBottom: 14, lineHeight: 1.7 }}>
-          Rotating your key immediately invalidates the current key and generates a new one.
-          The new key is shown exactly once — store it securely before dismissing.
-        </div>
-
-        {error && (
-          <div style={{ background: '#2D0808', border: '1px solid #991B1B', borderRadius: 6, padding: '8px 12px', fontSize: 11, color: '#EF4444', marginBottom: 12 }}>
-            {error}
-          </div>
-        )}
-
-        {confirmed && !rotating && (
-          <div style={{ background: '#2D1D06', border: '1px solid #92400E', borderRadius: 6, padding: '8px 12px', fontSize: 11, color: '#D97706', marginBottom: 12 }}>
-            ⚠ This will invalidate your current API key immediately. Click rotate again to confirm.
-          </div>
-        )}
-
-        <button
-          className="en-btn"
-          style={{
-            background: confirmed ? '#EF4444' : '#1E293B',
-            color: confirmed ? 'white' : '#94A3B8',
-            border: `1px solid ${confirmed ? '#991B1B' : '#334155'}`,
-          }}
-          onClick={handleRotate}
-          disabled={rotating}
-        >
-          {rotating ? 'rotating…' : confirmed ? '⚠ confirm rotate key' : 'rotate api key'}
-        </button>
       </div>
 
       {/* Environment variable reference */}
