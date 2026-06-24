@@ -23,6 +23,7 @@
   .btn-android { background:#3ddc84; color:#06251a; }
   .btn-ios { background:#fff; color:#111; opacity:.7; }
   .btn-ghost { background:transparent; color:var(--muted); border:.5px solid var(--border); }
+  .btn-listen { background:rgba(255,255,255,.06); color:var(--text); border:.5px solid var(--border); }
   .divider { display:flex; align-items:center; gap:12px; color:var(--muted); font-size:12px; margin:22px 0 6px; }
   .divider::before,.divider::after { content:''; flex:1; height:.5px; background:var(--border); }
   .foot { text-align:center; color:var(--muted); font-size:12px; margin-top:22px; line-height:1.5; }
@@ -78,6 +79,7 @@
       '<p class="sub">Hosted on the ExergyNet sovereign mesh — real-time audio, no middleman.</p>',
       '<div class="room-id">' + shortRoom + '</div>',
       '<a class="btn btn-primary" id="open-app" href="' + deep + '">🎙️ Open in ExergyNet app</a>',
+      '<a class="btn btn-listen" id="ghost-listen" href="#">👻 Listen in Browser (Ghost Mode)</a>',
       '<div class="divider">Don\'t have the app yet?</div>',
       '<a class="btn btn-android" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Download for Android</a>',
       '<a class="btn btn-ios" id="dl-ios" href="#">⬇ Download for iOS (coming soon)</a>',
@@ -89,6 +91,12 @@
     if (/android/i.test(navigator.userAgent || '')) {
       setTimeout(function() { location.href = deep; }, 800);
     }
+
+    document.getElementById('ghost-listen').addEventListener('click', function(e) {
+      e.preventDefault();
+      var listenUrl = '/space-listen.html?room=' + encodeURIComponent(roomId) + (host ? ('&h=' + encodeURIComponent(host)) : '');
+      location.href = listenUrl;
+    });
 
     document.getElementById('copy').addEventListener('click', function(e) {
       e.preventDefault();
