@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ── Primary SEO ──────────────────────────────────────────────────────── -->
+  <title>Sovereign Voice Stack — On-Premise GPU Voice AI | ExergyNet</title>
+  <meta name="description" content="ExergyNet Sovereign Voice Stack: a fully localized, GPU-accelerated voice AI pipeline for clinical and enterprise use. Whisper STT + Piper TTS. 1.24s round-trip. 100% HIPAA compliant. Zero third-party API leakage." />
+  <meta name="keywords" content="sovereign voice AI, on-premise voice stack, HIPAA voice AI, Whisper STT, Piper TTS, GPU voice pipeline, clinical voice AI, enterprise voice API, WebSocket voice stream, Twilio media stream, vanguard voice, exergynet voice, private voice AI, local LLM voice" />
+  <meta name="author" content="ExergyNet" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://exergynet.org/voice" />
+
+  <!-- ── Open Graph ────────────────────────────────────────────────────────── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://exergynet.org/voice" />
+  <meta property="og:title" content="Sovereign Voice Stack — On-Premise GPU Voice AI | ExergyNet" />
+  <meta property="og:description" content="Localized GPU-accelerated voice AI for clinical and enterprise. Whisper STT → Vanguard LLM → Piper TTS. 1.24s round-trip. HIPAA compliant. No external API calls." />
+  <meta property="og:image" content="https://exergynet.org/assets/og-voice.png" />
+  <meta property="og:site_name" content="ExergyNet" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- ── Twitter Card ──────────────────────────────────────────────────────── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@ExergyNet" />
+  <meta name="twitter:title" content="Sovereign Voice Stack — On-Premise GPU Voice AI" />
+  <meta name="twitter:description" content="HIPAA-compliant, fully local voice AI pipeline. 1.24s end-to-end latency. Whisper + Vanguard + Piper. No third-party data egress." />
+  <meta name="twitter:image" content="https://exergynet.org/assets/og-voice.png" />
+
+  <!-- ── JSON-LD Structured Data ───────────────────────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ExergyNet Sovereign Voice Stack",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Linux",
+    "url": "https://exergynet.org/voice",
+    "description": "A fully localized, GPU-accelerated acoustic voice pipeline for clinical and enterprise workloads. Integrates Whisper.cpp STT, Vanguard LLM inference, and Piper TTS. HIPAA compliant, zero external API leakage.",
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Vanguard Standard",
+        "price": "0.40",
+        "priceCurrency": "USD",
+        "description": "Per 1M tokens — Qwen-14B Coder"
+      },
+      {
+        "@type": "Offer",
+        "name": "Vanguard Pro",
+        "price": "0.80",
+        "priceCurrency": "USD",
+        "description": "Per 1M tokens — Nemotron-30B"
+      },
+      {
+        "@type": "Offer",
+        "name": "Acoustic Voice Stream",
+        "price": "0.002",
+        "priceCurrency": "USD",
+        "description": "Per minute — G.711 µ-law 8kHz WebSocket stream"
+      }
+    ],
+    "provider": {
+      "@type": "Organization",
+      "name": "ExergyNet",
+      "url": "https://exergynet.org"
+    },
+    "featureList": [
+      "1.24s average end-to-end round-trip",
+      "98% ASR accuracy under telephone-band noise",
+      "100% on-premise execution",
+      "HIPAA compliant",
+      "WebSocket Twilio Connect Stream support",
+      "G.711 µ-law 8kHz mono audio frames",
+      "Barge-in interruption handling",
+      "Structured clinical data extraction via /v1/extract"
+    ]
+  }
+  </script>
+
+  <!-- ── Favicon ───────────────────────────────────────────────────────────── -->
+  <link rel="icon" href="/exg_icon.svg" type="image/svg+xml" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #060814;
+      --surface:  #0b1120;
+      --border:   #1e293b;
+      --teal:     #0d9488;
+      --teal-dk:  #0f766e;
+      --text:     #f8fafc;
+      --muted:    #94a3b8;
+      --dim:      #475569;
+      --mono:     'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    }
+
+    html { background: var(--bg); color: var(--text); font-family: var(--mono); -webkit-font-smoothing: antialiased; }
+    body { min-height: 100vh; }
+
+    a { color: var(--teal); text-decoration: none; }
+    a:hover { color: #2dd4bf; }
+
+    /* ── NAV ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 32px; border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .nav-logo { font-size: 13px; font-weight: 600; letter-spacing: .08em; color: var(--teal); }
+    .nav-links { display: flex; gap: 24px; font-size: 11px; color: var(--dim); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      padding: 6px 16px; background: var(--teal); color: var(--text);
+      border-radius: 6px; font-size: 11px; font-weight: 500;
+      transition: background .15s;
+    }
+    .nav-cta:hover { background: var(--teal-dk); color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 860px; margin: 0 auto; padding: 96px 24px 72px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block; padding: 4px 14px;
+      border: 1px solid var(--teal); border-radius: 100px;
+      font-size: 10px; letter-spacing: .14em; color: var(--teal); margin-bottom: 28px;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 3.2rem); font-weight: 600;
+      line-height: 1.15; margin-bottom: 20px; letter-spacing: -.02em;
+    }
+    h1 span { color: var(--teal); }
+    .hero-sub {
+      font-size: 14px; color: var(--muted); max-width: 580px;
+      margin: 0 auto 36px; line-height: 1.8;
+    }
+    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-block; padding: 12px 28px;
+      background: var(--teal); color: var(--text); border-radius: 8px;
+      font-size: 13px; font-weight: 500; letter-spacing: .04em;
+      transition: background .15s;
+    }
+    .btn-primary:hover { background: var(--teal-dk); color: var(--text); }
+    .btn-ghost {
+      display: inline-block; padding: 12px 28px;
+      border: 1px solid var(--border); color: var(--muted); border-radius: 8px;
+      font-size: 13px; transition: border-color .15s, color .15s;
+    }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--text); }
+
+    /* ── METRICS ── */
+    section { max-width: 960px; margin: 0 auto; padding: 0 24px 72px; }
+    .section-label {
+      font-size: 10px; color: var(--dim); letter-spacing: .12em;
+      margin-bottom: 24px; text-align: center;
+    }
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px;
+    }
+    .metric-val { font-size: 36px; font-weight: 600; color: var(--teal); margin-bottom: 6px; }
+    .metric-label { font-size: 12px; color: var(--text); margin-bottom: 4px; }
+    .metric-sub { font-size: 10px; color: var(--dim); line-height: 1.6; }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;
+    }
+    .price-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; position: relative; }
+    .price-card.featured { border-color: var(--teal); }
+    .rec-badge {
+      position: absolute; top: -1px; right: 16px;
+      background: var(--teal); color: var(--text); font-size: 9px;
+      letter-spacing: .1em; padding: 2px 10px; border-radius: 0 0 6px 6px;
+    }
+    .price-name { font-size: 11px; color: var(--teal); margin-bottom: 4px; }
+    .price-model { font-size: 10px; color: var(--dim); margin-bottom: 16px; }
+    .price-val { font-size: 28px; font-weight: 600; color: var(--text); }
+    .price-unit { font-size: 11px; color: var(--dim); margin-left: 4px; }
+
+    /* ── API DOCS ── */
+    .api-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+    @media (max-width: 700px) { .api-grid { grid-template-columns: 1fr; } .nav-links { display: none; } }
+    .api-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+    .api-label { font-size: 10px; color: var(--teal); letter-spacing: .1em; margin-bottom: 12px; }
+    .api-method { font-size: 11px; color: var(--dim); margin-bottom: 12px; }
+    .api-endpoint { font-family: var(--mono); font-size: 12px; color: var(--teal); display: block; margin-bottom: 12px; word-break: break-all; }
+    .api-desc { font-size: 11px; color: var(--muted); line-height: 1.8; margin-bottom: 16px; }
+    .headers-label { font-size: 10px; color: var(--dim); margin-bottom: 6px; }
+    pre.headers { font-size: 10px; color: var(--dim); line-height: 1.7; }
+
+    .code-block { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .tab-bar { display: flex; background: #0b1120; border-bottom: 1px solid var(--border); }
+    .tab {
+      padding: 6px 16px; font-size: 10px; letter-spacing: .08em;
+      border: none; border-bottom: 2px solid transparent;
+      background: transparent; color: var(--dim);
+      cursor: pointer; font-family: var(--mono);
+    }
+    .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+    .copy-btn {
+      margin-left: auto; padding: 6px 14px; font-size: 10px;
+      border: none; background: transparent; color: var(--dim);
+      cursor: pointer; font-family: var(--mono);
+    }
+    .copy-btn:hover { color: var(--teal); }
+    .code-pane { display: none; padding: 16px; background: var(--bg); }
+    .code-pane.active { display: block; }
+    pre.code { font-size: 11px; color: var(--muted); line-height: 1.7; white-space: pre; overflow-x: auto; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 32px 24px;
+      text-align: center; font-size: 11px; color: var(--dim);
+    }
+    footer a { color: var(--dim); margin: 0 10px; }
+    footer a:hover { color: var(--teal); }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────────────────── -->
+<nav>
+  <a href="/" class="nav-logo">EXERGYNET</a>
+  <div class="nav-links">
+    <a href="/developers.html">Docs</a>
+    <a href="/voice.html">Voice</a>
+    <a href="/nodes.html">Nodes</a>
+    <a href="/token.html">Token</a>
+  </div>
+  <a href="https://portal.exergynet.org/auth/register" class="nav-cta">Get Started</a>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="badge">SOVEREIGN VOICE STACK v2.1.2 · LIVE</div>
+  <h1>Bringing Voice to Life.<br><span>Sovereign. Private. Local.</span></h1>
+  <p class="hero-sub">
+    A completely localized, GPU-accelerated acoustic membrane for clinical and enterprise workloads.
+    100% HIPAA compliant. Zero external API leakage.
+  </p>
+  <div class="cta-row">
+    <a href="https://portal.exergynet.org/auth/register" class="btn-primary">
+      Get Started — Includes $10.00 Free Developer Credit
+    </a>
+    <a href="/developers.html" class="btn-ghost">Read the Docs</a>
+  </div>
+</div>
+
+<!-- ── METRICS ───────────────────────────────────────────────────────────────── -->
+<section>
+  <div class="section-label">■ VERIFIED PERFORMANCE</div>
+  <div class="metrics-grid">
+    <div class="card" style="text-align:center">
+      <div class="metric-val">1.24s</div>
+      <div class="metric-label">End-to-End Latency</div>
+      <div class="metric-sub">Whisper STT → Vanguard LLM → Piper TTS</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="metric-val">98%</div>
+      <div class="metric-label">ASR Transcription Accuracy</div>
+      <div class="metric-sub">Under telephone-band noise (G.711 µ-law 8kHz)</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="metric-val">100%</div>
+      <div class="metric-label">Data Privacy</div>
+      <div class="metric-sub">On-premise execution — zero third-party API calls</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ───────────────────────────────────────────────────────────────── -->
+<section>
+  <div class="section-label">■ TRANSPARENT PRICING</div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-name">Vanguard Standard</div>
+      <div class="price-model">Qwen-14B Coder · Node 4</div>
+      <div><span class="price-val">$0.40</span><span class="price-unit">/ 1M tokens</span></div>
+    </div>
+    <div class="price-card featured">
+      <div class="rec-badge">RECOMMENDED</div>
+      <div class="price-name">Vanguard Pro</div>
+      <div class="price-model">Nemotron-30B · Node 3</div>
+      <div><span class="price-val">$0.80</span><span class="price-unit">/ 1M tokens</span></div>
+    </div>
+    <div class="price-card">
+      <div class="price-name">Acoustic Voice Stream</div>
+      <div class="price-model">G.711 µ-law · TURN relay</div>
+      <div><span class="price-val">$0.002</span><span class="price-unit">/ minute</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── API DOCS ───────────────────────────────────────────────────────────────── -->
+<section style="max-width:1060px">
+  <div class="section-label">■ INTERACTIVE API DOCUMENTATION</div>
+
+  <!-- /media-stream -->
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-label">■ ACOUSTIC VOICE STREAM</div>
+      <div class="api-method">WebSocket · G.711 µ-law · 8kHz mono · 20ms frames</div>
+      <code class="api-endpoint">wss://explorer-api.exergynet.org/media-stream</code>
+      <p class="api-desc">
+        Establish a bidirectional Twilio <code style="color:var(--teal)">&lt;Connect&gt;&lt;Stream&gt;</code>
+        over WebSocket. The server ingests mulaw audio frames, transcribes via CUDA-Whisper,
+        routes through Vanguard, synthesizes TTS, and streams mulaw frames back — all within 1.24s average.
+      </p>
+      <div class="headers-label">REQUIRED HEADERS</div>
+      <pre class="headers">Authorization: Bearer &lt;key&gt;
+Upgrade: websocket
+Connection: Upgrade</pre>
+    </div>
+    <div class="code-block">
+      <div class="tab-bar">
+        <button class="tab active" onclick="switchTab(this,'ms-curl')">cURL</button>
+        <button class="tab" onclick="switchTab(this,'ms-ts')">TypeScript</button>
+        <button class="tab" onclick="switchTab(this,'ms-py')">Python</button>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <div class="code-pane active" id="ms-curl">
+<pre class="code">wscat -c "wss://explorer-api.exergynet.org/media-stream" \
+  -H "Authorization: Bearer $EXERGYNET_API_KEY"
+
+# Then send start event:
+# { "event": "start", "streamSid": "MZ...",
+#   "mediaFormat": { "encoding": "audio/x-mulaw",
+#                    "sampleRate": 8000, "channels": 1 } }</pre>
+      </div>
+      <div class="code-pane" id="ms-ts">
+<pre class="code">import WebSocket from 'ws';
+
+const ws = new WebSocket(
+  'wss://explorer-api.exergynet.org/media-stream',
+  { headers: { Authorization: `Bearer ${process.env.EXERGYNET_API_KEY}` } }
+);
+
+ws.on('open', () => {
+  ws.send(JSON.stringify({
+    event: 'start',
+    streamSid: 'MZ_your_sid',
+    mediaFormat: { encoding: 'audio/x-mulaw', sampleRate: 8000, channels: 1 },
+  }));
+});
+
+ws.on('message', (data) => {
+  const frame = JSON.parse(data.toString());
+  if (frame.event === 'media') {
+    const audio = Buffer.from(frame.media.payload, 'base64');
+    // pipe audio → speaker
+  }
+});</pre>
+      </div>
+      <div class="code-pane" id="ms-py">
+<pre class="code">import asyncio, websockets, json, base64
+
+API_KEY = "sk-exergy-..."
+
+async def stream():
+    uri = "wss://explorer-api.exergynet.org/media-stream"
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    async with websockets.connect(uri, extra_headers=headers) as ws:
+        await ws.send(json.dumps({
+            "event": "start", "streamSid": "MZ_your_sid",
+            "mediaFormat": {"encoding": "audio/x-mulaw",
+                            "sampleRate": 8000, "channels": 1},
+        }))
+        async for message in ws:
+            frame = json.loads(message)
+            if frame["event"] == "media":
+                audio = base64.b64decode(frame["media"]["payload"])
+
+asyncio.run(stream())</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- /v1/extract -->
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-label">■ SOVEREIGN CLINICAL EXTRACTOR</div>
+      <div class="api-method">REST · POST · JSON · Schema-aware structured extraction</div>
+      <code class="api-endpoint">POST https://explorer-api.exergynet.org/v1/extract</code>
+      <p class="api-desc">
+        Pass raw clinical text and a typed schema. The SEI extractor returns structured JSON
+        with per-field confidence scores and clarification flags. No conversational prose leaks.
+        Bypasses LLM chat mode entirely.
+      </p>
+      <div class="headers-label">REQUIRED HEADERS</div>
+      <pre class="headers">Authorization: Bearer &lt;key&gt;
+Content-Type: application/json</pre>
+    </div>
+    <div class="code-block">
+      <div class="tab-bar">
+        <button class="tab active" onclick="switchTab(this,'ex-curl')">cURL</button>
+        <button class="tab" onclick="switchTab(this,'ex-ts')">TypeScript</button>
+        <button class="tab" onclick="switchTab(this,'ex-py')">Python</button>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <div class="code-pane active" id="ex-curl">
+<pre class="code">curl -X POST https://explorer-api.exergynet.org/v1/extract \
+  -H "Authorization: Bearer $EXERGYNET_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Patient denies smoking. BP 150/95.",
+    "schema": {
+      "smoking_status": "boolean",
+      "blood_pressure": "string"
+    },
+    "domain": "clinical"
+  }'</pre>
+      </div>
+      <div class="code-pane" id="ex-ts">
+<pre class="code">const res = await fetch(
+  'https://explorer-api.exergynet.org/v1/extract',
+  {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.EXERGYNET_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      text: 'Patient denies smoking. BP 150/95.',
+      schema: { smoking_status: 'boolean', blood_pressure: 'string' },
+      domain: 'clinical',
+    }),
+  }
+);
+const { extraction } = await res.json();
+// extraction.smoking_status === false
+// extraction.blood_pressure === "150/95"</pre>
+      </div>
+      <div class="code-pane" id="ex-py">
+<pre class="code">import requests
+
+resp = requests.post(
+    "https://explorer-api.exergynet.org/v1/extract",
+    headers={
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json",
+    },
+    json={
+        "text": "Patient denies smoking. BP 150/95.",
+        "schema": {"smoking_status": "boolean", "blood_pressure": "string"},
+        "domain": "clinical",
+    },
+)
+data = resp.json()
+# {'smoking_status': False, 'blood_pressure': '150/95'}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────────── -->
+<footer>
+  <p style="margin-bottom:12px">
+    <a href="/">exergynet.org</a>
+    <a href="/developers.html">Docs</a>
+    <a href="https://portal.exergynet.org">Portal</a>
+    <a href="/nodes.html">Nodes</a>
+    <a href="/token.html">Token</a>
+    <a href="/legal.html">Legal</a>
+  </p>
+  <p>© 2026 ExergyNet · Sovereign Voice Stack v2.1.2 · HIPAA Compliant · Zero Data Egress</p>
+</footer>
+
+<script>
+  function switchTab(btn, paneId) {
+    const block = btn.closest('.code-block');
+    block.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    block.querySelectorAll('.code-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(paneId).classList.add('active');
+  }
+
+  function copyCode(btn) {
+    const block = btn.closest('.code-block');
+    const active = block.querySelector('.code-pane.active pre');
+    if (!active) return;
+    navigator.clipboard.writeText(active.textContent).then(() => {
+      btn.textContent = '✓ copied';
+      setTimeout(() => btn.textContent = 'copy', 1800);
+    });
+  }
+</script>
+
+</body>
+</html>
