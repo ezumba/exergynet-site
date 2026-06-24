@@ -105,14 +105,29 @@ var myIdentity = '';
 var audioElements = [];
 var _audioUnlocked = false;
 
-// iOS Safari blocks AudioContext until a user gesture. Call this inside any
-// button click handler to unlock it before LiveKit tracks arrive.
+// iOS Safari blocks AudioContext until a user gesture AND defaults to the
+// voice-call audio session (earpiece). Call this inside any button click to:
+//  1. Unlock AudioContext so audio elements can play
+//  2. Force the media audio session (loudspeaker / headphones) by playing a
+//     muted inline <video> — iOS switches to media route when a video element
+//     is active, instead of routing audio to the earpiece like a phone call.
 function _unlockAudio() {
   if (_audioUnlocked) return;
   _audioUnlocked = true;
   try {
     var ctx = new (window.AudioContext || window.webkitAudioContext)();
     ctx.resume().then(function() { ctx.close(); });
+  } catch(e) {}
+  // Force media audio session on iOS (speaker/headphones, not earpiece)
+  try {
+    var v = document.createElement('video');
+    v.setAttribute('playsinline', '');
+    v.setAttribute('webkit-playsinline', '');
+    v.muted = true;
+    v.srcObject = new MediaStream();
+    v.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
+    document.body.appendChild(v);
+    v.play().catch(function(){});
   } catch(e) {}
 }
 
