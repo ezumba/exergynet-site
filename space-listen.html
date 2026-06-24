@@ -103,6 +103,34 @@ if (!roomId) {
 var lkRoom = null;
 var myIdentity = '';
 var audioElements = [];
+var _audioUnlocked = false;
+
+// iOS Safari blocks AudioContext until a user gesture. Call this inside any
+// button click handler to unlock it before LiveKit tracks arrive.
+function _unlockAudio() {
+  if (_audioUnlocked) return;
+  _audioUnlocked = true;
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    ctx.resume().then(function() { ctx.close(); });
+  } catch(e) {}
+}
+
+function _showAudioUnlockBanner() {
+  if (document.getElementById('audio-unlock-btn')) return;
+  var btn = document.createElement('button');
+  btn.id = 'audio-unlock-btn';
+  btn.className = 'btn btn-primary';
+  btn.style.cssText = 'margin:0 0 12px;font-size:16px;';
+  btn.textContent = '🔊 Tap to Enable Audio';
+  btn.addEventListener('click', function() {
+    _unlockAudio();
+    if (lkRoom && lkRoom.startAudio) lkRoom.startAudio();
+    audioElements.forEach(function(el) { el.play().catch(function(){}); });
+    btn.remove();
+  });
+  listenUi.insertBefore(btn, listenUi.firstChild);
+}
 
 // ─── DOM refs ────────────────────────────────────────────────────────────────
 var inviteUi  = document.getElementById('invite-ui');
@@ -160,6 +188,7 @@ function renderInvite() {
 
 // ─── Modal handlers ──────────────────────────────────────────────────────────
 document.getElementById('enter-ghost-btn').addEventListener('click', function() {
+  _unlockAudio(); // iOS: unlock AudioContext during this user gesture
   var name = document.getElementById('ghost-name').value.trim();
   modalBg.classList.remove('open');
   startListening(name);
@@ -321,6 +350,10 @@ async function startListening(displayName) {
           el.autoplay = true;
           document.body.appendChild(el);
           audioElements.push(el);
+          el.play().catch(function() {
+            // iOS blocked autoplay — show tap-to-enable banner
+            _showAudioUnlockBanner();
+          });
         }
       })
       .on(LK.RoomEvent.TrackUnsubscribed, function(track) {
