@@ -10,6 +10,10 @@ const { Pool }  = require('pg');
 const bcrypt    = require('bcrypt');
 const jwt       = require('jsonwebtoken');
 const crypto    = require('crypto');
+const { AccessToken: LKAccessToken, RoomServiceClient } = require('livekit-server-sdk');
+
+const LK_API_KEY    = process.env.LIVEKIT_API_KEY    || 'exergynet';
+const LK_API_SECRET = process.env.LIVEKIT_API_SECRET || 'LNES06RHObridgeSecret2026exergynetSFU';
 
 const app  = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -21,6 +25,25 @@ const USDC_ADDRESS  = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
 const OPERATOR_WALLET = '0xbd1e790f6040FA62797671B84a50025a0133109C';
 const BASE_SEPOLIA_RPC = 'https://sepolia.base.org';
 const ERC20_TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+const APEX_BASE_URL    = process.env.APEX_BASE_URL || 'https://explorer-api.exergynet.org';
+const APEX_TOPUP_KEY   = process.env.APEX_TOPUP_KEY || 'SOVEREIGN_BYPASS';
+
+// Credit the L0 Apex miners ledger so the siphon sees the balance.
+// Fails silently — portal DB is already credited; this is a best-effort sync.
+async function creditApexMiner(miner_id, amount_micro_usdc) {
+  if (!miner_id) return;
+  try {
+    const r = await fetch(`${APEX_BASE_URL}/api/v1/miners/topup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ miner_id, amount_micro_usdc, admin_key: APEX_TOPUP_KEY }),
+    });
+    if (!r.ok) console.error(`[apex-topup] HTTP ${r.status} for miner ${miner_id}`);
+    else console.log(`[apex-topup] credited ${amount_micro_usdc}µUSDC → miner ${miner_id}`);
+  } catch (e) {
+    console.error('[apex-topup] fetch failed:', e.message);
+  }
+}
 
 // ── Stripe (optional) — module-level singleton ─────────────────────────────
 let stripe = null;
@@ -59,6 +82,10 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
         [microUsdc, developerId]
       );
       console.log(`[webhook/stripe] credited ${microUsdc} micro-USDC to ${developerId}`);
+      // Sync to L0 miners ledger so the siphon sees the balance.
+      const devRow = await pool.query(`SELECT node_id FROM biological_developers WHERE id = $1`, [developerId]);
+      const nodeId = devRow.rows[0]?.node_id;
+      if (nodeId) creditApexMiner(nodeId, microUsdc);
     }
   }
   res.json({ received: true });
@@ -185,6 +212,58 @@ async function requireAuth(req, res, next) {
     res.status(401).json({ error: 'Invalid or expired token' });
   }
 }
+
+// ── GET /space/guest-token — anonymous listener token for public Spaces ───────
+// No auth. Issues a canPublish:false LiveKit JWT so any browser can listen in.
+// Rate-limiting should be added before mainnet; this is intentionally open for ghost-mode.
+app.get('/space/guest-token', async (req, res) => {
+  const room = (req.query.room || '').trim();
+  if (!room) return res.status(400).json({ error: 'room required' });
+
+  const rawName = (req.query.name || '').trim().replace(/[^a-zA-Z0-9 _\-]/g, '').slice(0, 24);
+  const suffix   = crypto.randomBytes(4).toString('hex');
+  const identity = rawName
+    ? `ghost_${rawName.replace(/\s+/g, '_')}_${suffix}`
+    : `ghost_${suffix}`;
+
+  try {
+    // Strip Express's reflected-origin CORS header — Caddy's global "Access-Control-Allow-Origin: *"
+    // is already set for this vhost. Two ACAO headers break the browser preflight check.
+    res.removeHeader('Access-Control-Allow-Origin');
+    res.removeHeader('Vary');
+
+    const at = new LKAccessToken(LK_API_KEY, LK_API_SECRET, {
+      identity,
+      metadata: JSON.stringify({ role: 'ghost', displayName: rawName || null }),
+    });
+    at.addGrant({ roomJoin: true, room, canPublish: false, canSubscribe: true, canPublishData: false });
+    const token = await at.toJwt();
+
+    // Fetch current participant names so the web listener shows real names immediately
+    // instead of waiting for a space.name broadcast that already happened before they joined.
+    let nameMap = {};
+    try {
+      const svc = new RoomServiceClient('https://livekit.exergynet.org', LK_API_KEY, LK_API_SECRET);
+      const participants = await svc.listParticipants(room);
+      for (const p of participants) {
+        let label = null;
+        try { label = JSON.parse(p.metadata || '{}').displayName; } catch (_) {}
+        if (!label && p.name) label = p.name;
+        if (!label) {
+          // ghost identity: ghost_Name_hex → extract name
+          const gm = p.identity.match(/^ghost_(.+)_[0-9a-f]{4,8}$/i);
+          label = gm ? gm[1].replace(/_/g, ' ') : null;
+        }
+        if (label) nameMap[p.identity] = label;
+      }
+    } catch (_) { /* room may not exist yet or LK unreachable — not fatal */ }
+
+    return res.json({ token, identity, room, nameMap });
+  } catch (err) {
+    console.error('[space/guest-token]', err);
+    return res.status(500).json({ error: 'Token generation failed' });
+  }
+});
 
 // ── POST /auth/api-token — exchange API key for a short-lived JWT (§1.2b) ────
 app.post('/auth/api-token', async (req, res) => {
@@ -378,6 +457,9 @@ app.post('/developer/link-node', requireAuth, async (req, res) => {
       `UPDATE biological_developers SET node_id = $1 WHERE id = $2`,
       [node_id, req.developerId]
     );
+    // Credit $10 (10,000,000 µUSDC) to the L0 miners ledger for every new node link.
+    // Fire-and-forget — don't block the response on Apex availability.
+    creditApexMiner(node_id, 10_000_000);
     res.json({ ok: true, node_id });
   } catch (err) {
     console.error('[link-node]', err);
@@ -578,6 +660,10 @@ app.post('/api/deposit/claim', requireAuth, async (req, res) => {
     }
 
     console.log(`[deposit/claim] credited ${onChainMicro} µUSDC → developer ${req.developerId}`);
+    // Sync to L0 miners ledger so the siphon sees the balance.
+    const devRow = await pool.query(`SELECT node_id FROM biological_developers WHERE id = $1`, [req.developerId]);
+    const nodeId = devRow.rows[0]?.node_id;
+    if (nodeId) creditApexMiner(nodeId, onChainMicro);
     res.json({
       ok:           true,
       credited_micro: onChainMicro,
