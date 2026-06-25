@@ -106,7 +106,7 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: ['https://portal.exergynet.org', 'http://localhost:4000', 'http://localhost:3000'],
+  origin: ['https://portal.exergynet.org', 'https://dt.portal.exergynet.org', 'http://localhost:4000', 'http://localhost:3000'],
   credentials: true
 }));
 app.use(express.json());
@@ -985,6 +985,35 @@ app.get('/health', (_req, res) =>
   res.json({ ok: true, service: 'biological_proxy', ts: new Date().toISOString() })
 );
 
+// ── GET /api/apps — public catalog of all active apps ─────────────────────────
+app.get('/api/apps', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT app_key, name, tier, price_micro, usage_price_micro, description,
+              category, tags, icon_url, icon, app_url, featured
+       FROM app_catalog WHERE active = true
+       ORDER BY featured DESC NULLS LAST, created_at ASC`
+    );
+    const apps = rows.map(r => ({
+      app_key:         r.app_key,
+      name:            r.name,
+      tier:            r.tier,
+      price_usd:       (r.price_micro / 1_000_000).toFixed(2),
+      usage_price_usd: (r.usage_price_micro / 1_000_000).toFixed(4),
+      description:     r.description || null,
+      category:        r.category || null,
+      tags:            r.tags || [],
+      icon_url:        r.icon_url || r.icon || null,
+      app_url:         r.app_url || null,
+      featured:        r.featured || false,
+    }));
+    res.json({ apps, count: apps.length });
+  } catch (e) {
+    console.error('[/api/apps]', e);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
 // ── GET /api/apps/mine — developer's published apps ───────────────────────────
 app.get('/api/apps/mine', requireAuth, async (req, res) => {
   try {
@@ -993,7 +1022,7 @@ app.get('/api/apps/mine', requireAuth, async (req, res) => {
               created_at, app_url, description, icon, usage_price_micro,
               review_status, category, tags, icon_url, featured
        FROM app_catalog WHERE publisher_id = $1 ORDER BY created_at DESC`,
-      [req.user.id]
+      [req.developerId]
     );
     const apps = rows.map(r => ({
       app_key:           r.app_key,
@@ -1056,7 +1085,7 @@ app.post('/api/apps/publish', requireAuth, async (req, res) => {
          icon_url = EXCLUDED.icon_url, review_status = 'pending_review'
        RETURNING *`,
       [app_key, name.trim(), tier, priceMicro, usagePriceMicro,
-       req.user.id, app_url || null, description || null, category || null,
+       req.developerId, app_url || null, description || null, category || null,
        tagsJson, icon_url || null]
     );
     const r = rows[0];
@@ -1080,6 +1109,384 @@ app.post('/api/apps/publish', requireAuth, async (req, res) => {
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN PANEL
+// ═══════════════════════════════════════════════════════════════
+// ADMIN PANEL — Authenticated with dedicated ADMIN_JWT_SECRET, role-based
+// Roles: super_admin | ops | support
+// ══════════════════════════════════════════════════════════════════════════════
+
+const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'admin-secret-CHANGE-IN-PROD';
+
+function signAdminToken(adminId, role) {
+  return jwt.sign({ sub: adminId, role, iss: 'exergynet-admin' }, ADMIN_JWT_SECRET, { expiresIn: '8h' });
+}
+
+function requireAdmin(...roles) {
+  return (req, res, next) => {
+    const header = req.headers['authorization'];
+    if (!header?.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Missing authorization header' });
+    }
+    try {
+      const payload = jwt.verify(header.slice(7), ADMIN_JWT_SECRET);
+      if (payload.iss !== 'exergynet-admin') return res.status(401).json({ error: 'Not an admin token' });
+      if (roles.length && !roles.includes(payload.role)) {
+        return res.status(403).json({ error: 'Insufficient role — requires: ' + roles.join(' | ') });
+      }
+      req.adminId = payload.sub;
+      req.adminRole = payload.role;
+      next();
+    } catch {
+      res.status(401).json({ error: 'Invalid or expired admin token' });
+    }
+  };
+}
+
+// ── POST /admin/login ────────────────────────────────────────────────
+app.post('/api/admin/login', async (req, res) => {
+  const { email, password } = req.body || {};
+  if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+  try {
+    const result = await pool.query(
+      'SELECT id, email, password_hash, role, is_active FROM admin_users WHERE email = $1',
+      [email.toLowerCase().trim()]
+    );
+    if (!result.rows.length) return res.status(401).json({ error: 'Invalid credentials' });
+    const admin = result.rows[0];
+    if (!admin.is_active) return res.status(403).json({ error: 'Account disabled' });
+    const valid = await bcrypt.compare(password, admin.password_hash);
+    if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
+    await pool.query('UPDATE admin_users SET last_login = NOW() WHERE id = $1', [admin.id]);
+    res.json({ token: signAdminToken(admin.id, admin.role), role: admin.role, email: admin.email });
+  } catch (err) {
+    console.error('[admin/login]', err);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// ── GET /admin/me ─────────────────────────────────────────────────────
+app.get('/api/admin/me', requireAdmin(), async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, email, role, is_active, created_at, last_login FROM admin_users WHERE id = $1',
+      [req.adminId]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Admin not found' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch admin profile' });
+  }
+});
+
+// ── GET /admin/developers ───────────────────────────────────────────
+app.get('/api/admin/developers', requireAdmin('super_admin', 'ops', 'support'), async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT d.id, d.email, d.active, d.usdc_micro_balance,
+             ROUND(d.usdc_micro_balance::numeric / 1000000, 4)::text AS usdc_balance_usd,
+             d.api_key_preview, d.wallet_address, d.created_at,
+             COUNT(j.id)::int AS total_jobs,
+             COALESCE(SUM(j.tokens_yielded), 0)::bigint AS total_tokens
+      FROM biological_developers d
+      LEFT JOIN en_jobs j ON j.developer_id = d.id
+      GROUP BY d.id
+      ORDER BY d.created_at DESC
+    `);
+    res.json({ developers: result.rows, total: result.rows.length });
+  } catch (err) {
+    console.error('[admin/developers]', err);
+    res.status(500).json({ error: 'Failed to fetch developers' });
+  }
+});
+
+// ── PUT /admin/developers/:id/active ─────────────────────────────────
+app.put('/api/admin/developers/:id/active', requireAdmin('super_admin', 'support'), async (req, res) => {
+  const { active } = req.body || {};
+  if (typeof active !== 'boolean') return res.status(400).json({ error: 'active (boolean) required' });
+  try {
+    const result = await pool.query(
+      'UPDATE biological_developers SET active = $1 WHERE id = $2 RETURNING id, email, active',
+      [active, req.params.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Developer not found' });
+    res.json({ developer: result.rows[0] });
+  } catch (err) {
+    console.error('[admin/developers/active]', err);
+    res.status(500).json({ error: 'Failed to update developer' });
+  }
+});
+
+// ── POST /admin/developers/:id/credit ────────────────────────────────
+app.post('/api/admin/developers/:id/credit', requireAdmin('super_admin'), async (req, res) => {
+  const { usdc_micro } = req.body || {};
+  if (!usdc_micro || typeof usdc_micro !== 'number' || usdc_micro <= 0) {
+    return res.status(400).json({ error: 'usdc_micro (positive number) required' });
+  }
+  try {
+    const result = await pool.query(
+      `UPDATE biological_developers SET usdc_micro_balance = usdc_micro_balance + $1
+       WHERE id = $2
+       RETURNING id, email, usdc_micro_balance`,
+      [Math.round(usdc_micro), req.params.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Developer not found' });
+    const dev = result.rows[0];
+    res.json({
+      developer: dev,
+      new_balance_usd: (dev.usdc_micro_balance / 1_000_000).toFixed(4),
+      credited_usd: (usdc_micro / 1_000_000).toFixed(4),
+    });
+  } catch (err) {
+    console.error('[admin/developers/credit]', err);
+    res.status(500).json({ error: 'Failed to credit developer' });
+  }
+});
+
+// ── GET /admin/settlements ────────────────────────────────────────────
+app.get('/api/admin/settlements', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit) || 50, 200);
+  const offset = parseInt(req.query.offset) || 0;
+  const status = req.query.status;
+  const developer_id = req.query.developer_id;
+
+  try {
+    const params = [];
+    const conditions = [];
+    let i = 1;
+    if (status) { conditions.push(`j.zk_proof_status = $${i++}`); params.push(status); }
+    if (developer_id) { conditions.push(`j.developer_id = $${i++}`); params.push(developer_id); }
+    const where = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
+    const countParams = [...params];
+    params.push(limit, offset);
+
+    const [rows, countResult] = await Promise.all([
+      pool.query(`
+        SELECT j.id AS job_id, j.developer_id, d.email AS developer_email,
+               j.prompt_hash, j.tokens_yielded, j.bypassed_layers,
+               j.zk_proof_status, j.on_chain_sig, j.created_at
+        FROM en_jobs j
+        LEFT JOIN biological_developers d ON d.id = j.developer_id
+        ${where}
+        ORDER BY j.created_at DESC
+        LIMIT $${i++} OFFSET $${i}
+      `, params),
+      pool.query(`SELECT COUNT(*) FROM en_jobs j ${where}`, countParams),
+    ]);
+
+    res.json({
+      jobs: rows.rows,
+      total: parseInt(countResult.rows[0].count),
+      limit,
+      offset,
+    });
+  } catch (err) {
+    console.error('[admin/settlements]', err);
+    res.status(500).json({ error: 'Failed to fetch settlements' });
+  }
+});
+
+// ── GET /admin/instructions ───────────────────────────────────────────
+app.get('/api/admin/instructions', requireAdmin('super_admin', 'support'), async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT i.id, i.developer_id, d.email AS developer_email,
+             i.name, i.instruction_text, i.is_active, i.created_at, i.updated_at
+      FROM developer_instructions i
+      LEFT JOIN biological_developers d ON d.id = i.developer_id
+      ORDER BY i.created_at DESC
+    `);
+    res.json({ instructions: result.rows, total: result.rows.length });
+  } catch (err) {
+    console.error('[admin/instructions]', err);
+    res.status(500).json({ error: 'Failed to fetch instructions' });
+  }
+});
+
+// ── GET /admin/engine ──────────────────────────────────────────────────
+app.get('/api/admin/engine', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  const vanguardUrl = process.env.SEI_VANGUARD_URL || 'http://localhost:3000';
+  const vanguardKey = process.env.SEI_VANGUARD_KEY;
+  try {
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 5000);
+    const response = await fetch(`${vanguardUrl}/health`, {
+      headers: vanguardKey ? { Authorization: `Bearer ${vanguardKey}` } : {},
+      signal: ctrl.signal,
+    });
+    clearTimeout(timeout);
+    const body = await response.json().catch(() => ({}));
+    res.json({ status: response.ok ? 'online' : 'degraded', url: vanguardUrl, ...body });
+  } catch (err) {
+    res.json({ status: 'offline', url: vanguardUrl, error: err.message });
+  }
+});
+
+// ── GET /admin/keys ─────────────────────────────────────────────────────
+app.get('/api/admin/keys', requireAdmin('super_admin'), async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT d.id, d.email, d.api_key_preview, d.active,
+             COUNT(j.id)::int AS total_jobs,
+             COALESCE(SUM(j.tokens_yielded), 0)::bigint AS total_tokens,
+             MAX(j.created_at) AS last_active,
+             d.created_at
+      FROM biological_developers d
+      LEFT JOIN en_jobs j ON j.developer_id = d.id
+      GROUP BY d.id, d.email, d.api_key_preview, d.active, d.created_at
+      ORDER BY total_jobs DESC NULLS LAST, d.created_at DESC
+    `);
+    res.json({ keys: result.rows, total: result.rows.length });
+  } catch (err) {
+    console.error('[admin/keys]', err);
+    res.status(500).json({ error: 'Failed to fetch keys' });
+  }
+});
+
+// ── DELETE /admin/keys/:id (revoke) ──────────────────────────────────────
+app.delete('/api/admin/keys/:id', requireAdmin('super_admin'), async (req, res) => {
+  try {
+    const deadHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), SALT_ROUNDS);
+    const result = await pool.query(
+      "UPDATE biological_developers SET api_key_hash = $1, api_key_preview = 'REVOKED', active = false WHERE id = $2 RETURNING id, email",
+      [deadHash, req.params.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Developer not found' });
+    res.json({ ok: true, revoked: result.rows[0] });
+  } catch (err) {
+    console.error('[admin/keys/revoke]', err);
+    res.status(500).json({ error: 'Failed to revoke key' });
+  }
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// VANGUARD SCAN + APP STORE REVIEW
+// ═══════════════════════════════════════════════════════════════
+const SEI_VG_URL = process.env.SEI_VANGUARD_URL || 'http://20.127.220.199:3000';
+const SEI_VG_KEY = process.env.SEI_VANGUARD_KEY || 'sk-vanguard-apex-internal-v1';
+const VG_FLAG_THRESHOLD = 0.5;
+let CONSOLE_HTML = '<h1>console missing</h1>';
+try { CONSOLE_HTML = require('./console_html.js'); } catch (e) { console.error('[console] load failed', e.message); }
+
+async function scanAppWithVanguard(appKey) {
+  try {
+    const row = await pool.query('SELECT app_key, name, tier, price_micro, usage_price_micro, app_url, description FROM app_catalog WHERE app_key=$1', [appKey]);
+    if (!row.rows.length) return;
+    const a = row.rows[0];
+    const priceUsd = Number(a.price_micro)/1e6, usageUsd = Number(a.usage_price_micro||0)/1e6;
+    // ── Deterministic objective checks (code, never hallucinated) ──
+    const det = [];
+    if (!a.app_url) det.push('no app_url set');
+    else if (!/^https:\/\//i.test(a.app_url)) det.push('app_url is not https');
+    if (priceUsd > 9999) det.push('price exceeds $9999');
+    if (usageUsd > 100) det.push('per-use price unusually high ($' + usageUsd.toFixed(2) + ')');
+    if (!a.description || a.description.trim().length < 10) det.push('missing or too-short description');
+    // ── Subjective CONTENT assessment from Vanguard (objective facts already validated) ──
+    const profile = { name: a.name, tier: a.tier, price_usd: priceUsd, usage_price_usd: usageUsd, app_url: a.app_url, description: a.description };
+    const sys = 'You are SEI Vanguard, the ExergyNet app-store CONTENT scanner. Technical checks (https, required fields, price bounds) are ALREADY validated in code — do NOT comment on URLs, https, or missing fields. Judge ONLY the listing CONTENT for: deceptive or unverifiable claims, safety/abuse/illegal signals, or a real contradiction between the name and the description. Reply with ONLY compact JSON, no prose: {"risk":0.0,"reasons":[]}. risk in [0,1] = content risk (0 = benign and coherent). Give reasons ONLY when the risk is concrete and specific; otherwise return an empty list.';
+    let vrisk = null, vreasons = [];
+    try {
+      const vRes = await fetch(SEI_VG_URL + '/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SEI_VG_KEY },
+        body: JSON.stringify({ model: 'vanguard-engine', stream: true, max_tokens: 250, temperature: 0,
+          messages: [{ role: 'system', content: sys }, { role: 'user', content: JSON.stringify(profile) }] }),
+        signal: AbortSignal.timeout(45000),
+      });
+      let text = '';
+      if (vRes.ok && vRes.body) {
+        const raw = await vRes.text();
+        for (const line of raw.split('\n')) {
+          const t = line.trim();
+          if (!t.startsWith('data:')) continue;
+          const p = t.slice(5).trim();
+          if (p === '[DONE]') continue;
+          try { const j = JSON.parse(p); text += (j.choices && j.choices[0] && (j.choices[0].delta && j.choices[0].delta.content || j.choices[0].message && j.choices[0].message.content)) || ''; } catch (e) {}
+        }
+      }
+      const m = text.match(/\{[\s\S]*\}/);
+      if (m) {
+        const v = JSON.parse(m[0]);
+        const r = Number(v.risk);
+        if (!isNaN(r)) vrisk = Math.max(0, Math.min(1, r));
+        if (Array.isArray(v.reasons)) vreasons = v.reasons.filter(x => typeof x === 'string' && x.trim().length > 3).slice(0, 8);
+      }
+    } catch (e) { console.warn('[vanguard-scan] model error', appKey, e.message); }
+    // ── Combine: deterministic dominates; Vanguard adds subjective risk ──
+    let entropy;
+    if (vrisk == null) entropy = det.length ? 0.6 : 0.2;          // model unreachable -> lean on deterministic
+    else entropy = Math.max(vrisk, det.length ? 0.55 : 0);
+    entropy = Math.max(0, Math.min(1, entropy));
+    const reasons = det.concat(vreasons);
+    const flagged = det.length > 0 || (vrisk != null && vrisk >= VG_FLAG_THRESHOLD);
+    const status = flagged ? 'flagged' : 'vanguard_clean';
+    await pool.query("UPDATE app_catalog SET entropy=$2, review_reasons=$3, review_status=$4 WHERE app_key=$1 AND review_status NOT IN ('active','rejected')",
+      [appKey, entropy, JSON.stringify(reasons), status]);
+    if (flagged) emitWebhookForApp(appKey, 'app.flagged', { entropy, reasons });
+    console.log('[vanguard-scan]', appKey, status, 'entropy=' + entropy.toFixed(2), 'det=' + det.length, 'vrisk=' + vrisk);
+  } catch (e) { console.error('[vanguard-scan] error', appKey, e.message); }
+}
+
+// GET review queue (all publisher apps + governance state)
+app.get('/api/admin/apps/review-queue', requireAdmin('super_admin','ops','support'), async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT c.app_key, c.name, c.tier, c.price_micro, c.usage_price_micro, c.app_url, c.description, c.active,
+              c.review_status, c.entropy, c.review_reasons, c.created_at, d.email AS publisher_email
+       FROM app_catalog c LEFT JOIN biological_developers d ON d.id = c.publisher_id
+       WHERE 1=1
+       ORDER BY (c.review_status = 'active') ASC, c.created_at DESC`);
+    res.json({ apps: r.rows.map(a => ({
+      app_key: a.app_key, name: a.name, tier: a.tier,
+      price_usd: (Number(a.price_micro)/1e6).toFixed(2),
+      usage_price_usd: (Number(a.usage_price_micro||0)/1e6).toFixed(2),
+      app_url: a.app_url, description: a.description, active: a.active,
+      review_status: a.review_status, entropy: a.entropy,
+      review_reasons: a.review_reasons || [], publisher_email: a.publisher_email,
+    })) });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/apps/approve', requireAdmin('super_admin','ops'), async (req, res) => {
+  const appKey = String((req.body && req.body.app_key) || '');
+  if (!appKey) return res.status(400).json({ error: 'app_key required' });
+  try {
+    const r = await pool.query("UPDATE app_catalog SET active=TRUE, review_status='active' WHERE app_key=$1 RETURNING app_key, active, review_status", [appKey]);
+    if (!r.rows.length) return res.status(404).json({ error: 'app not found' });
+    emitWebhookForApp(appKey, 'app.approved', { approved_by: req.adminRole });
+    res.json({ status: 'approved', app: r.rows[0] });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/apps/reject', requireAdmin('super_admin','ops'), async (req, res) => {
+  const appKey = String((req.body && req.body.app_key) || '');
+  const reason = String((req.body && req.body.reason) || '').slice(0, 300);
+  if (!appKey) return res.status(400).json({ error: 'app_key required' });
+  try {
+    const r = await pool.query("UPDATE app_catalog SET active=FALSE, review_status='rejected', review_reasons=$2 WHERE app_key=$1 RETURNING app_key, active, review_status",
+      [appKey, JSON.stringify(reason ? [reason] : ['rejected by admin'])]);
+    if (!r.rows.length) return res.status(404).json({ error: 'app not found' });
+    emitWebhookForApp(appKey, 'app.rejected', { reason, rejected_by: req.adminRole });
+    res.json({ status: 'rejected', app: r.rows[0] });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/apps/rescan', requireAdmin('super_admin','ops'), async (req, res) => {
+  const appKey = String((req.body && req.body.app_key) || '');
+  if (!appKey) return res.status(400).json({ error: 'app_key required' });
+  await pool.query("UPDATE app_catalog SET review_status='pending_review' WHERE app_key=$1 AND review_status<>'active'", [appKey]);
+  scanAppWithVanguard(appKey).catch(() => {});
+  res.json({ status: 'rescanning', app_key: appKey });
+});
+
+// Self-contained admin review console (login + queue + approve/reject)
+app.get('/api/admin/apps/console', (req, res) => {
+  res.set('Content-Type', 'text/html');
+  res.send(CONSOLE_HTML);
+});
+
 initDb()
   .then(() => {
     app.listen(PORT, '127.0.0.1', () =>
