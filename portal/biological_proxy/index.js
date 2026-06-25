@@ -122,10 +122,13 @@ async function initDb() {
       created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
-    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS node_id     TEXT UNIQUE;
-    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS username     TEXT UNIQUE;
-    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS display_name TEXT;
-    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS bio          TEXT;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS node_id           TEXT UNIQUE;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS username           TEXT UNIQUE;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS display_name       TEXT;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS bio                TEXT;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS phone              TEXT;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS profile_image_b64  TEXT;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS profile_gallery     JSONB NOT NULL DEFAULT '[]'::jsonb;
 
     CREATE TABLE IF NOT EXISTS en_jobs (
       id               TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -370,7 +373,8 @@ app.get('/developer/me', requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, email, active, usdc_micro_balance, api_key_preview,
-              wallet_address, node_id, username, display_name, bio, created_at
+              wallet_address, node_id, username, display_name, bio,
+              phone, profile_image_b64, profile_gallery, created_at
          FROM biological_developers WHERE id = $1`,
       [req.developerId]
     );
@@ -389,6 +393,9 @@ app.get('/developer/me', requireAuth, async (req, res) => {
       username:           dev.username,
       display_name:       dev.display_name,
       bio:                dev.bio,
+      phone:              dev.phone,
+      profile_image_b64:  dev.profile_image_b64,
+      profile_gallery:    dev.profile_gallery || [],
       created_at:         dev.created_at,
     });
   } catch (err) {
@@ -397,9 +404,9 @@ app.get('/developer/me', requireAuth, async (req, res) => {
   }
 });
 
-// ── PATCH /developer/me — update username, display_name, bio ─────────────────
+// ── PATCH /developer/me — update profile fields ───────────────────────────────
 app.patch('/developer/me', requireAuth, async (req, res) => {
-  const { username, display_name, bio } = req.body || {};
+  const { username, display_name, bio, phone } = req.body || {};
   const updates = [];
   const params  = [];
 
@@ -419,6 +426,11 @@ app.patch('/developer/me', requireAuth, async (req, res) => {
     params.push(bio.trim().slice(0, 200));
     updates.push(`bio = $${params.length}`);
   }
+  if (phone !== undefined) {
+    const cleanPhone = phone.trim().slice(0, 30);
+    params.push(cleanPhone || null);
+    updates.push(`phone = $${params.length}`);
+  }
 
   if (updates.length === 0) return res.status(400).json({ error: 'Nothing to update' });
 
@@ -433,6 +445,94 @@ app.patch('/developer/me', requireAuth, async (req, res) => {
     if (err.code === '23505') return res.status(409).json({ error: 'Username already taken' });
     console.error('[PATCH /developer/me]', err);
     res.status(500).json({ error: 'Update failed' });
+  }
+});
+
+// ── POST /developer/profile-image — upload/add image to gallery ───────────────
+// Body: { image_b64: "data:image/jpeg;base64,..." or raw base64, set_active: true/false }
+app.post('/developer/profile-image', requireAuth, async (req, res) => {
+  const { image_b64, set_active } = req.body || {};
+  if (!image_b64 || typeof image_b64 !== 'string') {
+    return res.status(400).json({ error: 'image_b64 required' });
+  }
+  // Strip data URI prefix if present
+  const raw = image_b64.replace(/^data:image\/[a-z]+;base64,/, '');
+  if (raw.length > 1_500_000) { // ~1.1MB base64 limit per image
+    return res.status(413).json({ error: 'Image too large (max ~800KB)' });
+  }
+  try {
+    // Append to gallery array, cap at 8 images
+    const result = await pool.query(
+      `UPDATE biological_developers
+          SET profile_gallery = (
+            CASE WHEN jsonb_array_length(COALESCE(profile_gallery,'[]'::jsonb)) >= 8
+              THEN profile_gallery
+              ELSE COALESCE(profile_gallery,'[]'::jsonb) || $1::jsonb
+            END
+          )
+        WHERE id = $2
+        RETURNING profile_gallery`,
+      [JSON.stringify(raw), req.developerId]
+    );
+    const gallery = result.rows[0]?.profile_gallery || [];
+    const activeIdx = gallery.length - 1;
+    if (set_active !== false) {
+      await pool.query(
+        `UPDATE biological_developers SET profile_image_b64 = $1 WHERE id = $2`,
+        [raw, req.developerId]
+      );
+    }
+    res.json({ ok: true, gallery_size: gallery.length, active_index: activeIdx });
+  } catch (err) {
+    console.error('[POST /developer/profile-image]', err);
+    res.status(500).json({ error: 'Upload failed' });
+  }
+});
+
+// ── DELETE /developer/profile-image/:idx ─────────────────────────────────────
+app.delete('/developer/profile-image/:idx', requireAuth, async (req, res) => {
+  const idx = parseInt(req.params.idx, 10);
+  if (isNaN(idx) || idx < 0) return res.status(400).json({ error: 'Invalid index' });
+  try {
+    const r = await pool.query(
+      `SELECT profile_gallery, profile_image_b64 FROM biological_developers WHERE id = $1`,
+      [req.developerId]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Not found' });
+    const gallery = r.rows[0].profile_gallery || [];
+    if (idx >= gallery.length) return res.status(404).json({ error: 'Index out of range' });
+    gallery.splice(idx, 1);
+    const newActive = gallery.length > 0 ? gallery[0] : null;
+    await pool.query(
+      `UPDATE biological_developers SET profile_gallery = $1::jsonb, profile_image_b64 = $2 WHERE id = $3`,
+      [JSON.stringify(gallery), newActive, req.developerId]
+    );
+    res.json({ ok: true, gallery_size: gallery.length });
+  } catch (err) {
+    console.error('[DELETE /developer/profile-image]', err);
+    res.status(500).json({ error: 'Delete failed' });
+  }
+});
+
+// ── PUT /developer/profile-image/active/:idx — set active image ──────────────
+app.put('/developer/profile-image/active/:idx', requireAuth, async (req, res) => {
+  const idx = parseInt(req.params.idx, 10);
+  if (isNaN(idx) || idx < 0) return res.status(400).json({ error: 'Invalid index' });
+  try {
+    const r = await pool.query(
+      `SELECT profile_gallery FROM biological_developers WHERE id = $1`,
+      [req.developerId]
+    );
+    const gallery = r.rows[0]?.profile_gallery || [];
+    if (idx >= gallery.length) return res.status(404).json({ error: 'Index out of range' });
+    await pool.query(
+      `UPDATE biological_developers SET profile_image_b64 = $1 WHERE id = $2`,
+      [gallery[idx], req.developerId]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[PUT /developer/profile-image/active]', err);
+    res.status(500).json({ error: 'Failed' });
   }
 });
 
