@@ -1,0 +1,9 @@
+{
+  "corpus_lines": 49,
+  "worldstate_snapshots": 47,
+  "resolver_verified_pairs": 1,
+  "resolver_hard_negatives": 1,
+  "sft_examples": 647,
+  "ready_to_finetune": true,
+  "note": "ready_to_finetune is a quality gate, not a trigger. Promotion stays manual."
+}
