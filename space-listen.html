@@ -132,6 +132,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .tx-badge.speaker{background:rgba(240,180,41,.18);color:var(--gold)}
 .tx-name{font-size:11px;font-weight:700;color:var(--text);flex-shrink:0;white-space:nowrap;margin-top:2px}
 .tx-text{font-size:13px;color:var(--text);line-height:1.45;flex:1;opacity:.85}
+.tx-partial .tx-text{opacity:.5;font-style:italic}
 .tx-empty{color:var(--hint);font-size:13px;text-align:center;padding:24px 0;font-style:italic}
 
 /* Listeners sidebar */
@@ -479,20 +480,34 @@ function updateUI() {
 }
 
 // ── Transcript feed ───────────────────────────────────────────────────────────
-function addTranscriptLine(speakerIdentity, speakerName, role, text) {
+function addTranscriptLine(speakerIdentity, speakerName, role, text, isPartial) {
   var empty = document.getElementById('tx-empty');
   if (empty) empty.remove();
-
-  _txLines.push({ id: speakerIdentity, name: speakerName, role: role, text: text, ts: Date.now() });
-  if (_txLines.length > _TX_MAX) _txLines.shift();
 
   var feed = document.getElementById('tx-feed');
   if (!feed) return;
 
-  var line = document.createElement('div');
-  line.className = 'tx-line';
-
   var badgeClass = (role === 'host' ? 'host' : role === 'cohost' ? 'cohost' : 'speaker');
+
+  // Replace last partial line from same speaker instead of appending
+  if (isPartial) {
+    var existing = feed.querySelector('.tx-line.tx-partial[data-speaker="' + speakerIdentity + '"]');
+    if (existing) {
+      existing.querySelector('.tx-text').textContent = text;
+      feed.scrollTop = feed.scrollHeight;
+      return;
+    }
+  } else {
+    // Final result — remove any pending partial from same speaker
+    var pending = feed.querySelector('.tx-line.tx-partial[data-speaker="' + speakerIdentity + '"]');
+    if (pending) pending.remove();
+    _txLines.push({ id: speakerIdentity, name: speakerName, role: role, text: text, ts: Date.now() });
+    if (_txLines.length > _TX_MAX) _txLines.shift();
+  }
+
+  var line = document.createElement('div');
+  line.className = 'tx-line' + (isPartial ? ' tx-partial' : '');
+  line.dataset.speaker = speakerIdentity;
   line.innerHTML =
     '<span class="tx-badge ' + badgeClass + '">' + esc(role.toUpperCase()) + '</span>' +
     '<span class="tx-name">' + esc(speakerName) + '</span>' +
@@ -500,7 +515,6 @@ function addTranscriptLine(speakerIdentity, speakerName, role, text) {
 
   feed.appendChild(line);
   _twemoji(line);
-  // Auto-scroll to bottom
   feed.scrollTop = feed.scrollHeight;
 }
 
@@ -707,7 +721,7 @@ async function startListening(displayName) {
         try {
           var tx = JSON.parse(text);
           // tx: { speaker, speakerName, role, text }
-          addTranscriptLine(tx.speaker||'', tx.speakerName||'Unknown', tx.role||'speaker', tx.text||'');
+          addTranscriptLine(tx.speaker||'', tx.speakerName||'Unknown', tx.role||'speaker', tx.text||'', !!tx.partial);
         } catch(e) {}
       } else if (topic === 'space.name') {
         try {
