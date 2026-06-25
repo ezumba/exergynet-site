@@ -1108,6 +1108,68 @@ app.post('/api/apps/publish', requireAuth, async (req, res) => {
   }
 });
 
+// ── POST /api/apps/submit — Governed submission (pending_review, NOT live) ──────
+app.post('/api/apps/submit', requireAuth, async (req, res) => {
+  const b = req.body || {};
+  const appKey = String(b.app_key || '').toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 40);
+  const name = String(b.name || '').trim().slice(0, 80);
+  const priceUsd = parseFloat(b.price_usd) || 0;
+  const usageUsd = parseFloat(b.usage_price_usd) || 0;
+  if (!appKey || appKey.length < 3) return res.status(400).json({ error: 'app_key must be 3-40 chars [a-z0-9_]' });
+  if (!name) return res.status(400).json({ error: 'name required' });
+  if (priceUsd < 0 || priceUsd > 9999) return res.status(400).json({ error: 'price_usd must be 0-9999' });
+  const appUrl = b.app_url ? String(b.app_url).trim().slice(0, 300) : null;
+  if (appUrl && !/^https:\/\//i.test(appUrl)) return res.status(400).json({ error: 'app_url must be https://' });
+  const description = b.description ? String(b.description).trim().slice(0, 500) : null;
+  if (!description || description.length < 10) return res.status(400).json({ error: 'description required (10+ chars)' });
+  const icon = b.icon ? String(b.icon).trim().slice(0, 8) : null;
+  const iconUrl = b.icon_url ? String(b.icon_url).trim().slice(0, 300) : null;
+  if (iconUrl && !/^https:\/\//i.test(iconUrl)) return res.status(400).json({ error: 'icon_url must be https://' });
+  const category = b.category ? String(b.category).trim().slice(0, 40) : null;
+  const tags = Array.isArray(b.tags) ? b.tags.filter(t => typeof t === 'string').slice(0, 4).map(t => String(t).trim().slice(0, 24)) : null;
+  const priceMicro = Math.round(priceUsd * 1e6);
+  const usageMicro = Math.round(usageUsd * 1e6);
+  const tier = priceMicro > 0 ? 'subscription' : (usageMicro > 0 ? 'metered' : 'free');
+  try {
+    const ex = await pool.query('SELECT publisher_id, review_status FROM app_catalog WHERE app_key = $1', [appKey]);
+    if (ex.rows.length && ex.rows[0].publisher_id !== req.developerId) {
+      return res.status(409).json({ error: 'app_key already taken by another developer' });
+    }
+    if (ex.rows.length && ex.rows[0].review_status === 'pending_review') {
+      return res.status(409).json({ error: 'App already submitted and awaiting review' });
+    }
+    let row;
+    if (ex.rows.length) {
+      // Resubmit after rejection
+      const r = await pool.query(
+        `UPDATE app_catalog SET name=$2, tier=$3, price_micro=$4, usage_price_micro=$5, description=$6,
+         app_url=$7, icon=$8, icon_url=$9, category=$10, tags=$11, active=false, review_status='pending_review'
+         WHERE app_key=$1 RETURNING *`,
+        [appKey, name, tier, priceMicro, usageMicro, description, appUrl, icon, iconUrl, category, tags ? JSON.stringify(tags) : null]
+      );
+      row = r.rows[0];
+    } else {
+      const r = await pool.query(
+        `INSERT INTO app_catalog (app_key, name, tier, price_micro, usage_price_micro, description, app_url,
+         icon, icon_url, category, tags, publisher_id, fee_bps, active, review_status)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,500,false,'pending_review') RETURNING *`,
+        [appKey, name, tier, priceMicro, usageMicro, description, appUrl, icon, iconUrl, category,
+         tags ? JSON.stringify(tags) : null, req.developerId]
+      );
+      row = r.rows[0];
+    }
+    // Trigger Vanguard scan asynchronously (don't block response)
+    if (typeof scanAppWithVanguard === 'function') {
+      scanAppWithVanguard(appKey).catch(e => console.error('[submit/scan]', e.message));
+    }
+    res.json({ ok: true, app_key: row.app_key, review_status: 'pending_review',
+      message: 'App submitted for Vanguard review. You will be notified when approved.' });
+  } catch (e) {
+    console.error('[/api/apps/submit]', e);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 
 // ═══════════════════════════════════════════════════════════════
