@@ -430,7 +430,6 @@ async function startListening(displayName) {
     lkRoom = new LK.Room({
       adaptiveStream: true,
       dynacast: false,
-      audioCaptureDefaults: { echoCancellation: false, noiseSuppression: false },
     });
 
     lkRoom
@@ -483,6 +482,10 @@ async function startListening(displayName) {
       .on(LK.RoomEvent.ParticipantMetadataChanged, function() { updateListenerUi(); });
 
     await lkRoom.connect(LK_URL, data.token, { autoSubscribe: true });
+
+    // LiveKit v2: must call startAudio() after connect even when the user already
+    // performed a gesture — the Room's internal AudioContext starts suspended.
+    try { await lkRoom.startAudio(); } catch(e) {}
 
   } catch (err) {
     console.error('[space-listen]', err);
