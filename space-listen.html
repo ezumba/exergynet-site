@@ -52,12 +52,24 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .m-inp:focus{border-color:var(--teal)}
 
 /* ── Sign-in modal (ghost gate) ─────────────────────────────────────────────── */
-#signin-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:210;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+#signin-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:210;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
 #signin-modal.open{display:flex}
-.signin-card{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:360px;text-align:center}
-.signin-card .icon{font-size:44px;margin-bottom:14px;display:block}
-.signin-card h2{font-size:20px;font-weight:800;margin-bottom:8px}
-.signin-card p{color:var(--muted);font-size:13px;margin-bottom:22px;line-height:1.55}
+.signin-card{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:380px;text-align:center}
+.signin-card .sc-logo{font-size:13px;font-weight:900;letter-spacing:1px;color:var(--teal);margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.signin-card .sc-logo .sc-dot{width:8px;height:8px;background:var(--teal);border-radius:50%;display:inline-block}
+.signin-card h2{font-size:18px;font-weight:800;margin-bottom:6px}
+.signin-card .sc-sub{color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.5}
+.sc-oauth-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.sc-oauth-btn{background:var(--surface2);border:.5px solid var(--border2);border-radius:10px;padding:11px;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}
+.sc-oauth-btn:hover{border-color:var(--teal);background:rgba(0,200,150,.08)}
+.sc-divider{display:flex;align-items:center;gap:10px;margin:14px 0}
+.sc-divider span{color:var(--muted);font-size:12px;white-space:nowrap}
+.sc-divider:before,.sc-divider:after{content:'';flex:1;height:.5px;background:var(--border)}
+.sc-inp{width:100%;background:var(--surface2);border:.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;outline:none;margin-bottom:10px;box-sizing:border-box}
+.sc-inp:focus{border-color:var(--teal)}
+.sc-err{color:#ef4444;font-size:12px;margin:-4px 0 10px;text-align:left;display:none}
+.sc-footer{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;flex-direction:column}
+.sc-divider-h{height:.5px;background:var(--border);width:100%;margin:14px 0}
 
 /* ── Profile preview panel ───────────────────────────────────────────────────── */
 #profile-panel{display:none;position:fixed;right:0;top:0;bottom:0;width:100%;max-width:320px;background:var(--surface);border-left:.5px solid var(--border2);z-index:180;flex-direction:column;overflow:hidden;box-shadow:-16px 0 48px rgba(0,0,0,.6);animation:slideInR .22s ease-out}
@@ -195,11 +207,32 @@ img.emoji{width:1.1em;height:1.1em;vertical-align:-.15em;display:inline}
 <!-- ── Sign-in gate modal (ghost can't chat) ─────────────────────────────── -->
 <div id="signin-modal">
   <div class="signin-card">
-    <span class="icon">🔐</span>
+    <div class="sc-logo"><span class="sc-dot"></span> EXERGYNET</div>
     <h2>Sign in to participate</h2>
-    <p>Ghost listeners can only listen. Download the ExergyNet app or sign in to send messages, react, and raise your hand to speak.</p>
-    <a class="btn btn-teal" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Get ExergyNet App</a>
-    <button class="btn btn-outline" id="signin-close-btn" style="margin-top:8px;padding:10px">Not now</button>
+    <p class="sc-sub">React, chat, and raise your hand to speak.</p>
+
+    <!-- OAuth options -->
+    <div class="sc-oauth-row">
+      <a class="sc-oauth-btn" href="https://portal.exergynet.org/api/auth/signin/google" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Google
+      </a>
+      <a class="sc-oauth-btn" href="https://portal.exergynet.org/api/auth/signin/twitter" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X
+      </a>
+    </div>
+
+    <div class="sc-divider"><span>or sign in with email</span></div>
+
+    <input type="email" id="sc-email" class="sc-inp" placeholder="Email address" autocomplete="email">
+    <input type="password" id="sc-pw" class="sc-inp" placeholder="Password" autocomplete="current-password">
+    <div id="sc-err" class="sc-err"></div>
+    <button class="btn btn-teal" id="sc-submit" style="width:100%;padding:13px" onclick="doSpaceSignIn()">Sign in →</button>
+
+    <div class="sc-divider-h"></div>
+    <a class="btn btn-outline" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk" style="width:100%;padding:12px;text-align:center;display:block;box-sizing:border-box">⬇ Get ExergyNet App</a>
+    <button class="btn btn-outline" id="signin-close-btn" style="margin-top:8px;padding:10px;width:100%">Not now</button>
   </div>
 </div>
 
@@ -277,7 +310,7 @@ img.emoji{width:1.1em;height:1.1em;vertical-align:-.15em;display:inline}
   </div>
 
   <!-- Unified bottom bar: ghost gate + speak CTA -->
-  <div class="speak-cta">
+  <div class="speak-cta" id="ghost-gate">
     <p>Ghost mode — listen only. Want to speak or chat?</p>
     <button class="gate-btn" onclick="showSignInGate()">💬 Sign in</button>
     <a class="cta-btn" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Get App</a>
@@ -584,11 +617,64 @@ document.getElementById('pp-close-btn').addEventListener('click', function() {
 });
 
 // ── Sign-in gate ──────────────────────────────────────────────────────────────
+var _spaceJwt = localStorage.getItem('exergynet_jwt') || '';
+var _spaceMeName = localStorage.getItem('exergynet_display_name') || '';
+
 function showSignInGate() {
+  if (_spaceJwt) { onSignedIn(_spaceMeName); return; }
   document.getElementById('signin-modal').classList.add('open');
+  setTimeout(function() { document.getElementById('sc-email').focus(); }, 120);
 }
 document.getElementById('signin-close-btn').addEventListener('click', function() {
   document.getElementById('signin-modal').classList.remove('open');
+});
+
+function doSpaceSignIn() {
+  var email = document.getElementById('sc-email').value.trim();
+  var pw    = document.getElementById('sc-pw').value;
+  var errEl = document.getElementById('sc-err');
+  var btn   = document.getElementById('sc-submit');
+  errEl.style.display = 'none';
+  if (!email || !pw) { errEl.textContent = 'Email and password required.'; errEl.style.display = 'block'; return; }
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  fetch('https://explorer-api.exergynet.org/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, password: pw })
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, d: d }; }); })
+  .then(function(res) {
+    btn.textContent = 'Sign in →'; btn.disabled = false;
+    if (!res.ok || !res.d.token) {
+      errEl.textContent = res.d.error || 'Invalid email or password.';
+      errEl.style.display = 'block';
+      return;
+    }
+    _spaceJwt = res.d.token;
+    _spaceMeName = res.d.display_name || res.d.username || email.split('@')[0];
+    localStorage.setItem('exergynet_jwt', _spaceJwt);
+    localStorage.setItem('exergynet_display_name', _spaceMeName);
+    document.getElementById('signin-modal').classList.remove('open');
+    onSignedIn(_spaceMeName);
+  })
+  .catch(function() {
+    btn.textContent = 'Sign in →'; btn.disabled = false;
+    errEl.textContent = 'Network error — try again.'; errEl.style.display = 'block';
+  });
+}
+
+function onSignedIn(name) {
+  var gate = document.getElementById('ghost-gate');
+  if (gate) gate.innerHTML =
+    '<span style="color:var(--teal);font-size:13px;font-weight:700">✓ Signed in as ' + esc(name) + '</span>' +
+    '<button onclick="window.open(\'https://portal.exergynet.org\',\'_blank\')" style="background:var(--teal);border:none;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:700;color:#031b14;cursor:pointer">Open Portal</button>';
+}
+
+// Enter key submits sign-in form
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('signin-modal').classList.contains('open')) {
+    doSpaceSignIn();
+  }
 });
 
 // ── Render invite card ────────────────────────────────────────────────────────
