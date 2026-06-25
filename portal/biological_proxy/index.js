@@ -18,6 +18,19 @@ const LK_API_SECRET = process.env.LIVEKIT_API_SECRET || 'LNES06RHObridgeSecret20
 const app  = express();
 const PORT = parseInt(process.env.PORT || '5000');
 
+// ── Auth rate limiter (no extra package) ─────────────────────────────────────
+const _authHits = new Map();
+function authRateLimit(req, res, next) {
+  const key = req.ip;
+  const now = Date.now();
+  const entry = _authHits.get(key) || { count: 0, reset: now + 15 * 60 * 1000 };
+  if (now > entry.reset) { entry.count = 0; entry.reset = now + 15 * 60 * 1000; }
+  entry.count++;
+  _authHits.set(key, entry);
+  if (entry.count > 15) return res.status(429).json({ error: 'Too many requests, try again later.' });
+  next();
+}
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 const JWT_SECRET    = process.env.JWT_SECRET || 'dev-secret-CHANGE-IN-PROD';
 const SALT_ROUNDS   = 12;
@@ -92,7 +105,10 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
 });
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: ['https://portal.exergynet.org', 'http://localhost:4000', 'http://localhost:3000'],
+  credentials: true
+}));
 app.use(express.json());
 
 // ── PostgreSQL pool ────────────────────────────────────────────────────────────
@@ -269,7 +285,7 @@ app.get('/space/guest-token', async (req, res) => {
 });
 
 // ── POST /auth/api-token — exchange API key for a short-lived JWT (§1.2b) ────
-app.post('/auth/api-token', async (req, res) => {
+app.post('/auth/api-token', authRateLimit, async (req, res) => {
   const apiKey = (req.body?.api_key || '').trim();
   if (!apiKey.startsWith('sk-exergy-')) {
     return res.status(400).json({ error: 'Invalid API key format' });
@@ -293,7 +309,7 @@ app.post('/auth/api-token', async (req, res) => {
 });
 
 // ── POST /auth/register ───────────────────────────────────────────────────────
-app.post('/auth/register', async (req, res) => {
+app.post('/auth/register', authRateLimit, async (req, res) => {
   const { email, password } = req.body || {};
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
   if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
@@ -327,7 +343,7 @@ app.post('/auth/register', async (req, res) => {
 });
 
 // ── POST /auth/login ──────────────────────────────────────────────────────────
-app.post('/auth/login', async (req, res) => {
+app.post('/auth/login', authRateLimit, async (req, res) => {
   const { email, password } = req.body || {};
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
@@ -871,6 +887,9 @@ app.post('/v1/chat/completions', async (req, res) => {
 
 // ── POST /auth/oauth ─ called server-side by NextAuth after OAuth sign-in ─────
 app.post('/auth/oauth', async (req, res) => {
+  if (req.headers['x-internal-secret'] !== process.env.ASKMO_INTERNAL_SECRET) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
   const { provider, provider_id, email, name } = req.body || {};
   if (!provider || !provider_id) {
     return res.status(400).json({ error: 'provider and provider_id required' });
@@ -965,6 +984,100 @@ app.post('/auth/oauth', async (req, res) => {
 app.get('/health', (_req, res) =>
   res.json({ ok: true, service: 'biological_proxy', ts: new Date().toISOString() })
 );
+
+// ── GET /api/apps/mine — developer's published apps ───────────────────────────
+app.get('/api/apps/mine', requireAuth, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT app_key, name, tier, price_micro, period, publisher_id, active,
+              created_at, app_url, description, icon, usage_price_micro,
+              review_status, category, tags, icon_url, featured
+       FROM app_catalog WHERE publisher_id = $1 ORDER BY created_at DESC`,
+      [req.user.id]
+    );
+    const apps = rows.map(r => ({
+      app_key:           r.app_key,
+      name:              r.name,
+      tier:              r.tier,
+      price_usd:         (r.price_micro / 1_000_000).toFixed(2),
+      period:            r.period,
+      publisher_id:      r.publisher_id,
+      active:            r.active,
+      created_at:        r.created_at,
+      app_url:           r.app_url || null,
+      description:       r.description || null,
+      icon_url:          r.icon_url || r.icon || null,
+      usage_price_usd:   (r.usage_price_micro / 1_000_000).toFixed(4),
+      review_status:     r.review_status,
+      category:          r.category || null,
+      tags:              r.tags || [],
+      featured:          r.featured,
+    }));
+    res.json({ apps });
+  } catch (e) {
+    console.error('[/api/apps/mine]', e);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// ── POST /api/apps/publish — create or update a developer app listing ─────────
+app.post('/api/apps/publish', requireAuth, async (req, res) => {
+  const {
+    app_key, name, app_url, description, category,
+    tags, price_usd, usage_price_usd, icon_url,
+  } = req.body || {};
+
+  if (!app_key || !/^[a-z0-9_]{3,40}$/.test(String(app_key))) {
+    return res.status(400).json({ error: 'app_key must be 3–40 chars [a-z0-9_]' });
+  }
+  if (!name || String(name).trim().length < 2) {
+    return res.status(400).json({ error: 'name is required' });
+  }
+  if (app_url && !/^https:\/\//i.test(String(app_url))) {
+    return res.status(400).json({ error: 'app_url must be an https:// URL' });
+  }
+
+  const priceMicro      = Math.round((parseFloat(price_usd)       || 0) * 1_000_000);
+  const usagePriceMicro = Math.round((parseFloat(usage_price_usd) || 0) * 1_000_000);
+  const tier            = priceMicro > 0 ? 'subscription' : (usagePriceMicro > 0 ? 'usage' : 'free');
+  const tagsJson        = JSON.stringify(Array.isArray(tags) ? tags.slice(0, 4) : []);
+
+  try {
+    const { rows } = await pool.query(
+      `INSERT INTO app_catalog
+         (app_key, name, tier, price_micro, usage_price_micro, publisher_id,
+          app_url, description, category, tags, icon_url, active, review_status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11,false,'pending_review')
+       ON CONFLICT (app_key) DO UPDATE SET
+         name = EXCLUDED.name, tier = EXCLUDED.tier,
+         price_micro = EXCLUDED.price_micro, usage_price_micro = EXCLUDED.usage_price_micro,
+         app_url = EXCLUDED.app_url, description = EXCLUDED.description,
+         category = EXCLUDED.category, tags = EXCLUDED.tags,
+         icon_url = EXCLUDED.icon_url, review_status = 'pending_review'
+       RETURNING *`,
+      [app_key, name.trim(), tier, priceMicro, usagePriceMicro,
+       req.user.id, app_url || null, description || null, category || null,
+       tagsJson, icon_url || null]
+    );
+    const r = rows[0];
+    res.json({
+      status: 'pending_review',
+      app: {
+        app_key: r.app_key, name: r.name, tier: r.tier,
+        price_usd: (r.price_micro / 1_000_000).toFixed(2),
+        usage_price_usd: (r.usage_price_micro / 1_000_000).toFixed(4),
+        publisher_id: r.publisher_id, active: r.active,
+        app_url: r.app_url, description: r.description,
+        icon_url: r.icon_url, category: r.category,
+        tags: r.tags || [], review_status: r.review_status,
+        created_at: r.created_at,
+      },
+    });
+  } catch (e) {
+    console.error('[/api/apps/publish]', e);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 initDb()

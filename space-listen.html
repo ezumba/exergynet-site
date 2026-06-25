@@ -2,115 +2,301 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Live Space · ExergyNet</title>
 <meta property="og:title" content="🎙️ Live Space on ExergyNet">
 <meta property="og:description" content="Listen to a live audio Space — no app needed.">
-<!-- Twemoji: cross-platform emoji rendering (E) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 <style>
 :root {
-  --bg:#0D1117; --surface:#161B22; --surface2:#1c2330; --border:#222a35;
-  --text:#e6edf3; --muted:#8b949e; --teal:#00A884; --teal-dim:rgba(0,168,132,.12);
-  --red:#e05252; --ghost:#7c6fa0; --ghost-dim:rgba(124,111,160,.14);
-  --gold:#f0b429;
+  --bg:#080d12; --surface:#0f1620; --surface2:#141d2b; --surface3:#1a2433;
+  --border:#1e2c3d; --border2:#253349;
+  --text:#e6edf3; --muted:#6e7f94; --hint:#3d5068;
+  --teal:#00C896; --teal-d:rgba(0,200,150,.12); --teal-glow:rgba(0,200,150,.25);
+  --gold:#f0b429; --gold-d:rgba(240,180,41,.12);
+  --red:#e05252; --red-d:rgba(224,82,82,.12);
+  --ghost:#9b8cc4; --ghost-d:rgba(155,140,196,.1);
+  --purple:#7c6fa0; --blue:#3b82f6;
+  --host-col:#00C896; --cohost-col:#7c6fa0; --speaker-col:#f0b429;
+  --radius:18px; --radius-sm:12px;
+  --nav-h:60px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.card{width:100%;max-width:460px;background:var(--surface);border:.5px solid var(--border);border-radius:22px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.live{display:inline-flex;align-items:center;gap:8px;background:rgba(224,82,82,.14);color:var(--red);font-size:13px;font-weight:700;padding:6px 12px;border-radius:20px;letter-spacing:.5px}
-.live .dot{width:9px;height:9px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+
+/* ── Invite / landing ──────────────────────────────────────────────────────── */
+#invite-wrap{display:flex;align-items:center;justify-content:center;height:100vh;padding:20px;background:var(--bg)}
+.invite-card{width:100%;max-width:420px;background:var(--surface);border:.5px solid var(--border2);border-radius:var(--radius);padding:28px 24px;box-shadow:0 24px 80px rgba(0,0,0,.7)}
+.live-chip{display:inline-flex;align-items:center;gap:8px;background:var(--red-d);color:var(--red);font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;letter-spacing:.5px;border:.5px solid rgba(224,82,82,.25)}
+.live-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-h1{font-size:24px;font-weight:800;margin:16px 0 6px;line-height:1.2}
-.sub{color:var(--muted);font-size:13px;margin-bottom:4px}
-.room-id{font-family:monospace;font-size:12px;color:var(--teal);word-break:break-all;margin-top:10px;padding:8px 12px;background:var(--teal-dim);border-radius:10px}
-.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:14px;border-radius:14px;font-size:15px;font-weight:700;text-decoration:none;margin-top:10px;border:none;cursor:pointer;transition:opacity .15s}
-.btn:disabled{opacity:.45;cursor:default}
-.btn-primary{background:var(--teal);color:#031b14}
-.btn-ghost-listen{background:var(--ghost-dim);color:#c4b5fd;border:.5px solid var(--ghost)}
-.btn-android{background:#3ddc84;color:#06251a}
-.btn-ios{background:#fff;color:#111;opacity:.6}
-.btn-outline{background:transparent;color:var(--muted);border:.5px solid var(--border)}
-.divider{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin:18px 0 4px}
+.invite-card h1{font-size:22px;font-weight:800;margin:14px 0 5px;line-height:1.25}
+.invite-card .sub{color:var(--muted);font-size:13px;line-height:1.5}
+.room-pill{font-family:monospace;font-size:11px;color:var(--teal);background:var(--teal-d);border-radius:8px;padding:7px 12px;margin:10px 0;word-break:break-all}
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:700;text-decoration:none;margin-top:8px;border:none;cursor:pointer;transition:opacity .15s,transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-teal{background:var(--teal);color:#031b14}
+.btn-ghost{background:var(--ghost-d);color:#c4b5fd;border:.5px solid var(--ghost)}
+.btn-green{background:#3ddc84;color:#06251a}
+.btn-outline{background:transparent;color:var(--muted);border:.5px solid var(--border2)}
+.divider{display:flex;align-items:center;gap:10px;color:var(--hint);font-size:11px;margin:14px 0 4px}
 .divider::before,.divider::after{content:'';flex:1;height:.5px;background:var(--border)}
-/* Modal */
-#modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;padding:20px}
+
+/* ── Name modal ────────────────────────────────────────────────────────────── */
+#modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 #modal-bg.open{display:flex}
-.modal{background:var(--surface);border:.5px solid var(--border);border-radius:20px;padding:26px 22px;width:100%;max-width:380px}
-.modal h2{font-size:18px;font-weight:800;margin-bottom:6px}
-.modal p{color:var(--muted);font-size:13px;margin-bottom:18px;line-height:1.5}
-.inp{width:100%;background:var(--surface2);border:.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:15px;outline:none;margin-bottom:10px}
-.inp:focus{border-color:var(--teal)}
-/* Listener UI */
-#listen-ui{display:none}
-.listener-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.you-badge{background:var(--ghost-dim);color:#c4b5fd;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;border:.5px solid var(--ghost)}
-.section-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
-/* Stage roster (speakers + host) */
-.roster{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;min-height:44px}
-.pip{display:flex;flex-direction:column;align-items:center;gap:5px;width:64px}
-.pip .avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid transparent;transition:border-color .2s}
-.pip .avatar.speaking{border-color:var(--teal);box-shadow:0 0 10px rgba(0,168,132,.4)}
-.pip .avatar.ghost-av{background:var(--ghost-dim);border-color:var(--ghost)}
-.pip .avatar.host-av{background:var(--teal-dim);border-color:var(--teal)}
-.pip .avatar.speaker-av{background:rgba(240,180,41,.1);border-color:var(--gold)}
-.pip .name{font-size:10px;color:var(--muted);text-align:center;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pip .role-tag{font-size:9px;font-weight:700;color:var(--teal);text-transform:uppercase}
-/* Listeners row (A) */
-.listeners-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.lpip{display:flex;flex-direction:column;align-items:center;gap:4px;width:52px}
-.lpip .lavatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--surface2);border:.5px solid var(--border)}
-.lpip .lavatar.ghost-lav{background:var(--ghost-dim);border-color:var(--ghost)}
-.lpip .lname{font-size:9px;color:var(--muted);text-align:center;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.listener-more{font-size:11px;color:var(--muted);align-self:center;white-space:nowrap}
-/* Chat feed (D) */
-.chat-section{background:var(--surface2);border-radius:14px;padding:12px;margin-bottom:14px}
-.chat-section-hdr{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
-.chat-feed{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
-.chat-feed:empty::before{content:'No messages yet…';color:var(--muted);font-size:12px;font-style:italic}
-.chat-msg{display:flex;gap:7px;align-items:flex-start}
-.chat-msg .chat-sender{font-size:12px;font-weight:700;color:var(--teal);flex-shrink:0;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chat-msg .chat-text{font-size:13px;color:var(--text);word-break:break-word;line-height:1.4}
-/* Status */
-.status-bar{background:var(--surface2);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--teal);display:flex;align-items:center;gap:8px}
-.status-bar .dot-sm{width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;animation:pulse 1.4s infinite}
-.btn-sm{padding:10px;font-size:13px;border-radius:10px;margin-top:8px}
-.speak-cta{background:var(--teal-dim);border:.5px solid var(--teal);border-radius:14px;padding:14px;margin-top:6px;text-align:center}
-.speak-cta p{font-size:13px;color:var(--muted);margin-bottom:10px}
-.err-box{background:rgba(224,82,82,.1);border:.5px solid var(--red);border-radius:12px;padding:12px 14px;margin-top:12px;color:var(--red);font-size:13px}
-/* Floating emoji reactions (B) */
+.modal-card{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--radius);padding:26px 22px;width:100%;max-width:370px}
+.modal-card h2{font-size:18px;font-weight:800;margin-bottom:6px}
+.modal-card p{color:var(--muted);font-size:13px;margin-bottom:18px;line-height:1.5}
+.m-inp{width:100%;background:var(--surface2);border:.5px solid var(--border2);border-radius:10px;padding:12px 14px;color:var(--text);font-size:15px;outline:none;margin-bottom:10px}
+.m-inp:focus{border-color:var(--teal)}
+
+/* ── Sign-in modal (ghost gate) ─────────────────────────────────────────────── */
+#signin-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:210;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+#signin-modal.open{display:flex}
+.signin-card{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:360px;text-align:center}
+.signin-card .icon{font-size:44px;margin-bottom:14px;display:block}
+.signin-card h2{font-size:20px;font-weight:800;margin-bottom:8px}
+.signin-card p{color:var(--muted);font-size:13px;margin-bottom:22px;line-height:1.55}
+
+/* ── Profile preview panel ───────────────────────────────────────────────────── */
+#profile-panel{display:none;position:fixed;right:0;top:0;bottom:0;width:100%;max-width:320px;background:var(--surface);border-left:.5px solid var(--border2);z-index:180;flex-direction:column;overflow:hidden;box-shadow:-16px 0 48px rgba(0,0,0,.6);animation:slideInR .22s ease-out}
+#profile-panel.open{display:flex}
+@keyframes slideInR{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.pp-header{padding:18px 20px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.pp-avatar{width:60px;height:60px;border-radius:50%;background:var(--ghost-d);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden;border:2px solid var(--ghost)}
+.pp-avatar img{width:100%;height:100%;object-fit:cover}
+.pp-name{font-size:16px;font-weight:700}
+.pp-role{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.pp-close{margin-left:auto;background:var(--surface2);border:none;width:32px;height:32px;border-radius:50%;color:var(--muted);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pp-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:12px 16px;overflow-y:auto}
+.pp-img{aspect-ratio:1;background:var(--surface2);border-radius:8px;overflow:hidden;cursor:pointer}
+.pp-img img{width:100%;height:100%;object-fit:cover}
+.pp-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--hint)}
+.pp-empty{padding:24px 20px;color:var(--muted);font-size:13px;text-align:center}
+.pp-big-img{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:220;align-items:center;justify-content:center;cursor:pointer}
+.pp-big-img.open{display:flex}
+.pp-big-img img{max-width:92vw;max-height:90vh;border-radius:10px;object-fit:contain}
+
+/* ── Full-screen listener layout ──────────────────────────────────────────── */
+#listen-wrap{display:none;flex-direction:column;height:100vh;overflow:hidden}
+#listen-wrap.active{display:flex}
+
+/* Top bar */
+.top-bar{height:var(--nav-h);padding:0 18px;display:flex;align-items:center;gap:12px;background:var(--surface);border-bottom:.5px solid var(--border);flex-shrink:0;position:relative;z-index:10}
+.top-bar .space-title{font-size:15px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-bar .count-chip{background:var(--surface2);border:.5px solid var(--border2);border-radius:20px;padding:5px 11px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;flex-shrink:0}
+.top-bar .count-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
+.leave-btn{background:var(--red-d);color:var(--red);border:.5px solid rgba(224,82,82,.3);border-radius:10px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
+
+/* Main body: stage left, listeners right */
+.main-body{flex:1;display:flex;overflow:hidden}
+
+/* Stage column */
+.stage-col{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:0}
+.stage-section{padding:12px 16px 10px;border-bottom:.5px solid var(--border);flex-shrink:0}
+.sec-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.sec-label .on-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 1.4s infinite;flex-shrink:0}
+
+/* Speaker pips */
+.stage-roster{display:flex;flex-wrap:wrap;gap:12px}
+.s-pip{display:flex;flex-direction:column;align-items:center;gap:5px;width:62px}
+.s-pip .av{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:2.5px solid transparent;transition:border-color .2s,box-shadow .2s;overflow:hidden;position:relative;flex-shrink:0}
+.s-pip .av img{width:100%;height:100%;object-fit:cover}
+.s-pip .av.host-av{background:var(--teal-d);border-color:var(--host-col)}
+.s-pip .av.cohost-av{background:var(--ghost-d);border-color:var(--cohost-col)}
+.s-pip .av.speaker-av{background:var(--gold-d);border-color:var(--speaker-col)}
+.s-pip .av.speaking{animation:speakPulse 1s ease-in-out infinite}
+@keyframes speakPulse{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 5px var(--teal-glow)}}
+.s-pip .av.host-av.speaking{box-shadow:0 0 14px rgba(0,200,150,.5)}
+.s-pip .sname{font-size:10px;color:var(--text);text-align:center;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.s-pip .stag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.s-pip .stag.host-tag{color:var(--host-col)}
+.s-pip .stag.cohost-tag{color:var(--cohost-col)}
+.s-pip .stag.speaker-tag{color:var(--speaker-col)}
+.waiting-stage{font-size:13px;color:var(--muted);padding:8px 0}
+
+/* Transcript feed */
+.transcript-col{flex:1;display:flex;flex-direction:column;overflow:hidden;border-top:.5px solid var(--border)}
+.transcript-hdr{padding:10px 16px 8px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.transcript-hdr .label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+.transcript-feed{flex:1;overflow-y:auto;padding:4px 18px 14px;display:flex;flex-direction:column;gap:8px}
+.transcript-feed::-webkit-scrollbar{width:4px}
+.transcript-feed::-webkit-scrollbar-track{background:transparent}
+.transcript-feed::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.tx-line{display:flex;gap:10px;align-items:flex-start;animation:fadeUp .25s ease-out}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tx-badge{font-size:9px;font-weight:800;letter-spacing:.3px;padding:3px 7px;border-radius:6px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.tx-badge.host{background:rgba(0,200,150,.18);color:var(--teal)}
+.tx-badge.cohost{background:rgba(124,111,160,.18);color:var(--ghost)}
+.tx-badge.speaker{background:rgba(240,180,41,.18);color:var(--gold)}
+.tx-name{font-size:11px;font-weight:700;color:var(--text);flex-shrink:0;white-space:nowrap;margin-top:2px}
+.tx-text{font-size:13px;color:var(--text);line-height:1.45;flex:1;opacity:.85}
+.tx-empty{color:var(--hint);font-size:13px;text-align:center;padding:24px 0;font-style:italic}
+
+/* Listeners sidebar */
+.listeners-col{width:280px;border-left:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+@media(max-width:720px){.listeners-col{display:none}}
+.lc-hdr{padding:14px 16px 10px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:.5px solid var(--border)}
+.lc-hdr .cnt{font-size:13px;font-weight:800;color:var(--text);letter-spacing:0;text-transform:none}
+.lc-grid{flex:1;overflow-y:auto;padding:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-content:start}
+.lc-grid::-webkit-scrollbar{width:4px}
+.lc-grid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.lpip{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:transform .12s}
+.lpip:hover .lav{border-color:var(--teal)}
+.lpip:active{transform:scale(.92)}
+.lav{width:44px;height:44px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;transition:border-color .2s}
+.lav img{width:100%;height:100%;object-fit:cover}
+.lav.ghost-lav{background:var(--ghost-d);border-color:var(--ghost)}
+.lname{font-size:9px;color:var(--muted);text-align:center;max-width:44px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.overflow-chip{grid-column:1/-1;text-align:center;font-size:12px;color:var(--hint);padding:8px 0;font-weight:600}
+
+/* Bottom CTA bar (ghost gate + speak) — single compact row */
+.speak-cta{padding:10px 16px;border-top:.5px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.speak-cta p{font-size:11px;color:var(--muted);flex:1;line-height:1.4}
+.speak-cta .cta-btn{background:var(--teal);color:#031b14;border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;border:none;cursor:pointer}
+.speak-cta .gate-btn{background:var(--surface2);color:var(--teal);border:.5px solid var(--teal);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;cursor:pointer}
+
+/* Audio unlock banner */
+#audio-unlock-btn{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:99;background:var(--teal);color:#031b14;border:none;border-radius:12px;padding:12px 24px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(0,200,150,.35)}
+
+/* Emoji reaction floats */
 .reaction-float{position:fixed;bottom:20%;font-size:36px;pointer-events:none;z-index:9999;animation:floatUp 2s ease-out forwards;line-height:1}
-@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}70%{opacity:.8;transform:translateY(-80px) scale(1.2)}100%{opacity:0;transform:translateY(-140px) scale(.8)}}
-/* Twemoji img sizing */
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}70%{opacity:.8;transform:translateY(-90px) scale(1.2)}100%{opacity:0;transform:translateY(-160px) scale(.8)}}
 img.emoji{width:1.1em;height:1.1em;vertical-align:-.15em;display:inline}
+
+/* Role color utils */
+.role-host{color:var(--host-col)}
+.role-cohost{color:var(--cohost-col)}
+.role-speaker{color:var(--speaker-col)}
+
+/* Mobile: slide-up listeners sheet */
+.lc-mobile-toggle{display:none;position:fixed;bottom:70px;right:16px;z-index:50;background:var(--surface);border:.5px solid var(--border2);border-radius:50%;width:48px;height:48px;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 16px rgba(0,0,0,.5);cursor:pointer}
+@media(max-width:720px){.lc-mobile-toggle{display:flex}}
+
+/* Err box */
+.err-box{background:var(--red-d);border:.5px solid rgba(224,82,82,.3);border-radius:12px;padding:12px 14px;margin-top:10px;color:var(--red);font-size:13px}
 </style>
 </head>
 <body>
 
-<!-- Name / ghost prompt modal -->
+<!-- ── Name modal ─────────────────────────────────────────────────────────── -->
 <div id="modal-bg">
-  <div class="modal">
+  <div class="modal-card">
     <h2>👻 Enter as Ghost Listener</h2>
     <p>You'll listen in silence — no mic, no account needed.<br>Add a display name so others can see you, or stay anonymous.</p>
-    <input id="ghost-name" class="inp" placeholder="Display name (optional)" maxlength="24" autocomplete="off">
-    <button class="btn btn-ghost-listen" id="enter-ghost-btn">👻 Enter as Ghost</button>
-    <button class="btn btn-outline btn-sm" id="modal-cancel-btn" style="margin-top:6px">Cancel</button>
+    <input id="ghost-name" class="m-inp" placeholder="Display name (optional)" maxlength="24" autocomplete="off">
+    <button class="btn btn-ghost" id="enter-ghost-btn">👻 Enter as Ghost</button>
+    <button class="btn btn-outline" id="modal-cancel-btn" style="margin-top:6px;padding:10px">Cancel</button>
   </div>
 </div>
 
-<div class="card">
-  <div id="invite-ui"><!-- invite card injected by JS --></div>
-  <div id="listen-ui"><!-- listener UI injected by JS --></div>
+<!-- ── Sign-in gate modal (ghost can't chat) ─────────────────────────────── -->
+<div id="signin-modal">
+  <div class="signin-card">
+    <span class="icon">🔐</span>
+    <h2>Sign in to participate</h2>
+    <p>Ghost listeners can only listen. Download the ExergyNet app or sign in to send messages, react, and raise your hand to speak.</p>
+    <a class="btn btn-teal" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Get ExergyNet App</a>
+    <button class="btn btn-outline" id="signin-close-btn" style="margin-top:8px;padding:10px">Not now</button>
+  </div>
 </div>
 
-<!-- LiveKit Web SDK (CDN, pinned to v2) -->
+<!-- ── Listener profile panel ─────────────────────────────────────────────── -->
+<div id="profile-panel">
+  <div class="pp-header">
+    <div class="pp-avatar" id="pp-av">👤</div>
+    <div style="flex:1;min-width:0">
+      <div class="pp-name" id="pp-name">—</div>
+      <div class="pp-role" id="pp-role">—</div>
+    </div>
+    <button class="pp-close" id="pp-close-btn">✕</button>
+  </div>
+  <div class="pp-gallery" id="pp-gallery"></div>
+</div>
+<!-- Full-size image viewer -->
+<div class="pp-big-img" id="pp-big" onclick="closeBigImg()">
+  <img id="pp-big-img" src="" alt="">
+</div>
+
+<!-- ── Invite UI ──────────────────────────────────────────────────────────── -->
+<div id="invite-wrap">
+  <div class="invite-card">
+    <div id="invite-inner"></div>
+    <div id="invite-err"></div>
+  </div>
+</div>
+
+<!-- ── Full-screen listener UI ───────────────────────────────────────────── -->
+<div id="listen-wrap">
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="live-chip"><span class="dot"></span>LIVE</div>
+    <div class="space-title" id="top-room-label">Space</div>
+    <div class="count-chip"><span class="dot"></span><span id="top-listener-count">1</span> listening</div>
+    <button class="leave-btn" id="leave-btn">Leave</button>
+  </div>
+
+  <!-- Main content: stage + transcript | listeners sidebar -->
+  <div class="main-body">
+
+    <!-- Stage + Transcript column -->
+    <div class="stage-col">
+
+      <!-- On Stage -->
+      <div class="stage-section">
+        <div class="sec-label"><span class="on-dot"></span>On Stage</div>
+        <div class="stage-roster" id="stage-roster">
+          <span class="waiting-stage">Waiting for speakers…</span>
+        </div>
+      </div>
+
+      <!-- Live Transcript -->
+      <div class="transcript-col">
+        <div class="transcript-hdr">
+          <div class="label"><span class="on-dot"></span>Live Transcript</div>
+        </div>
+        <div class="transcript-feed" id="tx-feed">
+          <div class="tx-empty" id="tx-empty">🎙️ Transcript will appear when speakers are active</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Listeners sidebar (desktop) -->
+    <div class="listeners-col" id="listeners-col">
+      <div class="lc-hdr">
+        Listeners
+        <span class="cnt" id="lc-count">1</span>
+      </div>
+      <div class="lc-grid" id="lc-grid"></div>
+    </div>
+
+  </div>
+
+  <!-- Unified bottom bar: ghost gate + speak CTA -->
+  <div class="speak-cta">
+    <p>Ghost mode — listen only. Want to speak or chat?</p>
+    <button class="gate-btn" onclick="showSignInGate()">💬 Sign in</button>
+    <a class="cta-btn" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Get App</a>
+  </div>
+
+</div>
+
+<!-- Listener sheet toggle (mobile) -->
+<button class="lc-mobile-toggle" id="lc-toggle-btn" style="display:none" title="Show listeners">
+  👥
+</button>
+
+<!-- LiveKit SDK -->
 <script src="https://cdn.jsdelivr.net/npm/livekit-client@2/dist/livekit-client.umd.min.js"></script>
 <script>
-// ─── Config ──────────────────────────────────────────────────────────────────
+// ── Config ────────────────────────────────────────────────────────────────────
 var TOKEN_URL = 'https://explorer-api.exergynet.org/space/guest-token';
 var LK_URL    = 'wss://livekit.exergynet.org';
 
-// ─── Parse URL ───────────────────────────────────────────────────────────────
+// ── URL params ────────────────────────────────────────────────────────────────
 var params = new URLSearchParams(location.search);
 var roomId = (params.get('room') || '').trim();
 var hostId = (params.get('h')    || '').trim();
@@ -119,365 +305,443 @@ if (!roomId) {
   if (m && m[1] !== 'index.html' && m[1] !== 'listen') roomId = decodeURIComponent(m[1]);
 }
 
-// ─── State ───────────────────────────────────────────────────────────────────
-var lkRoom       = null;
-var myIdentity   = '';
+// ── State ─────────────────────────────────────────────────────────────────────
+var lkRoom        = null;
+var myIdentity    = '';
 var audioElements = [];
 var _audioUnlocked = false;
-var _nameMap     = {};   // identity → display name from space.name broadcasts
-var _chatMessages = [];  // { sender, senderName, text, ts }
+var _nameMap      = {};    // identity → display name
+var _metaMap      = {};    // identity → metadata object
+var _txLines      = [];    // transcript history
+var _TX_MAX       = 120;
+var _listenerProfiles = {}; // identity → { name, role, images[] }
 
-// ─── iOS Audio unlock ────────────────────────────────────────────────────────
+// ── iOS audio unlock ──────────────────────────────────────────────────────────
 function _unlockAudio() {
   if (_audioUnlocked) return;
   _audioUnlocked = true;
+  try { var c = new (window.AudioContext || window.webkitAudioContext)(); c.resume().then(function(){c.close();}); } catch(e) {}
   try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
-    ctx.resume().then(function() { ctx.close(); });
-  } catch(e) {}
-  try {
-    var v = document.createElement('video');
-    v.setAttribute('playsinline', '');
-    v.setAttribute('webkit-playsinline', '');
-    v.muted = true;
-    v.srcObject = new MediaStream();
-    v.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
-    document.body.appendChild(v);
-    v.play().catch(function(){});
+    var v = document.createElement('video'); v.setAttribute('playsinline',''); v.muted = true;
+    v.srcObject = new MediaStream(); v.style.cssText='position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
+    document.body.appendChild(v); v.play().catch(function(){});
   } catch(e) {}
 }
 
-function _showAudioUnlockBanner() {
-  if (document.getElementById('audio-unlock-btn')) return;
-  var btn = document.createElement('button');
-  btn.id = 'audio-unlock-btn';
-  btn.className = 'btn btn-primary';
-  btn.style.cssText = 'margin:0 0 12px;font-size:16px;';
-  btn.textContent = '🔊 Tap to Enable Audio';
-  btn.addEventListener('click', function() {
-    _unlockAudio();
-    if (lkRoom && lkRoom.startAudio) lkRoom.startAudio();
-    audioElements.forEach(function(el) { el.play().catch(function(){}); });
-    btn.remove();
-  });
-  listenUi.insertBefore(btn, listenUi.firstChild);
-}
+// ── Twemoji ───────────────────────────────────────────────────────────────────
+function _twemoji(el) { if (window.twemoji) twemoji.parse(el, { folder:'svg', ext:'.svg' }); }
 
-// ─── Twemoji helper (E) ──────────────────────────────────────────────────────
-function _twemojify(el) {
-  if (window.twemoji) twemoji.parse(el, { folder: 'svg', ext: '.svg' });
-}
+// ── HTML escape ───────────────────────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ─── Floating emoji reaction (B) ─────────────────────────────────────────────
+// ── Floating emoji ────────────────────────────────────────────────────────────
 function _showReaction(emoji) {
   var el = document.createElement('div');
-  el.className = 'reaction-float';
-  el.style.left = (15 + Math.random() * 70) + '%';
-  el.textContent = emoji;
-  document.body.appendChild(el);
-  _twemojify(el);
-  setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 2200);
+  el.className = 'reaction-float'; el.style.left = (12 + Math.random() * 76) + '%'; el.textContent = emoji;
+  document.body.appendChild(el); _twemoji(el);
+  setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 2200);
 }
 
-// ─── Chat helpers (D) ────────────────────────────────────────────────────────
-function _addChatMessage(sender, senderName, text) {
-  _chatMessages.push({ sender: sender, name: senderName || sender.slice(0,12), text: text });
-  if (_chatMessages.length > 60) _chatMessages.shift();
-  var feed = document.getElementById('chat-feed');
+// ── Participant helpers ───────────────────────────────────────────────────────
+function _getMeta(identity) {
+  return _metaMap[identity] || {};
+}
+function _resolveName(p) {
+  if (_nameMap[p.identity]) return _nameMap[p.identity];
+  var meta = _getMeta(p.identity);
+  if (meta.displayName) return meta.displayName;
+  if (p.identity.startsWith('ghost_')) {
+    var gm = p.identity.match(/^ghost_(.+)_[0-9a-f]{4,8}$/i);
+    return gm ? gm[1].replace(/_/g,' ') : 'Ghost';
+  }
+  return p.identity.slice(0,14);
+}
+function _getRole(p) {
+  var meta = _getMeta(p.identity);
+  if (meta.role) return meta.role;
+  if (p.permissions && p.permissions.canPublish) return 'speaker';
+  return 'listener';
+}
+function _myDisplayName() {
+  if (!myIdentity) return 'Ghost';
+  var gm = myIdentity.match(/^ghost_(.+)_[0-9a-f]{4,8}$/i);
+  if (gm) return gm[1].replace(/_/g,' ').trim() || 'Ghost';
+  return myIdentity.startsWith('ghost_') ? 'Ghost' : myIdentity.slice(0,14);
+}
+
+// ── Role avatar icon / class ──────────────────────────────────────────────────
+function _roleAvClass(role) {
+  if (role==='host') return 'host-av';
+  if (role==='cohost') return 'cohost-av';
+  return 'speaker-av';
+}
+function _roleTagClass(role) {
+  if (role==='host') return 'host-tag';
+  if (role==='cohost') return 'cohost-tag';
+  return 'speaker-tag';
+}
+function _roleIcon(role, isGhost) {
+  if (isGhost) return '👻';
+  if (role==='host') return '🎙️';
+  if (role==='cohost') return '🎤';
+  return '🔊';
+}
+
+// ── Build avatar img HTML or icon ─────────────────────────────────────────────
+function _avImgHtml(meta, fallback) {
+  if (meta && meta.profileImage) {
+    return '<img src="data:image/jpeg;base64,' + esc(meta.profileImage) + '" alt="" style="width:100%;height:100%;object-fit:cover">';
+  }
+  return fallback;
+}
+
+// ── Stage roster ──────────────────────────────────────────────────────────────
+function _renderStage(speakers) {
+  var roster = document.getElementById('stage-roster');
+  if (!roster) return;
+  if (speakers.length === 0) {
+    roster.innerHTML = '<span class="waiting-stage">Waiting for speakers…</span>';
+    return;
+  }
+  var html = '';
+  speakers.forEach(function(s) {
+    var avClass = _roleAvClass(s.role) + (s.isSpeaking ? ' speaking' : '');
+    var tagClass = _roleTagClass(s.role);
+    var icon = _roleIcon(s.role, s.isGhost);
+    var avContent = _avImgHtml(_getMeta(s.id), icon);
+    html += '<div class="s-pip">';
+    html += '<div class="av ' + avClass + '">' + avContent + '</div>';
+    html += '<div class="sname">' + esc(s.name) + '</div>';
+    html += '<div class="stag ' + tagClass + '">' + esc(s.role) + '</div>';
+    html += '</div>';
+  });
+  roster.innerHTML = html;
+  _twemoji(roster);
+}
+
+// ── Listeners grid ────────────────────────────────────────────────────────────
+var _MAX_VISIBLE_LISTENERS = 60;
+
+function _renderListeners(listeners, totalCount) {
+  var grid = document.getElementById('lc-grid');
+  var countEl = document.getElementById('lc-count');
+  var topEl = document.getElementById('top-listener-count');
+  if (!grid) return;
+
+  var total = totalCount || (listeners.length + 1);
+  if (countEl) countEl.textContent = total.toLocaleString();
+  if (topEl) topEl.textContent = total.toLocaleString();
+
+  var shown = listeners.slice(0, _MAX_VISIBLE_LISTENERS);
+  var html = '';
+  shown.forEach(function(l) {
+    var avClass = l.isGhost ? 'ghost-lav' : '';
+    var icon = l.isGhost ? '👻' : '👤';
+    var avContent = _avImgHtml(_getMeta(l.id), icon);
+    html += '<div class="lpip" data-identity="' + esc(l.id) + '" onclick="openProfilePanel(this)" title="' + esc(l.name) + '">';
+    html += '<div class="lav ' + avClass + '">' + avContent + '</div>';
+    html += '<div class="lname">' + esc(l.name) + '</div>';
+    html += '</div>';
+  });
+  // Self pip
+  html += '<div class="lpip" data-identity="__self" title="You"><div class="lav ghost-lav">👻</div><div class="lname">You</div></div>';
+  // Overflow
+  if (listeners.length > _MAX_VISIBLE_LISTENERS) {
+    html += '<div class="overflow-chip">+' + (listeners.length - _MAX_VISIBLE_LISTENERS).toLocaleString() + ' more</div>';
+  }
+  grid.innerHTML = html;
+  _twemoji(grid);
+}
+
+// ── Full UI update ────────────────────────────────────────────────────────────
+function updateUI() {
+  if (!lkRoom) return;
+  var speakers  = [];
+  var listeners = [];
+
+  lkRoom.remoteParticipants.forEach(function(p) {
+    var meta = {};
+    try { meta = JSON.parse(p.metadata || '{}'); } catch(e) {}
+    _metaMap[p.identity] = meta;
+    var isGhost  = p.identity.startsWith('ghost_');
+    var name     = _resolveName(p);
+    var role     = _getRole(p);
+    var isSpeaking = (lkRoom.activeSpeakers || []).some(function(s){ return s.identity === p.identity; });
+    var entry = { id: p.identity, name: name, role: role, isGhost: isGhost, isSpeaking: isSpeaking };
+    if (role === 'host' || role === 'speaker' || role === 'cohost') speakers.push(entry);
+    else listeners.push(entry);
+    // Cache for profile panel
+    _listenerProfiles[p.identity] = { name: name, role: role, isGhost: isGhost, meta: meta };
+  });
+
+  _renderStage(speakers);
+  _renderListeners(listeners, listeners.length + 1);
+}
+
+// ── Transcript feed ───────────────────────────────────────────────────────────
+function addTranscriptLine(speakerIdentity, speakerName, role, text) {
+  var empty = document.getElementById('tx-empty');
+  if (empty) empty.remove();
+
+  _txLines.push({ id: speakerIdentity, name: speakerName, role: role, text: text, ts: Date.now() });
+  if (_txLines.length > _TX_MAX) _txLines.shift();
+
+  var feed = document.getElementById('tx-feed');
   if (!feed) return;
-  var div = document.createElement('div');
-  div.className = 'chat-msg';
-  div.innerHTML = '<span class="chat-sender">' + esc(senderName || sender.slice(0,12)) + '</span>'
-    + '<span class="chat-text">' + esc(text) + '</span>';
-  feed.appendChild(div);
-  _twemojify(div);
+
+  var line = document.createElement('div');
+  line.className = 'tx-line';
+
+  var badgeClass = (role === 'host' ? 'host' : role === 'cohost' ? 'cohost' : 'speaker');
+  line.innerHTML =
+    '<span class="tx-badge ' + badgeClass + '">' + esc(role.toUpperCase()) + '</span>' +
+    '<span class="tx-name">' + esc(speakerName) + '</span>' +
+    '<span class="tx-text">' + esc(text) + '</span>';
+
+  feed.appendChild(line);
+  _twemoji(line);
+  // Auto-scroll to bottom
   feed.scrollTop = feed.scrollHeight;
 }
 
-// ─── DOM refs ────────────────────────────────────────────────────────────────
-var inviteUi = document.getElementById('invite-ui');
-var listenUi = document.getElementById('listen-ui');
-var modalBg  = document.getElementById('modal-bg');
+// ── Profile panel ─────────────────────────────────────────────────────────────
+function openProfilePanel(el) {
+  var identity = el.getAttribute('data-identity');
+  if (identity === '__self') return;
+  var profile = _listenerProfiles[identity];
+  if (!profile) return;
 
-// ─── Render invite card ──────────────────────────────────────────────────────
-function renderInvite() {
-  if (!roomId) {
-    inviteUi.innerHTML = [
-      '<div style="text-align:center;padding:10px 0 6px">',
-      '<div style="font-size:48px;margin-bottom:12px">🎙️</div>',
-      '<h1>ExergyNet Spaces</h1>',
-      '<p class="sub" style="margin-top:8px">Audio rooms on the sovereign mesh.<br>Ask the host to share their invite link.</p>',
-      '</div>',
-      '<div class="divider">Get the app</div>',
-      '<a class="btn btn-android" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Download for Android</a>',
-    ].join('');
-    _twemojify(inviteUi);
-    return;
+  var meta = profile.meta || {};
+  var nameEl = document.getElementById('pp-name');
+  var roleEl = document.getElementById('pp-role');
+  var avEl   = document.getElementById('pp-av');
+  var galEl  = document.getElementById('pp-gallery');
+
+  if (nameEl) nameEl.textContent = profile.name || 'Ghost';
+  if (roleEl) {
+    var r = profile.role;
+    roleEl.textContent = r.charAt(0).toUpperCase() + r.slice(1);
+    roleEl.className = 'pp-role role-' + r;
   }
 
-  var deep = 'exergynet://space/' + encodeURIComponent(roomId) + (hostId ? ('?h=' + encodeURIComponent(hostId)) : '');
-  var shortRoom = roomId.length > 28 ? roomId.slice(0,12) + '…' + roomId.slice(-8) : roomId;
+  // Avatar
+  if (avEl) {
+    if (meta.profileImage) {
+      avEl.innerHTML = '<img src="data:image/jpeg;base64,' + esc(meta.profileImage) + '" alt="" style="width:100%;height:100%;object-fit:cover">';
+    } else {
+      avEl.innerHTML = profile.isGhost ? '👻' : '👤';
+      _twemoji(avEl);
+    }
+  }
 
-  inviteUi.innerHTML = [
-    '<span class="live"><span class="dot"></span>LIVE SPACE</span>',
-    '<h1>A Space is live right now</h1>',
-    '<p class="sub">Hosted on the ExergyNet sovereign mesh.</p>',
-    '<div class="room-id">' + shortRoom + '</div>',
-    '<button class="btn btn-ghost-listen" id="listen-browser-btn" style="margin-top:18px">👻 Listen in Browser (Ghost Mode)</button>',
+  // Gallery
+  if (galEl) {
+    var gallery = meta.gallery || [];
+    if (gallery.length === 0) {
+      galEl.innerHTML = '<div class="pp-empty">No public photos</div>';
+    } else {
+      var gHtml = '';
+      gallery.forEach(function(img, i) {
+        gHtml += '<div class="pp-img" onclick="openBigImg(this)" data-src="data:image/jpeg;base64,' + esc(img) + '">';
+        gHtml += '<img src="data:image/jpeg;base64,' + esc(img) + '" alt="">';
+        gHtml += '</div>';
+      });
+      galEl.innerHTML = gHtml;
+    }
+  }
+
+  document.getElementById('profile-panel').classList.add('open');
+}
+
+function openBigImg(el) {
+  var src = el.getAttribute('data-src');
+  var bigWrap = document.getElementById('pp-big');
+  var bigImg  = document.getElementById('pp-big-img');
+  if (bigImg) bigImg.src = src;
+  if (bigWrap) bigWrap.classList.add('open');
+}
+function closeBigImg() {
+  var bigWrap = document.getElementById('pp-big');
+  if (bigWrap) bigWrap.classList.remove('open');
+}
+
+document.getElementById('pp-close-btn').addEventListener('click', function() {
+  document.getElementById('profile-panel').classList.remove('open');
+});
+
+// ── Sign-in gate ──────────────────────────────────────────────────────────────
+function showSignInGate() {
+  document.getElementById('signin-modal').classList.add('open');
+}
+document.getElementById('signin-close-btn').addEventListener('click', function() {
+  document.getElementById('signin-modal').classList.remove('open');
+});
+
+// ── Render invite card ────────────────────────────────────────────────────────
+function renderInvite() {
+  var inner = document.getElementById('invite-inner');
+  if (!roomId) {
+    inner.innerHTML = [
+      '<div style="text-align:center;padding:10px 0 6px">',
+      '<div style="font-size:48px;margin-bottom:12px">🎙️</div>',
+      '<h1 style="font-size:22px;font-weight:800;margin-bottom:8px">ExergyNet Spaces</h1>',
+      '<p class="sub" style="color:var(--muted);font-size:13px;line-height:1.5">Audio rooms on the sovereign mesh.<br>Ask the host to share their invite link.</p>',
+      '</div>',
+      '<div class="divider">Get the app</div>',
+      '<a class="btn btn-green" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Download for Android</a>',
+    ].join('');
+    _twemoji(inner);
+    return;
+  }
+  var deep = 'exergynet://space/' + encodeURIComponent(roomId) + (hostId ? ('?h=' + encodeURIComponent(hostId)) : '');
+  var shortRoom = roomId.length > 28 ? roomId.slice(0,14)+'…'+roomId.slice(-8) : roomId;
+
+  inner.innerHTML = [
+    '<span class="live-chip"><span class="dot"></span>LIVE SPACE</span>',
+    '<h1 style="font-size:22px;font-weight:800;margin:14px 0 5px">A Space is live right now</h1>',
+    '<p style="color:var(--muted);font-size:13px;line-height:1.5">Hosted on the ExergyNet sovereign mesh.</p>',
+    '<div class="room-pill">' + esc(shortRoom) + '</div>',
+    '<button class="btn btn-ghost" id="listen-browser-btn" style="margin-top:16px">👻 Listen in Browser (Ghost Mode)</button>',
     '<div class="divider">Have the app?</div>',
-    '<a class="btn btn-primary" href="' + deep + '">🎙️ Open in ExergyNet App</a>',
+    '<a class="btn btn-teal" href="' + esc(deep) + '">🎙️ Open in ExergyNet App</a>',
     '<div class="divider">Need the app?</div>',
-    '<a class="btn btn-android" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Download for Android</a>',
-    '<button class="btn btn-outline" id="copy-link-btn" style="margin-top:10px">Copy Invite Link</button>',
+    '<a class="btn btn-green" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Download for Android</a>',
+    '<button class="btn btn-outline" id="copy-link-btn" style="margin-top:8px;padding:10px">Copy Invite Link</button>',
   ].join('');
 
-  _twemojify(inviteUi);
+  _twemoji(inner);
 
   document.getElementById('listen-browser-btn').addEventListener('click', function() {
-    modalBg.classList.add('open');
+    _unlockAudio();
+    document.getElementById('modal-bg').classList.add('open');
     document.getElementById('ghost-name').focus();
   });
   document.getElementById('copy-link-btn').addEventListener('click', function() {
     navigator.clipboard && navigator.clipboard.writeText(location.href).then(function() {
       document.getElementById('copy-link-btn').textContent = '✓ Copied!';
-      setTimeout(function() { document.getElementById('copy-link-btn').textContent = 'Copy Invite Link'; }, 1600);
+      setTimeout(function(){ document.getElementById('copy-link-btn').textContent = 'Copy Invite Link'; }, 1600);
     });
   });
-  if (/android/i.test(navigator.userAgent || '')) {
-    setTimeout(function() { location.href = deep; }, 800);
-  }
+  if (/android/i.test(navigator.userAgent||'')) setTimeout(function(){ location.href = deep; }, 800);
 }
 
-// ─── Modal handlers ──────────────────────────────────────────────────────────
+// ── Modal handlers ────────────────────────────────────────────────────────────
 document.getElementById('enter-ghost-btn').addEventListener('click', function() {
   _unlockAudio();
   var name = document.getElementById('ghost-name').value.trim();
-  modalBg.classList.remove('open');
+  document.getElementById('modal-bg').classList.remove('open');
   startListening(name);
 });
 document.getElementById('modal-cancel-btn').addEventListener('click', function() {
-  modalBg.classList.remove('open');
+  document.getElementById('modal-bg').classList.remove('open');
 });
 document.getElementById('ghost-name').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') document.getElementById('enter-ghost-btn').click();
+  if (e.key==='Enter') document.getElementById('enter-ghost-btn').click();
 });
 
-// ─── Participant name resolution ──────────────────────────────────────────────
-function _resolveName(p) {
-  if (_nameMap[p.identity]) return _nameMap[p.identity];
-  var meta = {};
-  try { meta = JSON.parse(p.metadata || '{}'); } catch(e) {}
-  if (meta.displayName) return meta.displayName;
-  var isGhost = p.identity.startsWith('ghost_');
-  if (isGhost) {
-    var gm = p.identity.match(/^ghost_(.+)_[0-9a-f]{4,8}$/i);
-    if (gm) return gm[1].replace(/_/g, ' ');
-    return 'Ghost';
-  }
-  return p.identity.slice(0, 12);
-}
-
-function _myDisplayName() {
-  if (!myIdentity) return 'Ghost';
-  var gm = myIdentity.match(/^ghost_(.+)_[0-9a-f]{4,8}$/i);
-  if (gm) return gm[1].replace(/_/g, ' ').trim() || 'Ghost';
-  if (myIdentity.startsWith('ghost_')) return 'Ghost';
-  return myIdentity.slice(0, 12);
-}
-
-// ─── Connecting screen ────────────────────────────────────────────────────────
-function showConnecting() {
-  inviteUi.style.display = 'none';
-  listenUi.style.display = 'block';
-  listenUi.innerHTML = '<div style="text-align:center;padding:24px 0"><div style="font-size:36px;margin-bottom:14px">⏳</div><p style="color:var(--muted)">Connecting to Space…</p></div>';
-}
-
-// ─── Main listener UI (A — individual roster) ─────────────────────────────────
-function updateListenerUi() {
-  var speakers  = [];
-  var listeners = [];
-
-  if (lkRoom) {
-    lkRoom.remoteParticipants.forEach(function(p) {
-      var meta = {};
-      try { meta = JSON.parse(p.metadata || '{}'); } catch(e) {}
-      var isGhost = p.identity.startsWith('ghost_');
-      var name = _resolveName(p);
-      var role = meta.role || (p.permissions && p.permissions.canPublish ? 'speaker' : 'listener');
-      var isSpeaking = (lkRoom.activeSpeakers || []).some(function(s) { return s.identity === p.identity; });
-      var entry = { id: p.identity, name: name, role: role, isGhost: isGhost, isSpeaking: isSpeaking };
-      if (role === 'host' || role === 'speaker' || role === 'cohost') speakers.push(entry);
-      else listeners.push(entry);
-    });
-  }
-
-  var html = [
-    '<div class="listener-header">',
-    '  <span class="you-badge">👻 You — ' + esc(_myDisplayName()) + '</span>',
-    '</div>',
-    '<div class="status-bar"><span class="dot-sm"></span>Listening live · ' + esc(roomId.length > 20 ? roomId.slice(0,14)+'…' : roomId) + '</div>',
-  ];
-
-  // ── On Stage (speakers + host) ──
-  html.push('<div class="section-label">On Stage</div>');
-  if (speakers.length > 0) {
-    html.push('<div class="roster">');
-    speakers.forEach(function(s) {
-      var avClass = s.role === 'host' ? 'host-av' : 'speaker-av';
-      if (s.isSpeaking) avClass += ' speaking';
-      var icon = s.role === 'host' ? '🎙️' : '🔊';
-      html.push('<div class="pip"><div class="avatar ' + avClass + '">' + icon + '</div><div class="name">' + esc(s.name) + '</div><div class="role-tag">' + esc(s.role) + '</div></div>');
-    });
-    html.push('</div>');
-  } else {
-    html.push('<div class="roster"><span class="empty-roster">Waiting for speakers…</span></div>');
-  }
-
-  // ── Listeners (A — individual pips, max 12 shown, +N overflow) ──
-  var totalListeners = listeners.length + 1; // +1 self
-  if (listeners.length > 0) {
-    html.push('<div class="section-label">Listeners · ' + totalListeners + '</div>');
-    html.push('<div class="listeners-row">');
-    var shown = listeners.slice(0, 12);
-    shown.forEach(function(l) {
-      var avClass = l.isGhost ? 'ghost-lav' : '';
-      var icon = l.isGhost ? '👻' : '👤';
-      html.push('<div class="lpip"><div class="lavatar ' + avClass + '">' + icon + '</div><div class="lname">' + esc(l.name) + '</div></div>');
-    });
-    if (listeners.length > 12) {
-      html.push('<span class="listener-more">+' + (listeners.length - 12) + ' more</span>');
-    }
-    // Always add self pip
-    html.push('<div class="lpip"><div class="lavatar ghost-lav">👻</div><div class="lname">You</div></div>');
-    html.push('</div>');
-  } else {
-    html.push('<div style="font-size:12px;color:var(--muted);margin-bottom:14px">👻 You · 1 listener</div>');
-  }
-
-  // ── Chat feed (D) ──
-  html.push(
-    '<div class="chat-section">',
-    '  <div class="chat-section-hdr">💬 Space Chat</div>',
-    '  <div class="chat-feed" id="chat-feed"></div>',
-    '</div>'
-  );
-
-  // ── Speak CTA ──
-  html.push(
-    '<div class="speak-cta">',
-    '  <p>Want to speak? Get the ExergyNet app — raise your hand and the host can bring you on stage.</p>',
-    '  <a class="btn btn-android btn-sm" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Download App to Speak</a>',
-    '</div>',
-    '<button class="btn btn-outline btn-sm" id="leave-btn" style="margin-top:14px">Leave Space</button>'
-  );
-
-  listenUi.innerHTML = html.join('');
-  _twemojify(listenUi);
-
-  // Re-inject saved chat messages
-  var feed = document.getElementById('chat-feed');
-  if (feed && _chatMessages.length) {
-    _chatMessages.forEach(function(msg) {
-      var div = document.createElement('div');
-      div.className = 'chat-msg';
-      div.innerHTML = '<span class="chat-sender">' + esc(msg.name) + '</span><span class="chat-text">' + esc(msg.text) + '</span>';
-      feed.appendChild(div);
-      _twemojify(div);
-    });
-    feed.scrollTop = feed.scrollHeight;
-  }
-
-  document.getElementById('leave-btn').addEventListener('click', function() {
-    if (lkRoom) lkRoom.disconnect();
-    audioElements.forEach(function(el) { el.remove(); });
-    audioElements = []; lkRoom = null;
-    _chatMessages = []; _nameMap = {};
-    inviteUi.style.display = 'block';
-    listenUi.style.display = 'none';
-    renderInvite();
-  });
-}
-
+// ── Error ─────────────────────────────────────────────────────────────────────
 function showError(msg) {
-  inviteUi.style.display = 'block';
-  listenUi.style.display = 'none';
-  var errBox = document.getElementById('listen-error');
-  if (!errBox) {
-    errBox = document.createElement('div');
-    errBox.id = 'listen-error';
-    errBox.className = 'err-box';
-    inviteUi.appendChild(errBox);
-  }
-  errBox.textContent = '⚠ ' + msg;
+  document.getElementById('invite-wrap').style.display = 'flex';
+  document.getElementById('listen-wrap').classList.remove('active');
+  var errEl = document.getElementById('invite-err');
+  if (errEl) errEl.innerHTML = '<div class="err-box">⚠ ' + esc(msg) + '</div>';
 }
 
-function esc(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ── Audio unlock banner ───────────────────────────────────────────────────────
+function _showUnlockBanner() {
+  if (document.getElementById('audio-unlock-btn')) return;
+  var btn = document.createElement('button');
+  btn.id = 'audio-unlock-btn';
+  btn.textContent = '🔊 Tap to Enable Audio';
+  btn.addEventListener('click', function() {
+    _unlockAudio();
+    if (lkRoom && lkRoom.startAudio) lkRoom.startAudio();
+    audioElements.forEach(function(el){ el.play().catch(function(){}); });
+    btn.remove();
+  });
+  document.body.appendChild(btn);
 }
 
-// ─── Connect ─────────────────────────────────────────────────────────────────
+// ── Connect ───────────────────────────────────────────────────────────────────
 async function startListening(displayName) {
-  // CRITICAL: Create room and call startAudio() SYNCHRONOUSLY before any await.
-  // Chrome's user-activation window expires at the first await — startAudio()
-  // called after connect() is already outside that window and will be blocked.
+  // Show listen UI immediately
+  document.getElementById('invite-wrap').style.display = 'none';
+  document.getElementById('listen-wrap').classList.add('active');
+  document.getElementById('top-room-label').textContent = roomId.length > 24 ? roomId.slice(0,18)+'…' : roomId;
+
   var LK = window.LivekitClient;
   lkRoom = new LK.Room({ adaptiveStream: true, dynacast: false });
-  lkRoom.startAudio(); // synchronous call while still in gesture activation chain
+  lkRoom.startAudio(); // must be in gesture handler sync
 
   lkRoom
-    .on(LK.RoomEvent.Connected, function() { updateListenerUi(); })
+    .on(LK.RoomEvent.Connected, function() { updateUI(); })
     .on(LK.RoomEvent.AudioPlaybackStatusChanged, function() {
-      // If audio playback is blocked (e.g. strict browser), show the unlock banner
-      if (!lkRoom.canPlaybackAudio) _showAudioUnlockBanner();
+      if (!lkRoom.canPlaybackAudio) _showUnlockBanner();
     })
     .on(LK.RoomEvent.Disconnected, function(reason) {
-      inviteUi.style.display = 'block';
-      listenUi.style.display = 'none';
+      document.getElementById('invite-wrap').style.display = 'flex';
+      document.getElementById('listen-wrap').classList.remove('active');
       renderInvite();
       if (reason && reason !== 'CLIENT_INITIATED') showError('Disconnected: ' + reason);
     })
     .on(LK.RoomEvent.TrackSubscribed, function(track) {
       if (track.kind === LK.Track.Kind.Audio) {
         var el = track.attach();
-        el.autoplay = true;
-        el.setAttribute('playsinline', '');
-        document.body.appendChild(el);
-        audioElements.push(el);
-        el.play().catch(function() { _showAudioUnlockBanner(); });
+        el.autoplay = true; el.setAttribute('playsinline','');
+        document.body.appendChild(el); audioElements.push(el);
+        el.play().catch(function(){ _showUnlockBanner(); });
       }
     })
     .on(LK.RoomEvent.TrackUnsubscribed, function(track) {
       track.detach().forEach(function(el) {
         el.remove();
-        audioElements = audioElements.filter(function(a) { return a !== el; });
+        audioElements = audioElements.filter(function(a){ return a !== el; });
       });
     })
     .on(LK.RoomEvent.DataReceived, function(payload, participant, kind, topic) {
       var text = '';
-      try { text = new TextDecoder().decode(payload); } catch(e) { return; }
+      try { text = new TextDecoder().decode(payload); } catch(e){ return; }
       if (topic === 'reaction') {
         _showReaction(text);
-      } else if (topic === 'space.chat') {
+      } else if (topic === 'space.transcript') {
         try {
-          var msg = JSON.parse(text);
-          _addChatMessage(msg.sender || '', msg.senderName || '', msg.text || '');
+          var tx = JSON.parse(text);
+          // tx: { speaker, speakerName, role, text }
+          addTranscriptLine(tx.speaker||'', tx.speakerName||'Unknown', tx.role||'speaker', tx.text||'');
         } catch(e) {}
       } else if (topic === 'space.name') {
         try {
           var obj = JSON.parse(text);
-          if (obj.node_id && obj.label) {
-            _nameMap[obj.node_id] = obj.label;
-            updateListenerUi();
+          if (obj.node_id && obj.label) { _nameMap[obj.node_id] = obj.label; updateUI(); }
+        } catch(e) {}
+      } else if (topic === 'space.profile') {
+        // Participant sends their profile: { identity, displayName, profileImage, gallery: [b64,...] }
+        try {
+          var prof = JSON.parse(text);
+          if (prof.identity) {
+            if (!_metaMap[prof.identity]) _metaMap[prof.identity] = {};
+            if (prof.displayName) _nameMap[prof.identity] = prof.displayName;
+            if (prof.profileImage) _metaMap[prof.identity].profileImage = prof.profileImage;
+            if (prof.gallery)     _metaMap[prof.identity].gallery = prof.gallery;
+            if (_listenerProfiles[prof.identity]) {
+              _listenerProfiles[prof.identity].name = prof.displayName || _listenerProfiles[prof.identity].name;
+              _listenerProfiles[prof.identity].meta = _metaMap[prof.identity];
+            }
+            updateUI();
           }
         } catch(e) {}
       }
     })
-    .on(LK.RoomEvent.ParticipantConnected,       function() { updateListenerUi(); })
-    .on(LK.RoomEvent.ParticipantDisconnected,    function() { updateListenerUi(); })
-    .on(LK.RoomEvent.ActiveSpeakersChanged,      function() { updateListenerUi(); })
-    .on(LK.RoomEvent.ParticipantMetadataChanged, function() { updateListenerUi(); });
+    .on(LK.RoomEvent.ParticipantConnected,       function() { updateUI(); })
+    .on(LK.RoomEvent.ParticipantDisconnected,    function() { updateUI(); })
+    .on(LK.RoomEvent.ActiveSpeakersChanged,      function() { updateUI(); })
+    .on(LK.RoomEvent.ParticipantMetadataChanged, function(p) {
+      if (p && p.metadata) {
+        try { _metaMap[p.identity] = JSON.parse(p.metadata); } catch(e) {}
+      }
+      updateUI();
+    });
 
-  showConnecting();
   try {
     var url = TOKEN_URL + '?room=' + encodeURIComponent(roomId);
     if (displayName) url += '&name=' + encodeURIComponent(displayName);
@@ -485,20 +749,27 @@ async function startListening(displayName) {
     if (!resp.ok) throw new Error('Token error ' + resp.status);
     var data = await resp.json();
     myIdentity = data.identity;
-    // Pre-populate name map from server-side participant snapshot
     if (data.nameMap) Object.assign(_nameMap, data.nameMap);
 
     await lkRoom.connect(LK_URL, data.token, { autoSubscribe: true });
-
-  } catch (err) {
+  } catch(err) {
     console.error('[space-listen]', err);
-    inviteUi.style.display = 'block';
-    listenUi.style.display = 'none';
     showError(err.message || 'Could not connect. The Space may have ended.');
   }
 }
 
-// ─── Boot ─────────────────────────────────────────────────────────────────────
+// ── Leave ──────────────────────────────────────────────────────────────────────
+document.getElementById('leave-btn').addEventListener('click', function() {
+  if (lkRoom) lkRoom.disconnect();
+  audioElements.forEach(function(el){ el.remove(); });
+  audioElements = []; lkRoom = null;
+  _txLines = []; _nameMap = {}; _metaMap = {}; _listenerProfiles = {};
+  document.getElementById('invite-wrap').style.display = 'flex';
+  document.getElementById('listen-wrap').classList.remove('active');
+  renderInvite();
+});
+
+// ── Boot ───────────────────────────────────────────────────────────────────────
 renderInvite();
 </script>
 </body>
