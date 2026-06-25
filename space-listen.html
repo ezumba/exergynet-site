@@ -351,6 +351,172 @@ var _TX_MAX       = 120;
 var _listenerProfiles = {}; // identity → { name, role, images[] }
 
 // ── iOS audio unlock ──────────────────────────────────────────────────────────
+// ── Space background sound engine (mirrors BgSoundPlayer.kt synthesis) ────────
+var _bgCtx = null;
+var _bgGain = null;
+var _bgNodes = [];
+var _bgAudio = null;
+var _bgCurrentId = null;
+
+function _bgAudioCtx() {
+  if (!_bgCtx || _bgCtx.state === 'closed') {
+    _bgCtx = new (window.AudioContext || window.webkitAudioContext)();
+    _bgGain = _bgCtx.createGain();
+    _bgGain.connect(_bgCtx.destination);
+  }
+  if (_bgCtx.state === 'suspended') _bgCtx.resume();
+  return _bgCtx;
+}
+
+function _bgStop() {
+  _bgNodes.forEach(function(n) { try { n.stop ? n.stop(0) : n.disconnect(); } catch(e){} });
+  _bgNodes = [];
+  if (_bgAudio) { _bgAudio.pause(); _bgAudio.src = ''; _bgAudio = null; }
+  _bgCurrentId = null;
+}
+
+function _bgPlay(id, vol) {
+  if (_bgCurrentId === id) { if (_bgGain) _bgGain.gain.value = vol; return; }
+  _bgStop();
+  _bgCurrentId = id;
+  var ctx = _bgAudioCtx();
+  _bgGain.gain.value = vol;
+
+  if (id === 'edge_witness' || id === 'roots') {
+    var src = id === 'edge_witness' ? '/assets/spaces.edge.witness.mp3' : '/assets/spaces.roots.mp3';
+    _bgAudio = new Audio(src);
+    _bgAudio.loop = true;
+    _bgAudio.volume = vol;
+    // Route through AudioContext so it respects the same context as LiveKit
+    var ms = ctx.createMediaElementSource(_bgAudio);
+    ms.connect(_bgGain);
+    _bgNodes.push(ms);
+    _bgAudio.play().catch(function(){});
+    return;
+  }
+
+  var SR = ctx.sampleRate;
+  var BUF = 2; // seconds of looping buffer
+
+  if (id === 'white') {
+    var buf = ctx.createBuffer(1, SR * BUF, SR);
+    var d = buf.getChannelData(0);
+    for (var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * 0.55;
+    var src2 = ctx.createBufferSource(); src2.buffer = buf; src2.loop = true;
+    src2.connect(_bgGain); src2.start(0); _bgNodes.push(src2);
+
+  } else if (id === 'rain') {
+    var buf = ctx.createBuffer(1, SR * BUF, SR);
+    var d = buf.getChannelData(0), lpf1 = 0, lpf2 = 0;
+    for (var i = 0; i < d.length; i++) {
+      var w = _gauss();
+      lpf1 = 0.97 * lpf1 + 0.03 * w;
+      lpf2 = 0.985 * lpf2 + 0.015 * lpf1;
+      d[i] = lpf2 * 1.4;
+    }
+    var src2 = ctx.createBufferSource(); src2.buffer = buf; src2.loop = true;
+    src2.connect(_bgGain); src2.start(0); _bgNodes.push(src2);
+
+  } else if (id === 'ocean') {
+    var buf = ctx.createBuffer(1, SR * BUF, SR);
+    var d = buf.getChannelData(0), lpf1 = 0;
+    for (var i = 0; i < d.length; i++) {
+      var t = i / SR;
+      var swell = 0.5 + 0.5 * Math.sin(2 * Math.PI * t / 7.0);
+      var swell2 = 0.55 + 0.45 * Math.sin(2 * Math.PI * t / 11.3 + 1.2);
+      var mod = swell * swell2;
+      var w = _gauss();
+      lpf1 = 0.96 * lpf1 + 0.04 * w;
+      d[i] = lpf1 * mod * 1.8;
+    }
+    // Loop a long-enough buffer so the swell cycle doesn't click at the seam
+    var longBuf = ctx.createBuffer(1, SR * 12, SR);
+    var ld = longBuf.getChannelData(0), lp = 0;
+    for (var i = 0; i < ld.length; i++) {
+      var t = i / SR;
+      var swell = 0.5 + 0.5 * Math.sin(2 * Math.PI * t / 7.0);
+      var swell2 = 0.55 + 0.45 * Math.sin(2 * Math.PI * t / 11.3 + 1.2);
+      var w = _gauss();
+      lp = 0.96 * lp + 0.04 * w;
+      ld[i] = lp * swell * swell2 * 1.8;
+    }
+    var src2 = ctx.createBufferSource(); src2.buffer = longBuf; src2.loop = true;
+    src2.connect(_bgGain); src2.start(0); _bgNodes.push(src2);
+
+  } else if (id === 'fire') {
+    var buf = ctx.createBuffer(1, SR * BUF, SR);
+    var d = buf.getChannelData(0), lp1 = 0, lp2 = 0;
+    for (var i = 0; i < d.length; i++) {
+      var crackle = (Math.random() < 1/180) ? _gauss() * 3.5 : _gauss() * 0.12;
+      lp1 = 0.94 * lp1 + 0.06 * crackle;
+      lp2 = 0.98 * lp2 + 0.02 * lp1;
+      d[i] = lp1 * 0.55 + lp2 * 0.45;
+    }
+    var src2 = ctx.createBufferSource(); src2.buffer = buf; src2.loop = true;
+    src2.connect(_bgGain); src2.start(0); _bgNodes.push(src2);
+
+  } else if (id === 'lofi') {
+    var buf = ctx.createBuffer(1, SR * BUF, SR);
+    var d = buf.getChannelData(0);
+    for (var i = 0; i < d.length; i++) {
+      var t = i / SR;
+      var vib = 1.0 + 0.003 * Math.sin(2 * Math.PI * 5.5 * t);
+      var chord = Math.sin(2*Math.PI*261.63*vib*t)*0.30 +
+                  Math.sin(2*Math.PI*329.63*vib*t)*0.22 +
+                  Math.sin(2*Math.PI*392.00*vib*t)*0.16 +
+                  Math.sin(2*Math.PI*523.25*vib*t)*0.08;
+      d[i] = chord + _gauss() * 0.04;
+    }
+    var src2 = ctx.createBufferSource(); src2.buffer = buf; src2.loop = true;
+    src2.connect(_bgGain); src2.start(0); _bgNodes.push(src2);
+
+  } else if (id === 'cafe') {
+    var buf = ctx.createBuffer(1, SR * BUF, SR);
+    var d = buf.getChannelData(0);
+    var b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for (var i = 0; i < d.length; i++) {
+      var w = _gauss();
+      b0 = 0.99886*b0 + w*0.0555179;
+      b1 = 0.99332*b1 + w*0.0750759;
+      b2 = 0.96900*b2 + w*0.1538520;
+      b3 = 0.86650*b3 + w*0.3104856;
+      b4 = 0.55000*b4 + w*0.5329522;
+      b5 = -0.7616*b5 - w*0.0168980;
+      var pink = b0+b1+b2+b3+b4+b5+b6+w*0.5362;
+      b6 = w*0.115926;
+      d[i] = pink * 0.18;
+    }
+    var src2 = ctx.createBufferSource(); src2.buffer = buf; src2.loop = true;
+    src2.connect(_bgGain); src2.start(0); _bgNodes.push(src2);
+
+  } else if (id === 'focus') {
+    var buf = ctx.createBuffer(1, SR * BUF, SR);
+    var d = buf.getChannelData(0);
+    for (var i = 0; i < d.length; i++) {
+      var t = i / SR;
+      d[i] = Math.sin(2*Math.PI*40*t)*0.28 +
+              Math.sin(2*Math.PI*528*t)*0.10 +
+              Math.sin(2*Math.PI*80*t)*0.15 +
+              _gauss()*0.03;
+    }
+    var src2 = ctx.createBufferSource(); src2.buffer = buf; src2.loop = true;
+    src2.connect(_bgGain); src2.start(0); _bgNodes.push(src2);
+  }
+}
+
+// Box-Muller Gaussian approximation
+function _gauss() {
+  var u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}
+
+function handleBgSound(sid, vol) {
+  if (sid === 'stop' || !sid) { _bgStop(); return; }
+  _bgPlay(sid, vol);
+}
+
 function _unlockAudio() {
   if (_audioUnlocked) return;
   _audioUnlocked = true;
@@ -828,6 +994,11 @@ async function startListening(displayName) {
         try {
           var obj = JSON.parse(text);
           if (obj.node_id && obj.label) { _nameMap[obj.node_id] = obj.label; updateUI(); }
+        } catch(e) {}
+      } else if (topic === 'space.bgsound') {
+        try {
+          var obj = JSON.parse(text);
+          handleBgSound(obj.sound || 'stop', parseFloat(obj.vol) || 0.35);
         } catch(e) {}
       } else if (topic === 'space.profile') {
         // Participant sends their profile: { identity, displayName, profileImage, gallery: [b64,...] }
