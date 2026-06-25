@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  </script>
 
   <!-- ── Primary SEO ──────────────────────────────────────────────────────── -->
   <title>Sovereign Voice Stack — On-Premise GPU Voice AI | ExergyNet</title>
@@ -82,204 +87,469 @@
   <!-- ── Favicon ───────────────────────────────────────────────────────────── -->
   <link rel="icon" href="/exg_icon.svg" type="image/svg+xml" />
 
+  <!-- ── Type system ───────────────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #060814;
-      --surface:  #0b1120;
-      --border:   #1e293b;
-      --teal:     #0d9488;
-      --teal-dk:  #0f766e;
-      --text:     #f8fafc;
-      --muted:    #94a3b8;
-      --dim:      #475569;
-      --mono:     'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+      /* ── color tokens ── */
+      --bg:           #05070d;
+      --surface:      #0c1018;
+      --surface-2:    #10141e;
+      --border:       rgba(255,255,255,.08);
+      --border-up:    rgba(255,255,255,.16);
+      --signal:       #19e3b0;
+      --signal-dim:   #0d9488;
+      --signal-glow:  rgba(25,227,176,.32);
+      --amber:        #ffb454;
+      --text:         #f4f7fb;
+      --muted:        #97a2b5;
+      --dim:          #4d5567;
+      --grid-line:    rgba(255,255,255,.025);
+      --blob-1:       rgba(25,227,176,.12);
+      --blob-2:       rgba(13,148,136,.08);
+      --nav-bg:       rgba(5,7,13,.78);
+      --btn-ink:      #02110c;
+
+      /* ── type tokens ── */
+      --f-display: 'Space Grotesk', 'Inter', sans-serif;
+      --f-body:    'Inter', sans-serif;
+      --f-mono:    'JetBrains Mono', 'Fira Code', Consolas, monospace;
     }
 
-    html { background: var(--bg); color: var(--text); font-family: var(--mono); -webkit-font-smoothing: antialiased; }
-    body { min-height: 100vh; }
+    :root[data-theme="light"] {
+      --bg:           #f5f7fa;
+      --surface:      #ffffff;
+      --surface-2:    #eef1f6;
+      --border:       rgba(15,23,42,.09);
+      --border-up:    rgba(15,23,42,.18);
+      --signal:       #0d9488;
+      --signal-dim:   #0f766e;
+      --signal-glow:  rgba(13,148,136,.22);
+      --amber:        #b45309;
+      --text:         #0b1220;
+      --muted:        #54607a;
+      --dim:          #97a2b5;
+      --grid-line:    rgba(15,23,42,.045);
+      --blob-1:       rgba(13,148,136,.10);
+      --blob-2:       rgba(15,118,110,.07);
+      --nav-bg:       rgba(255,255,255,.8);
+      --btn-ink:      #02110c;
+    }
 
-    a { color: var(--teal); text-decoration: none; }
-    a:hover { color: #2dd4bf; }
+    html { background: var(--bg); color: var(--text); font-family: var(--f-body); -webkit-font-smoothing: antialiased; scroll-behavior: smooth; transition: background-color .25s ease; }
+    body {
+      min-height: 100vh;
+      background-image:
+        radial-gradient(560px 360px at 88% -6%, var(--blob-1), transparent 70%),
+        radial-gradient(900px 500px at 10% 8%, var(--blob-2), transparent 65%),
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: auto, auto, 42px 42px, 42px 42px;
+      background-position: 0 0, 0 0, 0 0, 0 0;
+      transition: background-color .25s ease;
+    }
 
-    /* ── NAV ── */
-    nav {
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { color: #5cf0d2; }
+    :focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 4px; }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+    .eyebrow {
+      font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; color: var(--dim);
+      text-transform: uppercase; display: flex; align-items: center; gap: 8px;
+    }
+    .eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 8px var(--signal-glow); flex: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+    }
+
+    /* ── NAV ───────────────────────────────────────────────────────────────── */
+    nav.topnav {
+      position: sticky; top: 0; z-index: 50;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 32px; border-bottom: 1px solid var(--border);
-      background: var(--surface);
+      padding: 16px 28px; border-bottom: 1px solid var(--border);
+      background: var(--nav-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      transition: background-color .25s ease, border-color .25s ease;
     }
-    .nav-logo { font-size: 13px; font-weight: 600; letter-spacing: .08em; color: var(--teal); }
-    .nav-links { display: flex; gap: 24px; font-size: 11px; color: var(--dim); }
+    .nav-logo {
+      font-family: var(--f-mono); font-size: 13px; font-weight: 600; letter-spacing: .1em; color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 10px var(--signal-glow); animation: blink 2.6s ease-in-out infinite; }
+    .nav-links { display: flex; gap: 28px; font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+    .nav-links a { color: var(--muted); }
     .nav-links a:hover { color: var(--text); }
     .nav-cta {
-      padding: 6px 16px; background: var(--teal); color: var(--text);
-      border-radius: 6px; font-size: 11px; font-weight: 500;
-      transition: background .15s;
+      padding: 8px 18px; background: var(--signal); color: var(--btn-ink);
+      border-radius: 7px; font-family: var(--f-mono); font-size: 12px; font-weight: 600;
+      transition: background .15s, transform .15s;
     }
-    .nav-cta:hover { background: var(--teal-dk); color: var(--text); }
+    .nav-cta:hover { background: #5cf0d2; color: var(--btn-ink); transform: translateY(-1px); }
 
-    /* ── HERO ── */
+    .theme-toggle {
+      width: 34px; height: 34px; flex: none; display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border-up); border-radius: 8px; background: transparent; color: var(--muted);
+      cursor: pointer; margin-right: 14px; transition: border-color .15s, color .15s;
+    }
+    .theme-toggle:hover { border-color: var(--signal); color: var(--text); }
+    .theme-toggle svg { width: 16px; height: 16px; }
+    .theme-toggle .icon-moon { display: none; }
+    :root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+    :root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+    .nav-right { display: flex; align-items: center; }
+
+    /* ── HERO ──────────────────────────────────────────────────────────────── */
     .hero {
-      max-width: 860px; margin: 0 auto; padding: 96px 24px 72px;
-      text-align: center;
+      display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 56px;
+      padding: 88px 28px 76px; max-width: 1180px; margin: 0 auto;
     }
+    .hero-copy { max-width: 540px; }
     .badge {
-      display: inline-block; padding: 4px 14px;
-      border: 1px solid var(--teal); border-radius: 100px;
-      font-size: 10px; letter-spacing: .14em; color: var(--teal); margin-bottom: 28px;
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 10px;
+      border: 1px solid var(--border-up); border-radius: 100px;
+      font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; color: var(--muted); margin-bottom: 26px;
     }
+    .badge .blinker { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 8px var(--signal-glow); animation: blink 1.6s ease-in-out infinite; }
     h1 {
-      font-size: clamp(1.8rem, 5vw, 3.2rem); font-weight: 600;
-      line-height: 1.15; margin-bottom: 20px; letter-spacing: -.02em;
+      font-family: var(--f-display); font-size: clamp(2.1rem, 4.4vw, 3.4rem); font-weight: 600;
+      line-height: 1.08; letter-spacing: -.02em; margin-bottom: 22px; color: var(--text);
     }
-    h1 span { color: var(--teal); }
-    .hero-sub {
-      font-size: 14px; color: var(--muted); max-width: 580px;
-      margin: 0 auto 36px; line-height: 1.8;
-    }
-    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    h1 em { font-style: normal; color: var(--signal); }
+    .hero-sub { font-size: 16px; color: var(--muted); line-height: 1.7; margin-bottom: 34px; }
+    .hero-sub code { font-family: var(--f-mono); font-size: 13px; color: var(--signal); }
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
     .btn-primary {
-      display: inline-block; padding: 12px 28px;
-      background: var(--teal); color: var(--text); border-radius: 8px;
-      font-size: 13px; font-weight: 500; letter-spacing: .04em;
-      transition: background .15s;
+      display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px;
+      background: var(--signal); color: var(--btn-ink); border-radius: 9px;
+      font-family: var(--f-mono); font-size: 13px; font-weight: 600; letter-spacing: .01em;
+      transition: transform .15s, box-shadow .15s;
     }
-    .btn-primary:hover { background: var(--teal-dk); color: var(--text); }
+    .btn-primary:hover { color: var(--btn-ink); transform: translateY(-1px); box-shadow: 0 8px 24px var(--signal-glow); }
     .btn-ghost {
-      display: inline-block; padding: 12px 28px;
-      border: 1px solid var(--border); color: var(--muted); border-radius: 8px;
-      font-size: 13px; transition: border-color .15s, color .15s;
+      display: inline-flex; align-items: center; padding: 13px 24px;
+      border: 1px solid var(--border-up); color: var(--muted); border-radius: 9px;
+      font-family: var(--f-mono); font-size: 13px; transition: border-color .15s, color .15s;
     }
-    .btn-ghost:hover { border-color: var(--teal); color: var(--text); }
+    .btn-ghost:hover { border-color: var(--signal); color: var(--text); }
 
-    /* ── METRICS ── */
-    section { max-width: 960px; margin: 0 auto; padding: 0 24px 72px; }
-    .section-label {
-      font-size: 10px; color: var(--dim); letter-spacing: .12em;
-      margin-bottom: 24px; text-align: center;
+    /* ── HERO SIGNAL PANEL (signature visual) ──────────────────────────────── */
+    .signal-panel {
+      position: relative; aspect-ratio: 1 / 1; max-width: 420px; margin: 0 auto;
+      border: 1px solid var(--border); border-radius: 20px; background: var(--surface);
+      overflow: hidden;
     }
-    .metrics-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;
+    .signal-panel .tag {
+      position: absolute; font-family: var(--f-mono); font-size: 10px; letter-spacing: .08em; color: var(--dim);
+      z-index: 3;
     }
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 20px;
-    }
-    .metric-val { font-size: 36px; font-weight: 600; color: var(--teal); margin-bottom: 6px; }
-    .metric-label { font-size: 12px; color: var(--text); margin-bottom: 4px; }
-    .metric-sub { font-size: 10px; color: var(--dim); line-height: 1.6; }
+    .signal-panel .tag.tl { top: 16px; left: 18px; }
+    .signal-panel .tag.tr { top: 16px; right: 18px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .signal-panel .tag.tr .blinker { width: 5px; height: 5px; border-radius: 50%; background: var(--signal); animation: blink 1.4s ease-in-out infinite; }
+    .signal-panel .tag.bl { bottom: 16px; left: 18px; color: var(--muted); }
+    .signal-panel .tag.bl b { color: var(--signal); font-weight: 600; }
 
-    /* ── PRICING ── */
-    .pricing-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;
+    .ring-field { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .ring {
+      position: absolute; border-radius: 50%; border: 1px solid var(--border);
     }
-    .price-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; position: relative; }
-    .price-card.featured { border-color: var(--teal); }
+    .ring.r1 { width: 64%; height: 64%; }
+    .ring.r2 { width: 84%; height: 84%; border-style: dashed; border-color: var(--border-up); animation: spin-slow 38s linear infinite; }
+    .ring.r3 { width: 100%; height: 100%; border: none; }
+
+    .core {
+      position: relative; width: 14px; height: 14px; border-radius: 50%;
+      background: var(--signal); box-shadow: 0 0 0 0 var(--signal-glow), 0 0 18px var(--signal-glow);
+      z-index: 2;
+    }
+    .core::before, .core::after {
+      content: ''; position: absolute; inset: -8px; border-radius: 50%;
+      border: 1px solid var(--signal); opacity: 0; animation: pulse-ring 3.2s ease-out infinite;
+    }
+    .core::after { animation-delay: 1.6s; }
+
+    .waveform { position: absolute; left: 8%; right: 8%; bottom: 17%; z-index: 1; opacity: .85; }
+    .waveform path { fill: none; stroke: var(--signal-dim); stroke-width: 1.4; stroke-linecap: round; }
+    .waveform path.front { stroke: var(--signal); stroke-dasharray: 6 5; animation: wave-flow 5s linear infinite; }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .2; } }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+    @keyframes wave-flow { to { stroke-dashoffset: -220; } }
+    @keyframes pulse-ring {
+      0%   { transform: scale(.6); opacity: .55; }
+      70%  { transform: scale(2.3); opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; padding-top: 56px; }
+      .hero-copy { max-width: none; }
+      .signal-panel { max-width: 300px; }
+      .nav-links { display: none; }
+    }
+
+    /* ── TRUST BAR ─────────────────────────────────────────────────────────── */
+    .trust { padding: 8px 28px 64px; }
+    .trust-inner { max-width: 1080px; margin: 0 auto; }
+    .trust-label {
+      text-align: center; font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em;
+      color: var(--dim); text-transform: uppercase; margin-bottom: 28px;
+    }
+    .logo-row {
+      display: flex; align-items: center; justify-content: center; gap: 56px; flex-wrap: wrap;
+      padding: 28px 24px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface);
+    }
+    .logo-mark {
+      font-family: var(--f-display); font-size: 19px; font-weight: 600; letter-spacing: .01em;
+      color: var(--dim); filter: grayscale(1); opacity: .75; transition: opacity .2s, color .2s, filter .2s;
+      display: flex; align-items: center; gap: 7px; white-space: nowrap;
+    }
+    .logo-mark:hover { opacity: 1; color: var(--text); filter: grayscale(0); }
+    .logo-mark .glyph { width: 9px; height: 9px; border-radius: 2px; background: currentColor; opacity: .9; }
+    .logo-mark.nvidia { font-weight: 700; letter-spacing: .03em; }
+    .logo-mark.nvidia .glyph { border-radius: 50%; background: #76B900; }
+    .logo-mark.nvidia:hover { color: #9ad13a; }
+    .logo-mark.twilio { font-family: var(--f-body); font-weight: 700; text-transform: lowercase; }
+    .logo-mark.twilio .glyph { border-radius: 50%; background: #F22F46; }
+    .logo-mark.twilio:hover { color: #F22F46; }
+    .logo-mark.metaldrug .glyph { background: var(--signal-dim); }
+    .logo-mark.mymonitor .glyph { background: var(--signal); }
+
+    /* ── SECTION SCAFFOLDING ──────────────────────────────────────────────── */
+    section.block { max-width: 1080px; margin: 0 auto; padding: 0 28px 88px; }
+    .block-head { text-align: center; margin-bottom: 36px; }
+    .block-head .eyebrow { justify-content: center; margin-bottom: 12px; }
+    .block-head h2 { font-family: var(--f-display); font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 600; letter-spacing: -.01em; }
+    .block-head p { color: var(--muted); font-size: 14px; max-width: 540px; margin: 12px auto 0; line-height: 1.7; }
+
+    /* ── METRICS / INSTRUMENT STRIP ───────────────────────────────────────── */
+    .instrument-strip {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border); border-radius: 14px; background: var(--surface); overflow: hidden;
+    }
+    .instrument {
+      padding: 30px 26px; border-right: 1px solid var(--border); position: relative;
+    }
+    .instrument:last-child { border-right: none; }
+    .instrument::before {
+      content: ''; position: absolute; left: 26px; top: 18px; width: 18px; height: 1px; background: var(--signal-dim); opacity: .6;
+    }
+    .instrument-val { font-family: var(--f-display); font-size: 38px; font-weight: 600; color: var(--signal); margin: 14px 0 6px; }
+    .instrument-label { font-size: 13px; color: var(--text); margin-bottom: 6px; font-weight: 500; }
+    .instrument-sub { font-family: var(--f-mono); font-size: 11px; color: var(--dim); line-height: 1.6; }
+    @media (max-width: 700px) { .instrument-strip { grid-template-columns: 1fr; } .instrument { border-right: none; border-bottom: 1px solid var(--border); } .instrument:last-child { border-bottom: none; } }
+
+    /* ── SIGNAL CHAIN (pipeline) ──────────────────────────────────────────── */
+    .chain { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative; }
+    .chain-step {
+      position: relative; padding: 22px 18px 0; border-top: 2px solid var(--border-up);
+    }
+    .chain-step::before {
+      content: attr(data-n); position: absolute; top: -11px; left: 0;
+      width: 20px; height: 20px; border-radius: 50%; background: var(--bg); border: 2px solid var(--signal-dim);
+      color: var(--signal); font-family: var(--f-mono); font-size: 10px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .chain-step h3 { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .chain-step p { font-size: 12px; color: var(--muted); line-height: 1.65; margin-bottom: 10px; }
+    .chain-step .evt {
+      display: inline-block; font-family: var(--f-mono); font-size: 10.5px; color: var(--signal-dim);
+      background: rgba(13,148,136,.1); border: 1px solid rgba(13,148,136,.25); border-radius: 5px; padding: 3px 8px;
+    }
+    @media (max-width: 900px) {
+      .chain { grid-template-columns: 1fr; gap: 22px; }
+      .chain-step { border-top: none; border-left: 2px solid var(--border-up); padding: 0 0 0 22px; }
+      .chain-step::before { top: -2px; left: -11px; }
+    }
+
+    /* ── PRICING ───────────────────────────────────────────────────────────── */
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .price-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; position: relative; transition: border-color .15s, transform .15s; }
+    .price-card:hover { border-color: var(--border-up); transform: translateY(-2px); }
+    .price-card.featured { border-color: var(--signal-dim); box-shadow: 0 0 0 1px rgba(13,148,136,.18) inset; }
     .rec-badge {
-      position: absolute; top: -1px; right: 16px;
-      background: var(--teal); color: var(--text); font-size: 9px;
-      letter-spacing: .1em; padding: 2px 10px; border-radius: 0 0 6px 6px;
+      position: absolute; top: -1px; right: 18px; background: var(--signal); color: #02110c;
+      font-family: var(--f-mono); font-size: 9px; font-weight: 700; letter-spacing: .08em; padding: 3px 10px; border-radius: 0 0 6px 6px;
     }
-    .price-name { font-size: 11px; color: var(--teal); margin-bottom: 4px; }
-    .price-model { font-size: 10px; color: var(--dim); margin-bottom: 16px; }
-    .price-val { font-size: 28px; font-weight: 600; color: var(--text); }
-    .price-unit { font-size: 11px; color: var(--dim); margin-left: 4px; }
+    .price-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .price-model { font-family: var(--f-mono); font-size: 10.5px; color: var(--dim); margin-bottom: 18px; }
+    .price-val { font-family: var(--f-display); font-size: 30px; font-weight: 600; color: var(--signal); }
+    .price-unit { font-family: var(--f-mono); font-size: 11px; color: var(--dim); margin-left: 5px; }
 
-    /* ── API DOCS ── */
+    /* ── API DOCS ──────────────────────────────────────────────────────────── */
     .api-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
-    @media (max-width: 700px) { .api-grid { grid-template-columns: 1fr; } .nav-links { display: none; } }
-    .api-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
-    .api-label { font-size: 10px; color: var(--teal); letter-spacing: .1em; margin-bottom: 12px; }
-    .api-method { font-size: 11px; color: var(--dim); margin-bottom: 12px; }
-    .api-endpoint { font-family: var(--mono); font-size: 12px; color: var(--teal); display: block; margin-bottom: 12px; word-break: break-all; }
-    .api-desc { font-size: 11px; color: var(--muted); line-height: 1.8; margin-bottom: 16px; }
-    .headers-label { font-size: 10px; color: var(--dim); margin-bottom: 6px; }
-    pre.headers { font-size: 10px; color: var(--dim); line-height: 1.7; }
+    @media (max-width: 760px) { .api-grid { grid-template-columns: 1fr; } }
+    .api-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+    .api-label { font-family: var(--f-mono); font-size: 10.5px; color: var(--signal); letter-spacing: .1em; margin-bottom: 12px; }
+    .api-method { font-family: var(--f-mono); font-size: 11px; color: var(--dim); margin-bottom: 14px; }
+    .api-endpoint { font-family: var(--f-mono); font-size: 12px; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; display: block; margin-bottom: 14px; word-break: break-all; }
+    .api-desc { font-size: 13px; color: var(--muted); line-height: 1.75; margin-bottom: 18px; }
+    .headers-label { font-family: var(--f-mono); font-size: 10px; color: var(--dim); margin-bottom: 6px; letter-spacing: .06em; }
+    pre.headers { font-family: var(--f-mono); font-size: 10.5px; color: var(--dim); line-height: 1.7; }
 
-    .code-block { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-    .tab-bar { display: flex; background: #0b1120; border-bottom: 1px solid var(--border); }
+    .code-block { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .tab-bar { display: flex; background: var(--surface-2); border-bottom: 1px solid var(--border); }
     .tab {
-      padding: 6px 16px; font-size: 10px; letter-spacing: .08em;
-      border: none; border-bottom: 2px solid transparent;
-      background: transparent; color: var(--dim);
-      cursor: pointer; font-family: var(--mono);
+      padding: 9px 16px; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .06em;
+      border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--dim);
+      cursor: pointer;
     }
-    .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+    .tab.active { color: var(--signal); border-bottom-color: var(--signal); }
     .copy-btn {
-      margin-left: auto; padding: 6px 14px; font-size: 10px;
-      border: none; background: transparent; color: var(--dim);
-      cursor: pointer; font-family: var(--mono);
+      margin-left: auto; padding: 9px 14px; font-family: var(--f-mono); font-size: 10.5px;
+      border: none; background: transparent; color: var(--dim); cursor: pointer;
     }
-    .copy-btn:hover { color: var(--teal); }
-    .code-pane { display: none; padding: 16px; background: var(--bg); }
+    .copy-btn:hover { color: var(--signal); }
+    .code-pane { display: none; padding: 18px; background: var(--bg); }
     .code-pane.active { display: block; }
-    pre.code { font-size: 11px; color: var(--muted); line-height: 1.7; white-space: pre; overflow-x: auto; }
+    pre.code { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); line-height: 1.7; white-space: pre; overflow-x: auto; }
 
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border); padding: 32px 24px;
-      text-align: center; font-size: 11px; color: var(--dim);
-    }
-    footer a { color: var(--dim); margin: 0 10px; }
-    footer a:hover { color: var(--teal); }
+    /* ── FOOTER ────────────────────────────────────────────────────────────── */
+    footer { border-top: 1px solid var(--border); padding: 36px 28px; text-align: center; }
+    footer .foot-links { font-family: var(--f-mono); font-size: 11.5px; margin-bottom: 14px; }
+    footer .foot-links a { color: var(--dim); margin: 0 12px; }
+    footer .foot-links a:hover { color: var(--signal); }
+    footer .foot-meta { font-family: var(--f-mono); font-size: 10.5px; color: var(--dim); }
   </style>
 </head>
 <body>
 
 <!-- ── NAV ─────────────────────────────────────────────────────────────────── -->
-<nav>
-  <a href="/" class="nav-logo">EXERGYNET</a>
+<nav class="topnav">
+  <a href="/" class="nav-logo"><span class="dot"></span>EXERGYNET</a>
   <div class="nav-links">
     <a href="/developers.html">Docs</a>
     <a href="/voice.html">Voice</a>
     <a href="/nodes.html">Nodes</a>
     <a href="/token.html">Token</a>
   </div>
-  <a href="https://portal.exergynet.org/auth/register" class="nav-cta">Get Started</a>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark and light mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.4A9 9 0 1 1 11.6 3 7 7 0 0 0 21 12.4z"/></svg>
+    </button>
+    <a href="https://portal.exergynet.org/auth/register" class="nav-cta">Get started</a>
+  </div>
 </nav>
 
-<!-- ── HERO ─────────────────────────────────────────────────────────────────── -->
+<!-- ── HERO ────────────────────────────────────────────────────────────────── -->
 <div class="hero">
-  <div class="badge">SOVEREIGN VOICE STACK v2.1.2 · LIVE</div>
-  <h1>Bringing Voice to Life.<br><span>Sovereign. Private. Local.</span></h1>
-  <p class="hero-sub">
-    A completely localized, GPU-accelerated acoustic membrane for clinical and enterprise workloads.
-    100% HIPAA compliant. Zero external API leakage.
-  </p>
-  <div class="cta-row">
-    <a href="https://portal.exergynet.org/auth/register" class="btn-primary">
-      Get Started — Includes $10.00 Free Developer Credit
-    </a>
-    <a href="/developers.html" class="btn-ghost">Read the Docs</a>
+  <div class="hero-copy">
+    <div class="badge"><span class="blinker"></span>SOVEREIGN VOICE STACK v2.1.2 · LIVE ON NODE 1</div>
+    <h1>Voice infrastructure that<br>never leaves <em>your</em> perimeter.</h1>
+    <p class="hero-sub">
+      A fully localized, GPU-accelerated acoustic pipeline for clinical and enterprise workloads.
+      Whisper STT, a local extraction model, and Piper TTS — all running on hardware you control.
+      100% HIPAA compliant. Zero third-party API leakage.
+    </p>
+    <div class="cta-row">
+      <a href="https://portal.exergynet.org/auth/register" class="btn-primary">Get started — $10 free credit</a>
+      <a href="/developers.html" class="btn-ghost">Read the docs</a>
+    </div>
+  </div>
+
+  <div class="signal-panel">
+    <div class="tag tl">NODE 1 · 20.127.220.199</div>
+    <div class="tag tr"><span class="blinker"></span>LIVE</div>
+    <div class="ring-field">
+      <div class="ring r3"></div>
+      <div class="ring r2"></div>
+      <div class="ring r1"></div>
+      <div class="core"></div>
+    </div>
+    <svg class="waveform" viewBox="0 0 300 60" preserveAspectRatio="none">
+      <path d="M0,30 L20,30 L28,12 L36,48 L44,18 L52,42 L60,30 L80,30 L88,8 L96,52 L104,22 L112,38 L120,30 L300,30" />
+      <path class="front" d="M0,30 L20,30 L28,12 L36,48 L44,18 L52,42 L60,30 L80,30 L88,8 L96,52 L104,22 L112,38 L120,30 L300,30" />
+    </svg>
+    <div class="tag bl">RTT <b>1.24s</b> · 8kHz µ-law</div>
   </div>
 </div>
 
-<!-- ── METRICS ───────────────────────────────────────────────────────────────── -->
-<section>
-  <div class="section-label">■ VERIFIED PERFORMANCE</div>
-  <div class="metrics-grid">
-    <div class="card" style="text-align:center">
-      <div class="metric-val">1.24s</div>
-      <div class="metric-label">End-to-End Latency</div>
-      <div class="metric-sub">Whisper STT → Vanguard LLM → Piper TTS</div>
-    </div>
-    <div class="card" style="text-align:center">
-      <div class="metric-val">98%</div>
-      <div class="metric-label">ASR Transcription Accuracy</div>
-      <div class="metric-sub">Under telephone-band noise (G.711 µ-law 8kHz)</div>
-    </div>
-    <div class="card" style="text-align:center">
-      <div class="metric-val">100%</div>
-      <div class="metric-label">Data Privacy</div>
-      <div class="metric-sub">On-premise execution — zero third-party API calls</div>
+<!-- ── TRUST BAR ───────────────────────────────────────────────────────────── -->
+<section class="trust">
+  <div class="trust-inner">
+    <div class="trust-label">Our developers and enterprises</div>
+    <div class="logo-row">
+      <span class="logo-mark metaldrug"><span class="glyph"></span>metaldrug.com</span>
+      <span class="logo-mark mymonitor"><span class="glyph"></span>MyMonitor.ai</span>
+      <span class="logo-mark nvidia"><span class="glyph"></span>NVIDIA</span>
+      <span class="logo-mark twilio"><span class="glyph"></span>twilio</span>
     </div>
   </div>
 </section>
 
-<!-- ── PRICING ───────────────────────────────────────────────────────────────── -->
-<section>
-  <div class="section-label">■ TRANSPARENT PRICING</div>
+<!-- ── METRICS ─────────────────────────────────────────────────────────────── -->
+<section class="block">
+  <div class="block-head">
+    <div class="eyebrow">VERIFIED PERFORMANCE</div>
+    <h2>Read straight off the node.</h2>
+  </div>
+  <div class="instrument-strip">
+    <div class="instrument">
+      <div class="instrument-val">1.24s</div>
+      <div class="instrument-label">End-to-end latency</div>
+      <div class="instrument-sub">Whisper STT → extraction → Piper TTS</div>
+    </div>
+    <div class="instrument">
+      <div class="instrument-val">98%</div>
+      <div class="instrument-label">ASR transcription accuracy</div>
+      <div class="instrument-sub">Under telephone-band noise (G.711 µ-law, 8kHz)</div>
+    </div>
+    <div class="instrument">
+      <div class="instrument-val">100%</div>
+      <div class="instrument-label">Data privacy</div>
+      <div class="instrument-sub">On-premise execution — zero third-party API calls</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SIGNAL CHAIN ────────────────────────────────────────────────────────── -->
+<section class="block">
+  <div class="block-head">
+    <div class="eyebrow">THE SIGNAL CHAIN</div>
+    <h2>One call, five steps, one machine.</h2>
+    <p>Every call rides a single round trip through hardware you own — no hop ever touches a third-party API.</p>
+  </div>
+  <div class="chain">
+    <div class="chain-step" data-n="1">
+      <h3>Stream opens</h3>
+      <p>Twilio connects over a bidirectional WebSocket and starts sending audio frames.</p>
+      <span class="evt">event: start</span>
+    </div>
+    <div class="chain-step" data-n="2">
+      <h3>Audio decodes</h3>
+      <p>20ms G.711 µ-law frames are decoded to PCM16 and handed to CUDA-Whisper.</p>
+      <span class="evt">160B / 20ms</span>
+    </div>
+    <div class="chain-step" data-n="3">
+      <h3>Speech transcribes</h3>
+      <p>Whisper.cpp transcribes in real time on local GPU — nothing leaves the node.</p>
+      <span class="evt">whisper.cpp + CUDA</span>
+    </div>
+    <div class="chain-step" data-n="4">
+      <h3>Response synthesizes</h3>
+      <p>The transcript is extracted to structured JSON, then Piper TTS speaks the reply.</p>
+      <span class="evt">/v1/extract</span>
+    </div>
+    <div class="chain-step" data-n="5">
+      <h3>Audio streams back</h3>
+      <p>Mulaw frames return over the same socket. A mid-sentence interruption flushes the queue instantly.</p>
+      <span class="evt">event: clear</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ─────────────────────────────────────────────────────────────── -->
+<section class="block">
+  <div class="block-head">
+    <div class="eyebrow">TRANSPARENT PRICING</div>
+    <h2>Pay for what the node burns.</h2>
+  </div>
   <div class="pricing-grid">
     <div class="price-card">
       <div class="price-name">Vanguard Standard</div>
@@ -300,20 +570,23 @@
   </div>
 </section>
 
-<!-- ── API DOCS ───────────────────────────────────────────────────────────────── -->
-<section style="max-width:1060px">
-  <div class="section-label">■ INTERACTIVE API DOCUMENTATION</div>
+<!-- ── API DOCS ────────────────────────────────────────────────────────────── -->
+<section class="block" style="max-width:1100px">
+  <div class="block-head">
+    <div class="eyebrow">INTERACTIVE API DOCUMENTATION</div>
+    <h2>Two endpoints. That's the whole surface.</h2>
+  </div>
 
   <!-- /media-stream -->
   <div class="api-grid">
     <div class="api-card">
-      <div class="api-label">■ ACOUSTIC VOICE STREAM</div>
+      <div class="api-label">ACOUSTIC VOICE STREAM</div>
       <div class="api-method">WebSocket · G.711 µ-law · 8kHz mono · 20ms frames</div>
       <code class="api-endpoint">wss://explorer-api.exergynet.org/media-stream</code>
       <p class="api-desc">
-        Establish a bidirectional Twilio <code style="color:var(--teal)">&lt;Connect&gt;&lt;Stream&gt;</code>
+        Establish a bidirectional Twilio <code style="color:var(--signal)">&lt;Connect&gt;&lt;Stream&gt;</code>
         over WebSocket. The server ingests mulaw audio frames, transcribes via CUDA-Whisper,
-        routes through Vanguard, synthesizes TTS, and streams mulaw frames back — all within 1.24s average.
+        extracts structured intent, synthesizes TTS, and streams mulaw frames back — all within 1.24s average.
       </p>
       <div class="headers-label">REQUIRED HEADERS</div>
       <pre class="headers">Authorization: Bearer &lt;key&gt;
@@ -387,13 +660,13 @@ asyncio.run(stream())</pre>
   <!-- /v1/extract -->
   <div class="api-grid">
     <div class="api-card">
-      <div class="api-label">■ SOVEREIGN CLINICAL EXTRACTOR</div>
+      <div class="api-label">SOVEREIGN CLINICAL EXTRACTOR</div>
       <div class="api-method">REST · POST · JSON · Schema-aware structured extraction</div>
       <code class="api-endpoint">POST https://explorer-api.exergynet.org/v1/extract</code>
       <p class="api-desc">
-        Pass raw clinical text and a typed schema. The SEI extractor returns structured JSON
+        Pass raw clinical text and a typed schema. The extractor returns structured JSON
         with per-field confidence scores and clarification flags. No conversational prose leaks.
-        Bypasses LLM chat mode entirely.
+        Bypasses chat mode entirely.
       </p>
       <div class="headers-label">REQUIRED HEADERS</div>
       <pre class="headers">Authorization: Bearer &lt;key&gt;
@@ -461,9 +734,9 @@ data = resp.json()
   </div>
 </section>
 
-<!-- ── FOOTER ─────────────────────────────────────────────────────────────────── -->
+<!-- ── FOOTER ──────────────────────────────────────────────────────────────── -->
 <footer>
-  <p style="margin-bottom:12px">
+  <p class="foot-links">
     <a href="/">exergynet.org</a>
     <a href="/developers.html">Docs</a>
     <a href="https://portal.exergynet.org">Portal</a>
@@ -471,10 +744,16 @@ data = resp.json()
     <a href="/token.html">Token</a>
     <a href="/legal.html">Legal</a>
   </p>
-  <p>© 2026 ExergyNet · Sovereign Voice Stack v2.1.2 · HIPAA Compliant · Zero Data Egress</p>
+  <p class="foot-meta">© 2026 ExergyNet · Sovereign Voice Stack v2.1.2 · HIPAA Compliant · Zero Data Egress</p>
 </footer>
 
 <script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+  }
+
   function switchTab(btn, paneId) {
     const block = btn.closest('.code-block');
     block.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
