@@ -8,16 +8,18 @@ export interface HollowObject {
 }
 
 export interface ZKQueryResult {
+  query_id: string;
+  xlmp_root: string;
+  image_id: string;
+  proof_size_bytes: number;
+  latency_ms: number;
   journal: {
     result: string;
     confidence: number;
     citations: string[];
-    groth16_receipt: string;
     zk_sealed: boolean;
+    groth16_receipt: string;
   };
-  latency_ms: number;
-  proof_size_bytes: number;
-  xlmp_root: string;
 }
 
 // ── In-process content store (persists within PM2 worker) ─────────────────────
@@ -61,12 +63,10 @@ export const xlmp_shatter_payload = async (payload: Buffer): Promise<HollowObjec
 function resolveIntent(intent: string, content: string): { result: string; confidence: number; citations: string[] } {
   const q = intent.toLowerCase();
 
-  // Try to parse as JSON for structured lookup
   let parsed: Record<string, unknown> | null = null;
   try { parsed = JSON.parse(content); } catch { parsed = null; }
 
   if (parsed) {
-    // Flatten all key-value pairs from the JSON for keyword search
     const pairs: Array<{ path: string; value: string }> = [];
     const flatten = (obj: unknown, prefix = '') => {
       if (obj === null || obj === undefined) return;
@@ -82,7 +82,6 @@ function resolveIntent(intent: string, content: string): { result: string; confi
     };
     flatten(parsed);
 
-    // Score each pair against the intent keywords
     const words = q.split(/\W+/).filter(w => w.length > 2);
     const scored = pairs.map(pair => {
       const pairText = `${pair.path} ${pair.value}`.toLowerCase();
@@ -100,15 +99,10 @@ function resolveIntent(intent: string, content: string): { result: string; confi
       return { result, confidence, citations };
     }
 
-    // Nothing matched
-    return {
-      result: 'No matching field found in dataset for this query.',
-      confidence: 0.08,
-      citations: [],
-    };
+    return { result: 'No matching field found in dataset for this query.', confidence: 0.08, citations: [] };
   }
 
-  // Plain text fallback — return excerpt containing any matching word
+  // Plain-text fallback
   const lines = content.split('\n');
   const words = q.split(/\W+/).filter(w => w.length > 2);
   const matching = lines.filter(l => words.some(w => l.toLowerCase().includes(w)));
@@ -120,23 +114,20 @@ function resolveIntent(intent: string, content: string): { result: string; confi
     };
   }
 
-  return {
-    result: 'No matching content found for this query in the Hollow Object.',
-    confidence: 0.05,
-    citations: [],
-  };
+  return { result: 'No matching content found for this query in the Hollow Object.', confidence: 0.05, citations: [] };
 }
 
 // ── ZK Query ──────────────────────────────────────────────────────────────────
 export const xlmp_zk_query = async (
   xlmp_root: string,
-  intent: string,
+  image_id: string,
+  query_params: { intent: string },
 ): Promise<ZKQueryResult> => {
-  console.log(`[xLMP-DS] ZK query — root: ${xlmp_root} | intent: "${intent}"`);
+  console.log(`[xLMP-DS] ZK query — image_id: ${image_id} | root: ${xlmp_root} | intent: "${query_params.intent}"`);
 
   const startMs = Date.now();
 
-  // Simulate ZK proof time
+  // Simulate ZK proof generation
   await new Promise(resolve => setTimeout(resolve, 400 + Math.random() * 600));
 
   const content = xlmp_get_content(xlmp_root);
@@ -144,23 +135,27 @@ export const xlmp_zk_query = async (
     throw new Error(`Hollow Object not found for root: ${xlmp_root}`);
   }
 
-  const { result, confidence, citations } = resolveIntent(intent, content);
+  const { result, confidence, citations } = resolveIntent(query_params.intent, content);
   const latency_ms = Date.now() - startMs;
 
   const groth16_receipt = '0x' + crypto.createHash('sha256')
-    .update(`${xlmp_root}:${intent}:${Date.now()}`)
+    .update(`${image_id}:${xlmp_root}:${query_params.intent}:${Date.now()}`)
     .digest('hex');
 
+  const query_id = 'qry_' + crypto.randomBytes(6).toString('hex');
+
   return {
+    query_id,
+    xlmp_root,
+    image_id,
+    proof_size_bytes: 192 + Math.floor(Math.random() * 64),
+    latency_ms,
     journal: {
       result,
       confidence,
       citations,
-      groth16_receipt,
       zk_sealed: true,
+      groth16_receipt,
     },
-    latency_ms,
-    proof_size_bytes: 192 + Math.floor(Math.random() * 64),
-    xlmp_root,
   };
 };
