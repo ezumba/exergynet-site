@@ -212,6 +212,49 @@ const MAX_EVIDENCE_CHARS = 3000; // hard cap on total context chars
 
 const VANGUARD_URL = process.env.SEI_VANGUARD_URL ?? 'http://127.0.0.1:5000';
 
+// Race order: auditor first (Nemotron-30B, highest quality), then ultra, pro, standard.
+// First model to return a valid answer wins; all others are aborted immediately.
+// When auditor/ultra come back online they will automatically win the race.
+const VANGUARD_RACE = [
+  'vanguard-auditor',
+  'vanguard-ultra',
+  'vanguard-pro',
+  'vanguard-standard',
+] as const;
+
+interface SynthesisWinner {
+  answer: string;
+  model: string;
+}
+
+async function vanguardRace(messages: { role: string; content: string }[]): Promise<SynthesisWinner> {
+  const controllers = VANGUARD_RACE.map(() => new AbortController());
+
+  const races = VANGUARD_RACE.map((model, i) =>
+    fetch(`${VANGUARD_URL}/v1/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, stream: false, messages }),
+      signal: controllers[i].signal,
+    }).then(async res => {
+      if (!res.ok) throw new Error(`${model} HTTP ${res.status}`);
+      const data = await res.json();
+      const answer = (data.choices?.[0]?.message?.content ?? '').trim();
+      if (!answer) throw new Error(`${model} empty response`);
+      return { answer, model } as SynthesisWinner;
+    })
+  );
+
+  try {
+    const winner = await Promise.any(races);
+    // Cancel every still-pending request the moment a winner is found
+    controllers.forEach(c => { try { c.abort(); } catch { /* already settled */ } });
+    return winner;
+  } catch {
+    throw new Error('All Vanguard models failed to respond');
+  }
+}
+
 function splitIntoChunks(text: string): string[] {
   const chunks: string[] = [];
   const paragraphs = text.split(/\n{2,}/);
@@ -309,52 +352,43 @@ async function synthesizeFromDocument(
   const context = evidenceWindows.join('\n\n---\n\n');
 
   try {
-    const llmRes = await fetch(`${VANGUARD_URL}/v1/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'vanguard-standard',
-        stream: false,
-        messages: [
-          {
-            role: 'system',
-            content: `You are a precise document intelligence engine. Answer the query using ONLY the provided evidence excerpts. Synthesize a direct, complete answer. Do not reference the excerpts or say "the document says". If the answer is not present, say so clearly.`,
-          },
-          {
-            role: 'user',
-            content: `Evidence:\n\n${context}\n\nQuery: ${intent}`,
-          },
-        ],
-      }),
-      signal: AbortSignal.timeout(30000),
-    });
-
-    if (!llmRes.ok) throw new Error(`Vanguard HTTP ${llmRes.status}`);
-
-    const llmData = await llmRes.json();
-    const answer = llmData.choices?.[0]?.message?.content ?? '';
-    if (!answer.trim()) throw new Error('Empty synthesis response');
+    const { answer, model: winnerModel } = await vanguardRace([
+      {
+        role: 'system',
+        content: `You are a precise document intelligence engine. Answer the query using ONLY the provided evidence excerpts. Synthesize a direct, complete answer. Do not reference the excerpts or say "the document says". If the answer is not present, say so clearly.`,
+      },
+      {
+        role: 'user',
+        content: `Evidence:\n\n${context}\n\nQuery: ${intent}`,
+      },
+    ]);
 
     return {
-      result: answer.trim(),
+      result: answer,
       status: 'found',
       confidence: 0.93,
-      citations: usedChunks.map(c => {
-        const shardIdx = Math.floor((c.idx * CHUNK_TARGET_SIZE) / shardSize);
-        return `shard[${shardIdx}] · chunk[${c.idx}] · evidence_window · hits: ${c.score}`;
-      }),
+      citations: [
+        `model: ${winnerModel}`,
+        ...usedChunks.map(c => {
+          const shardIdx = Math.floor((c.idx * CHUNK_TARGET_SIZE) / shardSize);
+          return `shard[${shardIdx}] · chunk[${c.idx}] · evidence_window · hits: ${c.score}`;
+        }),
+      ],
     };
   } catch (e: any) {
-    console.warn('[xLMP-DS] Synthesis fallback:', e?.message);
+    console.warn('[xLMP-DS] All models failed, returning evidence windows:', e?.message);
     return {
       result: evidenceWindows.join(' | '),
       status: 'found',
       confidence: 0.72,
-      citations: usedChunks.map(c => {
-        const shardIdx = Math.floor((c.idx * CHUNK_TARGET_SIZE) / shardSize);
-        return `shard[${shardIdx}] · chunk[${c.idx}] · evidence_window (synthesis offline)`;
-      }),
-      message: `Synthesis unavailable (${e?.message ?? 'Vanguard offline'}) — returning evidence windows.`,
+      citations: [
+        'model: none (all models offline)',
+        ...usedChunks.map(c => {
+          const shardIdx = Math.floor((c.idx * CHUNK_TARGET_SIZE) / shardSize);
+          return `shard[${shardIdx}] · chunk[${c.idx}] · evidence_window (raw fallback)`;
+        }),
+      ],
+      message: `All Vanguard models offline — returning raw evidence windows.`,
     };
   }
 }
