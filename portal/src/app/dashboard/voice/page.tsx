@@ -450,6 +450,9 @@ export default function VoiceStudio() {
   const mediaRecRef           = useRef<MediaRecorder | null>(null);
   const chunksRef             = useRef<Blob[]>([]);
   const timerRef              = useRef<ReturnType<typeof setInterval> | null>(null);
+  const analyserRef           = useRef<AnalyserNode | null>(null);
+  const animFrameRef          = useRef<number | null>(null);
+  const [waveAmps,  setWaveAmps]  = useState<number[]>(Array(32).fill(8));
 
   // ── Init ────────────────────────────────────────────────────────────────────
 
@@ -581,11 +584,27 @@ export default function VoiceStudio() {
     setSttError('');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mr     = new MediaRecorder(stream);
+      // Wire up Web Audio analyser for waveform visualizer
+      const audioCtx = new AudioContext();
+      const source   = audioCtx.createMediaStreamSource(stream);
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64;
+      source.connect(analyser);
+      analyserRef.current = analyser;
+      const dataArr = new Uint8Array(analyser.frequencyBinCount);
+      const drawWave = () => {
+        animFrameRef.current = requestAnimationFrame(drawWave);
+        analyser.getByteFrequencyData(dataArr);
+        setWaveAmps(Array.from(dataArr).slice(0, 32).map(v => Math.max(4, (v / 255) * 52)));
+      };
+      drawWave();
+
+      const mr = new MediaRecorder(stream);
       chunksRef.current = [];
       mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data); };
       mr.onstop = () => {
         stream.getTracks().forEach(t => t.stop());
+        audioCtx.close();
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
         transcribe(new File([blob], `recording-${Date.now()}.webm`, { type: 'audio/webm' }));
       };
@@ -603,6 +622,9 @@ export default function VoiceStudio() {
     mediaRecRef.current = null;
     setRecording(false);
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+    if (animFrameRef.current) { cancelAnimationFrame(animFrameRef.current); animFrameRef.current = null; }
+    analyserRef.current = null;
+    setWaveAmps(Array(32).fill(8));
   };
 
   // ── Styles ───────────────────────────────────────────────────────────────────
