@@ -453,6 +453,10 @@ export default function VoiceStudio() {
   const analyserRef           = useRef<AnalyserNode | null>(null);
   const animFrameRef          = useRef<number | null>(null);
   const [waveAmps,  setWaveAmps]  = useState<number[]>(Array(32).fill(8));
+  const [liveText,    setLiveText]    = useState('');
+  const [interimText, setInterimText] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
 
   // ── Init ────────────────────────────────────────────────────────────────────
 
@@ -612,6 +616,27 @@ export default function VoiceStudio() {
       mediaRecRef.current = mr;
       setRecording(true); setRecSeconds(0);
       timerRef.current = setInterval(() => setRecSeconds(s => s + 1), 1000);
+
+      // Web Speech API live transcript
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const rec = new SpeechRecognition();
+        rec.continuous = true;
+        rec.interimResults = true;
+        rec.onresult = (event: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+          let final = ''; let interim = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) final += event.results[i][0].transcript;
+            else interim += event.results[i][0].transcript;
+          }
+          if (final) setLiveText(p => p + final);
+          setInterimText(interim);
+        };
+        rec.onerror = () => {};
+        rec.start();
+        recognitionRef.current = rec;
+      }
     } catch {
       setSttError('Microphone access denied. Allow mic access and try again.');
     }
@@ -625,6 +650,10 @@ export default function VoiceStudio() {
     if (animFrameRef.current) { cancelAnimationFrame(animFrameRef.current); animFrameRef.current = null; }
     analyserRef.current = null;
     setWaveAmps(Array(32).fill(8));
+    recognitionRef.current?.stop();
+    recognitionRef.current = null;
+    setLiveText('');
+    setInterimText('');
   };
 
   // ── Styles ───────────────────────────────────────────────────────────────────
