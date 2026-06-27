@@ -9,6 +9,8 @@ import {
   xLMP_ObliterateAll,
 } from '@/lib/xlmp_storage';
 import { compileAndPlayEDL, stopEDL, isEDLPlaying } from '@/lib/exergy_dsp';
+import StepSequencer from '@/components/voice/StepSequencer';
+import type { SeqTrack } from '@/components/voice/StepSequencer';
 import type { ExergyDSPProtocol } from '@/types/edl';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -384,6 +386,23 @@ function ClipActions({ clip, onDelete, onToast }: {
   );
 }
 
+// ── StepSequencer helpers ─────────────────────────────────────────────────────
+
+function scriptToSeqTracks(script: ExergyDSPProtocol): SeqTrack[] {
+  return script.tracks.map(track => {
+    const steps = new Array<boolean>(16).fill(false);
+    for (const note of track.notes) {
+      if (!note.time) continue;
+      const parts = note.time.split(':').map(Number);
+      if ((parts[0] ?? 0) !== 0) continue; // first bar only
+      const step = (parts[1] ?? 0) * 4 + (parts[2] ?? 0);
+      if (step >= 0 && step < 16) steps[step] = true;
+    }
+    const inst = track.drumType ?? track.instrument ?? track.synth ?? track.type ?? 'synth';
+    return { name: track.name, instrument: String(inst), steps };
+  });
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function VoiceStudio() {
@@ -394,6 +413,9 @@ export default function VoiceStudio() {
   const [musicGenerating, setMusicGenerating] = useState(false);
   const [musicPlaying,   setMusicPlaying]   = useState(false);
   const [musicError,     setMusicError]     = useState('');
+  const [seqTracks,      setSeqTracks]      = useState<SeqTrack[]>([]);
+  const [currentStep,    setCurrentStep]    = useState(-1);
+  const stepTickerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [forgeRecording, setForgeRecording] = useState(false);
   const [forgeSeconds, setForgeSeconds]   = useState(0);
   const forgeMediaRef = useRef<MediaRecorder | null>(null);
@@ -973,6 +995,22 @@ export default function VoiceStudio() {
                   </div>
                 )}
 
+                {/* ── Step Sequencer grid ── */}
+                {seqTracks.length > 0 && (
+                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '14px 16px' }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 8 }}>
+                      Step Grid — {musicScript?.bpm} BPM
+                    </div>
+                    <StepSequencer
+                      tracks={seqTracks}
+                      currentStep={currentStep}
+                      onToggle={(ti, si) => setSeqTracks(prev => prev.map((t, i) =>
+                        i === ti ? { ...t, steps: t.steps.map((v, j) => j === si ? !v : v) } : t
+                      ))}
+                    />
+                  </div>
+                )}
+
                 {/* Script preview (collapsible) */}
                 {musicScript && (
                   <details style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10 }}>
@@ -1004,8 +1042,18 @@ export default function VoiceStudio() {
                       if (!res.ok) { setMusicError(data.detail || data.error || 'Generation failed'); return; }
                       const script: ExergyDSPProtocol = data.script;
                       setMusicScript(script);
+                      setSeqTracks(scriptToSeqTracks(script));
+                      setCurrentStep(-1);
+                      if (stepTickerRef.current) clearInterval(stepTickerRef.current);
                       await compileAndPlayEDL(script);
                       setMusicPlaying(true);
+                      // Step ticker: 16th notes at script.bpm
+                      const msPerStep = (60000 / script.bpm) / 4;
+                      let step = 0;
+                      stepTickerRef.current = setInterval(() => {
+                        setCurrentStep(step % 16);
+                        step++;
+                      }, msPerStep);
                       const clipId = `EDL-${Date.now()}`;
                       setClips(prev => {
                         const entry = {
@@ -1024,7 +1072,22 @@ export default function VoiceStudio() {
 
                 {musicScript && (
                   <button
-                    onClick={() => { if (musicPlaying) { stopEDL(); setMusicPlaying(false); } else { compileAndPlayEDL(musicScript).then(() => setMusicPlaying(true)); } }}
+                    onClick={async () => {
+                      if (musicPlaying) {
+                        stopEDL();
+                        if (stepTickerRef.current) { clearInterval(stepTickerRef.current); stepTickerRef.current = null; }
+                        setCurrentStep(-1);
+                        setMusicPlaying(false);
+                      } else if (musicScript) {
+                        setCurrentStep(-1);
+                        if (stepTickerRef.current) clearInterval(stepTickerRef.current);
+                        await compileAndPlayEDL(musicScript);
+                        setMusicPlaying(true);
+                        const msPerStep = (60000 / musicScript.bpm) / 4;
+                        let step = 0;
+                        stepTickerRef.current = setInterval(() => { setCurrentStep(step % 16); step++; }, msPerStep);
+                      }
+                    }}
                     style={{ background: 'var(--bg-surface)', color: musicPlaying ? '#ef4444' : 'var(--accent)', border: `1px solid ${musicPlaying ? 'rgba(239,68,68,0.4)' : 'var(--border-mid)'}`, borderRadius: 10, padding: '11px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
                     {musicPlaying ? '■ HALT ENGINE' : '▶ REPLAY'}
                   </button>
