@@ -107,6 +107,13 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
           const body = await res.json().catch(() => ({}));
           throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
         }
+        // Also credit voice ledger: $1 USDC = 10,000 voice credits
+        const voiceCreditsToAdd = Math.round(parseFloat(amount) * 10000);
+        fetch('/api/billing/add-credits', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ credits: voiceCreditsToAdd }),
+        }).catch(() => {});
         setStatus('done');
         onSuccess();
         setTimeout(() => { setStatus('idle'); setTxHash(undefined); }, 4000);
@@ -353,12 +360,32 @@ export default function BillingPage() {
     }
   }, [authed]);
 
-  // Check for Stripe success redirect
+  // Check for Stripe success redirect — call verify-session to guarantee credit
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('stripe') === 'success') {
-      setTimeout(refresh, 1500); // give webhook time to process
-      window.history.replaceState({}, '', window.location.pathname);
+    if (params.get('stripe') !== 'success') return;
+    window.history.replaceState({}, '', window.location.pathname);
+
+    const sessionId = params.get('session_id');
+    const token = localStorage.getItem('en_token') ?? '';
+
+    if (sessionId && token) {
+      // Credit USDC balance via biological_proxy
+      fetch(`${API}/api/stripe/verify-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ session_id: sessionId }),
+      }).catch(() => {});
+
+      // Credit Voice Studio ledger via Next.js API
+      fetch('/api/billing/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId }),
+      }).then(() => refresh()).catch(() => setTimeout(refresh, 2000));
+    } else {
+      // No session_id in URL (old success URLs) — fall back to delay
+      setTimeout(refresh, 2000);
     }
   }, []);
 
