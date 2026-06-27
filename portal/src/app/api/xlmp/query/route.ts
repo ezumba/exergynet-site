@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { xlmp_zk_query } from "@/lib/xlmp_ds_core";
 
+// Elevate body size limit for large xLMP query payloads (evidence + metadata)
+export const config = { api: { bodyParser: { sizeLimit: '10mb' } } };
+
 export async function POST(req: Request) {
   try {
     let xlmp_root: string | undefined;

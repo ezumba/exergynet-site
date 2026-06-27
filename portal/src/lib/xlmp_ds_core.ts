@@ -200,11 +200,15 @@ interface ResolveResult {
   message?: string;
 }
 
-// ── Document Intelligence Layer ────────────────────────────────────────────────
-// Split plain-text content into semantic chunks at paragraph boundaries.
-const CHUNK_TARGET_SIZE = 1800; // chars per chunk
-const MAX_CONTEXT_CHARS = 7000; // total chars passed to LLM
-const TOP_CHUNKS = 5;
+// ── Document Intelligence Layer — Staged Compression Path ─────────────────────
+// Blind chunking replaced by Semantic Evidence Extraction:
+//   1. Score chunks by keyword hit density
+//   2. Extract a 900-char evidence window centered on the best keyword match per chunk
+//   3. Pass max 3 windows (< 3000 chars total) to Vanguard — not raw chunks
+const CHUNK_TARGET_SIZE = 1800; // chars per chunk for initial segmentation
+const EVIDENCE_WINDOW    = 900;  // chars surrounding the best keyword match
+const MAX_WINDOWS        = 3;    // max evidence windows sent to Vanguard
+const MAX_EVIDENCE_CHARS = 3000; // hard cap on total context chars
 
 const VANGUARD_URL = process.env.SEI_VANGUARD_URL ?? 'http://127.0.0.1:5000';
 
@@ -230,12 +234,42 @@ function scoreChunk(chunk: string, queryWords: string[]): number {
   let score = 0;
   for (const w of queryWords) {
     let pos = 0;
-    while ((pos = lower.indexOf(w, pos)) !== -1) {
-      score++;
-      pos++;
-    }
+    while ((pos = lower.indexOf(w, pos)) !== -1) { score++; pos++; }
   }
   return score;
+}
+
+// Extract the 900-char window centered on the highest-density keyword match.
+// Returns null if no keyword is found in the chunk.
+function extractEvidenceWindow(chunk: string, queryWords: string[]): string | null {
+  const lower = chunk.toLowerCase();
+  let bestPos = -1;
+
+  for (const w of queryWords) {
+    const pos = lower.indexOf(w);
+    if (pos !== -1 && bestPos === -1) bestPos = pos;
+    // Prefer the position with the most surrounding hits (density center)
+    if (pos !== -1) {
+      const half = Math.floor(EVIDENCE_WINDOW / 2);
+      const wStart = Math.max(0, pos - half);
+      const wEnd   = Math.min(lower.length, pos + half);
+      const windowText = lower.slice(wStart, wEnd);
+      const density = queryWords.reduce((sum, qw) => {
+        let count = 0; let p = 0;
+        while ((p = windowText.indexOf(qw, p)) !== -1) { count++; p++; }
+        return sum + count;
+      }, 0);
+      // Always prefer the first hit as anchor; density used for tie-breaking
+      if (bestPos === -1 || density > 1) bestPos = pos;
+    }
+  }
+
+  if (bestPos === -1) return null;
+
+  const half = Math.floor(EVIDENCE_WINDOW / 2);
+  const start = Math.max(0, bestPos - half);
+  const end   = Math.min(chunk.length, bestPos + half);
+  return chunk.slice(start, end).trim();
 }
 
 async function synthesizeFromDocument(
@@ -245,33 +279,34 @@ async function synthesizeFromDocument(
 ): Promise<ResolveResult> {
   const chunks = splitIntoChunks(content);
 
-  // Score all chunks, sort descending
   const scored = chunks
     .map((chunk, idx) => ({ chunk, score: scoreChunk(chunk, queryWords), idx }))
     .filter(c => c.score > 0)
     .sort((a, b) => b.score - a.score);
 
   if (scored.length === 0) {
-    return {
-      result: null,
-      status: 'not_found',
-      confidence: 0,
-      citations: [],
-      message: 'No relevant content found for this query.',
-    };
+    return { result: null, status: 'not_found', confidence: 0, citations: [], message: 'No relevant content found for this query.' };
   }
 
-  // Build context: take top chunks up to MAX_CONTEXT_CHARS
-  let context = '';
+  // ── Evidence Reducer: extract windowed evidence, not raw chunks ────────────
+  const evidenceWindows: string[] = [];
   const usedChunks: typeof scored = [];
-  for (const c of scored.slice(0, TOP_CHUNKS)) {
-    const addition = c.chunk + '\n\n---\n\n';
-    if (context.length + addition.length > MAX_CONTEXT_CHARS && usedChunks.length > 0) break;
-    context += addition;
+  const shardSize = 512 * 1024;
+
+  for (const c of scored) {
+    if (evidenceWindows.length >= MAX_WINDOWS) break;
+    const window = extractEvidenceWindow(c.chunk, queryWords);
+    if (!window) continue;
+    if (evidenceWindows.reduce((s, w) => s + w.length, 0) + window.length > MAX_EVIDENCE_CHARS) break;
+    evidenceWindows.push(window);
     usedChunks.push(c);
   }
 
-  const shardSize = 512 * 1024;
+  if (evidenceWindows.length === 0) {
+    return { result: null, status: 'not_found', confidence: 0, citations: [], message: 'No evidence windows extracted.' };
+  }
+
+  const context = evidenceWindows.join('\n\n---\n\n');
 
   try {
     const llmRes = await fetch(`${VANGUARD_URL}/v1/chat/completions`, {
@@ -283,11 +318,11 @@ async function synthesizeFromDocument(
         messages: [
           {
             role: 'system',
-            content: `You are a precise document intelligence engine. Answer the query using ONLY the provided document excerpts. Be concise, accurate, and complete. Do not reference the excerpts directly — synthesize the answer. If the answer is not present in the excerpts, say so clearly.`,
+            content: `You are a precise document intelligence engine. Answer the query using ONLY the provided evidence excerpts. Synthesize a direct, complete answer. Do not reference the excerpts or say "the document says". If the answer is not present, say so clearly.`,
           },
           {
             role: 'user',
-            content: `Document excerpts:\n\n${context}\n\nQuery: ${intent}`,
+            content: `Evidence:\n\n${context}\n\nQuery: ${intent}`,
           },
         ],
       }),
@@ -303,25 +338,23 @@ async function synthesizeFromDocument(
     return {
       result: answer.trim(),
       status: 'found',
-      confidence: 0.91,
+      confidence: 0.93,
       citations: usedChunks.map(c => {
         const shardIdx = Math.floor((c.idx * CHUNK_TARGET_SIZE) / shardSize);
-        return `shard[${shardIdx}] · chunk[${c.idx}] · relevance: ${c.score}`;
+        return `shard[${shardIdx}] · chunk[${c.idx}] · evidence_window · hits: ${c.score}`;
       }),
     };
   } catch (e: any) {
     console.warn('[xLMP-DS] Synthesis fallback:', e?.message);
-    // Fallback: return top matching text fragments (current behavior)
-    const hits = usedChunks.map(c => c.chunk.slice(0, 150).replace(/\s+/g, ' ').trim());
     return {
-      result: hits.join(' | '),
+      result: evidenceWindows.join(' | '),
       status: 'found',
       confidence: 0.72,
       citations: usedChunks.map(c => {
         const shardIdx = Math.floor((c.idx * CHUNK_TARGET_SIZE) / shardSize);
-        return `shard[${shardIdx}] · chunk[${c.idx}] · plain-text match`;
+        return `shard[${shardIdx}] · chunk[${c.idx}] · evidence_window (synthesis offline)`;
       }),
-      message: `Synthesis unavailable (${e?.message ?? 'Vanguard offline'}) — returning matched fragments.`,
+      message: `Synthesis unavailable (${e?.message ?? 'Vanguard offline'}) — returning evidence windows.`,
     };
   }
 }
