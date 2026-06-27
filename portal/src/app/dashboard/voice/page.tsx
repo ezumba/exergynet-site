@@ -1097,6 +1097,7 @@ export default function VoiceStudio() {
                       onToggle={(ti, si) => setSeqTracks(prev => prev.map((t, i) =>
                         i === ti ? { ...t, steps: t.steps.map((v, j) => j === si ? !v : v) } : t
                       ))}
+                      onUpdate={(ti, changes) => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, ...changes } : t))}
                       onMute={ti => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, muted: !t.muted } : t))}
                       onRemove={ti => setSeqTracks(prev => prev.filter((_, i) => i !== ti))}
                       onRename={(ti, name) => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, name } : t))}

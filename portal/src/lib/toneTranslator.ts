@@ -170,7 +170,7 @@ export function disposeAllSequences(): void {
 }
 
 export async function compileAllTracks(
-  tracks: Array<{ name: string; instrument: string; steps: boolean[]; volume?: number; muted?: boolean }>,
+  tracks: Array<{ name: string; instrument: string; steps: boolean[]; volume?: number; muted?: boolean; swing?: number; human?: number }>,
   bpm: number,
   onStep?: (step: number) => void,
 ): Promise<void> {
@@ -196,7 +196,7 @@ export async function compileAllTracks(
 
   for (const track of tracks) {
     if (track.muted) continue;
-    const seq = await _buildTrackSequence(Tone, track.instrument, track.steps, track.volume ?? 0);
+    const seq = await _buildTrackSequence(Tone, track.instrument, track.steps, track.volume ?? 0, track.swing ?? 0, track.human ?? 0);
     if (seq) _globalDisposables.push(seq);
   }
 
@@ -205,11 +205,10 @@ export async function compileAllTracks(
 }
 
 export async function compileOrUpdateDrumTrack(
-  track: { name: string; instrument: string; steps: boolean[]; volume?: number },
+  track: { name: string; instrument: string; steps: boolean[]; volume?: number; swing?: number; human?: number },
   bpm: number,
 ): Promise<void> {
   const Tone = await import('tone');
-  // Dispose any existing sequence for this track name
   const key = `track_${track.name}`;
   const existing = (_globalDisposables as any[]).find((d: any) => d.__trackKey === key);
   if (existing) {
@@ -217,7 +216,7 @@ export async function compileOrUpdateDrumTrack(
     _globalDisposables = _globalDisposables.filter((d: any) => d.__trackKey !== key);
   }
   Tone.getTransport().bpm.value = bpm;
-  const seq = await _buildTrackSequence(Tone, track.instrument, track.steps, track.volume ?? 0);
+  const seq = await _buildTrackSequence(Tone, track.instrument, track.steps, track.volume ?? 0, track.swing ?? 0, track.human ?? 0);
   if (seq) {
     (seq as any).__trackKey = key;
     _globalDisposables.push(seq);
@@ -245,11 +244,15 @@ export async function scheduleLyricsTrack(
 }
 
 // Internal helper — build Tone sequence for one track
+// swingPct: 0–45% pushes every odd 16th note late
+// humanMs: 0–25ms adds random timing jitter per hit
 async function _buildTrackSequence(
   Tone: typeof import('tone'),
   instrument: string,
   steps: boolean[],
   volumeDb: number,
+  swingPct = 0,
+  humanMs = 0,
 ): Promise<{ dispose: () => void; start: (t: number) => void } | null> {
   if (steps.every(s => !s)) return null;
   const inst = instrument.toLowerCase();
@@ -273,17 +276,30 @@ async function _buildTrackSequence(
   }
   synth.volume.value += volumeDb;
 
-  const notes = steps.map((on, i) => on ? `0:${Math.floor(i/4)}:${i%4}` : null).filter(Boolean);
+  // Build event list with swing offset on odd 16th steps
+  const secPer16th = Tone.getTransport().toSeconds('16n');
+  const swingOffset = secPer16th * (swingPct / 100) * 0.667; // standard swing formula
+  const humanSec = humanMs / 1000;
 
-  const part = new Tone.Part((time: number) => {
+  const events: Array<{ time: string; stepIdx: number }> = [];
+  steps.forEach((on, i) => {
+    if (on) events.push({ time: `0:${Math.floor(i / 4)}:${i % 4}`, stepIdx: i });
+  });
+
+  const part = new Tone.Part((time: number, ev: { stepIdx: number }) => {
+    const isOddStep = ev.stepIdx % 2 === 1;
+    const swing = isOddStep ? swingOffset : 0;
+    const jitter = humanMs > 0 ? (Math.random() * 2 - 1) * humanSec : 0;
+    const t = time + swing + jitter;
+
     if (isPerc && (isSnare || isHihat)) {
-      synth.triggerAttackRelease(isHihat ? '32n' : '8n', time);
+      synth.triggerAttackRelease(isHihat ? '32n' : '8n', t);
     } else if (isKick) {
-      synth.triggerAttackRelease('C1', '8n', time);
+      synth.triggerAttackRelease('C1', '8n', t);
     } else {
-      synth.triggerAttackRelease(isBass ? 'C2' : 'C4', '8n', time);
+      synth.triggerAttackRelease(isBass ? 'C2' : 'C4', '8n', t);
     }
-  }, notes);
+  }, events);
   part.loop = true;
   part.loopEnd = '1m';
   part.start(0);
