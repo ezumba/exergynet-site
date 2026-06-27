@@ -449,7 +449,7 @@ export default function KeysPage() {
           <div style={{ fontSize: 10, color: 'var(--accent)', letterSpacing: '0.1em', marginBottom: 4 }}>
             ■ ACTIVE SOVEREIGN API SERVICES
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-faint)' }}>5 services · explorer-api.exergynet.org</div>
+          <div style={{ fontSize: 11, color: 'var(--text-faint)' }}>{SERVICES.length} services · portal.exergynet.org + explorer-api.exergynet.org</div>
         </div>
 
         {/* Service tabs */}
@@ -536,9 +536,10 @@ export default function KeysPage() {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[
-            { key: 'EXERGYNET_API_KEY', value: dev?.api_key_preview ?? 'sk-exergy-••••••••••••••••', note: 'your API key' },
-            { key: 'EXERGYNET_BASE_URL', value: `${API}/v1`, note: 'inference endpoint' },
-            { key: 'OPENAI_BASE_URL', value: `${API}/v1`, note: 'if using openai SDK' },
+            { key: 'EXERGYNET_API_KEY',        value: dev?.api_key_preview ?? 'sk-exergy-••••••••••••••••',                          note: 'your API key' },
+            { key: 'EXERGYNET_BASE_URL',        value: `${API}/v1`,                                                                   note: 'inference endpoint' },
+            { key: 'OPENAI_BASE_URL',           value: `${API}/v1`,                                                                   note: 'if using openai SDK' },
+            { key: 'EXERGYNET_VAULT_IMAGE_ID',  value: '0xb226f60a6a3406e5cd3792b4bbe86ed996e2e2cc8dd31ddbe7989a20a897092d',         note: 'Vault ZK Query image ID' },
           ].map(({ key, value, note }) => (
             <div key={key} style={{
               display: 'flex', alignItems: 'center', gap: 8,

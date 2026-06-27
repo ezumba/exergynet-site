@@ -13,7 +13,16 @@ export async function POST(req: Request) {
     // Store raw content so query can resolve intents against it
     xlmp_store_content(hollowObj.xlmp_root, buffer.toString("utf8"));
 
-    return NextResponse.json({ success: true, hollow_object: hollowObj });
+    return NextResponse.json({
+      success: true,
+      hollow_object: hollowObj,
+      next_step: {
+        endpoint: '/api/xlmp/query',
+        required_fields: ['xlmp_root', 'image_id', 'query_params.intent'],
+        image_id_source: 'API Keys → Vault: ZK Query',
+        note: 'image_id is a fixed Groth16 verifier ID — find it on your API Keys page, not in this response.',
+      },
+    });
   } catch {
     return NextResponse.json({ error: "xLMP_Compress failure" }, { status: 500 });
   }
