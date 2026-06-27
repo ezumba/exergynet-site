@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { xlmp_shatter_payload } from "@/lib/xlmp_ds_core";
+import { xlmp_shatter_payload, xlmp_store_content } from "@/lib/xlmp_ds_core";
 
 export async function POST(req: Request) {
   try {
@@ -9,6 +9,9 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const hollowObj = await xlmp_shatter_payload(buffer);
+
+    // Store raw content so query can resolve intents against it
+    xlmp_store_content(hollowObj.xlmp_root, buffer.toString("utf8"));
 
     return NextResponse.json({ success: true, hollow_object: hollowObj });
   } catch {
