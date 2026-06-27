@@ -416,8 +416,31 @@ export default function VoiceStudio() {
   const [seqTracks,      setSeqTracks]      = useState<SeqTrack[]>([]);
   const [currentStep,    setCurrentStep]    = useState(-1);
   const stepTickerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [lyrics,        setLyrics]        = useState('');
+  const [lyricsBlobs,   setLyricsBlobs]   = useState<Blob[]>([]);
+  const [bigMicRecording, setBigMicRecording] = useState(false);
+  const [bigMicBlob,    setBigMicBlob]    = useState<Blob | null>(null);
+  const bigMicRef   = useRef<MediaRecorder | null>(null);
+  const bigMicChunks = useRef<Blob[]>([]);
+  const [projectName,   setProjectName]   = useState('');
+  const [savedProjects, setSavedProjects] = useState<string[]>(() => {
+    try { return Object.keys(localStorage).filter(k => k.startsWith('enproject_')).map(k => k.replace('enproject_', '')); } catch { return []; }
+  });
   const [forgeRecording, setForgeRecording] = useState(false);
   const [forgeSeconds, setForgeSeconds]   = useState(0);
+  const [forgeCalibStep,  setForgeCalibStep]  = useState(0);
+  const [forgePitch,      setForgePitch]      = useState(100);
+  const [forgeBaseModel,  setForgeBaseModel]  = useState('sovereign-atlas');
+  const forgeCalibPrompts = [
+    "Peter Piper picked a peck of pickled peppers.",
+    "She sells seashells by the seashore.",
+    "The quick brown fox jumps over the lazy dog.",
+    "How much wood would a woodchuck chuck?",
+    "Around the rough and rugged rocks the ragged rascal ran.",
+    "Unique New York, unique New York, you know you need unique New York.",
+    "Red lorry, yellow lorry, red lorry, yellow lorry.",
+    "I scream, you scream, we all scream for ice cream.",
+  ];
   const forgeMediaRef = useRef<MediaRecorder | null>(null);
   const forgeChunksRef = useRef<Blob[]>([]);
   const forgeTimerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -435,6 +458,8 @@ export default function VoiceStudio() {
   const [ttsError,     setTtsError]     = useState('');
   const [showPicker,   setShowPicker]   = useState(false);
   const [credits,      setCredits]      = useState(10000);
+  const [customVoices,    setCustomVoices]    = useState<Voice[]>([]);
+  const [communityVoices, setCommunityVoices] = useState<Voice[]>([]);
   const [clips,        setClips]        = useState<Clip[]>([]);
   const [metaLoaded,   setMetaLoaded]   = useState(false);
   const [toast,        setToast]        = useState('');
@@ -475,6 +500,14 @@ export default function VoiceStudio() {
       localStorage.removeItem(LS_META_KEY);
     }
     setMetaLoaded(true);
+    // Fetch custom registered voices
+    fetch('/api/voice/forge/register').then(r => r.json()).then(d => {
+      if (Array.isArray(d.voices)) setCustomVoices(d.voices);
+    }).catch(() => {});
+    // Fetch community marketplace voices
+    fetch('/api/voice/marketplace').then(r => r.json()).then(d => {
+      if (Array.isArray(d.voices)) setCommunityVoices(d.voices);
+    }).catch(() => {});
   }, []);
 
   // Persist metadata only (never audio URLs)
@@ -676,7 +709,7 @@ export default function VoiceStudio() {
 
   return (
     <div style={S.root}>
-      {showPicker && <VoicePicker selected={voice} onSelect={setVoice} onClose={() => setShowPicker(false)} />}
+      {showPicker && <VoicePicker selected={voice} onSelect={setVoice} onClose={() => setShowPicker(false)} customVoices={customVoices} communityVoices={communityVoices} />}
       {toast && <Toast msg={toast} onDone={() => setToast('')} />}
 
       {/* ── Header / Tabs ── */}
@@ -987,6 +1020,12 @@ export default function VoiceStudio() {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
               {/* Prompt area */}
               <div style={{ flex: 1, padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 16, overflowY: 'auto' }}>
+                {/* DAW Header */}
+                <div style={{ marginBottom: 8 }}>
+                  <div style={{ fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 4 }}>[ LNES-16 ] NEUROSYMBOLIC DAW</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-faint)' }}>Bidirectional acoustic compiler · $0 VRAM cost</div>
+                </div>
+
                 {/* Genre presets */}
                 <div>
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 8 }}>Quick Start</div>
@@ -1058,9 +1097,136 @@ export default function VoiceStudio() {
                       onToggle={(ti, si) => setSeqTracks(prev => prev.map((t, i) =>
                         i === ti ? { ...t, steps: t.steps.map((v, j) => j === si ? !v : v) } : t
                       ))}
+                      onMute={ti => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, muted: !t.muted } : t))}
+                      onRemove={ti => setSeqTracks(prev => prev.filter((_, i) => i !== ti))}
+                      onRename={(ti, name) => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, name } : t))}
+                      onClear={ti => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, steps: new Array(16).fill(false) } : t))}
+                      onPreset={(ti, steps) => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, steps } : t))}
+                      onAddTrack={() => setSeqTracks(prev => [...prev, { name: `Track ${prev.length + 1}`, instrument: 'synth', steps: new Array(16).fill(false) }])}
                     />
                   </div>
                 )}
+
+                {/* BPM + Vanguard Writer */}
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>BPM</span>
+                    <input
+                      type="number" min={40} max={220} value={musicScript?.bpm ?? 120}
+                      onChange={e => {
+                        const bpm = parseInt(e.target.value);
+                        if (musicScript && bpm >= 40 && bpm <= 220) {
+                          setMusicScript({ ...musicScript, bpm });
+                          if (musicPlaying) {
+                            if (stepTickerRef.current) clearInterval(stepTickerRef.current);
+                            const msPerStep = (60000 / bpm) / 4;
+                            let step = 0;
+                            stepTickerRef.current = setInterval(() => { setCurrentStep(step % 16); step++; }, msPerStep);
+                            import('tone').then(Tone => { Tone.getTransport().bpm.value = bpm; });
+                          }
+                        }
+                      }}
+                      style={{ width: 60, background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, padding: '5px 8px', fontSize: 13, color: 'var(--text)', outline: 'none', fontFamily: 'monospace' }}
+                    />
+                  </div>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const res = await fetch('/api/voice/lyrics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: musicPrompt || 'Generate 8 song lyrics lines matching the mood.' }) });
+                        const data = await res.json();
+                        if (data.lyrics) setLyrics(data.lyrics);
+                      } catch {}
+                    }}
+                    style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 14px', borderRadius: 6, border: '1px solid var(--border-mid)', background: 'var(--bg-surface)', color: 'var(--text-soft)', cursor: 'pointer' }}>
+                    ✦ VANGUARD WRITER
+                  </button>
+                </div>
+
+                {/* Lyrics track */}
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 6 }}>Vocal / Lyrics Track</div>
+                  <textarea
+                    value={lyrics}
+                    onChange={e => setLyrics(e.target.value)}
+                    placeholder={'One line per bar — e.g.\nVerse 1 line here\nVerse 1 line 2\n...'}
+                    style={{ width: '100%', height: 80, background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--text)', outline: 'none', resize: 'vertical', fontFamily: 'monospace', lineHeight: 1.6, boxSizing: 'border-box' }}
+                  />
+                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                    <button
+                      disabled={!lyrics.trim() || !musicScript}
+                      onClick={async () => {
+                        const lines = lyrics.split('\n').filter(l => l.trim());
+                        const blobs: Blob[] = [];
+                        for (const line of lines) {
+                          try {
+                            const r = await fetch('/api/voice/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: line, voice_id: 'lnes-16', model: 'lnes-16', output_format: 'mp3_44100' }) });
+                            if (r.ok) { const b = await r.blob(); blobs.push(b); }
+                          } catch {}
+                        }
+                        setLyricsBlobs(blobs);
+                        setToast(`${blobs.length} vocal takes rendered`);
+                      }}
+                      style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 14px', borderRadius: 6, border: '1px solid var(--border-mid)', background: 'var(--bg-surface)', color: 'var(--text-soft)', cursor: 'pointer', opacity: !lyrics.trim() ? 0.5 : 1 }}>
+                      ◎ RENDER VOCALS
+                    </button>
+                    <button
+                      disabled={lyricsBlobs.length === 0 || !musicScript}
+                      onClick={async () => {
+                        const { scheduleLyricsTrack } = await import('@/lib/toneTranslator');
+                        await scheduleLyricsTrack(lyricsBlobs, 1, musicScript!.bpm);
+                      }}
+                      style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 14px', borderRadius: 6, border: '1px solid var(--accent)', background: 'rgba(13,148,136,0.08)', color: 'var(--accent)', cursor: 'pointer', opacity: lyricsBlobs.length === 0 ? 0.5 : 1 }}>
+                      ♪ SING
+                    </button>
+                  </div>
+                </div>
+
+                {/* Big Mic */}
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 6 }}>Big Mic — Live Recording</div>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <button
+                      onClick={async () => {
+                        if (bigMicRecording) {
+                          bigMicRef.current?.stop();
+                          bigMicRef.current = null;
+                          setBigMicRecording(false);
+                        } else {
+                          try {
+                            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                            const mr = new MediaRecorder(stream);
+                            bigMicChunks.current = [];
+                            mr.ondataavailable = e => { if (e.data.size > 0) bigMicChunks.current.push(e.data); };
+                            mr.onstop = () => {
+                              stream.getTracks().forEach(t => t.stop());
+                              const blob = new Blob(bigMicChunks.current, { type: 'audio/webm' });
+                              setBigMicBlob(blob);
+                            };
+                            mr.start(100);
+                            bigMicRef.current = mr;
+                            setBigMicRecording(true);
+                          } catch { setToast('Mic access denied'); }
+                        }
+                      }}
+                      style={{ fontSize: 12, fontFamily: 'monospace', padding: '8px 16px', borderRadius: 8, border: `1px solid ${bigMicRecording ? 'rgba(239,68,68,0.5)' : 'var(--border-mid)'}`, background: bigMicRecording ? 'rgba(239,68,68,0.08)' : 'var(--bg-surface)', color: bigMicRecording ? '#ef4444' : 'var(--text-soft)', cursor: 'pointer' }}>
+                      {bigMicRecording ? '■ STOP TAKE' : '● REC TAKE'}
+                    </button>
+                    {bigMicBlob && (
+                      <>
+                        <button
+                          onClick={() => {
+                            const url = URL.createObjectURL(bigMicBlob);
+                            const a = document.createElement('a');
+                            a.href = url; a.download = `take-${Date.now()}.webm`; a.click();
+                          }}
+                          style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 12px', borderRadius: 6, border: '1px solid var(--border-mid)', background: 'var(--bg-surface)', color: 'var(--text-faint)', cursor: 'pointer' }}>
+                          ↓ DOWNLOAD
+                        </button>
+                        <span style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'monospace' }}>TAKE READY</span>
+                      </>
+                    )}
+                  </div>
+                </div>
 
                 {/* Script preview (collapsible) */}
                 {musicScript && (
@@ -1121,32 +1287,75 @@ export default function VoiceStudio() {
                   {musicGenerating ? '⟳ GENERATING SCRIPT…' : '▶ GENERATE DSP SCRIPT'}
                 </button>
 
-                {musicScript && (
+                {musicScript && !musicPlaying && (
                   <button
                     onClick={async () => {
-                      if (musicPlaying) {
-                        stopEDL();
-                        if (stepTickerRef.current) { clearInterval(stepTickerRef.current); stepTickerRef.current = null; }
-                        setCurrentStep(-1);
-                        setMusicPlaying(false);
-                      } else if (musicScript) {
-                        setCurrentStep(-1);
-                        if (stepTickerRef.current) clearInterval(stepTickerRef.current);
-                        await compileAndPlayEDL(musicScript);
-                        setMusicPlaying(true);
-                        const msPerStep = (60000 / musicScript.bpm) / 4;
-                        let step = 0;
-                        stepTickerRef.current = setInterval(() => { setCurrentStep(step % 16); step++; }, msPerStep);
-                      }
+                      setCurrentStep(-1);
+                      if (stepTickerRef.current) clearInterval(stepTickerRef.current);
+                      await compileAndPlayEDL(musicScript);
+                      setMusicPlaying(true);
+                      const msPerStep = (60000 / musicScript.bpm) / 4;
+                      let step = 0;
+                      stepTickerRef.current = setInterval(() => { setCurrentStep(step % 16); step++; }, msPerStep);
                     }}
-                    style={{ background: 'var(--bg-surface)', color: musicPlaying ? '#ef4444' : 'var(--accent)', border: `1px solid ${musicPlaying ? 'rgba(239,68,68,0.4)' : 'var(--border-mid)'}`, borderRadius: 10, padding: '11px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
-                    {musicPlaying ? '■ HALT ENGINE' : '▶ REPLAY'}
+                    style={{ background: 'var(--bg-surface)', color: 'var(--accent)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '11px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
+                    ▶ PLAY
+                  </button>
+                )}
+                {musicScript && musicPlaying && (
+                  <button
+                    onClick={() => {
+                      stopEDL();
+                      if (stepTickerRef.current) { clearInterval(stepTickerRef.current); stepTickerRef.current = null; }
+                      setCurrentStep(-1);
+                      setMusicPlaying(false);
+                    }}
+                    style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 10, padding: '11px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
+                    ■ STOP
                   </button>
                 )}
 
                 <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-faint)', fontFamily: 'monospace' }}>
                   $0 VRAM · EDGE RENDER · TONE.JS
                 </span>
+                {/* Save/Load projects */}
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                  <input
+                    value={projectName}
+                    onChange={e => setProjectName(e.target.value)}
+                    placeholder="project name"
+                    style={{ fontSize: 11, fontFamily: 'monospace', padding: '5px 8px', background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, color: 'var(--text)', outline: 'none', width: 100 }}
+                  />
+                  <button
+                    disabled={!projectName.trim() || seqTracks.length === 0}
+                    onClick={() => {
+                      const key = `enproject_${projectName.trim()}`;
+                      localStorage.setItem(key, JSON.stringify({ seqTracks, bpm: musicScript?.bpm ?? 120, lyrics }));
+                      setSavedProjects(Object.keys(localStorage).filter(k => k.startsWith('enproject_')).map(k => k.replace('enproject_', '')));
+                      setToast(`Project "${projectName}" saved`);
+                    }}
+                    style={{ fontSize: 11, fontFamily: 'monospace', padding: '5px 10px', borderRadius: 6, border: '1px solid var(--border-mid)', background: 'var(--bg-surface)', color: 'var(--text-soft)', cursor: 'pointer' }}>
+                    SAVE
+                  </button>
+                  {savedProjects.length > 0 && (
+                    <select
+                      onChange={e => {
+                        const key = `enproject_${e.target.value}`;
+                        try {
+                          const data = JSON.parse(localStorage.getItem(key) ?? '{}');
+                          if (data.seqTracks) setSeqTracks(data.seqTracks);
+                          if (data.lyrics) setLyrics(data.lyrics);
+                          if (data.bpm && musicScript) setMusicScript({ ...musicScript, bpm: data.bpm });
+                          setToast(`Loaded "${e.target.value}"`);
+                        } catch {}
+                      }}
+                      defaultValue=""
+                      style={{ fontSize: 11, fontFamily: 'monospace', padding: '5px 8px', background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer' }}>
+                      <option value="" disabled>LOAD…</option>
+                      {savedProjects.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1156,9 +1365,9 @@ export default function VoiceStudio() {
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 10 }}>Architecture</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {[
-                    { label: 'LLM', value: 'Qwen Coder 14B', ok: true },
+                    { label: 'LLM', value: 'Vanguard Engine', ok: true },
                     { label: 'Engine', value: 'Tone.js / Web Audio', ok: true },
-                    { label: 'Protocol', value: 'EDL v1.0 (JSON)', ok: true },
+                    { label: 'Protocol', value: 'EDL v1.2 (JSON)', ok: true },
                     { label: 'VRAM cost', value: '$0 (edge render)', ok: true },
                     { label: 'Stems', value: 'LNES-16.5', ok: false },
                   ].map(r => (
@@ -1288,6 +1497,37 @@ export default function VoiceStudio() {
                 <div style={{ fontSize: 13, fontFamily: 'monospace', color: forgeRecording ? '#A78BFA' : 'var(--text-soft)', fontWeight: 600 }}>
                   {forgeRecording ? `RECORDING — ${fmt(forgeSeconds)}` : '● INITIATE BIOLOGICAL RECORDING'}
                 </div>
+                {/* 8 calibration prompts */}
+                {forgeCalibStep < forgeCalibPrompts.length && (
+                  <div style={{ marginTop: 16, padding: '12px 16px', background: 'rgba(124,58,237,0.06)', borderRadius: 8, border: '1px solid rgba(124,58,237,0.2)', maxWidth: 500, margin: '16px auto 0' }}>
+                    <div style={{ fontSize: 10, fontFamily: 'monospace', color: '#A78BFA', letterSpacing: '0.1em', marginBottom: 6 }}>
+                      CALIBRATION PHRASE {forgeCalibStep + 1} / {forgeCalibPrompts.length}
+                    </div>
+                    <div style={{ fontSize: 14, color: 'var(--text-soft)', fontStyle: 'italic', lineHeight: 1.6, marginBottom: 10 }}>
+                      "{forgeCalibPrompts[forgeCalibStep]}"
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                      <button
+                        onClick={async () => {
+                          if (!forgeRecording) return;
+                          forgeMediaRef.current?.stop();
+                          forgeMediaRef.current = null;
+                          setForgeRecording(false);
+                          if (forgeTimerRef.current) { clearInterval(forgeTimerRef.current); forgeTimerRef.current = null; }
+                          setForgeCalibStep(s => s + 1);
+                        }}
+                        disabled={!forgeRecording}
+                        style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 16px', borderRadius: 6, border: '1px solid rgba(124,58,237,0.4)', background: 'rgba(124,58,237,0.08)', color: '#A78BFA', cursor: forgeRecording ? 'pointer' : 'not-allowed', opacity: forgeRecording ? 1 : 0.5 }}>
+                        ✓ NEXT PHRASE
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {forgeCalibStep >= forgeCalibPrompts.length && forgeCalibStep > 0 && (
+                  <div style={{ marginTop: 16, padding: '10px 16px', background: 'rgba(13,148,136,0.06)', borderRadius: 8, border: '1px solid rgba(13,148,136,0.2)', textAlign: 'center' }}>
+                    <span style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'monospace', fontWeight: 700 }}>✓ ALL 8 PHRASES CAPTURED</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1319,9 +1559,44 @@ export default function VoiceStudio() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <button disabled style={{ padding: '12px 32px', background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10, fontSize: 13, fontWeight: 600, fontFamily: 'monospace', color: 'var(--text-faint)', cursor: 'not-allowed', letterSpacing: '0.06em' }}>
-                MINT VOICE MATRIX — COMING LNES-16.5
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+              {/* Pitch slider */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--text-faint)' }}>PITCH</span>
+                <input type="range" min={65} max={145} step={5} value={forgePitch}
+                  onChange={e => setForgePitch(Number(e.target.value))}
+                  style={{ width: 80 }} />
+                <span style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--text-soft)', minWidth: 32 }}>{forgePitch / 100}×</span>
+              </div>
+
+              {/* Base model picker */}
+              <select value={forgeBaseModel} onChange={e => setForgeBaseModel(e.target.value)}
+                style={{ fontSize: 11, fontFamily: 'monospace', padding: '5px 10px', background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer' }}>
+                <option value="sovereign-atlas">sovereign-atlas</option>
+                <option value="sovereign-lyra">sovereign-lyra</option>
+                <option value="sovereign-nova">sovereign-nova</option>
+                <option value="sovereign-cygnus">sovereign-cygnus</option>
+                <option value="sovereign-vega">sovereign-vega</option>
+              </select>
+
+              {/* Register button */}
+              <button
+                disabled={forgeChunksRef.current.length === 0 && forgeCalibStep === 0}
+                onClick={async () => {
+                  if (forgeChunksRef.current.length === 0) { setToast('Record at least one phrase first'); return; }
+                  const fd = new FormData();
+                  forgeChunksRef.current.forEach((chunk, i) => fd.append('samples', chunk, `sample_${i}.webm`));
+                  fd.append('base_model', forgeBaseModel);
+                  fd.append('pitch', String(forgePitch / 100));
+                  try {
+                    const res = await fetch('/api/voice/forge/register', { method: 'POST', body: fd });
+                    const data = await res.json();
+                    if (data.success) { setToast(`Voice "${data.voice_name}" registered!`); }
+                    else setToast(data.error || 'Registration failed');
+                  } catch { setToast('Registration error'); }
+                }}
+                style={{ padding: '12px 32px', background: forgeCalibStep > 0 ? '#7C3AED' : 'var(--bg-surface)', border: `1px solid ${forgeCalibStep > 0 ? '#7C3AED' : 'var(--border-mid)'}`, borderRadius: 10, fontSize: 13, fontWeight: 600, fontFamily: 'monospace', color: forgeCalibStep > 0 ? '#fff' : 'var(--text-faint)', cursor: forgeCalibStep > 0 ? 'pointer' : 'not-allowed', letterSpacing: '0.06em' }}>
+                {forgeCalibStep > 0 ? 'MINT VOICE MATRIX' : 'MINT VOICE MATRIX — COMING LNES-16.5'}
               </button>
             </div>
           </div>
