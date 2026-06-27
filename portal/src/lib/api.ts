@@ -81,6 +81,36 @@ function authHeaders(): Record<string, string> {
 
 // ── Session ───────────────────────────────────────────────────────────────────
 
+export const adminSession = {
+  save: (token: string): void => {
+    if (typeof window !== 'undefined') localStorage.setItem('en_admin_token', token);
+  },
+  clear: (): void => {
+    if (typeof window !== 'undefined') localStorage.removeItem('en_admin_token');
+  },
+  exists: (): boolean => {
+    if (typeof window === 'undefined') return false;
+    return !!localStorage.getItem('en_admin_token');
+  },
+  get: (): string | null => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('en_admin_token');
+  },
+};
+
+export const admin = {
+  login: async (email: string, password: string): Promise<{ token: string }> => {
+    const BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
+    const res = await fetch(`${BASE}/api/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) throw new Error('Admin login failed');
+    return res.json();
+  },
+};
+
 export const session = {
   save: (token: string): void => {
     if (typeof window !== 'undefined') localStorage.setItem('en_token', token);
