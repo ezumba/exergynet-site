@@ -22,7 +22,9 @@ export interface SeqTrack {
   instrument: string;
   steps: boolean[];
   muted?: boolean;
-  volume?: number;
+  volume?: number;  // -20 to +6 dB
+  swing?: number;   // 0–45 %
+  human?: number;   // 0–25 ms timing jitter
 }
 
 const PRESETS: Record<string, boolean[]> = {
@@ -32,23 +34,50 @@ const PRESETS: Record<string, boolean[]> = {
   BREAKBEAT:[1,0,0,0, 0,0,1,0, 0,0,1,0, 0,1,0,0].map(Boolean),
 };
 
+interface MixSliderProps {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  color: string;
+  onChange: (v: number) => void;
+}
+
+function MixSlider({ label, value, min, max, step, unit, color, onChange }: MixSliderProps) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 5, minWidth: 70 }}>
+      <span style={{ fontSize: 9, fontFamily: 'monospace', color, letterSpacing: '0.06em', flexShrink: 0 }}>{label}</span>
+      <input
+        type="range" min={min} max={max} step={step} value={value}
+        onChange={e => onChange(Number(e.target.value))}
+        style={{ width: 52, accentColor: color, cursor: 'pointer' }}
+      />
+      <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'var(--text-faint)', flexShrink: 0, minWidth: 24, textAlign: 'right' }}>
+        {value}{unit}
+      </span>
+    </div>
+  );
+}
+
 interface Props {
   tracks: SeqTrack[];
   currentStep: number;
   onToggle: (trackIdx: number, stepIdx: number) => void;
+  onUpdate?: (trackIdx: number, changes: Partial<SeqTrack>) => void;
   onMute?: (trackIdx: number) => void;
   onRemove?: (trackIdx: number) => void;
   onRename?: (trackIdx: number, name: string) => void;
   onAddTrack?: () => void;
   onClear?: (trackIdx: number) => void;
   onPreset?: (trackIdx: number, steps: boolean[]) => void;
-  onVolumeChange?: (trackIdx: number, db: number) => void;
   swing?: number;
 }
 
 export default function StepSequencer({
-  tracks, currentStep, onToggle,
-  onMute, onRemove, onRename, onAddTrack, onClear, onPreset, onVolumeChange,
+  tracks, currentStep, onToggle, onUpdate,
+  onMute, onRemove, onRename, onAddTrack, onClear, onPreset,
   swing = 0,
 }: Props) {
   const [editingName, setEditingName] = useState<number | null>(null);
@@ -73,7 +102,7 @@ export default function StepSequencer({
       {tracks.map((track, ti) => {
         const col = TRACK_COLORS[ti % TRACK_COLORS.length];
         return (
-          <div key={ti} style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 6 }}>
+          <div key={ti} style={{ marginBottom: 10 }}>
             {/* Track label — editable */}
             <div style={{ width: 96, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
               <span style={{ fontSize: 13, color: col, flexShrink: 0 }}>{instrIcon(track.instrument)}</span>
@@ -155,6 +184,25 @@ export default function StepSequencer({
               )}
             </div>
           </div>
+
+          {/* Mixer row — SWING / HUMAN / VOL per track */}
+          {onUpdate && (
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', paddingLeft: 128, marginTop: 3, marginBottom: 4 }}>
+              <MixSlider
+                label="SWING" value={track.swing ?? 0} min={0} max={45} step={1} unit="%" color="#A78BFA"
+                onChange={v => onUpdate(ti, { swing: v })}
+              />
+              <MixSlider
+                label="HUMAN" value={track.human ?? 0} min={0} max={25} step={1} unit="ms" color={col}
+                onChange={v => onUpdate(ti, { human: v })}
+              />
+              <MixSlider
+                label="VOL" value={track.volume ?? 0} min={-20} max={6} step={1} unit="dB" color="#22D3EE"
+                onChange={v => onUpdate(ti, { volume: v })}
+              />
+            </div>
+          )}
+        </div>
         );
       })}
 
