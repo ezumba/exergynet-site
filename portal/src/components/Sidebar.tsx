@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { session } from '@/lib/api';
+import { useSidebar } from '@/lib/SidebarContext';
 
 const NAV_ITEMS = [
   { href: '/dashboard',             label: '◈ overview',    exact: true  },
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router   = useRouter();
+  const { open } = useSidebar();
 
   function handleSignOut() {
     session.clear();
@@ -31,19 +33,23 @@ export default function Sidebar() {
   return (
     <aside
       style={{
-        width: 'var(--sidebar-w)',
-        minWidth: 'var(--sidebar-w)',
+        width: open ? 'var(--sidebar-w)' : 0,
+        minWidth: 0,
         background: 'var(--bg-surface)',
-        borderRight: '1px solid var(--border-mid)',
+        borderRight: open ? '1px solid var(--border-mid)' : 'none',
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
         position: 'sticky',
         top: 0,
         flexShrink: 0,
-        transition: 'background var(--ease), border-color var(--ease)',
+        overflow: 'hidden',
+        transition: 'width 0.2s ease, border-color var(--ease), background var(--ease)',
       }}
     >
+      {/* Fixed-width inner wrapper so content doesn't reflow during slide animation */}
+      <div style={{ width: 'var(--sidebar-w)', display: 'flex', flexDirection: 'column', height: '100%', flexShrink: 0 }}>
+
       {/* Logo */}
       <div style={{ padding: '22px 20px 18px', borderBottom: '1px solid var(--border-mid)' }}>
         <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: '0.10em', marginBottom: 3, color: 'var(--text)' }}>
@@ -96,6 +102,7 @@ export default function Sidebar() {
           sign out
         </button>
       </div>
+      </div>{/* end inner wrapper */}
     </aside>
   );
 }
