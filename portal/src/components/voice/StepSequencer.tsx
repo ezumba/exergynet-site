@@ -183,26 +183,25 @@ export default function StepSequencer({
                   style={{ width: 22, height: 22, borderRadius: 3, border: '1px solid rgba(239,68,68,0.3)', background: 'none', color: 'rgba(239,68,68,0.6)', fontSize: 10, cursor: 'pointer', padding: 0 }}>−</button>
               )}
             </div>
-          </div>
 
-          {/* Mixer row — SWING / HUMAN / VOL per track */}
-          {onUpdate && (
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center', paddingLeft: 128, marginTop: 3, marginBottom: 4 }}>
-              <MixSlider
-                label="SWING" value={track.swing ?? 0} min={0} max={45} step={1} unit="%" color="#A78BFA"
-                onChange={v => onUpdate(ti, { swing: v })}
-              />
-              <MixSlider
-                label="HUMAN" value={track.human ?? 0} min={0} max={25} step={1} unit="ms" color={col}
-                onChange={v => onUpdate(ti, { human: v })}
-              />
-              <MixSlider
-                label="VOL" value={track.volume ?? 0} min={-20} max={6} step={1} unit="dB" color="#22D3EE"
-                onChange={v => onUpdate(ti, { volume: v })}
-              />
-            </div>
-          )}
-        </div>
+            {/* Mixer row — SWING / HUMAN / VOL per track */}
+            {onUpdate && (
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', paddingLeft: 128, marginTop: 3, marginBottom: 2 }}>
+                <MixSlider
+                  label="SWING" value={track.swing ?? 0} min={0} max={45} step={1} unit="%" color="#A78BFA"
+                  onChange={v => onUpdate(ti, { swing: v })}
+                />
+                <MixSlider
+                  label="HUMAN" value={track.human ?? 0} min={0} max={25} step={1} unit="ms" color={col}
+                  onChange={v => onUpdate(ti, { human: v })}
+                />
+                <MixSlider
+                  label="VOL" value={track.volume ?? 0} min={-20} max={6} step={1} unit="dB" color="#22D3EE"
+                  onChange={v => onUpdate(ti, { volume: v })}
+                />
+              </div>
+            )}
+          </div>
         );
       })}
 
