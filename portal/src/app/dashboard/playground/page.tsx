@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { streamCompletion } from '@/lib/api';
@@ -104,21 +104,21 @@ export default function PlaygroundPage() {
     <div style={{ padding: 24, maxWidth: 900, height: 'calc(100vh - 48px)', display: 'flex', flexDirection: 'column' }}>
 
       <div style={{ marginBottom: 20, flexShrink: 0 }}>
-        <div style={{ fontSize: 11, color: '#334155', letterSpacing: '0.08em', marginBottom: 6 }}>
-          <span style={{ color: '#0D9488' }}>■</span> INFERENCE PLAYGROUND
+        <div style={{ fontSize: 11, color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 6 }}>
+          <span style={{ color: 'var(--accent)' }}>■</span> INFERENCE PLAYGROUND
         </div>
-        <div style={{ fontSize: 20, fontWeight: 500, color: '#F8FAFC' }}>vanguard engine</div>
+        <div style={{ fontSize: 20, fontWeight: 500, color: 'var(--text)' }}>vanguard engine</div>
       </div>
 
       {/* Auth config */}
       <div className="en-card" style={{ marginBottom: 12, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 11, color: '#475569' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 11, color: 'var(--text-faint)' }}>
             <input
               type="checkbox"
               checked={useSessionAuth}
               onChange={e => setUseSessionAuth(e.target.checked)}
-              style={{ accentColor: '#0D9488' }}
+              style={{ accentColor: 'var(--accent)' }}
             />
             use session token
           </label>
@@ -132,9 +132,9 @@ export default function PlaygroundPage() {
               style={{ flex: 1, fontSize: 11 }}
             />
           )}
-          <div style={{ marginLeft: 'auto', fontSize: 10, color: '#334155', display: 'flex', gap: 12 }}>
-            <span>model: <span style={{ color: '#0D9488' }}>vanguard-engine</span></span>
-            <span>streaming: <span style={{ color: '#0D9488' }}>SSE</span></span>
+          <div style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-faint)', display: 'flex', gap: 12 }}>
+            <span>model: <span style={{ color: 'var(--accent)' }}>vanguard-engine</span></span>
+            <span>streaming: <span style={{ color: 'var(--accent)' }}>SSE</span></span>
           </div>
         </div>
       </div>
@@ -159,7 +159,7 @@ export default function PlaygroundPage() {
         style={{
           flex: 1,
           overflowY: 'auto',
-          background: '#0A1220',
+          background: 'var(--bg-surface)',
           border: '1px solid #1E293B',
           borderRadius: 8,
           padding: 16,
@@ -170,7 +170,7 @@ export default function PlaygroundPage() {
         }}
       >
         {log.length === 0 && !streaming && (
-          <div style={{ color: '#334155', textAlign: 'center', paddingTop: 60 }}>
+          <div style={{ color: 'var(--text-faint)', textAlign: 'center', paddingTop: 60 }}>
             <div style={{ fontSize: 14, marginBottom: 8 }}>▷</div>
             <div>send a prompt to start streaming from vanguard engine</div>
             <div style={{ marginTop: 6, fontSize: 10 }}>ctrl+enter to run · or click run</div>
@@ -182,24 +182,24 @@ export default function PlaygroundPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
               <span style={{
                 fontSize: 10,
-                color: entry.role === 'user' ? '#D97706' : '#0D9488',
+                color: entry.role === 'user' ? 'var(--amber)' : 'var(--accent)',
                 letterSpacing: '0.08em',
               }}>
                 {entry.role === 'user' ? '◇ USER' : '■ VANGUARD'}
               </span>
-              <span style={{ fontSize: 10, color: '#334155' }}>{entry.ts}</span>
+              <span style={{ fontSize: 10, color: 'var(--text-faint)' }}>{entry.ts}</span>
               {entry.tokenCount && (
-                <span style={{ fontSize: 10, color: '#334155' }}>· {entry.tokenCount} tokens</span>
+                <span style={{ fontSize: 10, color: 'var(--text-faint)' }}>· {entry.tokenCount} tokens</span>
               )}
             </div>
             <div style={{
               color: entry.content.startsWith('⚠')
-                ? '#EF4444'
+                ? 'var(--red)'
                 : entry.role === 'user'
-                  ? '#94A3B8'
-                  : '#CBD5E1',
+                  ? 'var(--text-soft)'
+                  : 'var(--text-soft)',
               paddingLeft: 12,
-              borderLeft: `2px solid ${entry.role === 'user' ? '#D97706' : '#0D9488'}20`,
+              borderLeft: `2px solid ${entry.role === 'user' ? 'var(--amber)' : 'var(--accent)'}20`,
             }}>
               {entry.content}
             </div>
@@ -210,17 +210,17 @@ export default function PlaygroundPage() {
         {streaming && (
           <div style={{ marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <span style={{ fontSize: 10, color: '#0D9488', letterSpacing: '0.08em' }}>■ VANGUARD</span>
-              <span style={{ fontSize: 10, color: '#334155' }}>{tokenCount} tokens</span>
-              <span style={{ fontSize: 10, color: '#0D9488', animation: 'pulse 1s infinite' }}>streaming…</span>
+              <span style={{ fontSize: 10, color: 'var(--accent)', letterSpacing: '0.08em' }}>■ VANGUARD</span>
+              <span style={{ fontSize: 10, color: 'var(--text-faint)' }}>{tokenCount} tokens</span>
+              <span style={{ fontSize: 10, color: 'var(--accent)', animation: 'pulse 1s infinite' }}>streaming…</span>
             </div>
-            <div style={{ color: '#CBD5E1', paddingLeft: 12, borderLeft: '2px solid #0D948820' }}>
+            <div style={{ color: 'var(--text-soft)', paddingLeft: 12, borderLeft: '2px solid var(--accent-dim)' }}>
               {currentBuffer}
               <span style={{
                 display: 'inline-block',
                 width: 7,
                 height: 14,
-                background: '#0D9488',
+                background: 'var(--accent)',
                 marginLeft: 2,
                 verticalAlign: 'text-bottom',
                 animation: 'blink 0.8s step-end infinite',

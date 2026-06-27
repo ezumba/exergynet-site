@@ -1,13 +1,13 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { developer, Job, JobsResponse } from '@/lib/api';
 
 const STATUS_BADGE: Record<string, { bg: string; color: string; border: string; label: string }> = {
-  QUEUED:  { bg: '#2D1D06', color: '#D97706', border: '#92400E', label: 'queued'  },
-  SETTLED: { bg: '#042B27', color: '#10B981', border: '#065F46', label: 'settled' },
-  PENDING: { bg: '#1E293B', color: '#64748B', border: '#334155', label: 'pending' },
-  ERROR:   { bg: '#2D0808', color: '#EF4444', border: '#991B1B', label: 'error'   },
+  QUEUED:  { bg: 'var(--warn-bg)', color: 'var(--amber)', border: 'var(--warn-border)', label: 'queued'  },
+  SETTLED: { bg: 'var(--success-bg)', color: 'var(--accent)', border: 'var(--accent-dark)', label: 'settled' },
+  PENDING: { bg: 'var(--bg-card)', color: 'var(--text-faint)', border: 'var(--text-faint)', label: 'pending' },
+  ERROR:   { bg: 'var(--error-bg)', color: 'var(--red)', border: 'var(--error-border)', label: 'error'   },
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -65,13 +65,13 @@ export default function SettlementsPage() {
     <div style={{ padding: 24, maxWidth: 1000 }}>
 
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontSize: 11, color: '#334155', letterSpacing: '0.08em', marginBottom: 6 }}>
-          <span style={{ color: '#0D9488' }}>■</span> SETTLEMENTS
+        <div style={{ fontSize: 11, color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 6 }}>
+          <span style={{ color: 'var(--accent)' }}>■</span> SETTLEMENTS
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ fontSize: 20, fontWeight: 500, color: '#F8FAFC' }}>pending settlements</div>
+          <div style={{ fontSize: 20, fontWeight: 500, color: 'var(--text)' }}>pending settlements</div>
           {data && (
-            <span style={{ fontSize: 11, color: '#475569', marginLeft: 8 }}>
+            <span style={{ fontSize: 11, color: 'var(--text-faint)', marginLeft: 8 }}>
               {data.total.toLocaleString()} records
             </span>
           )}
@@ -95,9 +95,9 @@ export default function SettlementsPage() {
             style={{
               fontSize: 10,
               padding: '4px 12px',
-              background: statusFilter === s ? '#0D9488' : '#1E293B',
-              color: statusFilter === s ? 'white' : '#475569',
-              border: `1px solid ${statusFilter === s ? '#0D9488' : '#334155'}`,
+              background: statusFilter === s ? 'var(--accent)' : 'var(--bg-card)',
+              color: statusFilter === s ? 'white' : 'var(--text-faint)',
+              border: `1px solid ${statusFilter === s ? 'var(--accent)' : 'var(--text-faint)'}`,
               borderRadius: 4,
             }}
           >
@@ -109,11 +109,11 @@ export default function SettlementsPage() {
       {/* Table */}
       <div className="en-card" style={{ padding: 0, overflow: 'hidden' }}>
         {loading ? (
-          <div style={{ padding: 24, textAlign: 'center', fontSize: 11, color: '#334155' }}>
-            <span style={{ color: '#0D9488' }}>■</span> loading…
+          <div style={{ padding: 24, textAlign: 'center', fontSize: 11, color: 'var(--text-faint)' }}>
+            <span style={{ color: 'var(--accent)' }}>■</span> loading…
           </div>
         ) : !data || data.jobs.length === 0 ? (
-          <div style={{ padding: 40, textAlign: 'center', fontSize: 11, color: '#334155' }}>
+          <div style={{ padding: 40, textAlign: 'center', fontSize: 11, color: 'var(--text-faint)' }}>
             no settlements found
             {statusFilter && ` with status: ${statusFilter}`}
           </div>
@@ -137,29 +137,29 @@ export default function SettlementsPage() {
                     style={{ cursor: 'pointer' }}
                     onClick={() => setExpanded(expanded === job.job_id ? null : job.job_id)}
                   >
-                    <td style={{ padding: '10px 16px', fontFamily: 'monospace', color: '#0D9488', fontSize: 11 }}>
+                    <td style={{ padding: '10px 16px', fontFamily: 'monospace', color: 'var(--accent)', fontSize: 11 }}>
                       {job.job_id.slice(0, 8)}
                     </td>
-                    <td style={{ padding: '10px 16px', fontFamily: 'monospace', color: '#475569', fontSize: 10 }}>
+                    <td style={{ padding: '10px 16px', fontFamily: 'monospace', color: 'var(--text-faint)', fontSize: 10 }}>
                       {truncate(job.prompt_hash ?? '—', 20)}
                     </td>
-                    <td style={{ padding: '10px 16px', color: '#F8FAFC', textAlign: 'right' }}>
+                    <td style={{ padding: '10px 16px', color: 'var(--text)', textAlign: 'right' }}>
                       {job.tokens_yielded.toLocaleString()}
                     </td>
-                    <td style={{ padding: '10px 16px', color: '#94A3B8', textAlign: 'right' }}>
+                    <td style={{ padding: '10px 16px', color: 'var(--text-soft)', textAlign: 'right' }}>
                       {job.bypassed_layers}
                     </td>
                     <td style={{ padding: '10px 16px' }}>
                       <StatusBadge status={job.zk_proof_status} />
                     </td>
-                    <td style={{ padding: '10px 16px', color: '#334155', fontSize: 10 }}>
+                    <td style={{ padding: '10px 16px', color: 'var(--text-faint)', fontSize: 10 }}>
                       {job.on_chain_sig ? (
-                        <span style={{ color: '#0D9488' }}>
+                        <span style={{ color: 'var(--accent)' }}>
                           {job.on_chain_sig.slice(0, 8)}…
                         </span>
                       ) : '—'}
                     </td>
-                    <td style={{ padding: '10px 16px', color: '#475569', fontSize: 10 }}>
+                    <td style={{ padding: '10px 16px', color: 'var(--text-faint)', fontSize: 10 }}>
                       {timeAgo(job.created_at)}
                     </td>
                   </tr>
@@ -169,25 +169,25 @@ export default function SettlementsPage() {
                     <tr>
                       <td colSpan={7} style={{ padding: '0 16px 12px' }}>
                         <div style={{
-                          background: '#0A1220',
+                          background: 'var(--bg-surface)',
                           border: '1px solid #1E293B',
                           borderRadius: 6,
                           padding: '12px 14px',
                           fontSize: 11,
                           fontFamily: 'JetBrains Mono, monospace',
-                          color: '#64748B',
+                          color: 'var(--text-faint)',
                           lineHeight: 1.8,
                         }}>
-                          <div><span style={{ color: '#475569' }}>job_id:</span> <span style={{ color: '#94A3B8' }}>{job.job_id}</span></div>
-                          <div><span style={{ color: '#475569' }}>prompt_hash:</span> <span style={{ color: '#94A3B8' }}>{job.prompt_hash ?? '—'}</span></div>
-                          <div><span style={{ color: '#475569' }}>tokens_yielded:</span> <span style={{ color: '#F8FAFC' }}>{job.tokens_yielded}</span></div>
-                          <div><span style={{ color: '#475569' }}>bypassed_layers:</span> <span style={{ color: '#F8FAFC' }}>{job.bypassed_layers}</span></div>
-                          <div><span style={{ color: '#475569' }}>zk_proof_status:</span> <span style={{ color: STATUS_BADGE[job.zk_proof_status]?.color ?? '#64748B' }}>{job.zk_proof_status}</span></div>
-                          <div><span style={{ color: '#475569' }}>on_chain_sig:</span> <span style={{ color: '#94A3B8' }}>{job.on_chain_sig ?? 'pending'}</span></div>
-                          <div><span style={{ color: '#475569' }}>created_at:</span> <span style={{ color: '#94A3B8' }}>{new Date(job.created_at).toISOString()}</span></div>
+                          <div><span style={{ color: 'var(--text-faint)' }}>job_id:</span> <span style={{ color: 'var(--text-soft)' }}>{job.job_id}</span></div>
+                          <div><span style={{ color: 'var(--text-faint)' }}>prompt_hash:</span> <span style={{ color: 'var(--text-soft)' }}>{job.prompt_hash ?? '—'}</span></div>
+                          <div><span style={{ color: 'var(--text-faint)' }}>tokens_yielded:</span> <span style={{ color: 'var(--text)' }}>{job.tokens_yielded}</span></div>
+                          <div><span style={{ color: 'var(--text-faint)' }}>bypassed_layers:</span> <span style={{ color: 'var(--text)' }}>{job.bypassed_layers}</span></div>
+                          <div><span style={{ color: 'var(--text-faint)' }}>zk_proof_status:</span> <span style={{ color: STATUS_BADGE[job.zk_proof_status]?.color ?? 'var(--text-faint)' }}>{job.zk_proof_status}</span></div>
+                          <div><span style={{ color: 'var(--text-faint)' }}>on_chain_sig:</span> <span style={{ color: 'var(--text-soft)' }}>{job.on_chain_sig ?? 'pending'}</span></div>
+                          <div><span style={{ color: 'var(--text-faint)' }}>created_at:</span> <span style={{ color: 'var(--text-soft)' }}>{new Date(job.created_at).toISOString()}</span></div>
                           <div style={{ marginTop: 8 }}>
-                            <span style={{ color: '#475569' }}>cost:</span>{' '}
-                            <span style={{ color: '#0D9488' }}>${((job.tokens_yielded * 0.4) / 1_000_000).toFixed(6)} USDC</span>
+                            <span style={{ color: 'var(--text-faint)' }}>cost:</span>{' '}
+                            <span style={{ color: 'var(--accent)' }}>${((job.tokens_yielded * 0.4) / 1_000_000).toFixed(6)} USDC</span>
                           </div>
                         </div>
                       </td>
@@ -211,7 +211,7 @@ export default function SettlementsPage() {
           >
             ← prev
           </button>
-          <span style={{ fontSize: 11, color: '#475569' }}>
+          <span style={{ fontSize: 11, color: 'var(--text-faint)' }}>
             page {page + 1} of {totalPages} · {data?.total.toLocaleString()} total
           </span>
           <button

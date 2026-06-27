@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
@@ -33,11 +33,11 @@ interface MyApp {
 }
 
 const STATUS_META: Record<ReviewStatus, { label: string; color: string; bg: string }> = {
-  pending_review: { label: 'Under Review',    color: '#F59E0B', bg: 'rgba(245,158,11,0.10)' },
-  active:         { label: 'Live',            color: '#10B981', bg: 'rgba(16,185,129,0.10)' },
-  vanguard_clean: { label: 'Approved',        color: '#10B981', bg: 'rgba(16,185,129,0.10)' },
-  flagged:        { label: 'Flagged',         color: '#EF4444', bg: 'rgba(239,68,68,0.10)'  },
-  rejected:       { label: 'Rejected',        color: '#6B7280', bg: 'rgba(107,114,128,0.10)'},
+  pending_review: { label: 'Under Review',    color: 'var(--amber)', bg: 'rgba(245,158,11,0.10)' },
+  active:         { label: 'Live',            color: 'var(--accent)', bg: 'var(--accent-dim)' },
+  vanguard_clean: { label: 'Approved',        color: 'var(--accent)', bg: 'var(--accent-dim)' },
+  flagged:        { label: 'Flagged',         color: 'var(--red)', bg: 'rgba(239,68,68,0.10)'  },
+  rejected:       { label: 'Rejected',        color: 'var(--text-faint)', bg: 'rgba(107,114,128,0.10)'},
 };
 
 const CATEGORIES = ['Analytics', 'AI', 'Markets', 'Proofs', 'Documents', 'Collaboration', 'Oracle', 'Verification', 'Other'];
@@ -103,14 +103,14 @@ export default function MyAppsPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 600, color: '#F1F5F9', letterSpacing: '-0.02em' }}>My Apps</div>
-          <div style={{ fontSize: 13, color: '#475569', marginTop: 4 }}>
+          <div style={{ fontSize: 22, fontWeight: 600, color: 'var(--text)', letterSpacing: '-0.02em' }}>My Apps</div>
+          <div style={{ fontSize: 13, color: 'var(--text-faint)', marginTop: 4 }}>
             Submit apps for Vanguard governance review — approved apps appear in the ExergyNet App Store.
           </div>
         </div>
         <button
           onClick={() => { setShowForm(s => !s); setError(''); setSuccess(''); }}
-          style={{ background: '#0D9488', color: '#fff', border: 'none', borderRadius: 8,
+          style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8,
             padding: '9px 18px', fontSize: 13, fontWeight: 500, cursor: 'pointer', letterSpacing: '0.01em' }}>
           {showForm ? '✕ Cancel' : '+ Submit App'}
         </button>
@@ -118,23 +118,23 @@ export default function MyAppsPage() {
 
       {/* Governance explanation */}
       <div style={{ background: 'rgba(13,148,136,0.06)', border: '1px solid rgba(13,148,136,0.18)',
-        borderRadius: 10, padding: '16px 20px', marginBottom: 28, fontSize: 13, color: '#94A3B8', lineHeight: 1.7 }}>
-        <strong style={{ color: '#0D9488' }}>Vanguard Governance Flow</strong><br />
+        borderRadius: 10, padding: '16px 20px', marginBottom: 28, fontSize: 13, color: 'var(--text-soft)', lineHeight: 1.7 }}>
+        <strong style={{ color: 'var(--accent)' }}>Vanguard Governance Flow</strong><br />
         Submit → Vanguard scans for content risk &amp; integrity → Admin reviews score → Approved apps go live in the App Store
       </div>
 
       {success && (
         <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)',
-          borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 13, color: '#10B981' }}>
+          borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 13, color: 'var(--accent)' }}>
           ✓ {success}
         </div>
       )}
 
       {/* Submission Form */}
       {showForm && (
-        <form onSubmit={submit} style={{ background: '#0F1923', border: '1px solid #1E293B',
+        <form onSubmit={submit} style={{ background: 'var(--bg)', border: '1px solid var(--border-dim)',
           borderRadius: 12, padding: 28, marginBottom: 32 }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: '#F1F5F9', marginBottom: 24 }}>Submit App for Review</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', marginBottom: 24 }}>Submit App for Review</div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
             <div>
@@ -143,14 +143,14 @@ export default function MyAppsPage() {
                 placeholder="My Awesome App" required style={inputStyle} />
             </div>
             <div>
-              <label style={labelStyle}>App Key * <span style={{ color: '#475569', fontWeight: 400 }}>(unique ID)</span></label>
+              <label style={labelStyle}>App Key * <span style={{ color: 'var(--text-faint)', fontWeight: 400 }}>(unique ID)</span></label>
               <input value={form.app_key} onChange={e => field('app_key', e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
                 placeholder="my_awesome_app" required style={inputStyle} />
             </div>
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>Description * <span style={{ color: '#475569', fontWeight: 400 }}>(min 10 chars)</span></label>
+            <label style={labelStyle}>Description * <span style={{ color: 'var(--text-faint)', fontWeight: 400 }}>(min 10 chars)</span></label>
             <textarea value={form.description} onChange={e => field('description', e.target.value)}
               placeholder="What does your app do? Be specific — Vanguard evaluates this." required rows={3}
               style={{ ...inputStyle, resize: 'vertical', minHeight: 80 }} />
@@ -158,7 +158,7 @@ export default function MyAppsPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
             <div>
-              <label style={labelStyle}>App URL <span style={{ color: '#475569', fontWeight: 400 }}>(https://)</span></label>
+              <label style={labelStyle}>App URL <span style={{ color: 'var(--text-faint)', fontWeight: 400 }}>(https://)</span></label>
               <input value={form.app_url} onChange={e => field('app_url', e.target.value)}
                 placeholder="https://yourapp.com" style={inputStyle} />
             </div>
@@ -190,12 +190,12 @@ export default function MyAppsPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
             <div>
-              <label style={labelStyle}>Icon URL <span style={{ color: '#475569', fontWeight: 400 }}>(https://)</span></label>
+              <label style={labelStyle}>Icon URL <span style={{ color: 'var(--text-faint)', fontWeight: 400 }}>(https://)</span></label>
               <input value={form.icon_url} onChange={e => field('icon_url', e.target.value)}
                 placeholder="https://yourapp.com/icon.png" style={inputStyle} />
             </div>
             <div>
-              <label style={labelStyle}>Tags <span style={{ color: '#475569', fontWeight: 400 }}>(comma-separated, max 4)</span></label>
+              <label style={labelStyle}>Tags <span style={{ color: 'var(--text-faint)', fontWeight: 400 }}>(comma-separated, max 4)</span></label>
               <input value={form.tags} onChange={e => field('tags', e.target.value)}
                 placeholder="AI, Real-time, Analytics" style={inputStyle} />
             </div>
@@ -203,18 +203,18 @@ export default function MyAppsPage() {
 
           {error && (
             <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)',
-              borderRadius: 6, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#EF4444' }}>
+              borderRadius: 6, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: 'var(--red)' }}>
               {error}
             </div>
           )}
 
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <button type="submit" disabled={submitting}
-              style={{ background: submitting ? '#164E63' : '#0D9488', color: '#fff', border: 'none',
+              style={{ background: submitting ? 'var(--accent-dark)' : 'var(--accent)', color: '#fff', border: 'none',
                 borderRadius: 8, padding: '10px 24px', fontSize: 13, fontWeight: 500, cursor: submitting ? 'not-allowed' : 'pointer' }}>
               {submitting ? 'Submitting…' : 'Submit for Review'}
             </button>
-            <div style={{ fontSize: 12, color: '#475569' }}>
+            <div style={{ fontSize: 12, color: 'var(--text-faint)' }}>
               Vanguard will scan your app automatically after submission.
             </div>
           </div>
@@ -223,13 +223,13 @@ export default function MyAppsPage() {
 
       {/* App List */}
       {loading ? (
-        <div style={{ color: '#475569', fontSize: 14, padding: '40px 0', textAlign: 'center' }}>Loading…</div>
+        <div style={{ color: 'var(--text-faint)', fontSize: 14, padding: '40px 0', textAlign: 'center' }}>Loading…</div>
       ) : apps.length === 0 ? (
-        <div style={{ background: '#0F1923', border: '1px solid #1E293B', borderRadius: 12,
+        <div style={{ background: 'var(--bg)', border: '1px solid var(--border-dim)', borderRadius: 12,
           padding: '48px 32px', textAlign: 'center' }}>
           <div style={{ fontSize: 32, marginBottom: 12 }}>◈</div>
-          <div style={{ fontSize: 15, color: '#CBD5E1', marginBottom: 6 }}>No apps submitted yet</div>
-          <div style={{ fontSize: 13, color: '#475569' }}>
+          <div style={{ fontSize: 15, color: 'var(--text-soft)', marginBottom: 6 }}>No apps submitted yet</div>
+          <div style={{ fontSize: 13, color: 'var(--text-faint)' }}>
             Click "Submit App" to register your app for Vanguard review.
           </div>
         </div>
@@ -238,39 +238,39 @@ export default function MyAppsPage() {
           {apps.map(app => {
             const st = STATUS_META[app.review_status] ?? STATUS_META.pending_review;
             return (
-              <div key={app.app_key} style={{ background: '#0F1923', border: '1px solid #1E293B',
+              <div key={app.app_key} style={{ background: 'var(--bg)', border: '1px solid var(--border-dim)',
                 borderRadius: 12, padding: '20px 24px', display: 'flex', alignItems: 'center', gap: 20 }}>
-                <div style={{ width: 44, height: 44, borderRadius: 10, background: '#1E293B',
+                <div style={{ width: 44, height: 44, borderRadius: 10, background: 'var(--bg-card)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
                   {app.icon || '◈'}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                    <span style={{ fontSize: 15, fontWeight: 600, color: '#F1F5F9' }}>{app.name}</span>
-                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#475569' }}>{app.app_key}</span>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)' }}>{app.name}</span>
+                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--text-faint)' }}>{app.app_key}</span>
                     <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 4,
                       color: st.color, background: st.bg, fontWeight: 500 }}>{st.label}</span>
                     {app.active && (
                       <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 4,
-                        color: '#10B981', background: 'rgba(16,185,129,0.10)', fontWeight: 500 }}>LIVE</span>
+                        color: 'var(--accent)', background: 'var(--accent-dim)', fontWeight: 500 }}>LIVE</span>
                     )}
                   </div>
-                  <div style={{ fontSize: 13, color: '#64748B', overflow: 'hidden',
+                  <div style={{ fontSize: 13, color: 'var(--text-faint)', overflow: 'hidden',
                     textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 500 }}>
                     {app.description}
                   </div>
-                  <div style={{ fontSize: 11, color: '#334155', marginTop: 4 }}>
+                  <div style={{ fontSize: 11, color: 'var(--text-faint)', marginTop: 4 }}>
                     {app.tier} · ${app.price_usd}/mo · ${app.usage_price_usd}/use
                     {app.app_url && (
                       <> · <a href={app.app_url} target="_blank" rel="noreferrer"
-                        style={{ color: '#0D9488', textDecoration: 'none' }}>{app.app_url}</a></>
+                        style={{ color: 'var(--accent)', textDecoration: 'none' }}>{app.app_url}</a></>
                     )}
                   </div>
                 </div>
                 <div style={{ flexShrink: 0, textAlign: 'right' }}>
                   {app.review_status === 'rejected' && (
                     <button onClick={() => { setShowForm(true); setForm(f => ({ ...f, app_key: app.app_key, name: app.name, description: app.description, app_url: app.app_url || '', icon: app.icon || '' })); }}
-                      style={{ fontSize: 12, color: '#0D9488', background: 'transparent', border: '1px solid #0D9488',
+                      style={{ fontSize: 12, color: 'var(--accent)', background: 'transparent', border: '1px solid #0D9488',
                         borderRadius: 6, padding: '5px 12px', cursor: 'pointer' }}>
                       Resubmit
                     </button>
@@ -286,11 +286,11 @@ export default function MyAppsPage() {
 }
 
 const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: 12, fontWeight: 500, color: '#64748B',
+  display: 'block', fontSize: 12, fontWeight: 500, color: 'var(--text-faint)',
   letterSpacing: '0.04em', marginBottom: 6, textTransform: 'uppercase',
 };
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', background: '#0A1220', border: '1px solid #1E293B', borderRadius: 7,
-  padding: '9px 12px', fontSize: 13, color: '#CBD5E1', outline: 'none', boxSizing: 'border-box',
+  width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-dim)', borderRadius: 7,
+  padding: '9px 12px', fontSize: 13, color: 'var(--text-soft)', outline: 'none', boxSizing: 'border-box',
 };
