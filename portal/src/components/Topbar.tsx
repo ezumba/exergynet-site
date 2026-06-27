@@ -52,11 +52,10 @@ export default function Topbar() {
       }}
     >
       <button
-        className="en-hamburger"
         onClick={toggle}
         aria-label="Toggle navigation"
         style={{
-          display: 'none',
+          display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           width: 34,
@@ -64,9 +63,10 @@ export default function Topbar() {
           borderRadius: 8,
           border: '1px solid var(--border-mid)',
           background: 'var(--bg-surface)',
-          color: 'var(--text)',
+          color: 'var(--text-soft)',
           cursor: 'pointer',
           flexShrink: 0,
+          transition: 'background var(--ease), color var(--ease)',
         }}
       >
         <HamburgerIcon />
