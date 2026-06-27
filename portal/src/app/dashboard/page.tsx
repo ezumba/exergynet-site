@@ -8,8 +8,6 @@ import {
 } from 'recharts';
 import { developer, Developer, Stats, Job } from '@/lib/api';
 
-const TEAL = '#0D9488';
-
 function MetricCard({
   label,
   value,
@@ -23,20 +21,20 @@ function MetricCard({
 }) {
   return (
     <div className="en-card" style={{ flex: 1 }}>
-      <div style={{ fontSize: 10, color: '#475569', letterSpacing: '0.08em', marginBottom: 8 }}>
+      <div style={{ fontSize: 10, color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 8 }}>
         {label}
       </div>
       <div
         style={{
           fontSize: 22,
           fontWeight: 500,
-          color: accent ? TEAL : '#F8FAFC',
+          color: accent ? 'var(--accent)' : 'var(--text)',
           marginBottom: 4,
         }}
       >
         {value}
       </div>
-      {sub && <div style={{ fontSize: 10, color: '#334155' }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 10, color: 'var(--text-faint)' }}>{sub}</div>}
     </div>
   );
 }
@@ -51,10 +49,10 @@ function timeAgo(iso: string): string {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  QUEUED:  '#D97706',
-  SETTLED: '#0D9488',
-  PENDING: '#475569',
-  ERROR:   '#EF4444',
+  QUEUED:  'var(--amber)',
+  SETTLED: 'var(--accent)',
+  PENDING: 'var(--text-faint)',
+  ERROR:   'var(--red)',
 };
 
 export default function DashboardPage() {
@@ -99,12 +97,12 @@ export default function DashboardPage() {
       <div
         style={{
           padding: 24,
-          color: '#334155',
+          color: 'var(--text-faint)',
           fontSize: 11,
           letterSpacing: '0.08em',
         }}
       >
-        <span style={{ color: TEAL }}>■</span> loading…
+        <span style={{ color: 'var(--accent)' }}>■</span> loading…
       </div>
     );
   }
@@ -117,12 +115,12 @@ export default function DashboardPage() {
         <div
           style={{
             fontSize: 11,
-            color: '#334155',
+            color: 'var(--text-faint)',
             letterSpacing: '0.08em',
             marginBottom: 6,
           }}
         >
-          <span style={{ color: TEAL }}>■</span> OVERVIEW
+          <span style={{ color: 'var(--accent)' }}>■</span> OVERVIEW
         </div>
         <div
           style={{
@@ -131,7 +129,7 @@ export default function DashboardPage() {
             gap: 12,
           }}
         >
-          <div style={{ fontSize: 20, fontWeight: 500, color: '#F8FAFC' }}>
+          <div style={{ fontSize: 20, fontWeight: 500, color: 'var(--text)' }}>
             {dev?.email ?? 'developer'}
           </div>
           <span
@@ -139,9 +137,9 @@ export default function DashboardPage() {
               fontSize: 10,
               padding: '2px 8px',
               borderRadius: 99,
-              background: dev?.active ? '#042B27' : '#1E293B',
-              color: dev?.active ? TEAL : '#475569',
-              border: `1px solid ${dev?.active ? '#0F766E' : '#334155'}`,
+              background: dev?.active ? 'var(--success-bg)' : 'var(--bg-card)',
+              color: dev?.active ? 'var(--accent)' : 'var(--text-faint)',
+              border: `1px solid ${dev?.active ? 'var(--success-border)' : 'var(--border)'}`,
             }}
           >
             {dev?.active ? '● active' : '○ inactive'}
@@ -179,7 +177,7 @@ export default function DashboardPage() {
         <div
           style={{
             fontSize: 10,
-            color: '#475569',
+            color: 'var(--text-faint)',
             letterSpacing: '0.08em',
             marginBottom: 16,
           }}
@@ -191,40 +189,40 @@ export default function DashboardPage() {
             <AreaChart data={dailyData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
               <defs>
                 <linearGradient id="overviewGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="10%" stopColor={TEAL} stopOpacity={0.22} />
-                  <stop offset="90%" stopColor={TEAL} stopOpacity={0} />
+                  <stop offset="10%" stopColor="#0D9488" stopOpacity={0.22} />
+                  <stop offset="90%" stopColor="#0D9488" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: 10, fill: '#475569', fontFamily: 'JetBrains Mono, monospace' }}
+                tick={{ fontSize: 10, fill: 'var(--text-faint)', fontFamily: 'JetBrains Mono, monospace' }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 10, fill: '#475569', fontFamily: 'JetBrains Mono, monospace' }}
+                tick={{ fontSize: 10, fill: 'var(--text-faint)', fontFamily: 'JetBrains Mono, monospace' }}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
                 contentStyle={{
-                  background: '#1E293B',
-                  border: '1px solid #334155',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border)',
                   borderRadius: 6,
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace',
+                  color: 'var(--text)',
                 }}
-                labelStyle={{ color: '#94A3B8' }}
-                itemStyle={{ color: TEAL }}
-                cursor={{ fill: 'rgba(13,148,136,0.06)' }}
+                labelStyle={{ color: 'var(--text-soft)' }}
+                cursor={{ fill: 'var(--accent-dim)' }}
               />
               <Area
                 type="monotone"
                 dataKey="tokens"
-                stroke={TEAL}
+                stroke="var(--accent)"
                 strokeWidth={2}
                 fill="url(#overviewGrad)"
-                dot={{ r: 3, fill: TEAL, strokeWidth: 0 }}
+                dot={{ r: 3, fill: 'var(--accent)', strokeWidth: 0 }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -236,7 +234,7 @@ export default function DashboardPage() {
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: 11,
-              color: '#334155',
+              color: 'var(--text-faint)',
               flexDirection: 'column',
               gap: 8,
             }}
@@ -260,9 +258,9 @@ export default function DashboardPage() {
             style={{
               padding: '14px 16px',
               fontSize: 10,
-              color: '#475569',
+              color: 'var(--text-faint)',
               letterSpacing: '0.08em',
-              borderBottom: '1px solid #1E293B',
+              borderBottom: '1px solid var(--border-mid)',
             }}
           >
             RECENT SETTLEMENTS
@@ -274,7 +272,7 @@ export default function DashboardPage() {
                 padding: '32px 16px',
                 textAlign: 'center',
                 fontSize: 11,
-                color: '#334155',
+                color: 'var(--text-faint)',
               }}
             >
               no jobs yet
@@ -296,7 +294,7 @@ export default function DashboardPage() {
                       style={{
                         padding: '8px 16px',
                         fontFamily: 'monospace',
-                        color: TEAL,
+                        color: 'var(--accent)',
                         fontSize: 11,
                       }}
                     >
@@ -305,23 +303,23 @@ export default function DashboardPage() {
                     <td
                       style={{
                         padding: '8px 16px',
-                        color: '#F8FAFC',
+                        color: 'var(--text)',
                         textAlign: 'right',
                       }}
                     >
                       {job.tokens_yielded.toLocaleString()}
                     </td>
-                    <td style={{ padding: '8px 16px' }}>
+                    <td style={{ padding: '8px 16px', color: 'var(--text-soft)' }}>
                       <span
                         style={{
                           fontSize: 10,
-                          color: STATUS_COLOR[job.zk_proof_status] ?? '#475569',
+                          color: STATUS_COLOR[job.zk_proof_status] ?? 'var(--text-faint)',
                         }}
                       >
                         {job.zk_proof_status.toLowerCase()}
                       </span>
                     </td>
-                    <td style={{ padding: '8px 16px', fontSize: 10, color: '#475569' }}>
+                    <td style={{ padding: '8px 16px', fontSize: 10, color: 'var(--text-faint)' }}>
                       {timeAgo(job.created_at)}
                     </td>
                   </tr>
@@ -330,7 +328,7 @@ export default function DashboardPage() {
             </table>
           )}
 
-          <div style={{ padding: '10px 16px', borderTop: '1px solid #1E293B' }}>
+          <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border-mid)' }}>
             <Link href="/dashboard/settlements">
               <button
                 className="en-btn en-btn-ghost"
@@ -354,7 +352,7 @@ export default function DashboardPage() {
           <div
             style={{
               fontSize: 10,
-              color: '#475569',
+              color: 'var(--text-faint)',
               letterSpacing: '0.08em',
               marginBottom: 4,
             }}
@@ -384,11 +382,11 @@ export default function DashboardPage() {
               style={{
                 marginTop: 8,
                 padding: '10px 12px',
-                background: '#2D1D06',
-                border: '1px solid #92400E',
+                background: 'var(--warn-bg)',
+                border: '1px solid var(--warn-border)',
                 borderRadius: 6,
                 fontSize: 10,
-                color: '#D97706',
+                color: 'var(--amber)',
                 lineHeight: 1.7,
               }}
             >
