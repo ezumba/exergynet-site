@@ -16,9 +16,14 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
+const themeScript = `(function(){try{var t=localStorage.getItem('en_theme');if(t==='light'||t==='color'){document.documentElement.setAttribute('data-theme',t);}else{document.documentElement.removeAttribute('data-theme');}}catch(e){}})();`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={jetbrainsMono.variable}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         <Providers>{children}</Providers>
       </body>
