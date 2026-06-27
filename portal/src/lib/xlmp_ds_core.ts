@@ -75,6 +75,7 @@ const STOP_WORDS = new Set([
   'and', 'or', 'but', 'not', 'for', 'from', 'with', 'into',
   'get', 'give', 'show', 'find', 'tell', 'return', 'list',
   'me', 'you', 'your', 'about', 'any', 'all', 'please',
+  'say', 'says', 'said', 'does', 'document', 'text', 'file',
   'patient', 'patients', 'subject', 'person', 'user',
 ]);
 
@@ -114,7 +115,6 @@ function scoreField(
       } else if (seg.startsWith(qw) || qw.startsWith(seg)) {
         wordScore = Math.max(wordScore, 1.5);
       } else {
-        // Fuzzy prefix: count shared leading characters
         let shared = 0;
         const minLen = Math.min(seg.length, qw.length);
         while (shared < minLen && seg[shared] === qw[shared]) shared++;
@@ -126,7 +126,6 @@ function scoreField(
       }
     }
 
-    // Value text as fallback (weaker signal)
     if (wordScore === 0 && valueText.includes(qw)) {
       wordScore = 0.4;
     }
@@ -201,30 +200,144 @@ interface ResolveResult {
   message?: string;
 }
 
-function resolveIntent(intent: string, content: string): ResolveResult {
-  // Plain-text fallback when JSON parse fails
-  let parsed: unknown = null;
-  try { parsed = JSON.parse(content); } catch { parsed = null; }
+// ── Document Intelligence Layer ────────────────────────────────────────────────
+// Split plain-text content into semantic chunks at paragraph boundaries.
+const CHUNK_TARGET_SIZE = 1800; // chars per chunk
+const MAX_CONTEXT_CHARS = 7000; // total chars passed to LLM
+const TOP_CHUNKS = 5;
 
-  if (!parsed) {
-    const qWords = extractQueryWords(intent);
-    const lines = content.split('\n');
-    const hits = lines.filter(l => qWords.some(w => l.toLowerCase().includes(w)));
-    if (hits.length > 0) {
-      return {
-        result: hits.slice(0, 3).join(' | ').slice(0, 400),
-        status: 'found',
-        confidence: 0.72,
-        citations: ['shard[0] · plain-text match'],
-      };
+const VANGUARD_URL = process.env.SEI_VANGUARD_URL ?? 'http://127.0.0.1:5000';
+
+function splitIntoChunks(text: string): string[] {
+  const chunks: string[] = [];
+  const paragraphs = text.split(/\n{2,}/);
+  let current = '';
+
+  for (const para of paragraphs) {
+    if ((current + para).length > CHUNK_TARGET_SIZE && current) {
+      chunks.push(current.trim());
+      current = para;
+    } else {
+      current += (current ? '\n\n' : '') + para;
     }
+  }
+  if (current.trim().length > 50) chunks.push(current.trim());
+  return chunks;
+}
+
+function scoreChunk(chunk: string, queryWords: string[]): number {
+  const lower = chunk.toLowerCase();
+  let score = 0;
+  for (const w of queryWords) {
+    let pos = 0;
+    while ((pos = lower.indexOf(w, pos)) !== -1) {
+      score++;
+      pos++;
+    }
+  }
+  return score;
+}
+
+async function synthesizeFromDocument(
+  content: string,
+  intent: string,
+  queryWords: string[]
+): Promise<ResolveResult> {
+  const chunks = splitIntoChunks(content);
+
+  // Score all chunks, sort descending
+  const scored = chunks
+    .map((chunk, idx) => ({ chunk, score: scoreChunk(chunk, queryWords), idx }))
+    .filter(c => c.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  if (scored.length === 0) {
     return {
       result: null,
       status: 'not_found',
       confidence: 0,
       citations: [],
-      message: 'Requested field is not present in committed memory.',
+      message: 'No relevant content found for this query.',
     };
+  }
+
+  // Build context: take top chunks up to MAX_CONTEXT_CHARS
+  let context = '';
+  const usedChunks: typeof scored = [];
+  for (const c of scored.slice(0, TOP_CHUNKS)) {
+    const addition = c.chunk + '\n\n---\n\n';
+    if (context.length + addition.length > MAX_CONTEXT_CHARS && usedChunks.length > 0) break;
+    context += addition;
+    usedChunks.push(c);
+  }
+
+  const shardSize = 512 * 1024;
+
+  try {
+    const llmRes = await fetch(`${VANGUARD_URL}/v1/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'vanguard-standard',
+        stream: false,
+        messages: [
+          {
+            role: 'system',
+            content: `You are a precise document intelligence engine. Answer the query using ONLY the provided document excerpts. Be concise, accurate, and complete. Do not reference the excerpts directly — synthesize the answer. If the answer is not present in the excerpts, say so clearly.`,
+          },
+          {
+            role: 'user',
+            content: `Document excerpts:\n\n${context}\n\nQuery: ${intent}`,
+          },
+        ],
+      }),
+      signal: AbortSignal.timeout(30000),
+    });
+
+    if (!llmRes.ok) throw new Error(`Vanguard HTTP ${llmRes.status}`);
+
+    const llmData = await llmRes.json();
+    const answer = llmData.choices?.[0]?.message?.content ?? '';
+    if (!answer.trim()) throw new Error('Empty synthesis response');
+
+    return {
+      result: answer.trim(),
+      status: 'found',
+      confidence: 0.91,
+      citations: usedChunks.map(c => {
+        const shardIdx = Math.floor((c.idx * CHUNK_TARGET_SIZE) / shardSize);
+        return `shard[${shardIdx}] · chunk[${c.idx}] · relevance: ${c.score}`;
+      }),
+    };
+  } catch (e: any) {
+    console.warn('[xLMP-DS] Synthesis fallback:', e?.message);
+    // Fallback: return top matching text fragments (current behavior)
+    const hits = usedChunks.map(c => c.chunk.slice(0, 150).replace(/\s+/g, ' ').trim());
+    return {
+      result: hits.join(' | '),
+      status: 'found',
+      confidence: 0.72,
+      citations: usedChunks.map(c => {
+        const shardIdx = Math.floor((c.idx * CHUNK_TARGET_SIZE) / shardSize);
+        return `shard[${shardIdx}] · chunk[${c.idx}] · plain-text match`;
+      }),
+      message: `Synthesis unavailable (${e?.message ?? 'Vanguard offline'}) — returning matched fragments.`,
+    };
+  }
+}
+
+// ── Main intent resolver (async for document synthesis) ────────────────────────
+async function resolveIntent(intent: string, content: string): Promise<ResolveResult> {
+  // Plain-text path: JSON parse fails → document intelligence resolver
+  let parsed: unknown = null;
+  try { parsed = JSON.parse(content); } catch { parsed = null; }
+
+  if (!parsed) {
+    const qWords = extractQueryWords(intent);
+    if (qWords.length === 0) {
+      return { result: null, status: 'not_found', confidence: 0, citations: [], message: 'No searchable terms in query.' };
+    }
+    return synthesizeFromDocument(content, intent, qWords);
   }
 
   const pairs = flattenJSON(parsed);
@@ -243,7 +356,6 @@ function resolveIntent(intent: string, content: string): ResolveResult {
   const isComposite = intentLower.includes('json') || commaCount >= 2;
 
   if (isComposite) {
-    // Split intent by commas, then further by "and" / "or"
     const rawSegments = intent.split(/,\s*/).flatMap(s => s.split(/\s+(?:and|or)\s+/i));
 
     const resultObj: Record<string, unknown> = {};
@@ -263,7 +375,6 @@ function resolveIntent(intent: string, content: string): ResolveResult {
         resultObj[leafKey] = best.pair.rawValue;
         allCitations.push(`shard[0] → ${best.pair.path}`);
       } else {
-        // Try to name what was asked for
         missingTerms.push(segWords.join(' '));
       }
     }
@@ -345,7 +456,7 @@ export const xlmp_zk_query = async (
     throw new Error(`Hollow Object not found for root: ${xlmp_root}`);
   }
 
-  const resolved = resolveIntent(query_params.intent, content);
+  const resolved = await resolveIntent(query_params.intent, content);
   const latency_ms = Date.now() - startMs;
 
   const groth16_receipt = '0x' + crypto.createHash('sha256')
