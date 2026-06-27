@@ -9,8 +9,9 @@ import {
   xLMP_ObliterateAll,
 } from '@/lib/xlmp_storage';
 import { compileAndPlayEDL, stopEDL, isEDLPlaying } from '@/lib/exergy_dsp';
-import StepSequencer from '@/components/voice/StepSequencer';
-import type { SeqTrack } from '@/components/voice/StepSequencer';
+import DrumMachine from '@/components/voice/DrumMachine';
+import { DEFAULT_DRUM_ROWS } from '@/components/voice/DrumMachine';
+import type { DrumRow } from '@/components/voice/DrumMachine';
 import type { ExergyDSPProtocol } from '@/types/edl';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -386,20 +387,35 @@ function ClipActions({ clip, onDelete, onToast }: {
   );
 }
 
-// ── StepSequencer helpers ─────────────────────────────────────────────────────
+// ── EDL → DrumRow helpers ─────────────────────────────────────────────────────
 
-function scriptToSeqTracks(script: ExergyDSPProtocol): SeqTrack[] {
-  return script.tracks.map(track => {
-    const steps = new Array<boolean>(16).fill(false);
+const ROW_COLORS: Record<string, string> = {
+  kick: '#EF4444', snare: '#F59E0B', hihat: '#22D3EE', openhat: '#10B981',
+  bass: '#8B5CF6', pad: '#6366F1', lead: '#EC4899', default: '#0D9488',
+};
+
+function scriptToDrumRows(script: ExergyDSPProtocol): DrumRow[] {
+  return script.tracks.map((track, i) => {
+    const pattern = new Array(16).fill('.');
     for (const note of track.notes) {
       if (!note.time) continue;
       const parts = note.time.split(':').map(Number);
-      if ((parts[0] ?? 0) !== 0) continue; // first bar only
+      if ((parts[0] ?? 0) !== 0) continue;
       const step = (parts[1] ?? 0) * 4 + (parts[2] ?? 0);
-      if (step >= 0 && step < 16) steps[step] = true;
+      if (step >= 0 && step < 16) {
+        const vel = (note as any).velocity ?? 80;
+        pattern[step] = vel >= 100 ? 'X' : vel <= 40 ? 'o' : 'x';
+      }
     }
-    const inst = track.drumType ?? track.instrument ?? track.synth ?? track.type ?? 'synth';
-    return { name: track.name, instrument: String(inst), steps };
+    const keyGuess = (track.name ?? '').toLowerCase().replace(/\s+/g, '');
+    const colorKey = Object.keys(ROW_COLORS).find(k => keyGuess.includes(k)) ?? 'default';
+    return {
+      key: `track_${i}`,
+      name: track.name ?? `Track ${i + 1}`,
+      pattern: pattern.join(''),
+      color: ROW_COLORS[colorKey],
+      volume: 0, swing: 0, human: 0, muted: false,
+    };
   });
 }
 
@@ -413,7 +429,7 @@ export default function VoiceStudio() {
   const [musicGenerating, setMusicGenerating] = useState(false);
   const [musicPlaying,   setMusicPlaying]   = useState(false);
   const [musicError,     setMusicError]     = useState('');
-  const [seqTracks,      setSeqTracks]      = useState<SeqTrack[]>([]);
+  const [drumRows,       setDrumRows]       = useState<DrumRow[]>(DEFAULT_DRUM_ROWS);
   const [currentStep,    setCurrentStep]    = useState(-1);
   const stepTickerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [lyrics,        setLyrics]        = useState('');
@@ -1085,28 +1101,24 @@ export default function VoiceStudio() {
                   </div>
                 )}
 
-                {/* ── Step Sequencer grid ── */}
-                {seqTracks.length > 0 && (
-                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '14px 16px' }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 8 }}>
-                      Step Grid — {musicScript?.bpm} BPM
-                    </div>
-                    <StepSequencer
-                      tracks={seqTracks}
-                      currentStep={currentStep}
-                      onToggle={(ti, si) => setSeqTracks(prev => prev.map((t, i) =>
-                        i === ti ? { ...t, steps: t.steps.map((v, j) => j === si ? !v : v) } : t
-                      ))}
-                      onUpdate={(ti, changes) => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, ...changes } : t))}
-                      onMute={ti => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, muted: !t.muted } : t))}
-                      onRemove={ti => setSeqTracks(prev => prev.filter((_, i) => i !== ti))}
-                      onRename={(ti, name) => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, name } : t))}
-                      onClear={ti => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, steps: new Array(16).fill(false) } : t))}
-                      onPreset={(ti, steps) => setSeqTracks(prev => prev.map((t, i) => i === ti ? { ...t, steps } : t))}
-                      onAddTrack={() => setSeqTracks(prev => [...prev, { name: `Track ${prev.length + 1}`, instrument: 'synth', steps: new Array(16).fill(false) }])}
-                    />
+                {/* ── Drum Machine — always visible ── */}
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '16px 18px' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 12 }}>
+                    Drum Machine — {musicScript?.bpm ?? 120} BPM
                   </div>
-                )}
+                  <DrumMachine
+                    rows={drumRows}
+                    currentStep={currentStep}
+                    bpm={musicScript?.bpm ?? 120}
+                    onUpdate={async (rows) => {
+                      setDrumRows(rows);
+                      if (musicPlaying) {
+                        const { compileDrumMachine } = await import('@/lib/toneTranslator');
+                        await compileDrumMachine(rows, musicScript?.bpm ?? 120, (step) => setCurrentStep(step));
+                      }
+                    }}
+                  />
+                </div>
 
                 {/* BPM + Vanguard Writer */}
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -1260,7 +1272,7 @@ export default function VoiceStudio() {
                       if (!res.ok) { setMusicError(data.detail || data.error || 'Generation failed'); return; }
                       const script: ExergyDSPProtocol = data.script;
                       setMusicScript(script);
-                      setSeqTracks(scriptToSeqTracks(script));
+                      setDrumRows(scriptToDrumRows(script));
                       setCurrentStep(-1);
                       if (stepTickerRef.current) clearInterval(stepTickerRef.current);
                       await compileAndPlayEDL(script);
@@ -1288,25 +1300,26 @@ export default function VoiceStudio() {
                   {musicGenerating ? '⟳ GENERATING SCRIPT…' : '▶ GENERATE DSP SCRIPT'}
                 </button>
 
-                {musicScript && !musicPlaying && (
+                {!musicPlaying && (
                   <button
                     onClick={async () => {
+                      const { compileDrumMachine, disposeAllSequences } = await import('@/lib/toneTranslator');
+                      disposeAllSequences();
                       setCurrentStep(-1);
                       if (stepTickerRef.current) clearInterval(stepTickerRef.current);
-                      await compileAndPlayEDL(musicScript);
+                      const bpm = musicScript?.bpm ?? 120;
+                      await compileDrumMachine(drumRows, bpm, (step) => setCurrentStep(step));
                       setMusicPlaying(true);
-                      const msPerStep = (60000 / musicScript.bpm) / 4;
-                      let step = 0;
-                      stepTickerRef.current = setInterval(() => { setCurrentStep(step % 16); step++; }, msPerStep);
                     }}
                     style={{ background: 'var(--bg-surface)', color: 'var(--accent)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '11px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
                     ▶ PLAY
                   </button>
                 )}
-                {musicScript && musicPlaying && (
+                {musicPlaying && (
                   <button
-                    onClick={() => {
-                      stopEDL();
+                    onClick={async () => {
+                      const { disposeAllSequences } = await import('@/lib/toneTranslator');
+                      disposeAllSequences();
                       if (stepTickerRef.current) { clearInterval(stepTickerRef.current); stepTickerRef.current = null; }
                       setCurrentStep(-1);
                       setMusicPlaying(false);
@@ -1328,10 +1341,10 @@ export default function VoiceStudio() {
                     style={{ fontSize: 11, fontFamily: 'monospace', padding: '5px 8px', background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, color: 'var(--text)', outline: 'none', width: 100 }}
                   />
                   <button
-                    disabled={!projectName.trim() || seqTracks.length === 0}
+                    disabled={!projectName.trim()}
                     onClick={() => {
                       const key = `enproject_${projectName.trim()}`;
-                      localStorage.setItem(key, JSON.stringify({ seqTracks, bpm: musicScript?.bpm ?? 120, lyrics }));
+                      localStorage.setItem(key, JSON.stringify({ drumRows, bpm: musicScript?.bpm ?? 120, lyrics }));
                       setSavedProjects(Object.keys(localStorage).filter(k => k.startsWith('enproject_')).map(k => k.replace('enproject_', '')));
                       setToast(`Project "${projectName}" saved`);
                     }}
@@ -1344,7 +1357,7 @@ export default function VoiceStudio() {
                         const key = `enproject_${e.target.value}`;
                         try {
                           const data = JSON.parse(localStorage.getItem(key) ?? '{}');
-                          if (data.seqTracks) setSeqTracks(data.seqTracks);
+                          if (data.drumRows) setDrumRows(data.drumRows);
                           if (data.lyrics) setLyrics(data.lyrics);
                           if (data.bpm && musicScript) setMusicScript({ ...musicScript, bpm: data.bpm });
                           setToast(`Loaded "${e.target.value}"`);
