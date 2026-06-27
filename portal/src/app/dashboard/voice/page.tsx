@@ -431,9 +431,14 @@ export default function VoiceStudio() {
   const [musicError,     setMusicError]     = useState('');
   const [drumRows,       setDrumRows]       = useState<DrumRow[]>(DEFAULT_DRUM_ROWS);
   const [currentStep,    setCurrentStep]    = useState(-1);
+  const [musicBpm,       setMusicBpm]       = useState(120); // independent BPM — not derived from musicScript
   const stepTickerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [lyricConcept,  setLyricConcept]  = useState(''); // Vanguard Writer concept field
+  const [lyricStyle,    setLyricStyle]    = useState(''); // genre/style hint for lyric writer
+  const [lyricsWriting, setLyricsWriting] = useState(false);
   const [lyrics,        setLyrics]        = useState('');
   const [lyricsBlobs,   setLyricsBlobs]   = useState<Blob[]>([]);
+  const [vocalsRendering, setVocalsRendering] = useState(false);
   const [bigMicRecording, setBigMicRecording] = useState(false);
   const [bigMicBlob,    setBigMicBlob]    = useState<Blob | null>(null);
   const bigMicRef   = useRef<MediaRecorder | null>(null);
@@ -1104,93 +1109,135 @@ export default function VoiceStudio() {
                 {/* ── Drum Machine — always visible ── */}
                 <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '16px 18px' }}>
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 12 }}>
-                    Drum Machine — {musicScript?.bpm ?? 120} BPM
+                    Drum Machine — {musicBpm} BPM
                   </div>
                   <DrumMachine
                     rows={drumRows}
                     currentStep={currentStep}
-                    bpm={musicScript?.bpm ?? 120}
-                    onUpdate={async (rows) => {
-                      setDrumRows(rows);
+                    bpm={musicBpm}
+                    onUpdate={async (newRows) => {
+                      setDrumRows(newRows);
                       if (musicPlaying) {
                         const { compileDrumMachine } = await import('@/lib/toneTranslator');
-                        await compileDrumMachine(rows, musicScript?.bpm ?? 120, (step) => setCurrentStep(step));
+                        await compileDrumMachine(newRows, musicBpm, (step) => setCurrentStep(step));
                       }
                     }}
                   />
                 </div>
 
-                {/* BPM + Vanguard Writer */}
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>BPM</span>
-                    <input
-                      type="number" min={40} max={220} value={musicScript?.bpm ?? 120}
-                      onChange={e => {
-                        const bpm = parseInt(e.target.value);
-                        if (musicScript && bpm >= 40 && bpm <= 220) {
-                          setMusicScript({ ...musicScript, bpm });
-                          if (musicPlaying) {
-                            if (stepTickerRef.current) clearInterval(stepTickerRef.current);
-                            const msPerStep = (60000 / bpm) / 4;
-                            let step = 0;
-                            stepTickerRef.current = setInterval(() => { setCurrentStep(step % 16); step++; }, msPerStep);
-                            import('tone').then(Tone => { Tone.getTransport().bpm.value = bpm; });
-                          }
-                        }
-                      }}
-                      style={{ width: 60, background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, padding: '5px 8px', fontSize: 13, color: 'var(--text)', outline: 'none', fontFamily: 'monospace' }}
-                    />
-                  </div>
-                  <button
-                    onClick={async () => {
-                      try {
-                        const res = await fetch('/api/voice/lyrics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: musicPrompt || 'Generate 8 song lyrics lines matching the mood.' }) });
-                        const data = await res.json();
-                        if (data.lyrics) setLyrics(data.lyrics);
-                      } catch {}
+                {/* BPM control */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>BPM</span>
+                  <input
+                    type="number" min={40} max={220} value={musicBpm}
+                    onChange={e => {
+                      const bpm = parseInt(e.target.value);
+                      if (bpm >= 40 && bpm <= 220) {
+                        setMusicBpm(bpm);
+                        if (musicScript) setMusicScript({ ...musicScript, bpm });
+                        if (musicPlaying) import('tone').then(Tone => { Tone.getTransport().bpm.value = bpm; });
+                      }
                     }}
-                    style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 14px', borderRadius: 6, border: '1px solid var(--border-mid)', background: 'var(--bg-surface)', color: 'var(--text-soft)', cursor: 'pointer' }}>
-                    ✦ VANGUARD WRITER
-                  </button>
+                    style={{ width: 60, background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, padding: '5px 8px', fontSize: 13, color: 'var(--text)', outline: 'none', fontFamily: 'monospace' }}
+                  />
+                  {musicPlaying && (
+                    <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                      {Array.from({ length: 4 }, (_, i) => (
+                        <div key={i} style={{ width: 3, borderRadius: 2, background: 'var(--accent)', opacity: currentStep >= 0 && Math.floor(currentStep / 4) === i ? 1 : 0.2, height: currentStep >= 0 && Math.floor(currentStep / 4) === i ? 14 : 6, transition: 'height 0.05s, opacity 0.05s' }} />
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* Lyrics track */}
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 6 }}>Vocal / Lyrics Track</div>
+                {/* ── Vanguard Lyric Writer ── */}
+                <div style={{ background: 'rgba(109,40,217,0.04)', border: '1px solid rgba(109,40,217,0.2)', borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: '#A78BFA', textTransform: 'uppercase', marginBottom: 10 }}>✦ Vanguard Lyric Writer</div>
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                    <input
+                      value={lyricConcept}
+                      onChange={e => setLyricConcept(e.target.value)}
+                      placeholder="Song concept — e.g. rising from hardship, late nights in the city, first love..."
+                      style={{ flex: 1, minWidth: 200, background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 7, padding: '8px 12px', fontSize: 12, color: 'var(--text)', outline: 'none', fontFamily: 'inherit' }}
+                    />
+                    <input
+                      value={lyricStyle}
+                      onChange={e => setLyricStyle(e.target.value)}
+                      placeholder="Style (e.g. afrobeat, R&B, trap)"
+                      style={{ width: 160, background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 7, padding: '8px 12px', fontSize: 12, color: 'var(--text)', outline: 'none', fontFamily: 'inherit' }}
+                    />
+                    <button
+                      disabled={lyricsWriting || !lyricConcept.trim()}
+                      onClick={async () => {
+                        setLyricsWriting(true);
+                        try {
+                          const res = await fetch('/api/voice/lyrics', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ summary: lyricConcept.trim(), style: lyricStyle.trim() }),
+                          });
+                          const data = await res.json();
+                          if (data.lyrics) { setLyrics(data.lyrics); setToast('Lyrics drafted — edit freely'); }
+                          else setToast(data.error ?? 'Lyric generation failed');
+                        } catch (e: unknown) { setToast(e instanceof Error ? e.message : 'Error'); }
+                        finally { setLyricsWriting(false); }
+                      }}
+                      style={{ padding: '8px 16px', borderRadius: 7, border: '1px solid rgba(109,40,217,0.4)', background: lyricsWriting ? 'none' : 'rgba(109,40,217,0.15)', color: lyricsWriting || !lyricConcept.trim() ? 'var(--text-faint)' : '#A78BFA', cursor: lyricsWriting || !lyricConcept.trim() ? 'not-allowed' : 'pointer', fontSize: 12, fontFamily: 'monospace', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                      {lyricsWriting ? '⟳ WRITING…' : '✦ DRAFT LYRICS'}
+                    </button>
+                  </div>
+
+                  {/* Lyrics editor */}
                   <textarea
                     value={lyrics}
                     onChange={e => setLyrics(e.target.value)}
-                    placeholder={'One line per bar — e.g.\nVerse 1 line here\nVerse 1 line 2\n...'}
-                    style={{ width: '100%', height: 80, background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--text)', outline: 'none', resize: 'vertical', fontFamily: 'monospace', lineHeight: 1.6, boxSizing: 'border-box' }}
+                    placeholder={'Lyrics appear here — fully editable.\n\n[Verse 1]\nLine 1...\nLine 2...\n\n[Chorus]\nHook line...'}
+                    style={{ width: '100%', height: 160, background: 'var(--bg)', border: '1px solid var(--border-dim)', borderRadius: 7, padding: '10px 14px', fontSize: 12, color: 'var(--text)', outline: 'none', resize: 'vertical', fontFamily: 'monospace', lineHeight: 1.8, boxSizing: 'border-box' }}
                   />
-                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+
+                  {/* Voice selector + render controls */}
+                  <div style={{ display: 'flex', gap: 8, marginTop: 10, alignItems: 'center', flexWrap: 'wrap' }}>
                     <button
-                      disabled={!lyrics.trim() || !musicScript}
+                      disabled={vocalsRendering || !lyrics.trim()}
                       onClick={async () => {
-                        const lines = lyrics.split('\n').filter(l => l.trim());
+                        setVocalsRendering(true);
+                        const lines = lyrics.split('\n').filter(l => l.trim() && !l.startsWith('['));
                         const blobs: Blob[] = [];
+                        let rendered = 0;
                         for (const line of lines) {
                           try {
-                            const r = await fetch('/api/voice/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: line, voice_id: 'lnes-16', model: 'lnes-16', output_format: 'mp3_44100' }) });
-                            if (r.ok) { const b = await r.blob(); blobs.push(b); }
+                            const r = await fetch('/api/voice/generate', {
+                              method: 'POST', headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ text: line, voice_id: voice.id, model: selectedModel, output_format: 'mp3_44100_128' }),
+                            });
+                            if (r.ok) { blobs.push(await r.blob()); rendered++; }
                           } catch {}
                         }
                         setLyricsBlobs(blobs);
-                        setToast(`${blobs.length} vocal takes rendered`);
+                        setToast(`${rendered} of ${lines.length} vocal lines rendered`);
+                        setVocalsRendering(false);
                       }}
-                      style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 14px', borderRadius: 6, border: '1px solid var(--border-mid)', background: 'var(--bg-surface)', color: 'var(--text-soft)', cursor: 'pointer', opacity: !lyrics.trim() ? 0.5 : 1 }}>
-                      ◎ RENDER VOCALS
+                      style={{ padding: '7px 14px', borderRadius: 7, border: '1px solid var(--border-mid)', background: 'var(--bg-surface)', color: vocalsRendering || !lyrics.trim() ? 'var(--text-faint)' : 'var(--text-soft)', cursor: vocalsRendering || !lyrics.trim() ? 'not-allowed' : 'pointer', fontSize: 11, fontFamily: 'monospace' }}>
+                      {vocalsRendering ? `⟳ RENDERING…` : '◎ RENDER VOCALS'}
                     </button>
+                    {lyricsBlobs.length > 0 && (
+                      <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--accent)' }}>{lyricsBlobs.length} takes ready</span>
+                    )}
                     <button
-                      disabled={lyricsBlobs.length === 0 || !musicScript}
+                      disabled={lyricsBlobs.length === 0}
                       onClick={async () => {
+                        if (!musicPlaying) {
+                          const { compileDrumMachine: cDM2, disposeAllSequences: dAS2 } = await import('@/lib/toneTranslator');
+                          dAS2();
+                          await cDM2(drumRows, musicBpm, (s) => setCurrentStep(s));
+                          setMusicPlaying(true);
+                        }
                         const { scheduleLyricsTrack } = await import('@/lib/toneTranslator');
-                        await scheduleLyricsTrack(lyricsBlobs, 1, musicScript!.bpm);
+                        await scheduleLyricsTrack(lyricsBlobs, 1, musicBpm);
+                        setToast('Vocals scheduled over beat');
                       }}
-                      style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 14px', borderRadius: 6, border: '1px solid var(--accent)', background: 'rgba(13,148,136,0.08)', color: 'var(--accent)', cursor: 'pointer', opacity: lyricsBlobs.length === 0 ? 0.5 : 1 }}>
-                      ♪ SING
+                      style={{ padding: '7px 14px', borderRadius: 7, border: `1px solid ${lyricsBlobs.length === 0 ? 'var(--border-dim)' : 'rgba(13,148,136,0.5)'}`, background: lyricsBlobs.length === 0 ? 'none' : 'rgba(13,148,136,0.06)', color: lyricsBlobs.length === 0 ? 'var(--text-faint)' : 'var(--accent)', cursor: lyricsBlobs.length === 0 ? 'not-allowed' : 'pointer', fontSize: 11, fontFamily: 'monospace', fontWeight: 600 }}>
+                      ♪ SING WITH BEAT
                     </button>
+                    <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-faint)', fontFamily: 'monospace' }}>voice: {voice.name}</span>
                   </div>
                 </div>
 
@@ -1272,18 +1319,16 @@ export default function VoiceStudio() {
                       if (!res.ok) { setMusicError(data.detail || data.error || 'Generation failed'); return; }
                       const script: ExergyDSPProtocol = data.script;
                       setMusicScript(script);
-                      setDrumRows(scriptToDrumRows(script));
+                      setMusicBpm(script.bpm ?? 120);
+                      const newRows = scriptToDrumRows(script);
+                      setDrumRows(newRows);
                       setCurrentStep(-1);
                       if (stepTickerRef.current) clearInterval(stepTickerRef.current);
-                      await compileAndPlayEDL(script);
+                      // Play via DrumMachine (not compileAndPlayEDL)
+                      const { compileDrumMachine: cDM, disposeAllSequences: dAS } = await import('@/lib/toneTranslator');
+                      dAS();
+                      await cDM(newRows, script.bpm ?? 120, (s) => setCurrentStep(s));
                       setMusicPlaying(true);
-                      // Step ticker: 16th notes at script.bpm
-                      const msPerStep = (60000 / script.bpm) / 4;
-                      let step = 0;
-                      stepTickerRef.current = setInterval(() => {
-                        setCurrentStep(step % 16);
-                        step++;
-                      }, msPerStep);
                       const clipId = `EDL-${Date.now()}`;
                       setClips(prev => {
                         const entry = {
@@ -1306,9 +1351,7 @@ export default function VoiceStudio() {
                       const { compileDrumMachine, disposeAllSequences } = await import('@/lib/toneTranslator');
                       disposeAllSequences();
                       setCurrentStep(-1);
-                      if (stepTickerRef.current) clearInterval(stepTickerRef.current);
-                      const bpm = musicScript?.bpm ?? 120;
-                      await compileDrumMachine(drumRows, bpm, (step) => setCurrentStep(step));
+                      await compileDrumMachine(drumRows, musicBpm, (step) => setCurrentStep(step));
                       setMusicPlaying(true);
                     }}
                     style={{ background: 'var(--bg-surface)', color: 'var(--accent)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '11px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
@@ -1344,7 +1387,7 @@ export default function VoiceStudio() {
                     disabled={!projectName.trim()}
                     onClick={() => {
                       const key = `enproject_${projectName.trim()}`;
-                      localStorage.setItem(key, JSON.stringify({ drumRows, bpm: musicScript?.bpm ?? 120, lyrics }));
+                      localStorage.setItem(key, JSON.stringify({ drumRows, bpm: musicBpm, lyrics, lyricConcept, lyricStyle }));
                       setSavedProjects(Object.keys(localStorage).filter(k => k.startsWith('enproject_')).map(k => k.replace('enproject_', '')));
                       setToast(`Project "${projectName}" saved`);
                     }}
@@ -1359,7 +1402,9 @@ export default function VoiceStudio() {
                           const data = JSON.parse(localStorage.getItem(key) ?? '{}');
                           if (data.drumRows) setDrumRows(data.drumRows);
                           if (data.lyrics) setLyrics(data.lyrics);
-                          if (data.bpm && musicScript) setMusicScript({ ...musicScript, bpm: data.bpm });
+                          if (data.bpm) { setMusicBpm(data.bpm); if (musicScript) setMusicScript({ ...musicScript, bpm: data.bpm }); }
+                          if (data.lyricConcept) setLyricConcept(data.lyricConcept);
+                          if (data.lyricStyle) setLyricStyle(data.lyricStyle);
                           setToast(`Loaded "${e.target.value}"`);
                         } catch {}
                       }}
