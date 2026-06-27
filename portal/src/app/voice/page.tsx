@@ -11,8 +11,8 @@ const METRICS = [
 ];
 
 const PLANS = [
-  { name: 'Vanguard Standard', model: 'Qwen-14B Coder', price: '$0.40', unit: '/ 1M tokens', teal: false },
-  { name: 'Vanguard Pro', model: 'Nemotron-30B', price: '$0.80', unit: '/ 1M tokens', teal: true },
+  { name: 'Vanguard Standard', model: 'Sovereign Inference Engine', price: '$0.40', unit: '/ 1M tokens', teal: false },
+  { name: 'Vanguard Pro', model: 'Sovereign Reasoning Engine', price: '$0.80', unit: '/ 1M tokens', teal: true },
   { name: 'Acoustic Voice Stream', model: 'Unidirectional TURN relay', price: '$0.002', unit: '/ minute', teal: false },
 ];
 
