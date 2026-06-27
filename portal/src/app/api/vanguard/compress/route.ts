@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { xlmp_shatter_payload, xlmp_store_content } from '@/lib/xlmp_ds_core';
 
 export async function POST(req: NextRequest) {
