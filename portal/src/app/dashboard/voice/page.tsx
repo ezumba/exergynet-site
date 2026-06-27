@@ -2,12 +2,12 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  initLMPDatabase,
-  sinkAudioToColdSump,
-  rehydrateAudioFromColdSump,
-  obliterateAudioFromColdSump,
-  obliterateAllFromColdSump,
-} from '@/lib/landauer_storage';
+  initxLMPDatabase,
+  xLMP_Compress,
+  xLMP_Rehydrate,
+  xLMP_Obliterate,
+  xLMP_ObliterateAll,
+} from '@/lib/xlmp_storage';
 import { compileAndPlayEDL, stopEDL, isEDLPlaying } from '@/lib/exergy_dsp';
 import type { ExergyDSPProtocol } from '@/types/edl';
 
@@ -232,7 +232,7 @@ function StoredAudioPlayer({ clipId, label }: { clipId: string; label: string })
     if (loaded.current) return true;
     setLoading(true);
     try {
-      const dataUrl = await rehydrateAudioFromColdSump(clipId);
+      const dataUrl = await xLMP_Rehydrate(clipId);
       if (!dataUrl) { setDead(true); setLoading(false); return false; }
       const blob   = await fetch(dataUrl).then(r => r.blob());
       const objUrl = URL.createObjectURL(blob);
@@ -326,7 +326,7 @@ function ClipActions({ clip, onDelete, onToast }: {
   onToast: (msg: string) => void;
 }) {
   const download = async () => {
-    const dataUrl = await rehydrateAudioFromColdSump(clip.id);
+    const dataUrl = await xLMP_Rehydrate(clip.id);
     if (!dataUrl) { onToast('Audio not found — regenerate this clip.'); return; }
     const blob   = await fetch(dataUrl).then(r => r.blob());
     const objUrl = URL.createObjectURL(blob);
@@ -342,7 +342,7 @@ function ClipActions({ clip, onDelete, onToast }: {
   const share = async () => {
     if (navigator.share) {
       try {
-        const dataUrl = await rehydrateAudioFromColdSump(clip.id);
+        const dataUrl = await xLMP_Rehydrate(clip.id);
         if (dataUrl) {
           const blob = await fetch(dataUrl).then(r => r.blob());
           const ext  = extFor(clip.format);
@@ -362,7 +362,7 @@ function ClipActions({ clip, onDelete, onToast }: {
   };
 
   const del = async () => {
-    await obliterateAudioFromColdSump(clip.id);
+    await xLMP_Obliterate(clip.id);
     onDelete(clip.id);
   };
 
@@ -433,7 +433,7 @@ export default function VoiceStudio() {
 
   useEffect(() => {
     // Init IndexedDB (warm up connection)
-    initLMPDatabase().catch(() => {});
+    initxLMPDatabase().catch(() => {});
 
     // Purge old v1 history that stored full base64 URLs in localStorage
     try { localStorage.removeItem('exergynet_voice_history'); } catch {}
@@ -481,7 +481,7 @@ export default function VoiceStudio() {
       const rawUrl = data.url || data.audioUrl || '';
 
       // Sink heavy audio payload to IndexedDB cold sump
-      if (rawUrl) await sinkAudioToColdSump(clipId, rawUrl);
+      if (rawUrl) await xLMP_Compress(clipId, rawUrl);
 
       const clip: Clip = {
         id:        clipId,
@@ -515,7 +515,7 @@ export default function VoiceStudio() {
   const deleteClip = (id: string) => setClips(c => c.filter(x => x.id !== id));
 
   const clearAll = async () => {
-    await obliterateAllFromColdSump();
+    await xLMP_ObliterateAll();
     setClips([]);
     localStorage.removeItem(LS_META_KEY);
     setToast('All generations cleared');
