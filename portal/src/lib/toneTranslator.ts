@@ -1,4 +1,5 @@
 import type { EDLDocument } from '@/types/edl';
+import type { DrumRow } from '@/components/voice/DrumMachine';
 
 export interface TransportHandle {
   play: () => Promise<void>;
@@ -308,4 +309,131 @@ async function _buildTrackSequence(
     dispose: () => { try { part.dispose(); synth.dispose(); } catch {} },
     start: (t: number) => part.start(t),
   };
+}
+
+// ── DrumMachine compiler ───────────────────────────────────────────────────────
+// Accepts DrumRow[] (string patterns with x/X/o/. cells) and compiles to Tone.js
+// X = accent (velocity 1.0), x = normal (0.75), o = ghost (0.35), . = rest
+
+export async function compileDrumMachine(
+  rows: DrumRow[],
+  bpm: number,
+  onStep?: (step: number) => void,
+): Promise<void> {
+  const Tone = await import('tone');
+  disposeAllSequences();
+  const transport = Tone.getTransport();
+  transport.stop();
+  transport.cancel();
+  transport.bpm.value = bpm;
+
+  let stepCb = onStep ?? null;
+
+  // Playhead ticker
+  const tickSeq = new Tone.Sequence(
+    (time: number, step: number) => {
+      Tone.getDraw().schedule(() => { stepCb?.(step); }, time);
+    },
+    Array.from({ length: 16 }, (_, i) => i),
+    '16n',
+  );
+  tickSeq.loop = true;
+  tickSeq.start(0);
+  _globalDisposables.push(tickSeq);
+
+  for (const row of rows) {
+    if (row.muted) continue;
+    const key = row.key.toLowerCase();
+    const isKick    = /kick/.test(key);
+    const isSnare   = /snare|clap/.test(key);
+    const isHihat   = /hi.?hat|hihat/.test(key);
+    const isOpenHat = /open/.test(key);
+    const isBass    = /bass|sub/.test(key);
+
+    let synth: any;
+    if (isKick) {
+      synth = new Tone.MembraneSynth({
+        pitchDecay: 0.05, octaves: 10,
+        oscillator: { type: 'sine' },
+        envelope: { attack: 0.001, decay: 0.4, sustain: 0.01, release: 1.4, attackCurve: 'exponential' },
+      }).toDestination();
+    } else if (isSnare) {
+      synth = new Tone.NoiseSynth({
+        noise: { type: 'pink' },
+        envelope: { attack: 0.001, decay: 0.2, sustain: 0, release: 0.2 },
+      }).toDestination();
+    } else if (isOpenHat) {
+      synth = new Tone.MetalSynth({
+        harmonicity: 5.1, modulationIndex: 32, resonance: 4000, octaves: 1.5,
+        envelope: { attack: 0.001, decay: 0.3, release: 0.05 },
+        volume: -12 + (row.volume ?? 0),
+      }).toDestination();
+    } else if (isHihat) {
+      synth = new Tone.MetalSynth({
+        harmonicity: 5.1, modulationIndex: 32, resonance: 4000, octaves: 1.5,
+        envelope: { attack: 0.001, decay: 0.1, release: 0.01 },
+        volume: -10 + (row.volume ?? 0),
+      }).toDestination();
+    } else if (isBass) {
+      synth = new Tone.MonoSynth({
+        oscillator: { type: 'triangle' },
+        envelope: { attack: 0.02, decay: 0.25, sustain: 0.4, release: 0.5 },
+      }).toDestination();
+      synth.volume.value = row.volume ?? 0;
+    } else {
+      synth = new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: 'triangle' },
+        envelope: { attack: 0.02, decay: 0.25, sustain: 0.5, release: 0.7 },
+      }).toDestination();
+      synth.volume.value = -5 + (row.volume ?? 0);
+    }
+
+    const secPer16th = Tone.getTransport().toSeconds('16n');
+    const swingOffset = secPer16th * ((row.swing ?? 0) / 100) * 0.667;
+    const humanSec = (row.human ?? 0) / 1000;
+
+    // Parse string pattern into events
+    const events: Array<{ stepIdx: number; velocity: number }> = [];
+    const pat = row.pattern.padEnd(16, '.');
+    for (let i = 0; i < 16; i++) {
+      const cell = pat[i];
+      if (cell === 'x') events.push({ stepIdx: i, velocity: 0.75 });
+      else if (cell === 'X') events.push({ stepIdx: i, velocity: 1.0 });
+      else if (cell === 'o') events.push({ stepIdx: i, velocity: 0.35 });
+    }
+
+    if (events.length === 0) continue;
+
+    const toneEvents = events.map(e => ({ time: `0:${Math.floor(e.stepIdx / 4)}:${e.stepIdx % 4}`, ...e }));
+
+    const part = new Tone.Part((time: number, ev: { stepIdx: number; velocity: number }) => {
+      const isOdd = ev.stepIdx % 2 === 1;
+      const swing = isOdd ? swingOffset : 0;
+      const jitter = humanSec > 0 ? (Math.random() * 2 - 1) * humanSec : 0;
+      const t = time + swing + jitter;
+
+      if (isKick) {
+        synth.triggerAttackRelease('C1', '8n', t, ev.velocity);
+      } else if (isSnare) {
+        synth.triggerAttackRelease('16n', t, ev.velocity);
+      } else if (isHihat || isOpenHat) {
+        synth.triggerAttackRelease(isOpenHat ? '8n' : '32n', t, ev.velocity);
+      } else {
+        synth.triggerAttackRelease(isBass ? 'C2' : 'C4', '8n', t, ev.velocity);
+      }
+    }, toneEvents);
+
+    part.loop = true;
+    part.loopEnd = '1m';
+    part.start(0);
+    (part as any).__trackKey = `dm_${row.key}`;
+    (synth as any).__trackKey = `dm_synth_${row.key}`;
+
+    _globalDisposables.push({
+      dispose: () => { try { part.dispose(); synth.dispose(); } catch {} },
+    });
+  }
+
+  await Tone.start();
+  transport.start();
 }
