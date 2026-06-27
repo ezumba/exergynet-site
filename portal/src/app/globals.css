@@ -4,17 +4,74 @@
 
 /* ── CSS Variables ────────────────────────────────────────────────────────── */
 :root {
-  --bg:          #0F172A;
-  --surface:     #1E293B;
-  --border:      #334155;
-  --border-dim:  #1E293B;
-  --teal:        #0D9488;
-  --teal-dark:   #0F766E;
-  --text:        #F8FAFC;
-  --text-muted:  #94A3B8;
-  --text-dim:    #475569;
-  --text-faint:  #334155;
-  --font-mono:   var(--font-mono, 'JetBrains Mono', 'Fira Code', 'Consolas', monospace);
+  /* Dark theme (default) */
+  --bg:           #0F172A;
+  --bg-surface:   #0A1220;
+  --surface:      #1E293B;
+  --border:       #334155;
+  --border-mid:   #253045;
+  --border-dim:   #1E293B;
+  --teal:         #0D9488;
+  --teal-dark:    #0F766E;
+  --accent:       #0D9488;
+  --text:         #F8FAFC;
+  --text-soft:    #CBD5E1;
+  --text-muted:   #94A3B8;
+  --text-dim:     #475569;
+  --text-faint:   #334155;
+  --sidebar-bg:   #0A1220;
+  --sidebar-border: #1E293B;
+  --sidebar-text: #475569;
+  --sidebar-active-bg: rgba(13,148,136,0.10);
+  --sidebar-active-text: #0D9488;
+  --sidebar-active-border: #0D9488;
+  --font-mono:    var(--font-mono, 'JetBrains Mono', 'Fira Code', 'Consolas', monospace);
+}
+
+[data-theme="light"] {
+  --bg:           #F8FAFC;
+  --bg-surface:   #F1F5F9;
+  --surface:      #FFFFFF;
+  --border:       #CBD5E1;
+  --border-mid:   #E2E8F0;
+  --border-dim:   #E2E8F0;
+  --teal:         #0D9488;
+  --teal-dark:    #0F766E;
+  --accent:       #0D9488;
+  --text:         #0F172A;
+  --text-soft:    #1E293B;
+  --text-muted:   #475569;
+  --text-dim:     #94A3B8;
+  --text-faint:   #CBD5E1;
+  --sidebar-bg:   #F1F5F9;
+  --sidebar-border: #E2E8F0;
+  --sidebar-text: #64748B;
+  --sidebar-active-bg: rgba(13,148,136,0.08);
+  --sidebar-active-text: #0D9488;
+  --sidebar-active-border: #0D9488;
+}
+
+[data-theme="color"] {
+  --bg:           #FFFFFF;
+  --bg-surface:   #F0FAFA;
+  --surface:      #F8FFFE;
+  --border:       #CBD5E1;
+  --border-mid:   #E2E8F0;
+  --border-dim:   #EEF2F7;
+  --teal:         #0D9488;
+  --teal-dark:    #0F766E;
+  --accent:       #0D9488;
+  --text:         #0F172A;
+  --text-soft:    #1E293B;
+  --text-muted:   #475569;
+  --text-dim:     #94A3B8;
+  --text-faint:   #CBD5E1;
+  --sidebar-bg:   #0A1220;
+  --sidebar-border: #1E293B;
+  --sidebar-text: #475569;
+  --sidebar-active-bg: rgba(13,148,136,0.10);
+  --sidebar-active-text: #0D9488;
+  --sidebar-active-border: #0D9488;
 }
 
 /* ── Reset / Base ─────────────────────────────────────────────────────────── */
