@@ -1,0 +1,22 @@
+[Unit]
+Description=Omega Carrier MCP Server — ExergyNet Sovereignty Bridge
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/omega_carrier
+ExecStart=/home/ubuntu/omega_carrier/venv/bin/python3 omega_carrier_mcp.py sse
+Restart=always
+RestartSec=5
+
+# Never hardcode — these must be set in /etc/systemd/system/omega_carrier.service.d/env.conf
+# or in a .env file loaded below
+EnvironmentFile=-/home/ubuntu/omega_carrier/.env
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=omega-carrier
+
+[Install]
+WantedBy=multi-user.target

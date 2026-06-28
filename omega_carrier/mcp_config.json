@@ -1,0 +1,16 @@
+{
+  "_comment": "Paste this into claude_desktop_config.json mcpServers section for stdio mode.",
+  "mcpServers": {
+    "omega-carrier": {
+      "command": "python3",
+      "args": ["/home/ubuntu/omega_carrier/omega_carrier_mcp.py", "stdio"],
+      "env": {
+        "PORTAL_URL": "https://portal.exergynet.org",
+        "APEX_URL":   "https://explorer-api.exergynet.org"
+      }
+    }
+  },
+
+  "_sse_comment": "For SSE/network mode — connect custom agents to http://98.86.112.85:8765/sse",
+  "sse_endpoint": "http://98.86.112.85:8765/sse"
+}
