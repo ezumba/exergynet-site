@@ -12,6 +12,10 @@ import { compileAndPlayEDL, stopEDL, isEDLPlaying } from '@/lib/exergy_dsp';
 import DrumMachine from '@/components/voice/DrumMachine';
 import { DEFAULT_DRUM_ROWS } from '@/components/voice/DrumMachine';
 import type { DrumRow } from '@/components/voice/DrumMachine';
+import PianoRoll from '@/components/voice/PianoRoll';
+import type { PianoNote, PianoInstrument } from '@/components/voice/PianoRoll';
+import AudioTracks from '@/components/voice/AudioTracks';
+import type { AudioTrackData } from '@/components/voice/AudioTracks';
 import type { ExergyDSPProtocol } from '@/types/edl';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -439,6 +443,15 @@ export default function VoiceStudio() {
   const [lyrics,        setLyrics]        = useState('');
   const [lyricsBlobs,   setLyricsBlobs]   = useState<Blob[]>([]);
   const [vocalsRendering, setVocalsRendering] = useState(false);
+  // Piano Roll
+  const [pianoNotes,      setPianoNotes]      = useState<PianoNote[]>([]);
+  const [pianoInstrument, setPianoInstrument] = useState<PianoInstrument>('synth');
+  // Audio import tracks
+  const [audioTracks,     setAudioTracks]     = useState<AudioTrackData[]>([]);
+  // Mixdown recording
+  const [isRecording,     setIsRecording]     = useState(false);
+  const [recordSecs,      setRecordSecs]      = useState(0);
+  const recordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [bigMicRecording, setBigMicRecording] = useState(false);
   const [bigMicBlob,    setBigMicBlob]    = useState<Blob | null>(null);
   const bigMicRef   = useRef<MediaRecorder | null>(null);
@@ -1125,6 +1138,40 @@ export default function VoiceStudio() {
                   />
                 </div>
 
+                {/* ── Piano Roll ── */}
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '16px 18px' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 12 }}>
+                    Piano Roll <span style={{ color: 'var(--text-faint)', fontWeight: 400 }}>— melody · chords · bass</span>
+                  </div>
+                  <PianoRoll
+                    notes={pianoNotes}
+                    instrument={pianoInstrument}
+                    currentStep={currentStep}
+                    onNotesChange={async (newNotes) => {
+                      setPianoNotes(newNotes);
+                      if (musicPlaying) {
+                        const { compilePianoRoll } = await import('@/lib/toneTranslator');
+                        await compilePianoRoll(newNotes, pianoInstrument);
+                      }
+                    }}
+                    onInstrumentChange={async (inst) => {
+                      setPianoInstrument(inst);
+                      if (musicPlaying && pianoNotes.length > 0) {
+                        const { compilePianoRoll } = await import('@/lib/toneTranslator');
+                        await compilePianoRoll(pianoNotes, inst);
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* ── Audio Import Tracks ── */}
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '16px 18px' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 12 }}>
+                    Audio Tracks <span style={{ color: 'var(--text-faint)', fontWeight: 400 }}>— import loops · stems · samples</span>
+                  </div>
+                  <AudioTracks tracks={audioTracks} onChange={setAudioTracks} bpm={musicBpm} />
+                </div>
+
                 {/* BPM control */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>BPM</span>
@@ -1348,10 +1395,12 @@ export default function VoiceStudio() {
                 {!musicPlaying && (
                   <button
                     onClick={async () => {
-                      const { compileDrumMachine, disposeAllSequences } = await import('@/lib/toneTranslator');
+                      const { compileDrumMachine, compilePianoRoll, playAudioTracks, disposeAllSequences } = await import('@/lib/toneTranslator');
                       disposeAllSequences();
                       setCurrentStep(-1);
                       await compileDrumMachine(drumRows, musicBpm, (step) => setCurrentStep(step));
+                      await compilePianoRoll(pianoNotes, pianoInstrument);
+                      await playAudioTracks(audioTracks, musicBpm);
                       setMusicPlaying(true);
                     }}
                     style={{ background: 'var(--bg-surface)', color: 'var(--accent)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '11px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
@@ -1369,6 +1418,40 @@ export default function VoiceStudio() {
                     }}
                     style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 10, padding: '11px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
                     ■ STOP
+                  </button>
+                )}
+
+                {/* Mixdown record / export */}
+                {musicPlaying && !isRecording && (
+                  <button
+                    onClick={async () => {
+                      const { startMixdownRecording } = await import('@/lib/toneTranslator');
+                      await startMixdownRecording();
+                      setIsRecording(true);
+                      setRecordSecs(0);
+                      recordTimerRef.current = setInterval(() => setRecordSecs(s => s + 1), 1000);
+                    }}
+                    style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 10, padding: '11px 18px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
+                    ● REC MIX
+                  </button>
+                )}
+                {isRecording && (
+                  <button
+                    onClick={async () => {
+                      if (recordTimerRef.current) { clearInterval(recordTimerRef.current); recordTimerRef.current = null; }
+                      setIsRecording(false);
+                      try {
+                        const { stopMixdownRecording } = await import('@/lib/toneTranslator');
+                        const blob = await stopMixdownRecording();
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url; a.download = `${projectName || 'mixdown'}.webm`; a.click();
+                        URL.revokeObjectURL(url);
+                        setToast('Mixdown exported');
+                      } catch (err: unknown) { setToast(err instanceof Error ? err.message : 'Export failed'); }
+                    }}
+                    style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'monospace', animation: 'pulse 1s ease-in-out infinite' }}>
+                    ■ STOP REC · {recordSecs}s
                   </button>
                 )}
 
