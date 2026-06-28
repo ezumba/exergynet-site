@@ -1,5 +1,32 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 'use strict';
+const multer = require('multer');
+const path   = require('path');
+const fs     = require('fs');
+const { v4: uuidv4 } = require('uuid');
+
+const DROPS_DIR = process.env.DROPS_DIR || '/home/ubuntu/music-drops';
+['audio', 'video', 'cover'].forEach(sub => fs.mkdirSync(`${DROPS_DIR}/${sub}`, { recursive: true }));
+
+const dropsStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const sub = file.fieldname === 'audio' ? 'audio' : file.fieldname === 'video' ? 'video' : 'cover';
+    cb(null, `${DROPS_DIR}/${sub}`);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname) || (file.fieldname === 'audio' ? '.webm' : file.fieldname === 'video' ? '.mp4' : '.jpg');
+    cb(null, `${uuidv4()}${ext}`);
+  },
+});
+const dropsUpload = multer({
+  storage: dropsStorage,
+  limits: { fileSize: 200 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.fieldname === 'audio' && !/audio/i.test(file.mimetype)) return cb(new Error('Audio files only'));
+    if (file.fieldname === 'video' && !/video/i.test(file.mimetype)) return cb(new Error('Video files only'));
+    cb(null, true);
+  },
+});
 // ══════════════════════════════════════════════════════════════════════════════
 // biological_proxy — ExergyNet developer portal backend
 // Port 5000 (local only, behind Caddy on portal.exergynet.org)
@@ -95,6 +122,10 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
         [microUsdc, developerId]
       );
       console.log(`[webhook/stripe] credited ${microUsdc} micro-USDC to ${developerId}`);
+      await pool.query(
+        `UPDATE biological_developers SET stripe_session_credited = COALESCE(stripe_session_credited, '[]'::jsonb) || $1::jsonb WHERE id = $2`,
+        [JSON.stringify([session.id]), developerId]
+      ).catch(() => {}); // best-effort; column may not exist yet
       // Sync to L0 miners ledger so the siphon sees the balance.
       const devRow = await pool.query(`SELECT node_id FROM biological_developers WHERE id = $1`, [developerId]);
       const nodeId = devRow.rows[0]?.node_id;
@@ -144,7 +175,8 @@ async function initDb() {
     ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS bio                TEXT;
     ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS phone              TEXT;
     ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS profile_image_b64  TEXT;
-    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS profile_gallery     JSONB NOT NULL DEFAULT '[]'::jsonb;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS profile_gallery          JSONB NOT NULL DEFAULT '[]'::jsonb;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS stripe_session_credited  JSONB NOT NULL DEFAULT '[]'::jsonb;
 
     CREATE TABLE IF NOT EXISTS en_jobs (
       id               TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -171,6 +203,26 @@ async function initDb() {
       created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       UNIQUE(provider, provider_id)
     );
+
+    CREATE TABLE IF NOT EXISTS music_drops (
+      id           TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      email        TEXT NOT NULL,
+      artist       TEXT NOT NULL,
+      title        TEXT NOT NULL,
+      genre        TEXT NOT NULL DEFAULT '',
+      description  TEXT NOT NULL DEFAULT '',
+      audio_file   TEXT NOT NULL,
+      video_file   TEXT,
+      cover_file   TEXT,
+      plays        INTEGER NOT NULL DEFAULT 0,
+      likes        INTEGER NOT NULL DEFAULT 0,
+      source       TEXT NOT NULL DEFAULT 'portal',
+      spaces_ready BOOLEAN NOT NULL DEFAULT FALSE,
+      published_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    ALTER TABLE music_drops ADD COLUMN IF NOT EXISTS source       TEXT NOT NULL DEFAULT 'portal';
+    ALTER TABLE music_drops ADD COLUMN IF NOT EXISTS spaces_ready BOOLEAN NOT NULL DEFAULT FALSE;
   `);
   console.log('[DB] Tables ready');
 }
@@ -819,7 +871,7 @@ app.post('/api/create-checkout-session', requireAuth, async (req, res) => {
         developer_id:      req.developerId,
         usdc_amount_micro: String(Math.round(amount_usd * 1_000_000)),
       },
-      success_url: `${portalUrl}/dashboard/billing?stripe=success`,
+      success_url: `${portalUrl}/dashboard/billing?stripe=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${portalUrl}/dashboard/billing?stripe=cancelled`,
     });
     console.log(`[STRIPE] checkout session ${session.id} for developer ${req.developerId} | $${amount_usd}`);
@@ -830,59 +882,195 @@ app.post('/api/create-checkout-session', requireAuth, async (req, res) => {
   }
 });
 
-// ── POST /v1/chat/completions (SSE stub — validates API key) ──────────────────
-app.post('/v1/chat/completions', async (req, res) => {
-  const apiKey = req.headers['authorization']?.replace('Bearer ', '') || '';
-  if (!apiKey.startsWith('sk-exergy-')) {
-    return res.status(401).json({ error: 'Invalid API key format' });
+// ── POST /api/stripe/verify-session — fallback credit on return from Stripe ──────
+// Called by billing page when ?stripe=success lands. Retrieves the session directly
+// from Stripe API and credits the user if payment succeeded and not already credited.
+// Idempotent — safe to call multiple times for the same session.
+app.post('/api/stripe/verify-session', requireAuth, async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
+  const { session_id } = req.body ?? {};
+  if (!session_id || typeof session_id !== 'string') {
+    return res.status(400).json({ error: 'session_id required' });
   }
 
-  // Look up by preview prefix (first 18 chars of key are stored verbatim in preview)
+  let session;
   try {
-    const prefix = apiKey.slice(0, 18);
-    const devs   = await pool.query(
-      `SELECT id, api_key_hash, active, usdc_micro_balance
-         FROM biological_developers
-        WHERE api_key_preview LIKE $1`,
-      [prefix + '%']
-    );
+    session = await stripe.checkout.sessions.retrieve(session_id);
+  } catch (err) {
+    console.error('[verify-session] Stripe retrieve error:', err.message);
+    return res.status(502).json({ error: 'Failed to retrieve Stripe session' });
+  }
 
-    let dev = null;
-    for (const row of devs.rows) {
-      if (await bcrypt.compare(apiKey, row.api_key_hash)) { dev = row; break; }
+  if (session.payment_status !== 'paid') {
+    return res.json({ ok: false, reason: 'payment not completed' });
+  }
+
+  const developerId = session.metadata?.developer_id;
+  if (developerId !== req.developerId) {
+    return res.status(403).json({ error: 'Session does not belong to this account' });
+  }
+
+  // Idempotency check — if webhook already credited this session, skip
+  const already = await pool.query(
+    `SELECT id FROM biological_developers
+     WHERE id = $1 AND stripe_session_credited @> $2::jsonb`,
+    [developerId, JSON.stringify([session_id])]
+  ).catch(() => ({ rows: [] }));
+
+  if (already.rows.length > 0) {
+    const dev = await pool.query(
+      `SELECT usdc_micro_balance FROM biological_developers WHERE id = $1`,
+      [developerId]
+    );
+    return res.json({ ok: true, already_credited: true, new_balance_micro: dev.rows[0]?.usdc_micro_balance ?? 0 });
+  }
+
+  const amountCents = session.amount_total ?? 0;
+  if (amountCents <= 0) {
+    return res.status(400).json({ error: 'Invalid session amount' });
+  }
+  const microUsdc = amountCents * 10000;
+
+  try {
+    const result = await pool.query(
+      `UPDATE biological_developers
+         SET usdc_micro_balance = usdc_micro_balance + $1,
+             active = TRUE,
+             stripe_session_credited = COALESCE(stripe_session_credited, '[]'::jsonb) || $3::jsonb
+       WHERE id = $2
+       RETURNING usdc_micro_balance`,
+      [microUsdc, developerId, JSON.stringify([session_id])]
+    );
+    const newBalance = result.rows[0]?.usdc_micro_balance ?? 0;
+    console.log(`[verify-session] credited ${microUsdc} µUSDC to ${developerId} | session ${session_id} | balance ${newBalance}`);
+
+    const devRow = await pool.query(`SELECT node_id FROM biological_developers WHERE id = $1`, [developerId]);
+    const nodeId = devRow.rows[0]?.node_id;
+    if (nodeId) creditApexMiner(nodeId, microUsdc);
+
+    res.json({ ok: true, credited_micro: microUsdc, new_balance_micro: newBalance });
+  } catch (err) {
+    console.error('[verify-session] credit error:', err.message);
+    res.status(500).json({ error: 'Credit failed' });
+  }
+});
+
+// ── POST /api/dt-token — device token for Vanguard chat (Edge Witness app) ─────
+app.post('/api/dt-token', async (req, res) => {
+  const DT_PASSWORD = process.env.DT_TOKEN_PASSWORD || 'Exergynet2026@';
+  const { password } = req.body || {};
+  if (!password || password !== DT_PASSWORD) {
+    return res.status(401).json({ error: 'Invalid device token password' });
+  }
+  const token = jwt.sign(
+    { sub: 'edge-witness-device', iss: 'exergynet-dt', role: 'vanguard_chat' },
+    JWT_SECRET, { expiresIn: '2h' }
+  );
+  res.json({ ok: true, token });
+});
+
+// ── POST /v1/chat/completions — Vanguard LLM proxy (API key OR dt-token JWT) ──
+app.post('/v1/chat/completions', async (req, res) => {
+  const raw = req.headers['authorization']?.replace('Bearer ', '') || '';
+  if (!raw) return res.status(401).json({ error: 'Missing authorization' });
+
+  // API key path (sk-exergy-*)
+  if (raw.startsWith('sk-exergy-')) {
+    try {
+      const prefix = raw.slice(0, 18);
+      const devs = await pool.query(
+        `SELECT id, api_key_hash, active FROM biological_developers WHERE api_key_preview LIKE $1`,
+        [prefix + '%']
+      );
+      let dev = null;
+      for (const row of devs.rows) { if (await bcrypt.compare(raw, row.api_key_hash)) { dev = row; break; } }
+      if (!dev) return res.status(401).json({ error: 'Invalid API key' });
+      if (!dev.active) return res.status(403).json({ error: 'Account inactive' });
+    } catch (err) {
+      console.error('[v1/chat auth]', err);
+      return res.status(500).json({ error: 'Auth check failed' });
+    }
+  } else {
+    // JWT path (dt-token or portal session JWT)
+    try {
+      jwt.verify(raw, JWT_SECRET);
+    } catch {
+      return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+  }
+
+  // Proxy to real Vanguard LLM
+  const VG_URL = process.env.SEI_VANGUARD_URL || 'http://20.127.220.199:3000';
+  const VG_KEY = process.env.SEI_VANGUARD_KEY || 'sk-vanguard-apex-internal-v1';
+
+  const isStreaming   = req.body?.stream === true;
+  const isJsonObject  = req.body?.response_format?.type === 'json_object';
+  const isClinical    = req.body?.domain === 'clinical' || req.headers['x-vanguard-domain'] === 'clinical';
+
+  // Inject clinical system guard for json_object or clinical domain requests
+  let upstreamBody = req.body;
+  if ((isJsonObject || isClinical) && !isStreaming) {
+    const clinicalGuard = {
+      role: 'system',
+      content: 'You are a deterministic extraction engine. Your entire output must be a valid JSON object. Never mention your name. Never prepend system labels. Never explain your reasoning. No markdown. No code fences. If information is missing: return null. If uncertain: set confidence accordingly.',
+    };
+    const messages = Array.isArray(upstreamBody?.messages) ? upstreamBody.messages : [];
+    // Prepend guard only if not already present
+    const hasGuard = messages[0]?.role === 'system' && messages[0]?.content?.includes('deterministic');
+    upstreamBody = { ...upstreamBody, stream: false, messages: hasGuard ? messages : [clinicalGuard, ...messages.filter(m => m.role !== 'system')] };
+  }
+
+  try {
+    const upstream = await fetch(`${VG_URL}/v1/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${VG_KEY}` },
+      body: JSON.stringify(upstreamBody),
+      signal: AbortSignal.timeout(90000),
+    });
+
+    if (!upstream.ok) {
+      const errText = await upstream.text();
+      console.error('[v1/chat proxy]', upstream.status, errText.slice(0, 200));
+      return res.status(502).json({ error: 'Vanguard unavailable' });
     }
 
-    if (!dev) return res.status(401).json({ error: 'Invalid API key' });
-    if (!dev.active) return res.status(403).json({ error: 'Account inactive — add USDC balance to activate' });
-    if (Number(dev.usdc_micro_balance) <= 0) return res.status(402).json({ error: 'Insufficient balance' });
-  } catch (err) {
-    console.error('[v1/chat auth]', err);
-    return res.status(500).json({ error: 'Auth check failed' });
+    // Non-streaming path: read full response, apply normalizer for json_object calls
+    if (!isStreaming) {
+      const data = await upstream.json();
+      if (isJsonObject || isClinical) {
+        const raw = data.choices?.[0]?.message?.content ?? '';
+        const normalized = normalizeExtractionResponse(raw);
+        try {
+          JSON.parse(normalized); // validate
+          if (data.choices?.[0]?.message) {
+            data.choices[0].message.content = normalized;
+          }
+        } catch {
+          console.error('[v1/chat proxy] json_object normalizer failed to produce valid JSON. raw:', raw.slice(0, 200));
+          return res.status(502).json({ error: 'Model returned non-JSON response for json_object request' });
+        }
+      }
+      return res.json(data);
+    }
+
+    // Streaming path: pass through as SSE
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    const reader = upstream.body.getReader();
+    const dec = new TextDecoder();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      res.write(dec.decode(value, { stream: true }));
+    }
+    res.end();
+  } catch (e) {
+    console.error('[v1/chat proxy]', e.message);
+    if (!res.headersSent) res.status(503).json({ error: 'Vanguard unreachable' });
+    else res.end();
   }
-
-  const { stream, messages } = req.body || {};
-  const prompt = messages?.[messages.length - 1]?.content ?? '';
-
-  if (!stream) {
-    return res.json({
-      id:      'cmpl-' + crypto.randomBytes(8).toString('hex'),
-      object:  'chat.completion',
-      model:   'vanguard-engine',
-      choices: [{ message: { role: 'assistant', content: 'Vanguard Engine — ' + prompt }, finish_reason: 'stop' }],
-    });
-  }
-
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-
-  const words = ('Vanguard Engine ZK response: ' + prompt).split(' ');
-  for (const word of words) {
-    res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: word + ' ' } }] })}\n\n`);
-    await new Promise(r => setTimeout(r, 40));
-  }
-  res.write('data: [DONE]\n\n');
-  res.end();
 });
 
 // ── POST /auth/oauth ─ called server-side by NextAuth after OAuth sign-in ─────
@@ -977,6 +1165,134 @@ app.post('/auth/oauth', async (req, res) => {
     }
     console.error('[auth/oauth]', err);
     res.status(500).json({ error: 'OAuth sign-in failed' });
+  }
+});
+
+// ── Clinical response normalizer ──────────────────────────────────────────────
+// Strips all personality prefixes, markdown fences, and any text before the
+// first JSON object. Applied to all /v1/extract responses before returning.
+function normalizeExtractionResponse(text) {
+  text = text.replace(/^\*\*SEI Vanguard Response\*\*\s*/i, '');
+  text = text.replace(/^\*\*Vanguard(?:\s+Engine)?[^*]*\*\*\s*/i, '');
+  text = text.replace(/^Vanguard Engine[\s—\-:]+/i, '');
+  text = text.replace(/^\*\*JSON Output[:\s]*\*\*\s*/i, '');
+  text = text.replace(/^(?:Here is|I found|Assistant:|SEI\s+\w+\s+Response)[:\s]+/i, '');
+  text = text.replace(/^```(?:json)?\s*/im, '');
+  text = text.replace(/\s*```\s*$/m, '');
+  const start = text.indexOf('{');
+  const end   = text.lastIndexOf('}');
+  if (start !== -1 && end !== -1 && end > start) {
+    text = text.slice(start, end + 1);
+  }
+  return text.trim();
+}
+
+// ── POST /v1/extract — Sovereign Clinical Extraction ─────────────────────────
+// Accepts: { text: string, schema: Record<string, string>, domain?: string }
+// Returns: { extraction: Record<string, { value, confidence, needs_clarification }> }
+app.post('/v1/extract', requireAuth, async (req, res) => {
+  const { text, schema, domain } = req.body || {};
+
+  if (!text || typeof text !== 'string') {
+    return res.status(400).json({ error: 'text (string) is required' });
+  }
+  if (!schema || typeof schema !== 'object' || Array.isArray(schema)) {
+    return res.status(400).json({ error: 'schema (object mapping field names to types) is required' });
+  }
+
+  const VG_URL = process.env.SEI_VANGUARD_URL || 'http://20.127.220.199:3000';
+  const VG_KEY = process.env.SEI_VANGUARD_KEY || 'sk-vanguard-apex-internal-v1';
+
+  const fieldList = Object.entries(schema)
+    .map(([k, t]) => `  "${k}" (${t})`)
+    .join('\n');
+
+  // Regression test contract (must always pass):
+  // "I am 35 years old"     → { value: 35, confidence: 0.9, needs_clarification: false }
+  // "I do not know"         → { value: null, confidence: 0, needs_clarification: true }
+  // "For about 7 days"      → { value: 7, confidence: 0.8, needs_clarification: false }
+  const systemPrompt =
+`You are a deterministic clinical extraction engine.
+OUTPUT RULES — ABSOLUTE, NO EXCEPTIONS:
+1. Your ENTIRE response must be ONE valid JSON object. Nothing before it. Nothing after it.
+2. NEVER write your name, "Vanguard", "Assistant", "Here is", "I found", or any introduction.
+3. NEVER use markdown, code fences, or explanation.
+4. START your response with the character { and END with the character }.
+
+Extract the following fields from the clinical text provided by the user:
+${fieldList}
+
+Return a JSON object where each key is the EXACT field name listed above, and each value is:
+  { "value": <extracted value cast to the correct type, or null>, "confidence": <0.0–1.0>, "needs_clarification": <true|false> }
+
+Rules:
+- Use the EXACT field names from the list above. Do not rename or add prefix to them.
+- If the patient says "I do not know" or is ambiguous: value=null, confidence=0.0, needs_clarification=true
+- If a field is clearly not present in the text: value=null, confidence=1.0, needs_clarification=false`;
+
+  try {
+    const upstream = await fetch(`${VG_URL}/v1/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${VG_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'vanguard-engine',
+        stream: false,
+        temperature: 0,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: text },
+        ],
+      }),
+      signal: AbortSignal.timeout(60000),
+    });
+
+    if (!upstream.ok) {
+      const errText = await upstream.text();
+      console.error('[v1/extract upstream]', upstream.status, errText.slice(0, 200));
+      return res.status(502).json({ error: 'Extraction engine unavailable' });
+    }
+
+    const data = await upstream.json();
+    let raw = data.choices?.[0]?.message?.content || '';
+
+    raw = normalizeExtractionResponse(raw);
+
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      console.error('[v1/extract] JSON parse failed. Raw:', raw.slice(0, 300));
+      return res.status(502).json({ error: 'Extraction engine returned unparseable response' });
+    }
+
+    // Build final extraction object keyed strictly by schema fields
+    const extraction = {};
+    for (const [field, type] of Object.entries(schema)) {
+      const fieldData = parsed[field];
+      if (fieldData && typeof fieldData === 'object' && 'value' in fieldData) {
+        extraction[field] = {
+          value: fieldData.value,
+          confidence: typeof fieldData.confidence === 'number' ? fieldData.confidence : 1.0,
+          needs_clarification: Boolean(fieldData.needs_clarification),
+        };
+      } else if (fieldData !== undefined) {
+        // Model returned a flat value instead of the schema object
+        extraction[field] = { value: fieldData, confidence: 1.0, needs_clarification: false };
+      } else {
+        // Field not found in model response — mark for clarification
+        extraction[field] = { value: null, confidence: 0.0, needs_clarification: true };
+      }
+    }
+
+    console.log(`[v1/extract] ok — ${Object.keys(extraction).length} field(s) for developer ${req.developerId}`);
+    res.json({ extraction });
+  } catch (e) {
+    console.error('[v1/extract]', e.message);
+    res.status(503).json({ error: 'Extraction engine unreachable' });
   }
 });
 
@@ -1379,7 +1695,7 @@ app.get('/api/admin/engine', requireAdmin('super_admin', 'ops'), async (req, res
     });
     clearTimeout(timeout);
     const body = await response.json().catch(() => ({}));
-    res.json({ status: response.ok ? 'online' : 'degraded', url: vanguardUrl, ...body });
+    res.json({ url: vanguardUrl, ...body, status: response.ok ? 'online' : 'degraded' });
   } catch (err) {
     res.json({ status: 'offline', url: vanguardUrl, error: err.message });
   }
@@ -1428,7 +1744,7 @@ app.delete('/api/admin/keys/:id', requireAdmin('super_admin'), async (req, res) 
 // ═══════════════════════════════════════════════════════════════
 const SEI_VG_URL = process.env.SEI_VANGUARD_URL || 'http://20.127.220.199:3000';
 const SEI_VG_KEY = process.env.SEI_VANGUARD_KEY || 'sk-vanguard-apex-internal-v1';
-const VG_FLAG_THRESHOLD = 0.5;
+const VG_FLAG_THRESHOLD = 0.65;
 let CONSOLE_HTML = '<h1>console missing</h1>';
 try { CONSOLE_HTML = require('./console_html.js'); } catch (e) { console.error('[console] load failed', e.message); }
 
@@ -1547,6 +1863,93 @@ app.post('/api/admin/apps/rescan', requireAdmin('super_admin','ops'), async (req
 app.get('/api/admin/apps/console', (req, res) => {
   res.set('Content-Type', 'text/html');
   res.send(CONSOLE_HTML);
+});
+
+// ── Music Drops — static file serve ─────────────────────────────────────────
+app.use('/drops-media', express.static(DROPS_DIR, { maxAge: '7d' }));
+
+// ── Music Drops — GET public feed ────────────────────────────────────────────
+app.get('/api/music/drops', async (req, res) => {
+  const genre = (req.query.genre || '').slice(0, 40);
+  const limit = Math.min(parseInt(req.query.limit) || 24, 60);
+  try {
+    const where  = genre ? 'WHERE genre ILIKE $1' : '';
+    const params = genre ? [`%${genre}%`, limit] : [limit];
+    const idx    = genre ? 3 : 2;
+    const rows   = await pool.query(
+      `SELECT id, email, artist, title, genre, description,
+              audio_file, video_file, cover_file,
+              plays, likes, source, spaces_ready, published_at
+         FROM music_drops
+         ${where}
+         ORDER BY published_at DESC
+         LIMIT $${genre ? 2 : 1}`,
+      params
+    );
+    const drops = rows.rows.map(d => ({
+      ...d,
+      audio_url: `/drops-media/audio/${d.audio_file}`,
+      video_url: d.video_file ? `/drops-media/video/${d.video_file}` : null,
+      cover_url: d.cover_file ? `/drops-media/cover/${d.cover_file}` : null,
+    }));
+    res.json({ drops });
+  } catch (err) {
+    console.error('[drops/GET]', err.message);
+    res.json({ drops: [] });
+  }
+});
+
+// ── Music Drops — POST publish ────────────────────────────────────────────────
+app.post('/api/music/drops',
+  dropsUpload.fields([
+    { name: 'audio', maxCount: 1 },
+    { name: 'video', maxCount: 1 },
+    { name: 'cover', maxCount: 1 },
+  ]),
+  async (req, res) => {
+    const { title, artist, genre = '', description = '', email, source = 'portal' } = req.body;
+    if (!title || !email) return res.status(400).json({ error: 'title and email required' });
+
+    const audioFile = req.files?.audio?.[0]?.filename;
+    if (!audioFile) return res.status(400).json({ error: 'Audio file required' });
+
+    const videoFile = req.files?.video?.[0]?.filename ?? null;
+    const coverFile = req.files?.cover?.[0]?.filename ?? null;
+
+    try {
+      const r = await pool.query(
+        `INSERT INTO music_drops (email, artist, title, genre, description, audio_file, video_file, cover_file, source)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         RETURNING id, title, artist, published_at`,
+        [email, artist || 'Artist', title, genre, description, audioFile, videoFile, coverFile, source]
+      );
+      const drop = r.rows[0];
+      res.json({
+        success: true,
+        drop: {
+          ...drop,
+          audio_url: `/drops-media/audio/${audioFile}`,
+          video_url: videoFile ? `/drops-media/video/${videoFile}` : null,
+          cover_url: coverFile ? `/drops-media/cover/${coverFile}` : null,
+        },
+      });
+    } catch (err) {
+      console.error('[drops/POST]', err.message);
+      res.status(500).json({ error: 'Publish failed' });
+    }
+  }
+);
+
+// ── Music Drops — POST increment play count ───────────────────────────────────
+app.post('/api/music/drops/:id/play', async (req, res) => {
+  await pool.query('UPDATE music_drops SET plays = plays + 1 WHERE id = $1', [req.params.id]).catch(() => {});
+  res.json({ ok: true });
+});
+
+// ── Music Drops — POST mark spaces_ready (link portal drop → Spaces room) ────
+app.post('/api/music/drops/:id/spaces', async (req, res) => {
+  await pool.query('UPDATE music_drops SET spaces_ready = TRUE WHERE id = $1', [req.params.id]).catch(() => {});
+  res.json({ ok: true });
 });
 
 initDb()

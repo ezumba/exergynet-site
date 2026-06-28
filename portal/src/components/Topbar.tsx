@@ -13,6 +13,7 @@ const PAGE_MAP: Record<string, string> = {
   '/dashboard/settlements': 'Settlements',
   '/dashboard/intel':       'App Store',
   '/dashboard/voice':       'Voice Studio',
+  '/music':                 'Drops — Community Music',
   '/dashboard/apps':        'My Apps',
   '/dashboard/aeris':       'AERIS',
 };
