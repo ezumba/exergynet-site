@@ -479,9 +479,12 @@ export default function VoiceStudio() {
     "Red lorry, yellow lorry, red lorry, yellow lorry.",
     "I scream, you scream, we all scream for ice cream.",
   ];
-  const forgeMediaRef = useRef<MediaRecorder | null>(null);
-  const forgeChunksRef = useRef<Blob[]>([]);
-  const forgeTimerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [forgeVoiceName,   setForgeVoiceName]   = useState('');
+  const [forgePhrasesDone, setForgePhrasesDone] = useState(0);
+  const forgeMediaRef    = useRef<MediaRecorder | null>(null);
+  const forgeChunksRef   = useRef<Blob[]>([]);
+  const forgeAllChunksRef = useRef<Blob[]>([]);  // accumulates across all 8 phrases
+  const forgeTimerRef    = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // TTS
   const [text,         setText]         = useState('');
@@ -1730,7 +1733,13 @@ export default function VoiceStudio() {
                           const mr = new MediaRecorder(stream);
                           forgeChunksRef.current = [];
                           mr.ondataavailable = e => { if (e.data.size > 0) forgeChunksRef.current.push(e.data); };
-                          mr.onstop = () => { stream.getTracks().forEach(t => t.stop()); setToast('Capture complete — Voice Matrix pending Piper fine-tune.'); };
+                          mr.onstop = () => {
+                            stream.getTracks().forEach(t => t.stop());
+                            // Accumulate this phrase's blobs into the master list
+                            forgeAllChunksRef.current.push(...forgeChunksRef.current);
+                            setForgePhrasesDone(forgeAllChunksRef.current.length);
+                            setToast(`Phrase ${forgeCalibStep + 1} captured (${forgeAllChunksRef.current.length} chunks total)`);
+                          };
                           mr.start(100);
                           forgeMediaRef.current = mr;
                           setForgeRecording(true);
@@ -1808,6 +1817,17 @@ export default function VoiceStudio() {
               </div>
             </div>
 
+            {/* Voice name input */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+              <input
+                value={forgeVoiceName}
+                onChange={e => setForgeVoiceName(e.target.value)}
+                placeholder="Voice name (e.g. Seven-Prime)"
+                maxLength={48}
+                style={{ width: 280, fontSize: 13, fontFamily: 'monospace', padding: '9px 14px', background: 'var(--bg)', border: '1px solid rgba(124,58,237,0.35)', borderRadius: 8, color: 'var(--text)', outline: 'none', textAlign: 'center' }}
+              />
+            </div>
+
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
               {/* Pitch slider */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1828,24 +1848,55 @@ export default function VoiceStudio() {
                 <option value="sovereign-vega">sovereign-vega</option>
               </select>
 
-              {/* Register button */}
+              {/* MINT button */}
               <button
-                disabled={forgeChunksRef.current.length === 0 && forgeCalibStep === 0}
+                disabled={forgePhrasesDone === 0}
                 onClick={async () => {
-                  if (forgeChunksRef.current.length === 0) { setToast('Record at least one phrase first'); return; }
-                  const fd = new FormData();
-                  forgeChunksRef.current.forEach((chunk, i) => fd.append('samples', chunk, `sample_${i}.webm`));
-                  fd.append('base_model', forgeBaseModel);
-                  fd.append('pitch', String(forgePitch / 100));
+                  if (forgeAllChunksRef.current.length === 0) { setToast('Record at least one phrase first'); return; }
+                  const label = forgeVoiceName.trim() || 'my-sovereign-voice';
+                  const voiceId = `custom-${label.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`;
+                  setToast('Converting audio… please wait');
+
+                  // Convert all accumulated Blob chunks to base64
+                  const toBase64 = (blob: Blob): Promise<string> =>
+                    new Promise((res, rej) => {
+                      const reader = new FileReader();
+                      reader.onload = () => res(reader.result as string);
+                      reader.onerror = rej;
+                      reader.readAsDataURL(blob);
+                    });
+
                   try {
-                    const res = await fetch('/api/voice/forge/register', { method: 'POST', body: fd });
+                    const recordings = await Promise.all(forgeAllChunksRef.current.map(toBase64));
+                    const res = await fetch('/api/voice/forge/register', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        voiceId,
+                        displayName: label,
+                        pitchRatio: forgePitch / 100,
+                        baseModel: forgeBaseModel,
+                        recordings,
+                      }),
+                    });
                     const data = await res.json();
-                    if (data.success) { setToast(`Voice "${data.voice_name}" registered!`); }
-                    else setToast(data.error || 'Registration failed');
-                  } catch { setToast('Registration error'); }
+                    if (data.success) {
+                      setToast(`✓ Voice "${data.displayName ?? label}" minted — appears in your voice list`);
+                      // Reset Forge state for a fresh session
+                      forgeAllChunksRef.current = [];
+                      forgeChunksRef.current = [];
+                      setForgePhrasesDone(0);
+                      setForgeCalibStep(0);
+                      setForgeVoiceName('');
+                    } else {
+                      setToast(data.error || 'Mint failed');
+                    }
+                  } catch (err: unknown) {
+                    setToast(err instanceof Error ? err.message : 'Mint error');
+                  }
                 }}
-                style={{ padding: '12px 32px', background: forgeCalibStep > 0 ? '#7C3AED' : 'var(--bg-surface)', border: `1px solid ${forgeCalibStep > 0 ? '#7C3AED' : 'var(--border-mid)'}`, borderRadius: 10, fontSize: 13, fontWeight: 600, fontFamily: 'monospace', color: forgeCalibStep > 0 ? '#fff' : 'var(--text-faint)', cursor: forgeCalibStep > 0 ? 'pointer' : 'not-allowed', letterSpacing: '0.06em' }}>
-                {forgeCalibStep > 0 ? 'MINT VOICE MATRIX' : 'MINT VOICE MATRIX — COMING LNES-16.5'}
+                style={{ padding: '12px 32px', background: forgePhrasesDone > 0 ? '#7C3AED' : 'var(--bg-surface)', border: `1px solid ${forgePhrasesDone > 0 ? '#7C3AED' : 'var(--border-mid)'}`, borderRadius: 10, fontSize: 13, fontWeight: 600, fontFamily: 'monospace', color: forgePhrasesDone > 0 ? '#fff' : 'var(--text-faint)', cursor: forgePhrasesDone > 0 ? 'pointer' : 'not-allowed', letterSpacing: '0.06em' }}>
+                {forgePhrasesDone > 0 ? `MINT VOICE MATRIX · ${forgeCalibStep}/${forgeCalibPrompts.length} PHRASES` : 'MINT VOICE MATRIX — RECORD PHRASES FIRST'}
               </button>
             </div>
           </div>
