@@ -1737,8 +1737,8 @@ export default function VoiceStudio() {
                             stream.getTracks().forEach(t => t.stop());
                             // Accumulate this phrase's blobs into the master list
                             forgeAllChunksRef.current.push(...forgeChunksRef.current);
-                            setForgePhrasesDone(forgeAllChunksRef.current.length);
-                            setToast(`Phrase ${forgeCalibStep + 1} captured (${forgeAllChunksRef.current.length} chunks total)`);
+                            setForgePhrasesDone(n => n + 1);  // count phrases, not chunks
+                            setToast(`Phrase captured — ${forgeCalibStep + 1}/${forgeCalibPrompts.length} done`);
                           };
                           mr.start(100);
                           forgeMediaRef.current = mr;
@@ -1766,16 +1766,19 @@ export default function VoiceStudio() {
                     </div>
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
                       <button
-                        onClick={async () => {
-                          if (!forgeRecording) return;
-                          forgeMediaRef.current?.stop();
-                          forgeMediaRef.current = null;
-                          setForgeRecording(false);
-                          if (forgeTimerRef.current) { clearInterval(forgeTimerRef.current); forgeTimerRef.current = null; }
+                        onClick={() => {
+                          // If still recording — stop it first (onstop will accumulate chunks)
+                          if (forgeRecording) {
+                            forgeMediaRef.current?.stop();
+                            forgeMediaRef.current = null;
+                            setForgeRecording(false);
+                            if (forgeTimerRef.current) { clearInterval(forgeTimerRef.current); forgeTimerRef.current = null; }
+                          }
+                          // Advance regardless — phrase was already accumulated in onstop
                           setForgeCalibStep(s => s + 1);
                         }}
-                        disabled={!forgeRecording}
-                        style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 16px', borderRadius: 6, border: '1px solid rgba(124,58,237,0.4)', background: 'rgba(124,58,237,0.08)', color: '#A78BFA', cursor: forgeRecording ? 'pointer' : 'not-allowed', opacity: forgeRecording ? 1 : 0.5 }}>
+                        disabled={forgePhrasesDone <= forgeCalibStep && !forgeRecording}
+                        style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 16px', borderRadius: 6, border: '1px solid rgba(124,58,237,0.4)', background: 'rgba(124,58,237,0.08)', color: '#A78BFA', cursor: (forgePhrasesDone > forgeCalibStep || forgeRecording) ? 'pointer' : 'not-allowed', opacity: (forgePhrasesDone > forgeCalibStep || forgeRecording) ? 1 : 0.4 }}>
                         ✓ NEXT PHRASE
                       </button>
                     </div>
