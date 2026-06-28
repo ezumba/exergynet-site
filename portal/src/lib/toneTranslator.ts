@@ -324,16 +324,16 @@ export async function compilePianoRoll(
 
 // ── Audio Track scheduler ──────────────────────────────────────────────────────
 
-export async function playAudioTracks(tracks: AudioTrackData[], bpm: number): Promise<void> {
+export async function playAudioTracks(tracks: AudioTrackData[], _bpm: number): Promise<void> {
   if (tracks.length === 0) return;
   const Tone = await import('tone');
-  const secPerBar = (60 / bpm) * 4;
   for (const track of tracks) {
     if (track.muted) continue;
     const url = URL.createObjectURL(track.file);
     const player = new Tone.Player({ url, loop: track.loop, volume: track.volume }).toDestination();
     await player.load(url);
-    player.start(Tone.now() + track.offsetBars * secPerBar);
+    // sync() locks the player to the Transport clock so it starts in lock-step with drums
+    (player as any).sync().start(track.offsetBars + 'm');
     _scheduledPlayers.push(player as any);
   }
 }
@@ -433,6 +433,8 @@ export async function compileDrumMachine(
   rows: DrumRow[],
   bpm: number,
   onStep?: (step: number) => void,
+  autoStart = true,
+  loopBars = 1,
 ): Promise<void> {
   const Tone = await import('tone');
   disposeAllSequences();
@@ -538,7 +540,7 @@ export async function compileDrumMachine(
     }, toneEvents);
 
     part.loop = true;
-    part.loopEnd = '1m';
+    part.loopEnd = `${loopBars}m`;
     part.start(0);
     (part as any).__trackKey = `dm_${row.key}`;
     (synth as any).__trackKey = `dm_synth_${row.key}`;
@@ -548,6 +550,8 @@ export async function compileDrumMachine(
     });
   }
 
-  await Tone.start();
-  transport.start();
+  if (autoStart) {
+    await Tone.start();
+    transport.start();
+  }
 }

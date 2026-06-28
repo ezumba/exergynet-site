@@ -449,10 +449,13 @@ export default function VoiceStudio() {
   const [pianoInstrument, setPianoInstrument] = useState<PianoInstrument>('synth');
   // Audio import tracks
   const [audioTracks,     setAudioTracks]     = useState<AudioTrackData[]>([]);
+  // Track length in bars (applies to drum machine and piano roll loop)
+  const [trackBars, setTrackBars] = useState(2);
   // Mixdown recording
   const [isRecording,     setIsRecording]     = useState(false);
   const [recordSecs,      setRecordSecs]      = useState(0);
   const recordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [bigMicColor,     setBigMicColor]     = useState('#ef4444');
   const [bigMicRecording, setBigMicRecording] = useState(false);
   const [bigMicBlob,    setBigMicBlob]    = useState<Blob | null>(null);
   const bigMicRef   = useRef<MediaRecorder | null>(null);
@@ -1181,21 +1184,32 @@ export default function VoiceStudio() {
                   <AudioTracks tracks={audioTracks} onChange={setAudioTracks} bpm={musicBpm} />
                 </div>
 
-                {/* BPM control */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>BPM</span>
-                  <input
-                    type="number" min={40} max={220} value={musicBpm}
-                    onChange={e => {
-                      const bpm = parseInt(e.target.value);
-                      if (bpm >= 40 && bpm <= 220) {
-                        setMusicBpm(bpm);
-                        if (musicScript) setMusicScript({ ...musicScript, bpm });
-                        if (musicPlaying) import('tone').then(Tone => { Tone.getTransport().bpm.value = bpm; });
-                      }
-                    }}
-                    style={{ width: 60, background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, padding: '5px 8px', fontSize: 13, color: 'var(--text)', outline: 'none', fontFamily: 'monospace' }}
-                  />
+                {/* BPM + track length control */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>BPM</span>
+                    <input
+                      type="number" min={40} max={220} value={musicBpm}
+                      onChange={e => {
+                        const bpm = parseInt(e.target.value);
+                        if (bpm >= 40 && bpm <= 220) {
+                          setMusicBpm(bpm);
+                          if (musicScript) setMusicScript({ ...musicScript, bpm });
+                          if (musicPlaying) import('tone').then(Tone => { Tone.getTransport().bpm.value = bpm; });
+                        }
+                      }}
+                      style={{ width: 60, background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, padding: '5px 8px', fontSize: 13, color: 'var(--text)', outline: 'none', fontFamily: 'monospace' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>BARS</span>
+                    {[1, 2, 4, 8].map(b => (
+                      <button key={b} onClick={() => setTrackBars(b)}
+                        style={{ width: 28, height: 28, borderRadius: 5, border: `1px solid ${trackBars === b ? 'var(--accent)' : 'var(--border-mid)'}`, background: trackBars === b ? 'rgba(13,148,136,0.15)' : 'var(--bg-surface)', color: trackBars === b ? 'var(--accent)' : 'var(--text-faint)', cursor: 'pointer', fontSize: 11, fontFamily: 'monospace', fontWeight: trackBars === b ? 700 : 400 }}>
+                        {b}
+                      </button>
+                    ))}
+                  </div>
                   {musicPlaying && (
                     <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                       {Array.from({ length: 4 }, (_, i) => (
@@ -1262,7 +1276,7 @@ export default function VoiceStudio() {
                           try {
                             const r = await fetch('/api/voice/generate', {
                               method: 'POST', headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ text: line, voice_id: voice.id, model: selectedModel, output_format: 'mp3_44100_128' }),
+                              body: JSON.stringify({ text: line, voice_id: voice?.id ?? 'sovereign-meridian', model, output_format: 'mp3_44100_128' }),
                             });
                             if (r.ok) { blobs.push(await r.blob()); rendered++; }
                           } catch {}
@@ -1297,49 +1311,159 @@ export default function VoiceStudio() {
                   </div>
                 </div>
 
-                {/* Big Mic */}
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 6 }}>Big Mic — Live Recording</div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <button
-                      onClick={async () => {
-                        if (bigMicRecording) {
-                          bigMicRef.current?.stop();
-                          bigMicRef.current = null;
-                          setBigMicRecording(false);
-                        } else {
-                          try {
-                            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                            const mr = new MediaRecorder(stream);
-                            bigMicChunks.current = [];
-                            mr.ondataavailable = e => { if (e.data.size > 0) bigMicChunks.current.push(e.data); };
-                            mr.onstop = () => {
-                              stream.getTracks().forEach(t => t.stop());
-                              const blob = new Blob(bigMicChunks.current, { type: 'audio/webm' });
-                              setBigMicBlob(blob);
-                            };
-                            mr.start(100);
-                            bigMicRef.current = mr;
-                            setBigMicRecording(true);
-                          } catch { setToast('Mic access denied'); }
-                        }
-                      }}
-                      style={{ fontSize: 12, fontFamily: 'monospace', padding: '8px 16px', borderRadius: 8, border: `1px solid ${bigMicRecording ? 'rgba(239,68,68,0.5)' : 'var(--border-mid)'}`, background: bigMicRecording ? 'rgba(239,68,68,0.08)' : 'var(--bg-surface)', color: bigMicRecording ? '#ef4444' : 'var(--text-soft)', cursor: 'pointer' }}>
-                      {bigMicRecording ? '■ STOP TAKE' : '● REC TAKE'}
-                    </button>
-                    {bigMicBlob && (
-                      <>
+                {/* ── Big Mic — Live Recording ── */}
+                <div style={{ background: `linear-gradient(135deg, ${bigMicColor}08 0%, transparent 100%)`, border: `1px solid ${bigMicColor}30`, borderRadius: 16, padding: '24px 20px', textAlign: 'center' }}>
+                  <style>{`
+                    @keyframes bigMicPulse1 { 0%{transform:scale(1);opacity:0.5} 100%{transform:scale(1.6);opacity:0} }
+                    @keyframes bigMicPulse2 { 0%{transform:scale(1);opacity:0.35} 100%{transform:scale(2.1);opacity:0} }
+                    @keyframes bigMicPulse3 { 0%{transform:scale(1);opacity:0.2} 100%{transform:scale(2.7);opacity:0} }
+                    @keyframes bigMicFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+                  `}</style>
+
+                  {/* Color picker row */}
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16, gap: 8, alignItems: 'center' }}>
+                    <span style={{ fontSize: 9, color: 'var(--text-faint)', fontFamily: 'monospace', letterSpacing: '0.08em' }}>MIC COLOR</span>
+                    {['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#8b5cf6','#ec4899','#ffffff'].map(c => (
+                      <button key={c} onClick={() => setBigMicColor(c)}
+                        style={{ width: 16, height: 16, borderRadius: '50%', background: c, border: `2px solid ${bigMicColor === c ? '#fff' : 'transparent'}`, cursor: 'pointer', padding: 0, outline: bigMicColor === c ? `2px solid ${c}` : 'none', outlineOffset: 2 }} />
+                    ))}
+                    <input type="color" value={bigMicColor} onChange={e => setBigMicColor(e.target.value)}
+                      style={{ width: 20, height: 20, border: 'none', background: 'none', cursor: 'pointer', padding: 0, borderRadius: 4 }} />
+                  </div>
+
+                  {/* Mic button */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+                    <div style={{ position: 'relative', width: 96, height: 96 }}>
+                      {bigMicRecording && <>
+                        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `2px solid ${bigMicColor}`, animation: 'bigMicPulse1 1.4s ease-out infinite' }} />
+                        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `2px solid ${bigMicColor}`, animation: 'bigMicPulse2 1.4s ease-out infinite 0.35s' }} />
+                        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `2px solid ${bigMicColor}`, animation: 'bigMicPulse3 1.4s ease-out infinite 0.7s' }} />
+                      </>}
+                      <button
+                        onClick={async () => {
+                          if (bigMicRecording) {
+                            bigMicRef.current?.stop();
+                            bigMicRef.current = null;
+                            setBigMicRecording(false);
+                          } else {
+                            try {
+                              const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                              const mr = new MediaRecorder(stream);
+                              bigMicChunks.current = [];
+                              mr.ondataavailable = e => { if (e.data.size > 0) bigMicChunks.current.push(e.data); };
+                              mr.onstop = () => {
+                                stream.getTracks().forEach(t => t.stop());
+                                setBigMicBlob(new Blob(bigMicChunks.current, { type: 'audio/webm' }));
+                              };
+                              mr.start(100);
+                              bigMicRef.current = mr;
+                              setBigMicRecording(true);
+                            } catch { setToast('Mic access denied'); }
+                          }
+                        }}
+                        style={{
+                          position: 'absolute', inset: 0, borderRadius: '50%', border: 'none',
+                          background: bigMicRecording ? bigMicColor : `radial-gradient(circle at 35% 35%, ${bigMicColor}55 0%, ${bigMicColor}22 60%, ${bigMicColor}11 100%)`,
+                          boxShadow: bigMicRecording ? `0 0 32px ${bigMicColor}88, 0 0 64px ${bigMicColor}44` : `0 0 16px ${bigMicColor}33`,
+                          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          animation: bigMicRecording ? 'none' : 'bigMicFloat 3s ease-in-out infinite',
+                          transition: 'all 0.25s',
+                        }}>
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                          {/* Mic capsule */}
+                          <rect x="13" y="4" width="14" height="20" rx="7" fill={bigMicRecording ? '#fff' : bigMicColor} opacity={bigMicRecording ? 1 : 0.9} />
+                          {/* Stand arc */}
+                          <path d="M8 20 Q8 32 20 32 Q32 32 32 20" stroke={bigMicRecording ? '#fff' : bigMicColor} strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                          {/* Pole */}
+                          <line x1="20" y1="32" x2="20" y2="37" stroke={bigMicRecording ? '#fff' : bigMicColor} strokeWidth="2.5" strokeLinecap="round" />
+                          {/* Base */}
+                          <line x1="14" y1="37" x2="26" y2="37" stroke={bigMicRecording ? '#fff' : bigMicColor} strokeWidth="2.5" strokeLinecap="round" />
+                          {/* Grille lines */}
+                          <line x1="13" y1="12" x2="27" y2="12" stroke={bigMicRecording ? bigMicColor + '88' : '#ffffff33'} strokeWidth="1" />
+                          <line x1="13" y1="16" x2="27" y2="16" stroke={bigMicRecording ? bigMicColor + '88' : '#ffffff33'} strokeWidth="1" />
+                          <line x1="13" y1="20" x2="27" y2="20" stroke={bigMicRecording ? bigMicColor + '88' : '#ffffff33'} strokeWidth="1" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div>
+                      <div style={{ fontSize: bigMicRecording ? 13 : 15, fontWeight: 700, color: bigMicRecording ? bigMicColor : 'var(--text)', letterSpacing: '0.08em', fontFamily: 'monospace', textTransform: 'uppercase', marginBottom: 4, transition: 'all 0.2s' }}>
+                        {bigMicRecording ? '● RECORDING — TAP TO STOP' : 'TAP TO ADD YOUR VOICE'}
+                      </div>
+                      <div style={{ fontSize: 10, color: 'var(--text-faint)', fontFamily: 'monospace' }}>
+                        {bigMicBlob ? 'TAKE READY · ' : ''}{bigMicRecording ? 'live mic · capturing now' : 'lay your vocals over the beat'}
+                      </div>
+                    </div>
+
+                    {bigMicBlob && !bigMicRecording && (
+                      <div style={{ display: 'flex', gap: 8 }}>
                         <button
                           onClick={() => {
                             const url = URL.createObjectURL(bigMicBlob);
-                            const a = document.createElement('a');
-                            a.href = url; a.download = `take-${Date.now()}.webm`; a.click();
+                            const a = document.createElement('a'); a.href = url; a.download = `take-${Date.now()}.webm`; a.click();
                           }}
-                          style={{ fontSize: 11, fontFamily: 'monospace', padding: '6px 12px', borderRadius: 6, border: '1px solid var(--border-mid)', background: 'var(--bg-surface)', color: 'var(--text-faint)', cursor: 'pointer' }}>
-                          ↓ DOWNLOAD
+                          style={{ fontSize: 11, fontFamily: 'monospace', padding: '7px 16px', borderRadius: 8, border: `1px solid ${bigMicColor}50`, background: `${bigMicColor}10`, color: bigMicColor, cursor: 'pointer', fontWeight: 600 }}>
+                          ↓ DOWNLOAD TAKE
                         </button>
-                        <span style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'monospace' }}>TAKE READY</span>
-                      </>
+                        <button
+                          onClick={() => setBigMicBlob(null)}
+                          style={{ fontSize: 11, fontFamily: 'monospace', padding: '7px 12px', borderRadius: 8, border: '1px solid var(--border-mid)', background: 'none', color: 'var(--text-faint)', cursor: 'pointer' }}>
+                          CLEAR
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* ── Save / Load Project ── */}
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-faint)', textTransform: 'uppercase', marginBottom: 10 }}>💾 Save / Load Project</div>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <input
+                      value={projectName}
+                      onChange={e => setProjectName(e.target.value)}
+                      placeholder="project name…"
+                      style={{ flex: 1, minWidth: 140, fontSize: 12, fontFamily: 'monospace', padding: '7px 10px', background: 'var(--bg)', border: '1px solid var(--border-mid)', borderRadius: 7, color: 'var(--text)', outline: 'none' }}
+                    />
+                    <button
+                      disabled={!projectName.trim()}
+                      onClick={() => {
+                        const key = `enproject_${projectName.trim()}`;
+                        localStorage.setItem(key, JSON.stringify({
+                          drumRows, bpm: musicBpm, trackBars, lyrics, lyricConcept, lyricStyle, pianoNotes, pianoInstrument, bigMicColor,
+                        }));
+                        setSavedProjects(Object.keys(localStorage).filter(k => k.startsWith('enproject_')).map(k => k.replace('enproject_', '')));
+                        setToast(`✓ "${projectName}" saved`);
+                      }}
+                      style={{ fontSize: 12, fontFamily: 'monospace', padding: '7px 16px', borderRadius: 7, border: `1px solid ${projectName.trim() ? 'var(--accent)' : 'var(--border-mid)'}`, background: projectName.trim() ? 'rgba(13,148,136,0.1)' : 'var(--bg)', color: projectName.trim() ? 'var(--accent)' : 'var(--text-faint)', cursor: projectName.trim() ? 'pointer' : 'not-allowed', fontWeight: 600 }}>
+                      SAVE
+                    </button>
+                    {savedProjects.length > 0 && (
+                      <select
+                        defaultValue=""
+                        onChange={e => {
+                          if (!e.target.value) return;
+                          const key = `enproject_${e.target.value}`;
+                          try {
+                            const data = JSON.parse(localStorage.getItem(key) ?? '{}');
+                            if (data.drumRows)       setDrumRows(data.drumRows);
+                            if (data.lyrics)         setLyrics(data.lyrics);
+                            if (data.bpm)            { setMusicBpm(data.bpm); if (musicScript) setMusicScript({ ...musicScript, bpm: data.bpm }); }
+                            if (data.trackBars)      setTrackBars(data.trackBars);
+                            if (data.lyricConcept)   setLyricConcept(data.lyricConcept);
+                            if (data.lyricStyle)     setLyricStyle(data.lyricStyle);
+                            if (data.pianoNotes)     setPianoNotes(data.pianoNotes);
+                            if (data.pianoInstrument) setPianoInstrument(data.pianoInstrument);
+                            if (data.bigMicColor)    setBigMicColor(data.bigMicColor);
+                            setProjectName(e.target.value);
+                            setToast(`Loaded "${e.target.value}"`);
+                          } catch { setToast('Failed to load project'); }
+                          e.target.value = '';
+                        }}
+                        style={{ fontSize: 12, fontFamily: 'monospace', padding: '7px 10px', background: 'var(--bg)', border: '1px solid var(--border-mid)', borderRadius: 7, color: 'var(--text-soft)', outline: 'none', cursor: 'pointer' }}>
+                        <option value="">⬆ Load project…</option>
+                        {savedProjects.map(p => <option key={p} value={p}>{p}</option>)}
+                      </select>
                     )}
                   </div>
                 </div>
@@ -1404,12 +1528,14 @@ export default function VoiceStudio() {
                 {!musicPlaying && (
                   <button
                     onClick={async () => {
-                      const { compileDrumMachine, compilePianoRoll, playAudioTracks, disposeAllSequences } = await import('@/lib/toneTranslator');
+                      const { compileDrumMachine, compilePianoRoll, playAudioTracks, disposeAllSequences, startTransport } = await import('@/lib/toneTranslator');
                       disposeAllSequences();
                       setCurrentStep(-1);
-                      await compileDrumMachine(drumRows, musicBpm, (step) => setCurrentStep(step));
-                      await compilePianoRoll(pianoNotes, pianoInstrument);
+                      // Compile everything BEFORE starting transport so audio is transport-synced
+                      await compileDrumMachine(drumRows, musicBpm, (step) => setCurrentStep(step), false, trackBars);
+                      await compilePianoRoll(pianoNotes, pianoInstrument, trackBars);
                       await playAudioTracks(audioTracks, musicBpm);
+                      await startTransport(); // single moment everything starts together
                       setMusicPlaying(true);
                     }}
                     style={{ background: 'var(--bg-surface)', color: 'var(--accent)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '11px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
@@ -1467,46 +1593,6 @@ export default function VoiceStudio() {
                 <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-faint)', fontFamily: 'monospace' }}>
                   $0 VRAM · EDGE RENDER · TONE.JS
                 </span>
-                {/* Save/Load projects */}
-                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                  <input
-                    value={projectName}
-                    onChange={e => setProjectName(e.target.value)}
-                    placeholder="project name"
-                    style={{ fontSize: 11, fontFamily: 'monospace', padding: '5px 8px', background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, color: 'var(--text)', outline: 'none', width: 100 }}
-                  />
-                  <button
-                    disabled={!projectName.trim()}
-                    onClick={() => {
-                      const key = `enproject_${projectName.trim()}`;
-                      localStorage.setItem(key, JSON.stringify({ drumRows, bpm: musicBpm, lyrics, lyricConcept, lyricStyle }));
-                      setSavedProjects(Object.keys(localStorage).filter(k => k.startsWith('enproject_')).map(k => k.replace('enproject_', '')));
-                      setToast(`Project "${projectName}" saved`);
-                    }}
-                    style={{ fontSize: 11, fontFamily: 'monospace', padding: '5px 10px', borderRadius: 6, border: '1px solid var(--border-mid)', background: 'var(--bg-surface)', color: 'var(--text-soft)', cursor: 'pointer' }}>
-                    SAVE
-                  </button>
-                  {savedProjects.length > 0 && (
-                    <select
-                      onChange={e => {
-                        const key = `enproject_${e.target.value}`;
-                        try {
-                          const data = JSON.parse(localStorage.getItem(key) ?? '{}');
-                          if (data.drumRows) setDrumRows(data.drumRows);
-                          if (data.lyrics) setLyrics(data.lyrics);
-                          if (data.bpm) { setMusicBpm(data.bpm); if (musicScript) setMusicScript({ ...musicScript, bpm: data.bpm }); }
-                          if (data.lyricConcept) setLyricConcept(data.lyricConcept);
-                          if (data.lyricStyle) setLyricStyle(data.lyricStyle);
-                          setToast(`Loaded "${e.target.value}"`);
-                        } catch {}
-                      }}
-                      defaultValue=""
-                      style={{ fontSize: 11, fontFamily: 'monospace', padding: '5px 8px', background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer' }}>
-                      <option value="" disabled>LOAD…</option>
-                      {savedProjects.map(p => <option key={p} value={p}>{p}</option>)}
-                    </select>
-                  )}
-                </div>
               </div>
             </div>
 
