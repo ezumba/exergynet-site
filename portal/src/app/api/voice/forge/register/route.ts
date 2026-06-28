@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { resolveUser } from "@/lib/apiAuth";
 import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
 
@@ -13,10 +12,10 @@ function loadProfiles(): Record<string, any> {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await resolveUser(req);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const userId = (session.user as any).id ?? session.user.email ?? "unknown";
+  const userId = user.id ?? user.email;
   const { voiceId, displayName, pitchRatio, baseModel, recordings } = await req.json();
 
   if (!voiceId || !pitchRatio) {
@@ -49,10 +48,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await resolveUser(req);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const profiles = loadProfiles();
-  const userId = (session.user as any).id ?? session.user.email ?? "unknown";
-  // Return all + user's own
   return NextResponse.json({ voices: profiles });
 }

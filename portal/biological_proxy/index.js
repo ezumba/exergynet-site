@@ -418,6 +418,21 @@ app.post('/auth/login', authRateLimit, async (req, res) => {
   }
 });
 
+// ── GET /auth/me — verify Bearer token, return email (used by Next.js API routes) ──
+app.get('/auth/me', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT email, display_name, usdc_micro_balance FROM biological_developers WHERE id = $1',
+      [req.developerId]
+    );
+    if (!result.rows[0]) return res.status(404).json({ error: 'User not found' });
+    const { email, display_name, usdc_micro_balance } = result.rows[0];
+    res.json({ id: req.developerId, email, name: display_name, balance: usdc_micro_balance });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load user' });
+  }
+});
+
 // ── POST /auth/rotate-key ─────────────────────────────────────────────────────
 app.post('/auth/rotate-key', requireAuth, async (req, res) => {
   try {
