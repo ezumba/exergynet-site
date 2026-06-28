@@ -340,7 +340,7 @@ function ClipActions({ clip, onDelete, onToast }: {
     const objUrl = URL.createObjectURL(blob);
     const a      = document.createElement('a');
     a.href       = objUrl;
-    a.download   = `exergynet-${clip.voice.name.toLowerCase()}-${clip.id.slice(-6)}.${extFor(clip.format)}`;
+    a.download   = `exergynet-${(clip.voice?.name ?? 'voice').toLowerCase()}-${clip.id.slice(-6)}.${extFor(clip.format)}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -354,8 +354,8 @@ function ClipActions({ clip, onDelete, onToast }: {
         if (dataUrl) {
           const blob = await fetch(dataUrl).then(r => r.blob());
           const ext  = extFor(clip.format);
-          const file = new File([blob], `exergynet-${clip.voice.name.toLowerCase()}.${ext}`, { type: blob.type });
-          await navigator.share({ files: [file], title: `${clip.voice.name} — ExergyNet Voice`, text: clip.text.slice(0, 100) });
+          const file = new File([blob], `exergynet-${(clip.voice?.name ?? 'voice').toLowerCase()}.${ext}`, { type: blob.type });
+          await navigator.share({ files: [file], title: `${clip.voice?.name ?? 'ExergyNet'} — ExergyNet Voice`, text: clip.text.slice(0, 100) });
           return;
         }
       } catch {}
@@ -796,7 +796,7 @@ export default function VoiceStudio() {
                       <div key={clip.id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 10, padding: '12px 16px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                           <span style={{ fontSize: 12, color: 'var(--text-soft)' }}>
-                            {clip.voice.name} · {clip.chars.toLocaleString()} chars · {clip.model}
+                            {clip.voice?.name ?? 'Unknown'} · {clip.chars.toLocaleString()} chars · {clip.model}
                           </span>
                           <ClipActions clip={clip} onDelete={deleteClip} onToast={setToast} />
                         </div>
@@ -1293,7 +1293,7 @@ export default function VoiceStudio() {
                       style={{ padding: '7px 14px', borderRadius: 7, border: `1px solid ${lyricsBlobs.length === 0 ? 'var(--border-dim)' : 'rgba(13,148,136,0.5)'}`, background: lyricsBlobs.length === 0 ? 'none' : 'rgba(13,148,136,0.06)', color: lyricsBlobs.length === 0 ? 'var(--text-faint)' : 'var(--accent)', cursor: lyricsBlobs.length === 0 ? 'not-allowed' : 'pointer', fontSize: 11, fontFamily: 'monospace', fontWeight: 600 }}>
                       ♪ SING WITH BEAT
                     </button>
-                    <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-faint)', fontFamily: 'monospace' }}>voice: {voice.name}</span>
+                    <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-faint)', fontFamily: 'monospace' }}>voice: {voice?.name ?? 'none selected'}</span>
                   </div>
                 </div>
 
@@ -1570,15 +1570,15 @@ export default function VoiceStudio() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {clips.map(clip => {
-                    const col = voiceColor(clip.voice.id);
+                    const col = voiceColor(clip.voice?.id ?? 'unknown');
                     return (
                       <div key={clip.id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-mid)', borderRadius: 12, padding: '16px 20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                           <div style={{ width: 36, height: 36, borderRadius: '50%', background: col + '22', color: col, fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            {initials(clip.voice.name)}
+                            {initials(clip.voice?.name ?? '?')}
                           </div>
                           <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{clip.voice.name}</div>
+                            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{clip.voice?.name ?? 'Unknown Voice'}</div>
                             <div style={{ fontSize: 11, color: 'var(--text-faint)' }}>
                               {clip.model} · {clip.chars.toLocaleString()} chars · {new Date(clip.createdAt).toLocaleTimeString()}
                             </div>
