@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/settlements', label: '⊞ settlements', exact: false },
   { href: '/dashboard/intel',       label: '⬡ app store',   exact: false },
   { href: '/dashboard/voice',       label: '◎ voice',       exact: false },
+  { href: '/music',                 label: '♫ drops',       exact: false },
   { href: '/dashboard/apps',        label: '▦ my apps',     exact: false },
   { href: '/dashboard/aeris',       label: '◬ aeris',       exact: false },
   { href: '/dashboard/vanguard',    label: '⟁ vanguard',    exact: false },

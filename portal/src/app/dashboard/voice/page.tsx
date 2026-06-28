@@ -1590,7 +1590,19 @@ export default function VoiceStudio() {
                   </button>
                 )}
 
-                <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-faint)', fontFamily: 'monospace' }}>
+                {/* Publish to Drops */}
+                <button
+                  style={{ marginLeft: 'auto', background: 'rgba(13,148,136,0.12)', color: 'var(--accent)', border: '1px solid rgba(13,148,136,0.35)', borderRadius: 10, padding: '9px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'monospace', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 6 }}
+                  onClick={() => {
+                    // Navigate to the public Drops page with publish modal intent
+                    window.open('/music?publish=1', '_blank');
+                  }}
+                  title="Publish to public Drops page — accessible from web and mobile app"
+                >
+                  🎵 PUBLISH DROP
+                </button>
+
+                <span style={{ fontSize: 11, color: 'var(--text-faint)', fontFamily: 'monospace' }}>
                   $0 VRAM · EDGE RENDER · TONE.JS
                 </span>
               </div>
