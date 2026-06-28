@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { resolveUser } from '@/lib/apiAuth';
 import { readFileSync, writeFileSync } from 'fs';
 
 const PROFILES_FILE = '/home/ubuntu/sovereign-tts/custom_profiles.json';
@@ -16,10 +15,10 @@ function saveProfiles(p: Record<string, any>) {
 
 // GET — list all published community voices (from all users)
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const user = await resolveUser(req);
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const myId = (session.user as any).id ?? session.user.email ?? '';
+  const myId = user.id ?? user.email;
   const profiles = loadProfiles();
 
   const community = Object.entries(profiles)
@@ -40,10 +39,10 @@ export async function GET(req: NextRequest) {
 
 // POST — publish or unpublish own voice; update pricing
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const user = await resolveUser(req);
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const myId = (session.user as any).id ?? session.user.email ?? '';
+  const myId = user.id ?? user.email;
   const { voiceId, published, pricePerUse } = await req.json();
 
   if (!voiceId) return NextResponse.json({ error: 'voiceId required' }, { status: 400 });

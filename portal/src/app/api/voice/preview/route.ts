@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { resolveUser } from '@/lib/apiAuth';
 
 const PIPER_TTS_URL = process.env.PIPER_TTS_URL ?? 'http://127.0.0.1:5020/tts';
 
@@ -18,8 +17,8 @@ const VOICE_PREVIEWS: Record<string, string> = {
 const previewCache = new Map<string, string>();
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const user = await resolveUser(request);
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

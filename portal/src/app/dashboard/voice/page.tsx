@@ -1,5 +1,14 @@
 'use client';
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+
+// Helper: include en_token Bearer header on all server API calls
+function useAuthHeaders(): Record<string, string> {
+  return useMemo(() => {
+    if (typeof window === 'undefined') return {};
+    const token = localStorage.getItem('en_token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }, []);
+}
 import { createPortal } from 'react-dom';
 import {
   initxLMPDatabase,
@@ -125,7 +134,7 @@ function VoicePicker({ selected, onSelect, onClose, customVoices = {}, community
     try {
       const res = await fetch('/api/voice/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({ text: PREVIEW_TEXT, voice: voiceId }),
       });
       const data = await res.json();
@@ -427,6 +436,7 @@ function scriptToDrumRows(script: ExergyDSPProtocol): DrumRow[] {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function VoiceStudio() {
+  const authHeaders = useAuthHeaders();
   const [tab, setTab] = useState<'tts' | 'stt' | 'music' | 'history' | 'forge'>('tts');
   // Music engine state
   const [musicPrompt,    setMusicPrompt]    = useState('');
@@ -542,11 +552,13 @@ export default function VoiceStudio() {
     }
     setMetaLoaded(true);
     // Fetch custom registered voices
-    fetch('/api/voice/forge/register').then(r => r.json()).then(d => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('en_token') : null;
+    const hdrs = token ? { Authorization: `Bearer ${token}` } : {};
+    fetch('/api/voice/forge/register', { headers: hdrs }).then(r => r.json()).then(d => {
       if (Array.isArray(d.voices)) setCustomVoices(d.voices);
     }).catch(() => {});
     // Fetch community marketplace voices
-    fetch('/api/voice/marketplace').then(r => r.json()).then(d => {
+    fetch('/api/voice/marketplace', { headers: hdrs }).then(r => r.json()).then(d => {
       if (Array.isArray(d.voices)) setCommunityVoices(d.voices);
     }).catch(() => {});
   }, []);
@@ -574,7 +586,7 @@ export default function VoiceStudio() {
     try {
       const res  = await fetch('/api/voice/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({ text, voice_id: voice.id, model, settings: { stability, similarity, styleExaggeration: styleEx, outputFormat: format, speakerBoost } }),
       });
       const data = await res.json();
@@ -634,7 +646,7 @@ export default function VoiceStudio() {
       }
       const fd = new FormData();
       fd.append('file', file); // NOTE: route.ts reads formData.get('file')
-      const res  = await fetch('/api/voice/transcribe', { method: 'POST', body: fd });
+      const res  = await fetch('/api/voice/transcribe', { method: 'POST', body: fd, headers: authHeaders });
       const data = await res.json();
       if (!res.ok) { setSttError(data.error || 'Transcription failed'); return; }
       setTranscripts(t => [{
@@ -1244,7 +1256,7 @@ export default function VoiceStudio() {
                         setLyricsWriting(true);
                         try {
                           const res = await fetch('/api/voice/lyrics', {
-                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders },
                             body: JSON.stringify({ summary: lyricConcept.trim(), style: lyricStyle.trim() }),
                           });
                           const data = await res.json();
@@ -1278,7 +1290,7 @@ export default function VoiceStudio() {
                         for (const line of lines) {
                           try {
                             const r = await fetch('/api/voice/generate', {
-                              method: 'POST', headers: { 'Content-Type': 'application/json' },
+                              method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders },
                               body: JSON.stringify({ text: line, voice_id: voice?.id ?? 'sovereign-meridian', model, output_format: 'mp3_44100_128' }),
                             });
                             if (r.ok) { blobs.push(await r.blob()); rendered++; }
@@ -1873,7 +1885,7 @@ export default function VoiceStudio() {
                     const recordings = await Promise.all(forgeAllChunksRef.current.map(toBase64));
                     const res = await fetch('/api/voice/forge/register', {
                       method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
+                      headers: { 'Content-Type': 'application/json', ...authHeaders },
                       body: JSON.stringify({
                         voiceId,
                         displayName: label,
