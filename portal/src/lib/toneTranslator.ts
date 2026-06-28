@@ -1,5 +1,7 @@
 import type { EDLDocument } from '@/types/edl';
 import type { DrumRow } from '@/components/voice/DrumMachine';
+import type { PianoNote, PianoInstrument } from '@/components/voice/PianoRoll';
+import type { AudioTrackData } from '@/components/voice/AudioTracks';
 
 export interface TransportHandle {
   play: () => Promise<void>;
@@ -242,6 +244,118 @@ export async function scheduleLyricsTrack(
     player.start(Tone.now() + startTime);
     _scheduledPlayers.push(player as { dispose: () => void; stop: () => void });
   }
+}
+
+// ── Piano Roll compiler ────────────────────────────────────────────────────────
+
+export function midiToNote(midi: number): string {
+  const names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  return `${names[midi % 12]}${Math.floor(midi / 12) - 1}`;
+}
+
+function stepsToDuration(steps: number): string {
+  if (steps >= 16) return '1m';
+  if (steps >= 8)  return '2n';
+  if (steps >= 4)  return '4n';
+  if (steps >= 2)  return '8n';
+  return '16n';
+}
+
+export async function compilePianoRoll(
+  notes: PianoNote[],
+  instrument: PianoInstrument,
+  bars = 4,
+): Promise<void> {
+  if (notes.length === 0) return;
+  const Tone = await import('tone');
+
+  _globalDisposables = _globalDisposables.filter((d: any) => {
+    if (d.__isPianoRoll) { try { d.dispose(); } catch {} return false; }
+    return true;
+  });
+
+  let synth: any;
+  if (instrument === 'bass') {
+    synth = new Tone.MonoSynth({
+      oscillator: { type: 'sawtooth' },
+      envelope: { attack: 0.01, decay: 0.2, sustain: 0.5, release: 0.4 },
+      filterEnvelope: { attack: 0.01, decay: 0.1, sustain: 0.4, release: 0.4, baseFrequency: 200, octaves: 2 },
+    }).toDestination();
+  } else if (instrument === 'pad') {
+    synth = new Tone.PolySynth(Tone.Synth, {
+      oscillator: { type: 'sine' },
+      envelope: { attack: 0.3, decay: 0.5, sustain: 0.8, release: 1.5 },
+    }).toDestination();
+    synth.volume.value = -6;
+  } else if (instrument === 'lead') {
+    synth = new Tone.MonoSynth({
+      oscillator: { type: 'sawtooth' },
+      envelope: { attack: 0.005, decay: 0.1, sustain: 0.7, release: 0.3 },
+    }).toDestination();
+  } else {
+    synth = new Tone.PolySynth(Tone.Synth, {
+      oscillator: { type: 'triangle' },
+      envelope: { attack: 0.02, decay: 0.2, sustain: 0.6, release: 0.5 },
+    }).toDestination();
+    synth.volume.value = -4;
+  }
+
+  const toneEvents = notes.map(n => ({
+    time: `${Math.floor(n.start / 16)}:${Math.floor((n.start % 16) / 4)}:${n.start % 4}`,
+    note: midiToNote(n.pitch),
+    duration: stepsToDuration(n.duration),
+    velocity: n.velocity / 127,
+  }));
+
+  const part = new Tone.Part((time: number, ev: any) => {
+    synth.triggerAttackRelease(ev.note, ev.duration, time, ev.velocity);
+  }, toneEvents);
+
+  part.loop = true;
+  part.loopEnd = `${bars}m`;
+  part.start(0);
+
+  const disposable: any = {
+    __isPianoRoll: true,
+    dispose: () => { try { part.dispose(); synth.dispose(); } catch {} },
+  };
+  _globalDisposables.push(disposable);
+}
+
+// ── Audio Track scheduler ──────────────────────────────────────────────────────
+
+export async function playAudioTracks(tracks: AudioTrackData[], bpm: number): Promise<void> {
+  if (tracks.length === 0) return;
+  const Tone = await import('tone');
+  const secPerBar = (60 / bpm) * 4;
+  for (const track of tracks) {
+    if (track.muted) continue;
+    const url = URL.createObjectURL(track.file);
+    const player = new Tone.Player({ url, loop: track.loop, volume: track.volume }).toDestination();
+    await player.load(url);
+    player.start(Tone.now() + track.offsetBars * secPerBar);
+    _scheduledPlayers.push(player as any);
+  }
+}
+
+// ── Mixdown recording ──────────────────────────────────────────────────────────
+
+let _recorder: any = null;
+
+export async function startMixdownRecording(): Promise<void> {
+  const Tone = await import('tone');
+  if (_recorder) { try { _recorder.dispose(); } catch {} _recorder = null; }
+  _recorder = new Tone.Recorder();
+  Tone.getDestination().connect(_recorder);
+  await _recorder.start();
+}
+
+export async function stopMixdownRecording(): Promise<Blob> {
+  if (!_recorder) throw new Error('No active recording');
+  const blob = await _recorder.stop();
+  try { _recorder.dispose(); } catch {}
+  _recorder = null;
+  return blob;
 }
 
 // Internal helper — build Tone sequence for one track
