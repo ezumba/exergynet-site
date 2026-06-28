@@ -8,7 +8,8 @@ import {
   xLMP_Obliterate,
   xLMP_ObliterateAll,
 } from '@/lib/xlmp_storage';
-import { compileAndPlayEDL, stopEDL, isEDLPlaying } from '@/lib/exergy_dsp';
+// exergy_dsp uses a static Tone.js import — never import it at module level (SSR crash)
+// use dynamic import at call sites instead
 import DrumMachine from '@/components/voice/DrumMachine';
 import { DEFAULT_DRUM_ROWS } from '@/components/voice/DrumMachine';
 import type { DrumRow } from '@/components/voice/DrumMachine';
@@ -802,8 +803,16 @@ export default function VoiceStudio() {
                         {(clip as any).edlScript ? (
                   <button
                     onClick={async () => {
-                      await compileAndPlayEDL((clip as any).edlScript);
-                      setToast(`Playing: ${(clip as any).edlScript.title}`);
+                      const { compileDrumMachine, disposeAllSequences } = await import('@/lib/toneTranslator');
+                      const script = (clip as any).edlScript;
+                      const rows = scriptToDrumRows(script);
+                      disposeAllSequences();
+                      setDrumRows(rows);
+                      setMusicBpm(script.bpm ?? 120);
+                      await compileDrumMachine(rows, script.bpm ?? 120, (s) => setCurrentStep(s));
+                      setMusicPlaying(true);
+                      setTab('music');
+                      setToast(`Playing: ${script.title}`);
                     }}
                     style={{ fontSize: 12, color: '#A78BFA', border: '1px solid rgba(167,139,250,0.3)', borderRadius: 7, padding: '6px 14px', background: 'none', cursor: 'pointer', fontFamily: 'monospace' }}>
                     ▶ PLAY DSP SCRIPT
