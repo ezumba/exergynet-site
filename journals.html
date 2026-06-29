@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExergyNet Journal | Insights on Sovereign Compute</title>
+<meta name="description" content="Zero-knowledge proofs, sovereign AI infrastructure, and the economics of decentralized compute. Insights from the ExergyNet team.">
+<meta property="og:title" content="ExergyNet Journal">
+<meta property="og:description" content="Insights on zero-knowledge proofs, AI infrastructure, and sovereign compute.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/journals">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+/* ── Journal page styles ─────────────────────────────────────────────────── */
+.journal-hero {
+  text-align: center;
+  padding: 80px 24px 56px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.journal-hero-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  font-family: 'Barlow Condensed', 'JetBrains Mono', monospace;
+}
+.journal-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin: 0 0 16px;
+  line-height: 1.1;
+}
+.journal-hero h1 span { color: var(--accent); }
+.journal-hero p {
+  font-size: 16px;
+  color: var(--text-soft);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Tag filter strip ─────────────────────────────────────────────────────── */
+.journal-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0 24px 48px;
+}
+.journal-tag-btn {
+  font-size: 12px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: capitalize;
+}
+.journal-tag-btn:hover,
+.journal-tag-btn.active {
+  border-color: var(--accent);
+  background: rgba(0, 232, 135, 0.07);
+  color: var(--accent);
+}
+
+/* ── Article grid ─────────────────────────────────────────────────────────── */
+.journal-grid-wrap {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* Featured card */
+.journal-featured {
+  margin-bottom: 48px;
+}
+.journal-featured-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--surface, #1a2236);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.journal-featured-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.journal-featured-card.no-cover {
+  grid-template-columns: 1fr;
+}
+.journal-featured-img {
+  position: relative;
+  min-height: 340px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.journal-featured-img img {
+  width: 100%; height: 100%;
+  object-fit: cover; position: absolute; inset: 0;
+}
+.journal-featured-body {
+  padding: 44px 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+.journal-tag-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+.journal-tag-chip {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(0, 232, 135, 0.09);
+  padding: 3px 9px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,232,135,0.2);
+}
+.journal-featured-title {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text);
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+.journal-featured-sub {
+  font-size: 15px;
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin: 0;
+}
+.journal-featured-excerpt {
+  font-size: 13px;
+  color: var(--text-dim, #6b7280);
+  line-height: 1.7;
+  margin: 0;
+}
+.journal-byline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.journal-byline-dot { color: var(--border); font-size: 12px; }
+.journal-byline span {
+  font-size: 12px;
+  color: var(--text-dim, #6b7280);
+}
+
+/* Card grid */
+.journal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+}
+.journal-card {
+  background: var(--surface, #1a2236);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.journal-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+}
+.journal-card-img {
+  height: 180px;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.journal-card-img img { width: 100%; height: 100%; object-fit: cover; }
+.journal-card-placeholder {
+  height: 120px;
+  background: linear-gradient(135deg, var(--surface) 0%, #0d1526 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.journal-card-placeholder-icon {
+  font-size: 26px;
+  opacity: 0.1;
+  color: var(--accent);
+}
+.journal-card-body {
+  padding: 20px 22px 22px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.journal-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.journal-card-excerpt {
+  font-size: 13px;
+  color: var(--text-dim, #6b7280);
+  line-height: 1.65;
+  margin: 0;
+  flex: 1;
+}
+.journal-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-dim, #1e293b);
+  margin-top: auto;
+}
+.journal-card-meta span {
+  font-size: 11px;
+  color: var(--text-dim, #6b7280);
+}
+.journal-card-meta-dot { color: var(--border); }
+
+/* Pagination */
+.journal-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 52px;
+}
+.journal-pg-btn {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+.journal-pg-btn:hover,
+.journal-pg-btn.active {
+  border-color: var(--accent);
+  background: rgba(0, 232, 135, 0.07);
+  color: var(--accent);
+}
+
+/* Loading / empty */
+.journal-loading {
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--text-dim, #6b7280);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+.journal-empty {
+  text-align: center;
+  padding: 80px 24px;
+}
+.journal-empty-icon {
+  font-size: 40px;
+  opacity: 0.12;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.journal-empty p {
+  color: var(--text-dim, #6b7280);
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .journal-featured-card {
+    grid-template-columns: 1fr;
+  }
+  .journal-featured-img {
+    min-height: 220px;
+  }
+  .journal-featured-body {
+    padding: 28px 24px;
+  }
+}
+</style>
+</head>
+<body>
+<div id="nav-container"></div>
+
+<main>
+
+  <!-- Hero -->
+  <div class="journal-hero">
+    <div class="journal-hero-eyebrow">ExergyNet Journal</div>
+    <h1>Sovereign Compute,<br><span>In Print</span></h1>
+    <p>Zero-knowledge proofs, AI infrastructure,<br>and the economics of decentralized compute.</p>
+  </div>
+
+  <!-- Tag filters -->
+  <div class="journal-tags" id="tag-strip">
+    <button class="journal-tag-btn active" data-tag="">All</button>
+  </div>
+
+  <!-- Article grid -->
+  <div class="journal-grid-wrap">
+    <div id="journal-content">
+      <div class="journal-loading">loading articles…</div>
+    </div>
+    <div class="journal-pagination" id="pagination" style="display:none;"></div>
+  </div>
+
+</main>
+
+<div id="footer-container"></div>
+
+<script>
+// ── Load nav + footer ──────────────────────────────────────────────────────
+fetch('header.html').then(r => r.text()).then(h => {
+  var el = document.getElementById('nav-container');
+  if (el) { el.innerHTML = '<nav id="main-nav">' + h.replace(/^<!--.*?-->\s*/,'').replace(/^<nav[^>]*>/,'').replace(/<\/nav>\s*$/,'') + '</nav>'; }
+  if (window.initNav) window.initNav();
+});
+fetch('footer.html').then(r => r.text()).then(h => {
+  var el = document.getElementById('footer-container');
+  if (el) el.innerHTML = h;
+});
+
+// ── State ──────────────────────────────────────────────────────────────────
+var state = { page: 1, tag: '', total: 0, pages: 1 };
+var knownTags = new Set();
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function tagChips(tags, max) {
+  return (tags || []).slice(0, max || 2).map(function(t) {
+    return '<span class="journal-tag-chip">' + t + '</span>';
+  }).join('');
+}
+
+function featuredCard(a) {
+  var hasCover = !!a.cover_url;
+  return '<a href="https://portal.exergynet.org/blog/' + a.slug + '" class="journal-featured-card' + (hasCover ? '' : ' no-cover') + '" target="_blank" rel="noopener">' +
+    (hasCover ? '<div class="journal-featured-img"><img src="' + a.cover_url + '" alt="' + esc(a.title) + '" loading="lazy"></div>' : '') +
+    '<div class="journal-featured-body">' +
+      '<div class="journal-tag-chips">' + tagChips(a.tags, 3) + '</div>' +
+      '<h2 class="journal-featured-title">' + esc(a.title) + '</h2>' +
+      (a.subtitle ? '<p class="journal-featured-sub">' + esc(a.subtitle) + '</p>' : '') +
+      (a.excerpt ? '<p class="journal-featured-excerpt">' + esc(a.excerpt.slice(0, 160)) + '…</p>' : '') +
+      '<div class="journal-byline">' +
+        '<span>' + esc(a.author_name) + '</span>' +
+        '<span class="journal-byline-dot">·</span>' +
+        '<span>' + fmtDate(a.published_at) + '</span>' +
+        '<span class="journal-byline-dot">·</span>' +
+        '<span>' + a.reading_time_mins + ' min read</span>' +
+      '</div>' +
+    '</div>' +
+  '</a>';
+}
+
+function articleCard(a) {
+  var hasCover = !!a.cover_url;
+  return '<a href="https://portal.exergynet.org/blog/' + a.slug + '" class="journal-card" target="_blank" rel="noopener">' +
+    (hasCover
+      ? '<div class="journal-card-img"><img src="' + a.cover_url + '" alt="' + esc(a.title) + '" loading="lazy"></div>'
+      : '<div class="journal-card-placeholder"><div class="journal-card-placeholder-icon">◈</div></div>'
+    ) +
+    '<div class="journal-card-body">' +
+      '<div class="journal-tag-chips">' + tagChips(a.tags, 2) + '</div>' +
+      '<h3 class="journal-card-title">' + esc(a.title) + '</h3>' +
+      (a.excerpt ? '<p class="journal-card-excerpt">' + esc(a.excerpt.slice(0, 110)) + '…</p>' : '') +
+      '<div class="journal-card-meta">' +
+        '<span>' + fmtDate(a.published_at) + '</span>' +
+        '<span class="journal-card-meta-dot">·</span>' +
+        '<span>' + a.reading_time_mins + ' min</span>' +
+      '</div>' +
+    '</div>' +
+  '</a>';
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderTags(tags) {
+  var strip = document.getElementById('tag-strip');
+  if (!strip) return;
+  // Clear existing dynamic tags (keep "All")
+  var existing = strip.querySelectorAll('[data-tag]:not([data-tag=""])');
+  existing.forEach(function(el) { el.remove(); });
+  tags.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'journal-tag-btn' + (state.tag === t ? ' active' : '');
+    btn.setAttribute('data-tag', t);
+    btn.textContent = t;
+    btn.style.textTransform = 'capitalize';
+    btn.onclick = function() { setTag(t); };
+    strip.appendChild(btn);
+  });
+}
+
+function setTag(t) {
+  state.tag = t;
+  state.page = 1;
+  document.querySelectorAll('.journal-tag-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-tag') === t);
+  });
+  load();
+}
+
+function renderPagination(pages, current) {
+  var pg = document.getElementById('pagination');
+  if (!pg) return;
+  if (pages <= 1) { pg.style.display = 'none'; return; }
+  pg.style.display = 'flex';
+  pg.innerHTML = '';
+  for (var i = 1; i <= pages; i++) {
+    (function(p) {
+      var btn = document.createElement('button');
+      btn.className = 'journal-pg-btn' + (p === current ? ' active' : '');
+      btn.textContent = p;
+      btn.onclick = function() { state.page = p; load(); };
+      pg.appendChild(btn);
+    })(i);
+  }
+}
+
+function load() {
+  var content = document.getElementById('journal-content');
+  if (content) content.innerHTML = '<div class="journal-loading">loading articles…</div>';
+
+  var qs = 'page=' + state.page + '&limit=12';
+  if (state.tag) qs += '&tag=' + encodeURIComponent(state.tag);
+
+  fetch('https://portal.exergynet.org/api/blog/articles?' + qs)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var articles = data.articles || [];
+      state.pages = data.pages || 1;
+
+      // Collect tags (first page only)
+      if (state.page === 1 && !state.tag) {
+        articles.forEach(function(a) {
+          (a.tags || []).forEach(function(t) { knownTags.add(t); });
+        });
+        renderTags(Array.from(knownTags));
+      }
+
+      if (!content) return;
+
+      if (articles.length === 0) {
+        content.innerHTML = '<div class="journal-empty"><div class="journal-empty-icon">◈</div><p>No articles published yet.</p></div>';
+        renderPagination(1, 1);
+        return;
+      }
+
+      var featured = articles.filter(function(a) { return a.featured; });
+      var rest     = articles.filter(function(a) { return !a.featured; });
+
+      var html = '';
+      if (featured.length > 0 && state.page === 1) {
+        html += '<div class="journal-featured">' + featuredCard(featured[0]) + '</div>';
+        // Any additional featured fall into grid
+        var gridItems = featured.slice(1).concat(rest);
+        if (gridItems.length > 0) {
+          html += '<div class="journal-grid">' + gridItems.map(articleCard).join('') + '</div>';
+        }
+      } else {
+        html += '<div class="journal-grid">' + articles.map(articleCard).join('') + '</div>';
+      }
+
+      content.innerHTML = html;
+      renderPagination(state.pages, state.page);
+    })
+    .catch(function(err) {
+      if (content) content.innerHTML = '<div class="journal-loading">Could not load articles. Check back soon.</div>';
+      console.error('Journal fetch error:', err);
+    });
+}
+
+// ── Tag strip click handler for "All" button ───────────────────────────────
+document.getElementById('tag-strip').addEventListener('click', function(e) {
+  if (e.target.getAttribute('data-tag') === '') setTag('');
+});
+
+// ── Init ───────────────────────────────────────────────────────────────────
+load();
+</script>
+
+<script src="main.js" defer></script>
+</body>
+</html>
