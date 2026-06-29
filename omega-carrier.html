@@ -162,6 +162,76 @@ pre.qs-code .st { color: #7ec8e3; }
 .sec-text { font-size: 0.85rem; color: var(--text-soft); line-height: 1.5; }
 .sec-text strong { color: var(--text); }
 
+/* ── Hero layout: headline left, status card right ── */
+.hero-inner {
+  display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: start;
+}
+@media (max-width: 860px) { .hero-inner { grid-template-columns: 1fr; } }
+.hero-status-card {
+  background: rgba(9,21,37,0.85); border: 1px solid var(--border-hi);
+  border-radius: 12px; padding: 1.25rem 1.5rem; min-width: 220px;
+  flex-shrink: 0; backdrop-filter: blur(8px);
+}
+.hero-status-card .sc-title {
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-soft); font-family: var(--display); margin-bottom: 0.85rem;
+}
+.sc-row {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 1rem; padding: 0.3rem 0; border-bottom: 1px solid var(--border);
+}
+.sc-row:last-child { border-bottom: none; }
+.sc-key { font-size: 0.8rem; color: var(--text-soft); }
+.sc-val { font-size: 0.8rem; color: var(--accent); font-family: "Space Mono", monospace; font-weight: 600; }
+.sc-val.dim { color: var(--text-soft); }
+
+/* ── "What this is" plain-English strip ── */
+.plain-strip {
+  background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  padding: 2rem 0;
+}
+.plain-strip .container { display: grid; grid-template-columns: auto 1fr; gap: 3rem; align-items: center; }
+@media (max-width: 720px) { .plain-strip .container { grid-template-columns: 1fr; gap: 1.5rem; } }
+.plain-intro { font-size: 1.05rem; color: var(--text); line-height: 1.6; max-width: 340px; }
+.plain-intro strong { color: var(--accent); }
+.plain-caps {
+  display: flex; flex-wrap: wrap; gap: 0.6rem;
+}
+.plain-cap {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: var(--bg); border: 1px solid var(--border-mid);
+  border-radius: 6px; padding: 0.4rem 0.85rem; font-size: 0.85rem; color: var(--text);
+}
+.plain-cap span { color: var(--accent); font-size: 0.85rem; }
+
+/* ── Compact proof strip (above problem) ── */
+.proof-strip {
+  background: rgba(0,232,135,0.04); border: 1px solid rgba(0,232,135,0.18);
+  border-radius: 10px; padding: 1rem 1.5rem; margin-bottom: 3rem;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.5rem;
+}
+.proof-strip-label {
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); font-family: var(--display); flex-shrink: 0;
+}
+.proof-strip-item {
+  font-size: 0.8rem; color: var(--text-soft); display: flex; align-items: center; gap: 0.4rem;
+}
+.proof-strip-item::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0;
+}
+
+/* ── For AI Platforms section ── */
+.platform-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin-top: 1.75rem;
+}
+@media (max-width: 720px) { .platform-grid { grid-template-columns: 1fr; } }
+.platform-offer-list { list-style: none; padding: 0; margin: 1rem 0 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.platform-offer-list li {
+  font-size: 0.9rem; color: var(--text-soft); display: flex; align-items: center; gap: 0.65rem; line-height: 1.5;
+}
+.platform-offer-list li::before { content: '→'; color: var(--accent); font-size: 0.85rem; flex-shrink: 0; }
+
 /* ── Problem section ── */
 .problem-lines { max-width: 580px; }
 .problem-line {
@@ -188,43 +258,86 @@ pre.qs-code .st { color: #7ec8e3; }
 <main class="page">
 
   <!-- ── HERO ── -->
-  <div class="page-header">
-    <div class="glow-accent" style="width:600px;height:500px;top:-120px;right:-200px;"></div>
-    <div class="glow-blue"   style="width:500px;height:380px;bottom:-100px;left:-160px;"></div>
+  <div class="page-header" style="padding-top:3rem;padding-bottom:2.5rem;">
+    <div class="glow-accent" style="width:600px;height:400px;top:-80px;right:-200px;"></div>
+    <div class="glow-blue"   style="width:400px;height:300px;bottom:-60px;left:-160px;"></div>
     <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem;">
-        <span class="dot"></span>Omega Carrier · MCP Bridge · Developer Preview
-      </div>
-      <h1>Give AI Agents<br><span class="accent">Identity, Memory, Proof, and Capital</span></h1>
-      <p class="hero-sub" style="max-width:660px;">
-        Omega Carrier is the Model Context Protocol bridge that lets AI agents register identity, commit state to Exergy Vault, recall memory, witness external data through AERIS, check reserves, and route value through the ExergyNet capital loop.
-      </p>
-      <div class="btn-row" style="margin-top:2rem;">
-        <a class="btn btn-primary" href="#quickstart">Start Developer Test</a>
-        <a class="btn btn-secondary" href="#tools">View MCP Tools</a>
-        <a class="btn btn-ghost" href="docs.html">Read the Docs →</a>
-      </div>
+      <div class="hero-inner">
+        <div>
+          <div class="hero-eyebrow" style="margin-bottom:1rem;">
+            <span class="dot"></span>Omega Carrier · MCP Bridge · Developer Preview
+          </div>
+          <h1 style="margin-bottom:1rem;">Give AI Agents<br><span class="accent">Identity, Memory, Proof, and Capital</span></h1>
+          <p class="hero-sub" style="max-width:560px;margin-bottom:1.5rem;">
+            Omega Carrier is the MCP bridge that lets AI agents register identity, commit state to Exergy Vault, recall memory, witness external facts through AERIS, check reserves, and route task value into a live reserve queue.
+          </p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="developers.html">Request Developer Key</a>
+            <a class="btn btn-secondary" href="#quickstart">Run Test Sequence</a>
+            <a class="btn btn-ghost" href="#tools">View MCP Tools →</a>
+          </div>
 
-      <!-- Flow diagram -->
-      <div class="oc-hero-flow">
-        <div class="oc-flow-node">AI Agent</div>
-        <span class="oc-flow-arrow">→</span>
-        <div class="oc-flow-node accent">Omega Carrier MCP</div>
-        <span class="oc-flow-arrow">→</span>
-        <div class="oc-flow-node">ExergyNet</div>
-        <span class="oc-flow-arrow">→</span>
-        <div class="oc-flow-col">
-          <div class="oc-flow-node">Identity</div>
-          <div class="oc-flow-node">Vault</div>
-          <div class="oc-flow-node">AERIS</div>
-          <div class="oc-flow-node">Reserve</div>
-          <div class="oc-flow-node">RHO Sump</div>
+          <!-- Flow diagram -->
+          <div class="oc-hero-flow" style="margin-top:1.75rem;">
+            <div class="oc-flow-node">AI Agent</div>
+            <span class="oc-flow-arrow">→</span>
+            <div class="oc-flow-node accent">Omega Carrier MCP</div>
+            <span class="oc-flow-arrow">→</span>
+            <div class="oc-flow-node">ExergyNet</div>
+            <span class="oc-flow-arrow">→</span>
+            <div class="oc-flow-col">
+              <div class="oc-flow-node">Identity</div>
+              <div class="oc-flow-node">Vault</div>
+              <div class="oc-flow-node">AERIS</div>
+              <div class="oc-flow-node">Reserve</div>
+              <div class="oc-flow-node">RHO Sump</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status card -->
+        <div class="hero-status-card">
+          <div class="sc-title">Omega Carrier Status</div>
+          <div class="sc-row"><span class="sc-key">MCP Server</span><span class="sc-val">Live</span></div>
+          <div class="sc-row"><span class="sc-key">Transport</span><span class="sc-val">SSE / stdio</span></div>
+          <div class="sc-row"><span class="sc-key">Tools</span><span class="sc-val">5</span></div>
+          <div class="sc-row"><span class="sc-key">Vault</span><span class="sc-val">Active</span></div>
+          <div class="sc-row"><span class="sc-key">AERIS</span><span class="sc-val">Active</span></div>
+          <div class="sc-row"><span class="sc-key">RHO Sump</span><span class="sc-val">Verified</span></div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- ── WHAT THIS IS ── -->
+  <div class="plain-strip">
+    <div class="container">
+      <div class="plain-intro">
+        <strong>Omega Carrier</strong> is the bridge that lets AI agents use ExergyNet.<br><br>
+        It gives agents the infrastructure layer that models alone cannot provide.
+      </div>
+      <div class="plain-caps">
+        <div class="plain-cap"><span>◈</span> Identity to register</div>
+        <div class="plain-cap"><span>◈</span> Memory to persist</div>
+        <div class="plain-cap"><span>◈</span> Proof to verify</div>
+        <div class="plain-cap"><span>◈</span> Reserve to budget</div>
+        <div class="plain-cap"><span>◈</span> Capital routing to participate</div>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
+
+    <!-- ── COMPACT PROOF STRIP ── -->
+    <div class="proof-strip">
+      <span class="proof-strip-label">Verified Live</span>
+      <span class="proof-strip-item">GET /api/rho/sump/status</span>
+      <span class="proof-strip-item">POST /api/rho/sump</span>
+      <span class="proof-strip-item">50 µUSDC queued</span>
+      <span class="proof-strip-item">Threshold logic active</span>
+      <span class="proof-strip-item">Admin-gated strike</span>
+      <span class="proof-strip-item">MCP port 8765 online</span>
+    </div>
 
     <!-- ── PROBLEM ── -->
     <section>
@@ -247,9 +360,9 @@ pre.qs-code .st { color: #7ec8e3; }
     <!-- ── MCP TOOLS ── -->
     <section id="tools">
       <div class="section-label">MCP Tool Surface</div>
-      <h2>Five core capabilities through one bridge</h2>
+      <h2>Five MCP tools plus one live capital endpoint</h2>
       <p style="max-width:620px;color:var(--text-soft);">
-        Connect any MCP-compatible AI to Omega Carrier. All five tools are live. All calls require bearer-token authorization.
+        Connect any MCP-compatible AI to Omega Carrier. All five tools are live, plus the Chapter XIX capital route. All calls require bearer-token authorization.
       </p>
 
       <div class="tool-grid">
@@ -355,8 +468,8 @@ pre.qs-code .st { color: #7ec8e3; }
         <div class="proof-row">
           <div class="proof-status live">LIVE</div>
           <div>
-            <div class="proof-endpoint">omega-carrier PM2 · port 8765</div>
-            <div class="proof-detail">Running on 3.234.120.103 · SSE endpoint accepting connections · uptime stable</div>
+            <div class="proof-endpoint">omega-carrier · SSE · port 8765</div>
+            <div class="proof-detail">MCP server online · SSE endpoint accepting connections · uptime stable</div>
           </div>
         </div>
       </div>
@@ -484,6 +597,34 @@ pre.qs-code .st { color: #7ec8e3; }
       </p>
     </section>
 
+    <!-- ── FOR AI PLATFORMS ── -->
+    <section>
+      <div class="section-label">For AI Platforms</div>
+      <h2>Your model stays your model.<br>ExergyNet supplies the state layer underneath it.</h2>
+      <div class="platform-grid">
+        <div>
+          <p style="color:var(--text-soft);font-size:0.95rem;line-height:1.7;">
+            If you are building an AI platform, agent framework, or enterprise copilot, Omega Carrier is the infrastructure you connect once. Your users get portable AI identity, persistent memory, and proof-backed recall without you building any of it.
+          </p>
+          <p style="color:var(--text-soft);font-size:0.95rem;line-height:1.7;margin-top:1rem;">
+            Agents built on any model — Anthropic, OpenAI, Google, open-source — can connect through one MCP bridge and gain access to the full ExergyNet state layer.
+          </p>
+        </div>
+        <div>
+          <div class="card">
+            <div class="section-label" style="margin-bottom:0.85rem;">Give your users</div>
+            <ul class="platform-offer-list">
+              <li>Portable AI identity across sessions and models</li>
+              <li>Persistent memory with durable root handles</li>
+              <li>Proof-backed fact recall via AERIS witness</li>
+              <li>Agent reserve accounts and compute budgets</li>
+              <li>Machine-task value routing through the reserve queue</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── USE CASES ── -->
     <section>
       <div class="section-label">Use Cases</div>
@@ -513,7 +654,7 @@ pre.qs-code .st { color: #7ec8e3; }
       <div class="qs-block">
         <div class="qs-label">Step 1 — Connect to Omega Carrier (SSE)</div>
         <pre class="qs-code"><span class="cm"># MCP SSE endpoint — for custom agents and swarms</span>
-<span class="kw">endpoint:</span> <span class="st">http://3.234.120.103:8765/sse</span>
+<span class="kw">endpoint:</span> <span class="st">https://mcp.exergynet.org/sse</span>
 
 <span class="cm"># stdio — for Claude Desktop and local MCP clients</span>
 <span class="cm"># See mcp_config.json in the Omega Carrier repo</span></pre>
@@ -547,7 +688,7 @@ Authorization: Bearer <span class="st">YOUR_EXERGYNET_DEVELOPER_KEY</span>
 
 <span class="cm"># Returns:</span>
 <span class="cm"># { "status": "signaled", "sump_id": "...", "amount_micro_usdc": 50,</span>
-<span class="cm">#   "pending_queue_total": 50, "market_strike": null, "message": "$RHO buyback queued." }</span></pre>
+<span class="cm">#   "pending_queue_total": 50, "market_strike": null, "message": "Reserve queue: signaled." }</span></pre>
       </div>
     </section>
 
@@ -591,7 +732,8 @@ Authorization: Bearer <span class="st">YOUR_EXERGYNET_DEVELOPER_KEY</span>
       </p>
       <div class="btn-row" style="justify-content:center;">
         <a class="btn btn-primary" href="developers.html">Request Developer Key</a>
-        <a class="btn btn-secondary" href="#tools">Review MCP Tool Surface</a>
+        <a class="btn btn-secondary" href="#quickstart">Run Test Sequence</a>
+        <a class="btn btn-ghost" href="#tools">View MCP Tools →</a>
       </div>
     </section>
 
