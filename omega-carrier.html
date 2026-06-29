@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omega Carrier — MCP Bridge for Stateful AI Agents | ExergyNet</title>
+<meta name="description" content="Omega Carrier is the MCP bridge that lets AI agents register identity, commit state to Exergy Vault, witness external data through AERIS, check reserves, and route value through the ExergyNet capital loop.">
+<meta property="og:title" content="Omega Carrier — MCP Bridge for Stateful AI Agents">
+<meta property="og:description" content="Give AI agents identity, memory, proof, and capital. Connect to ExergyNet through one MCP server.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/omega-carrier">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+/* ── Omega Carrier page styles ── */
+.oc-hero-flow {
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  font-family: var(--display); font-size: 0.85rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-soft); margin: 2.5rem 0 0;
+}
+.oc-flow-node {
+  background: var(--bg-card); border: 1px solid var(--border-mid);
+  border-radius: 6px; padding: 0.35rem 0.75rem; color: var(--text);
+  font-size: 0.8rem; white-space: nowrap;
+}
+.oc-flow-node.accent { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.oc-flow-arrow { color: var(--text-faint); font-size: 1rem; }
+.oc-flow-col {
+  display: flex; flex-direction: column; gap: 0.3rem;
+}
+.oc-flow-col .oc-flow-node { font-size: 0.72rem; padding: 0.25rem 0.6rem; }
+
+/* ── Tool grid ── */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem; margin-top: 1.5rem;
+}
+.tool-card {
+  background: var(--bg-card); border: 1px solid var(--border-mid);
+  border-radius: 12px; padding: 1.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.tool-card:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
+.tool-card code {
+  display: block; font-size: 0.78rem; color: var(--accent);
+  margin-bottom: 0.6rem; font-family: "Space Mono", monospace;
+}
+.tool-card .tool-label {
+  font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-soft); margin-bottom: 0.35rem;
+}
+.tool-card h4 { font-size: 1rem; margin: 0 0 0.5rem; color: var(--text); }
+.tool-card p { font-size: 0.88rem; color: var(--text-soft); margin: 0; line-height: 1.55; }
+
+/* ── Proof panel ── */
+.proof-panel {
+  background: var(--bg-card); border: 1px solid var(--border-hi);
+  border-radius: 12px; padding: 1.75rem;
+}
+.proof-row {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: 0.75rem 0; border-bottom: 1px solid var(--border);
+}
+.proof-row:last-child { border-bottom: none; }
+.proof-status {
+  flex-shrink: 0; width: 68px; text-align: center;
+  font-size: 0.68rem; letter-spacing: 0.07em; text-transform: uppercase;
+  font-family: var(--display); padding: 0.25rem 0.4rem; border-radius: 5px; margin-top: 2px;
+}
+.proof-status.live { background: rgba(0,232,135,0.12); color: var(--accent); border: 1px solid rgba(0,232,135,0.25); }
+.proof-status.ok   { background: rgba(0,232,135,0.08); color: var(--accent); border: 1px solid rgba(0,232,135,0.15); }
+.proof-status.null { background: rgba(120,150,180,0.10); color: var(--text-soft); border: 1px solid var(--border-mid); }
+.proof-endpoint { font-family: "Space Mono", monospace; font-size: 0.8rem; color: var(--text); }
+.proof-detail { font-size: 0.82rem; color: var(--text-soft); margin-top: 0.2rem; }
+
+/* ── Architecture flow ── */
+.arch-flow {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 0; max-width: 520px; margin: 1.5rem 0;
+}
+.arch-step {
+  display: flex; align-items: center; gap: 1rem;
+}
+.arch-step-body {
+  background: var(--bg-card); border: 1px solid var(--border-mid);
+  border-radius: 8px; padding: 0.6rem 1.1rem;
+  font-size: 0.88rem; color: var(--text); min-width: 240px;
+}
+.arch-step-body.hl { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.arch-step-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent-dim); border: 1px solid var(--accent);
+  color: var(--accent); font-size: 0.7rem; font-family: var(--display);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.arch-connector {
+  width: 2px; height: 22px; background: var(--border-mid);
+  margin-left: 12px;
+}
+
+/* ── Quickstart ── */
+.qs-block { margin-bottom: 1.5rem; }
+.qs-label {
+  font-size: 0.7rem; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--text-soft); font-family: var(--display); margin-bottom: 0.5rem;
+}
+pre.qs-code {
+  background: var(--bg-card); border: 1px solid var(--border-mid);
+  border-radius: 8px; padding: 1.1rem 1.25rem; margin: 0;
+  font-family: "Space Mono", monospace; font-size: 0.8rem;
+  color: var(--text); overflow-x: auto; line-height: 1.65;
+}
+pre.qs-code .cm { color: var(--text-soft); }
+pre.qs-code .kw { color: var(--accent); }
+pre.qs-code .st { color: #7ec8e3; }
+
+/* ── Compare table ── */
+.compare-table { width: 100%; border-collapse: collapse; margin-top: 1.25rem; }
+.compare-table th {
+  text-align: left; font-size: 0.72rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-soft);
+  border-bottom: 1px solid var(--border-mid); padding: 0.5rem 1rem 0.75rem;
+}
+.compare-table td {
+  padding: 0.7rem 1rem; font-size: 0.87rem; color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table .dim { color: var(--text-soft); }
+.compare-table .accent { color: var(--accent); font-weight: 500; }
+
+/* ── Use case grid ── */
+.usecase-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem; margin-top: 1.25rem;
+}
+.usecase-chip {
+  background: var(--bg-card); border: 1px solid var(--border-mid);
+  border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.84rem; color: var(--text);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.usecase-chip::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+}
+
+/* ── Security chips ── */
+.sec-list { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1.25rem; max-width: 640px; }
+.sec-row {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.75rem 1rem;
+}
+.sec-icon { color: var(--accent); font-size: 0.9rem; margin-top: 1px; flex-shrink: 0; }
+.sec-text { font-size: 0.85rem; color: var(--text-soft); line-height: 1.5; }
+.sec-text strong { color: var(--text); }
+
+/* ── Problem section ── */
+.problem-lines { max-width: 580px; }
+.problem-line {
+  font-size: 1rem; color: var(--text-soft); padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem;
+}
+.problem-line::before { content: '✕'; color: var(--text-faint); font-size: 0.8rem; flex-shrink: 0; }
+.problem-line:last-child { border-bottom: none; }
+.problem-resolution {
+  margin-top: 1.75rem; font-size: 1.15rem; color: var(--text);
+  font-weight: 500; display: flex; align-items: center; gap: 0.75rem;
+}
+.problem-resolution::before {
+  content: '→'; color: var(--accent); font-size: 1.1rem;
+}
+</style>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <!-- ── HERO ── -->
+  <div class="page-header">
+    <div class="glow-accent" style="width:600px;height:500px;top:-120px;right:-200px;"></div>
+    <div class="glow-blue"   style="width:500px;height:380px;bottom:-100px;left:-160px;"></div>
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;">
+        <span class="dot"></span>Omega Carrier · MCP Bridge · Developer Preview
+      </div>
+      <h1>Give AI Agents<br><span class="accent">Identity, Memory, Proof, and Capital</span></h1>
+      <p class="hero-sub" style="max-width:660px;">
+        Omega Carrier is the Model Context Protocol bridge that lets AI agents register identity, commit state to Exergy Vault, recall memory, witness external data through AERIS, check reserves, and route value through the ExergyNet capital loop.
+      </p>
+      <div class="btn-row" style="margin-top:2rem;">
+        <a class="btn btn-primary" href="#quickstart">Start Developer Test</a>
+        <a class="btn btn-secondary" href="#tools">View MCP Tools</a>
+        <a class="btn btn-ghost" href="docs.html">Read the Docs →</a>
+      </div>
+
+      <!-- Flow diagram -->
+      <div class="oc-hero-flow">
+        <div class="oc-flow-node">AI Agent</div>
+        <span class="oc-flow-arrow">→</span>
+        <div class="oc-flow-node accent">Omega Carrier MCP</div>
+        <span class="oc-flow-arrow">→</span>
+        <div class="oc-flow-node">ExergyNet</div>
+        <span class="oc-flow-arrow">→</span>
+        <div class="oc-flow-col">
+          <div class="oc-flow-node">Identity</div>
+          <div class="oc-flow-node">Vault</div>
+          <div class="oc-flow-node">AERIS</div>
+          <div class="oc-flow-node">Reserve</div>
+          <div class="oc-flow-node">RHO Sump</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- ── PROBLEM ── -->
+    <section>
+      <div class="section-label">The Problem</div>
+      <h2>AI agents are missing an execution layer</h2>
+      <p style="max-width:620px;margin-bottom:1.75rem;color:var(--text-soft);">
+        Models can reason. But without durable state, identity, and economic routing, they remain temporary sessions — not persistent actors.
+      </p>
+      <div class="problem-lines">
+        <div class="problem-line">They forget state across sessions</div>
+        <div class="problem-line">They lack durable, verifiable identity</div>
+        <div class="problem-line">They cannot prove what they observed</div>
+        <div class="problem-line">They cannot check their own operational reserve</div>
+        <div class="problem-line">They cannot route value or participate in settlement</div>
+        <div class="problem-line">They cannot resume long-running work independently</div>
+      </div>
+      <div class="problem-resolution">Omega Carrier gives agents the missing execution layer.</div>
+    </section>
+
+    <!-- ── MCP TOOLS ── -->
+    <section id="tools">
+      <div class="section-label">MCP Tool Surface</div>
+      <h2>Five core capabilities through one bridge</h2>
+      <p style="max-width:620px;color:var(--text-soft);">
+        Connect any MCP-compatible AI to Omega Carrier. All five tools are live. All calls require bearer-token authorization.
+      </p>
+
+      <div class="tool-grid">
+
+        <div class="tool-card">
+          <div class="tool-label">Identity</div>
+          <code>initialize_sovereign_identity</code>
+          <h4>Agent Passport</h4>
+          <p>Generates an Ed25519 keypair and registers the agent as a sovereign node on the ExergyNet L0 Apex layer. Returns <code>miner_id</code> and credentials for all future calls.</p>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-label">Memory</div>
+          <code>vault_commit_state</code>
+          <h4>Agent Journal</h4>
+          <p>Archives agent state into Exergy Vault (up to 512 KB). Returns a durable <code>xlmp_root</code> handle. Memory persists across sessions, models, and agent restarts.</p>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-label">Recall</div>
+          <code>vault_recall_state</code>
+          <h4>Agent Memory</h4>
+          <p>Retrieves prior state by <code>xlmp_root</code>. Returns sealed content with ZK provenance metadata. The agent can resume exactly where it left off.</p>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-label">Proof</div>
+          <code>witness_external_site</code>
+          <h4>Agent Eye</h4>
+          <p>Uses AERIS to witness a third-party URL and return proof metadata. The agent can prove what it saw — not just assert it. No screenshots. No assumptions.</p>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-label">Reserve</div>
+          <code>check_exergy_reserve</code>
+          <h4>Agent Battery</h4>
+          <p>Checks available Exergy reserve or miner balance before acting. Foundation for agent budgets, task thresholds, compute tolls, and autonomous permission gates.</p>
+        </div>
+
+      </div>
+
+      <!-- RHO Sump -->
+      <div class="card accent-border" style="margin-top:1.25rem;">
+        <div class="section-label" style="margin-bottom:0.75rem;">Chapter XIX — Capital Loop</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;flex-wrap:wrap;">
+          <div>
+            <code style="font-family:'Space Mono',monospace;font-size:0.82rem;color:var(--accent);display:block;margin-bottom:0.5rem;">POST /api/rho/sump</code>
+            <div style="font-size:0.72rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-soft);margin-bottom:0.4rem;">Capital Loop</div>
+            <p style="font-size:0.87rem;color:var(--text-soft);margin:0;line-height:1.55;">Routes task value into the ExergyNet reserve queue. When agent task rewards accumulate, a portion flows into the RHO Sump. At 50,000 µUSDC threshold, queued for market strike.</p>
+          </div>
+          <div>
+            <code style="font-family:'Space Mono',monospace;font-size:0.82rem;color:var(--accent);display:block;margin-bottom:0.5rem;">GET /api/rho/sump/status</code>
+            <div style="font-size:0.72rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-soft);margin-bottom:0.4rem;">Reserve Status</div>
+            <p style="font-size:0.87rem;color:var(--text-soft);margin:0;line-height:1.55;">Returns the pending queue breakdown, accumulated total, threshold percentage, and current market strike status. Verifiable by any authorized agent.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── LIVE PROOF ── -->
+    <section>
+      <div class="section-label">Live Verification</div>
+      <h2>Chapter XIX — Confirmed operational</h2>
+      <p style="max-width:580px;color:var(--text-soft);margin-bottom:1.5rem;">
+        These results reflect a validation run against the live production endpoint. Developers trust proof more than claims.
+      </p>
+      <div class="proof-panel">
+        <div class="proof-row">
+          <div class="proof-status live">LIVE</div>
+          <div>
+            <div class="proof-endpoint">GET /api/rho/sump/status</div>
+            <div class="proof-detail">Endpoint responding — returns breakdown, pending total, threshold µUSDC</div>
+          </div>
+        </div>
+        <div class="proof-row">
+          <div class="proof-status ok">OK</div>
+          <div>
+            <div class="proof-endpoint">POST /api/rho/sump</div>
+            <div class="proof-detail">Accepted 50 µUSDC test entry · returned <code style="font-size:0.78rem;">sump_id</code> · status: queued</div>
+          </div>
+        </div>
+        <div class="proof-row">
+          <div class="proof-status ok">OK</div>
+          <div>
+            <div class="proof-endpoint">Queue state</div>
+            <div class="proof-detail">1 PENDING entry · 50 µUSDC · 0% to threshold</div>
+          </div>
+        </div>
+        <div class="proof-row">
+          <div class="proof-status ok">OK</div>
+          <div>
+            <div class="proof-endpoint">Threshold logic</div>
+            <div class="proof-detail">Active at 50,000 µUSDC · queue escalates to QUEUED_FOR_STRIKE at threshold</div>
+          </div>
+        </div>
+        <div class="proof-row">
+          <div class="proof-status null">NULL</div>
+          <div>
+            <div class="proof-endpoint">Market strike</div>
+            <div class="proof-detail">Null — correct. Threshold not yet reached. Strike held by admin gate.</div>
+          </div>
+        </div>
+        <div class="proof-row">
+          <div class="proof-status live">LIVE</div>
+          <div>
+            <div class="proof-endpoint">omega-carrier PM2 · port 8765</div>
+            <div class="proof-detail">Running on 3.234.120.103 · SSE endpoint accepting connections · uptime stable</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ARCHITECTURE ── -->
+    <section>
+      <div class="section-label">Architecture</div>
+      <h2>How the agent loop works</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;flex-wrap:wrap;">
+        <div>
+          <div class="arch-flow">
+            <div class="arch-step">
+              <div class="arch-step-num">01</div>
+              <div class="arch-step-body hl">AI Agent connects via MCP</div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-step">
+              <div class="arch-step-num">02</div>
+              <div class="arch-step-body">initialize_sovereign_identity</div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-step">
+              <div class="arch-step-num">03</div>
+              <div class="arch-step-body">Performs task</div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-step">
+              <div class="arch-step-num">04</div>
+              <div class="arch-step-body">vault_commit_state → xlmp_root</div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-step">
+              <div class="arch-step-num">05</div>
+              <div class="arch-step-body">vault_recall_state (next session)</div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-step">
+              <div class="arch-step-num">06</div>
+              <div class="arch-step-body">witness_external_site via AERIS</div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-step">
+              <div class="arch-step-num">07</div>
+              <div class="arch-step-body">check_exergy_reserve</div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-step">
+              <div class="arch-step-num">08</div>
+              <div class="arch-step-body hl">POST /api/rho/sump → capital loop</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p style="color:var(--text-soft);font-size:0.92rem;line-height:1.7;margin-bottom:1.5rem;">
+            Omega Carrier turns an AI agent from a temporary chat session into a stateful actor with memory, proof, and economic routing.
+          </p>
+          <p style="color:var(--text-soft);font-size:0.92rem;line-height:1.7;margin-bottom:1.5rem;">
+            Each tool call is independent. Agents can use any subset — identity only, memory only, or the full loop. The bearer token scopes all activity to the operator's account.
+          </p>
+          <div class="card" style="margin-top:1rem;">
+            <ul class="spec-list">
+              <li><span class="spec-key">Transport</span><span class="spec-val">SSE or stdio (MCP)</span></li>
+              <li><span class="spec-key">Auth</span><span class="spec-val">Bearer token per call</span></li>
+              <li><span class="spec-key">Identity</span><span class="spec-val">Ed25519 keypair</span></li>
+              <li><span class="spec-key">Memory</span><span class="spec-val">Exergy Vault (xLMP, root-addressed)</span></li>
+              <li><span class="spec-key">Proof</span><span class="spec-val">AERIS external witness</span></li>
+              <li><span class="spec-key">Capital</span><span class="spec-val">RHO Sump → reserve queue</span></li>
+              <li><span class="spec-key">Threshold</span><span class="spec-val">50,000 µUSDC → QUEUED_FOR_STRIKE</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MEMORY COMPARISON ── -->
+    <section>
+      <div class="section-label">Memory Model</div>
+      <h2>Not just memory. Provable memory.</h2>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>Standard AI memory</th>
+            <th>Exergy Vault</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Persists across sessions</td>
+            <td class="dim">Vendor-dependent</td>
+            <td class="accent">Yes — root-addressed</td>
+          </tr>
+          <tr>
+            <td>Content-addressed retrieval</td>
+            <td class="dim">No</td>
+            <td class="accent">Yes — xlmp_root handle</td>
+          </tr>
+          <tr>
+            <td>Sealed provenance</td>
+            <td class="dim">No</td>
+            <td class="accent">ZK metadata on recall</td>
+          </tr>
+          <tr>
+            <td>Explicit not-found behavior</td>
+            <td class="dim">Often hallucinates</td>
+            <td class="accent">Hard null on miss</td>
+          </tr>
+          <tr>
+            <td>Works across model providers</td>
+            <td class="dim">Rarely</td>
+            <td class="accent">Any MCP client</td>
+          </tr>
+          <tr>
+            <td>External fact proof</td>
+            <td class="dim">No</td>
+            <td class="accent">AERIS witness</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:1.25rem;font-size:0.9rem;color:var(--text-soft);">
+        Normal memory helps an agent remember. Exergy Vault helps an agent <strong style="color:var(--text);">prove what it remembers.</strong>
+      </p>
+    </section>
+
+    <!-- ── USE CASES ── -->
+    <section>
+      <div class="section-label">Use Cases</div>
+      <h2>Built for auditability and state</h2>
+      <p style="max-width:580px;color:var(--text-soft);margin-bottom:0.5rem;">
+        The first buyers are teams building agents where memory cannot be casual and actions must be traceable.
+      </p>
+      <div class="usecase-grid">
+        <div class="usecase-chip">AI agent platforms</div>
+        <div class="usecase-chip">Clinical AI systems</div>
+        <div class="usecase-chip">Financial AI agents</div>
+        <div class="usecase-chip">Legal evidence workflows</div>
+        <div class="usecase-chip">Autonomous research agents</div>
+        <div class="usecase-chip">Field operations</div>
+        <div class="usecase-chip">Compliance automation</div>
+        <div class="usecase-chip">Machine-to-machine networks</div>
+        <div class="usecase-chip">Enterprise copilots</div>
+        <div class="usecase-chip">Insurance agents</div>
+      </div>
+    </section>
+
+    <!-- ── QUICKSTART ── -->
+    <section id="quickstart">
+      <div class="section-label">Developer Quickstart</div>
+      <h2>Connect in two steps</h2>
+
+      <div class="qs-block">
+        <div class="qs-label">Step 1 — Connect to Omega Carrier (SSE)</div>
+        <pre class="qs-code"><span class="cm"># MCP SSE endpoint — for custom agents and swarms</span>
+<span class="kw">endpoint:</span> <span class="st">http://3.234.120.103:8765/sse</span>
+
+<span class="cm"># stdio — for Claude Desktop and local MCP clients</span>
+<span class="cm"># See mcp_config.json in the Omega Carrier repo</span></pre>
+      </div>
+
+      <div class="qs-block">
+        <div class="qs-label">Step 2 — Call tools with your key</div>
+        <pre class="qs-code"><span class="cm"># All calls require bearer token authorization</span>
+Authorization: Bearer <span class="st">YOUR_EXERGYNET_DEVELOPER_KEY</span>
+
+<span class="cm"># Example agent prompts:</span>
+<span class="st">"Initialize your sovereign identity."</span>
+<span class="st">"Commit this task state to Vault."</span>
+<span class="st">"Recall the last task state."</span>
+<span class="st">"Witness this external URL and return proof."</span>
+<span class="st">"Check your Exergy reserve."</span>
+<span class="st">"Route 5% of this task reward to the RHO sump."</span></pre>
+      </div>
+
+      <div class="qs-block">
+        <div class="qs-label">RHO Sump — direct API call</div>
+        <pre class="qs-code"><span class="kw">curl</span> -sS -X POST https://portal.exergynet.org/api/rho/sump \
+  -H <span class="st">"Authorization: Bearer YOUR_EXERGYNET_DEVELOPER_KEY"</span> \
+  -H <span class="st">"Content-Type: application/json"</span> \
+  -d <span class="st">'{
+    "node_id":   "your_agent_id",
+    "task_id":   "task_identifier",
+    "sump":      50,
+    "memo":      "5% recursion tax from completed task"
+  }'</span>
+
+<span class="cm"># Returns:</span>
+<span class="cm"># { "status": "signaled", "sump_id": "...", "amount_micro_usdc": 50,</span>
+<span class="cm">#   "pending_queue_total": 50, "market_strike": null, "message": "$RHO buyback queued." }</span></pre>
+      </div>
+    </section>
+
+    <!-- ── SECURITY ── -->
+    <section>
+      <div class="section-label">Security</div>
+      <h2>Controlled developer testing</h2>
+      <div class="sec-list">
+        <div class="sec-row">
+          <div class="sec-icon">◈</div>
+          <div class="sec-text"><strong>Bearer token authorization on every call.</strong> No server-side secrets stored. Tokens are passed per-call by the visiting agent and resolved via the ExergyNet portal.</div>
+        </div>
+        <div class="sec-row">
+          <div class="sec-icon">◈</div>
+          <div class="sec-text"><strong>Scoped temporary keys for production integrations.</strong> Developer keys are issued per-account. Rotate keys independently without affecting other agents.</div>
+        </div>
+        <div class="sec-row">
+          <div class="sec-icon">◈</div>
+          <div class="sec-text"><strong>Autonomous capital routing is staged.</strong> The market strike behind the RHO Sump requires an admin key and threshold confirmation. No autonomous swap executes without explicit approval.</div>
+        </div>
+        <div class="sec-row">
+          <div class="sec-icon">◈</div>
+          <div class="sec-text"><strong>Ed25519 only for identity.</strong> No RSA, no ECDSA. All agent identity registration uses Ed25519 keypairs registered on the L0 Apex layer.</div>
+        </div>
+        <div class="sec-row">
+          <div class="sec-icon">◈</div>
+          <div class="sec-text"><strong>Memory is namespace-isolated.</strong> Exergy Vault entries are scoped to the bearer token's developer account. No cross-account vault access.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FINAL CTA ── -->
+    <section style="text-align:center;padding:3rem 0 2rem;">
+      <div class="glow-accent" style="width:400px;height:300px;top:0;left:50%;transform:translateX(-50%);opacity:0.5;"></div>
+      <div class="section-label" style="justify-content:center;">Build on ExergyNet</div>
+      <h2 style="font-size:2.4rem;max-width:560px;margin:0.75rem auto 1.25rem;">
+        Build Stateful AI Agents<br><span class="accent">on ExergyNet</span>
+      </h2>
+      <p style="max-width:520px;margin:0 auto 2rem;color:var(--text-soft);font-size:0.95rem;line-height:1.65;">
+        Omega Carrier connects AI agents to ExergyNet, giving them identity, persistent memory, external proof, reserve awareness, and economic routing. Available for controlled developer testing now.
+      </p>
+      <div class="btn-row" style="justify-content:center;">
+        <a class="btn btn-primary" href="developers.html">Request Developer Key</a>
+        <a class="btn btn-secondary" href="#tools">Review MCP Tool Surface</a>
+      </div>
+    </section>
+
+  </div><!-- /container -->
+</main>
+
+  <div id="site-footer"></div>
+</div><!-- /site-wrap -->
+
+<script src="main.js"></script>
+</body>
+</html>
