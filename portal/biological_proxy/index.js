@@ -140,7 +140,7 @@ app.use(cors({
   origin: ['https://portal.exergynet.org', 'https://dt.portal.exergynet.org', 'http://localhost:4000', 'http://localhost:3000'],
   credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
 
 // ── PostgreSQL pool ────────────────────────────────────────────────────────────
 const pool = new Pool({
@@ -223,8 +223,127 @@ async function initDb() {
 
     ALTER TABLE music_drops ADD COLUMN IF NOT EXISTS source       TEXT NOT NULL DEFAULT 'portal';
     ALTER TABLE music_drops ADD COLUMN IF NOT EXISTS spaces_ready BOOLEAN NOT NULL DEFAULT FALSE;
+
+    CREATE TABLE IF NOT EXISTS rho_buyback_queue (
+      id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      node_id     TEXT,
+      task_id     TEXT,
+      amount      BIGINT NOT NULL,
+      status      TEXT NOT NULL DEFAULT 'PENDING',
+      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS xlmp_vault (
+      xlmp_root        TEXT PRIMARY KEY,
+      owner_id         TEXT NOT NULL,
+      intent           TEXT NOT NULL DEFAULT 'agent-memory-commit',
+      payload          TEXT NOT NULL,
+      bytes_committed  INTEGER NOT NULL,
+      committed_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS build_audit_ledger (
+      otet         TEXT PRIMARY KEY,
+      service_name TEXT NOT NULL,
+      target_id    TEXT NOT NULL,
+      state_hash   TEXT NOT NULL,
+      issued_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      expires_at   TIMESTAMPTZ NOT NULL DEFAULT NOW() + INTERVAL '24 hours',
+      spent_at     TIMESTAMPTZ,
+      status       TEXT NOT NULL DEFAULT 'UNSPENT'
+    );
+    -- B-02: add expires_at column to existing table if migration needed
+    ALTER TABLE build_audit_ledger ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ NOT NULL DEFAULT NOW() + INTERVAL '24 hours';
+    -- B-03: plain content hash (no nonce) for pre_hash verification in agent-edit
+    ALTER TABLE build_audit_ledger ADD COLUMN IF NOT EXISTS content_hash TEXT;
+
+    CREATE TABLE IF NOT EXISTS articles (
+      id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      slug             TEXT UNIQUE NOT NULL,
+      title            TEXT NOT NULL,
+      subtitle         TEXT,
+      content          TEXT NOT NULL DEFAULT '',
+      excerpt          TEXT,
+      cover_url        TEXT,
+      author_name      TEXT NOT NULL DEFAULT 'ExergyNet',
+      author_avatar    TEXT,
+      tags             TEXT[] DEFAULT '{}',
+      status           TEXT NOT NULL DEFAULT 'draft',
+      featured         BOOLEAN NOT NULL DEFAULT false,
+      reading_time_mins INT NOT NULL DEFAULT 1,
+      published_at     TIMESTAMPTZ,
+      created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS articles_status_idx   ON articles(status);
+    CREATE INDEX IF NOT EXISTS articles_slug_idx     ON articles(slug);
+    CREATE INDEX IF NOT EXISTS articles_featured_idx ON articles(featured);
   `);
   console.log('[DB] Tables ready');
+}
+
+// ── LNES-17: OTET Middleware ──────────────────────────────────────────────────
+// Witness-Hash nonce cache (Chapter XXVI). In-memory Map; keyed by admin token.
+// Nonces expire after 10 minutes. No Redis needed for single-server deploy.
+const witnessNonceCache = new Map(); // token -> { nonce, file_path, expires_at }
+function pruneNonceCache() {
+  const now = Date.now();
+  for (const [k, v] of witnessNonceCache) {
+    if (v.expires_at < now) witnessNonceCache.delete(k);
+  }
+}
+setInterval(pruneNonceCache, 60_000);
+// requireOTET(expected_prefix): scoped OTET factory.
+// A-03: validates token scope — target_id must start with expected_prefix.
+// A-05: auto-spends the token BEFORE calling next() — replay is impossible.
+// B-06: wrapped in try/catch — DB outage returns 500 not unhandled rejection.
+// Usage: requireOTET('developer_credit:') — scope prefix must match target_id.
+const requireOTET = (expected_prefix) => async (req, res, next) => {
+  try {
+    const token = req.headers['x-otet'];
+    if (!token) {
+      return res.status(423).json({ error: 'LNES-17 Violation: Missing One-Time Edit Token. Read before Action.' });
+    }
+    const { rows } = await pool.query(
+      `SELECT * FROM build_audit_ledger WHERE otet = $1 AND status = 'UNSPENT'`,
+      [token]
+    );
+    if (rows.length === 0) {
+      return res.status(403).json({ error: 'OTET Invalid or Already Spent.' });
+    }
+    const meta = rows[0];
+    // B-02: TTL enforcement — reject expired tokens even if still UNSPENT in DB
+    if (meta.expires_at && new Date(meta.expires_at) < new Date()) {
+      await pool.query(`UPDATE build_audit_ledger SET status = 'EXPIRED' WHERE otet = $1`, [token]);
+      return res.status(403).json({ error: 'OTET Expired. Issue a new token.' });
+    }
+    // A-03: scope enforcement — token must be issued for this class of target
+    if (expected_prefix && !meta.target_id.startsWith(expected_prefix)) {
+      console.warn(`[OTET] SCOPE VIOLATION | expected=${expected_prefix} | got=${meta.target_id}`);
+      return res.status(403).json({
+        error: `OTET Scope Violation. Token was issued for "${meta.target_id}", not for "${expected_prefix}*".`,
+      });
+    }
+    // A-05: auto-spend BEFORE next() — no route can replay the token
+    await pool.query(
+      `UPDATE build_audit_ledger SET status = 'SPENT', spent_at = NOW() WHERE otet = $1`,
+      [token]
+    );
+    req.otet_meta = meta;
+    console.log(`[OTET] Auto-spent: ${token.slice(0,16)}… | scope=${expected_prefix || 'any'} | target=${meta.target_id}`);
+    next();
+  } catch (e) {
+    console.error('[OTET] Middleware crash:', e.message);
+    res.status(500).json({ error: 'OTET Verification Crash — try again.' });
+  }
+};
+
+// spendOTET: kept for backward compat (spend-otet endpoint uses it explicitly)
+async function spendOTET(otet) {
+  await pool.query(
+    `UPDATE build_audit_ledger SET status = 'SPENT', spent_at = NOW() WHERE otet = $1`,
+    [otet]
+  );
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -267,6 +386,7 @@ async function requireAuth(req, res, next) {
       }
       if (!dev) return res.status(401).json({ error: 'Invalid API key' });
       req.developerId = dev.id;
+      req.dev = { id: dev.id };
       return next();
     } catch (err) {
       console.error('[requireAuth/apikey]', err);
@@ -278,6 +398,7 @@ async function requireAuth(req, res, next) {
   try {
     const payload = jwt.verify(raw, JWT_SECRET);
     req.developerId = payload.sub;
+    req.dev = { id: payload.sub };
     next();
   } catch {
     res.status(401).json({ error: 'Invalid or expired token' });
@@ -407,7 +528,10 @@ app.post('/auth/login', authRateLimit, async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const dev   = result.rows[0];
+    const dev = result.rows[0];
+    if (!dev.password_hash) {
+      return res.status(401).json({ error: 'This account was created with Google or X login. Please use the social login button to sign in.' });
+    }
     const valid = await bcrypt.compare(password, dev.password_hash);
     if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
 
@@ -1506,11 +1630,154 @@ app.post('/api/apps/submit', requireAuth, async (req, res) => {
 // ═══════════════════════════════════════════════════════════════
 // ADMIN PANEL
 // ═══════════════════════════════════════════════════════════════
+// ── xLMP VAULT — Sovereign Agent State Storage ────────────────────────────────
+// POST /api/xlmp/ingest  — commit agent state, returns durable xlmp_root handle
+// GET  /api/xlmp/query   — recall state by xlmp_root
+// GET  /api/xlmp/list    — list all commits for authenticated agent
+// ══════════════════════════════════════════════════════════════════════════════
+
+app.post('/api/xlmp/ingest', requireAuth, async (req, res) => {
+  try {
+    const { intent, payload: _payload, content } = req.body || {};
+    const payload = _payload ?? content;
+    if (!payload) return res.status(400).json({ error: 'payload required' });
+
+    const raw = typeof payload === 'string' ? payload : JSON.stringify(payload);
+
+    // Enforce 512 KB cap — strip to first 512KB if over
+    const MAX_BYTES = 512 * 1024;
+    const stripped = Buffer.byteLength(raw, 'utf8') > MAX_BYTES
+      ? raw.slice(0, MAX_BYTES)
+      : raw;
+
+    // Content-addressed root: SHA-256(owner_id + intent + payload)
+    const xlmp_root = crypto
+      .createHash('sha256')
+      .update(req.dev.id + (intent || 'agent-memory-commit') + stripped)
+      .digest('hex');
+
+    const bytes_committed = Buffer.byteLength(stripped, 'utf8');
+
+    await pool.query(
+      `INSERT INTO xlmp_vault (xlmp_root, owner_id, intent, payload, bytes_committed)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (xlmp_root) DO UPDATE SET committed_at = NOW()`,
+      [xlmp_root, req.dev.id, intent || 'agent-memory-commit', stripped, bytes_committed]
+    );
+
+    console.log(`[xLMP] Committed | root=${xlmp_root.slice(0,16)}… | bytes=${bytes_committed} | intent=${intent}`);
+    res.json({ xlmp_root, bytes_committed, status: 'committed' });
+  } catch (e) {
+    console.error('[xLMP ingest]', e.message);
+    res.status(500).json({ error: 'xLMP_Compress failure', detail: e.message });
+  }
+});
+
+app.get('/api/xlmp/query', requireAuth, async (req, res) => {
+  try {
+    const { xlmp_root } = req.query;
+    if (!xlmp_root) return res.status(400).json({ error: 'xlmp_root required' });
+
+    const { rows } = await pool.query(
+      `SELECT xlmp_root, intent, payload, bytes_committed, committed_at
+       FROM xlmp_vault WHERE xlmp_root = $1 AND owner_id = $2`,
+      [xlmp_root, req.dev.id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'State not found' });
+
+    const row = rows[0];
+    let parsed;
+    try { parsed = JSON.parse(row.payload); } catch { parsed = row.payload; }
+
+    res.json({
+      xlmp_root: row.xlmp_root,
+      intent: row.intent,
+      payload: parsed,
+      bytes_committed: row.bytes_committed,
+      committed_at: row.committed_at,
+      status: 'recalled',
+    });
+  } catch (e) {
+    console.error('[xLMP query]', e.message);
+    res.status(500).json({ error: 'xLMP recall failure', detail: e.message });
+  }
+});
+
+app.get('/api/xlmp/list', requireAuth, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT xlmp_root, intent, bytes_committed, committed_at
+       FROM xlmp_vault WHERE owner_id = $1 ORDER BY committed_at DESC LIMIT 50`,
+      [req.dev.id]
+    );
+    res.json({ commits: rows, count: rows.length });
+  } catch (e) {
+    res.status(500).json({ error: 'xLMP list failure' });
+  }
+});
+
 // ADMIN PANEL — Authenticated with dedicated ADMIN_JWT_SECRET, role-based
 // Roles: super_admin | ops | support
 // ══════════════════════════════════════════════════════════════════════════════
 
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'admin-secret-CHANGE-IN-PROD';
+
+// ── OMEGA CARRIER TOKEN AUTO-ROTATION ─────────────────────────────────────────
+// Rotates the Omega Carrier machine account API key every 24 hours.
+// New key is written to .env, hashed in DB, and broadcast to any subscribed
+// agents via the /api/admin/token-rotation SSE stream.
+const TOKEN_ROTATION_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 hours
+const OMEGA_EMAIL = 'omega-carrier@exergynet.org';
+const tokenRotationSubscribers = new Set(); // SSE clients
+
+async function rotateOmegaCarrierToken() {
+  try {
+    const newToken = 'sk-exergy-' + require('crypto').randomBytes(32).toString('hex');
+    const newHash  = await bcrypt.hash(newToken, 12);
+    const preview  = newToken.slice(0, 16) + '...';
+
+    // Update DB
+    const { rowCount } = await pool.query(
+      `UPDATE biological_developers
+       SET api_key_hash = $1, api_key_preview = $2
+       WHERE email = $3`,
+      [newHash, preview, OMEGA_EMAIL]
+    );
+    if (rowCount === 0) {
+      console.warn('[TOKEN-ROTATION] Omega Carrier account not found in DB — skipping.');
+      return;
+    }
+
+    // Update .env file
+    const fs2 = require('fs');
+    const envPath = '/home/ubuntu/biological_proxy/.env';
+    let envContent = fs2.readFileSync(envPath, 'utf8');
+    if (envContent.includes('OMEGA_CARRIER_TOKEN=')) {
+      envContent = envContent.replace(/OMEGA_CARRIER_TOKEN=.*/, `OMEGA_CARRIER_TOKEN=${newToken}`);
+    } else {
+      envContent = envContent.trimEnd() + `\nOMEGA_CARRIER_TOKEN=${newToken}\n`;
+    }
+    fs2.writeFileSync(envPath, envContent);
+
+    // Update runtime env var
+    process.env.OMEGA_CARRIER_TOKEN = newToken;
+
+    const rotatedAt = new Date().toISOString();
+    console.log(`[TOKEN-ROTATION] Omega Carrier token rotated at ${rotatedAt} | preview=${preview}`);
+
+    // Notify SSE subscribers
+    const payload = JSON.stringify({ event: 'token_rotated', preview, rotated_at: rotatedAt });
+    for (const res of tokenRotationSubscribers) {
+      try { res.write(`data: ${payload}\n\n`); } catch {}
+    }
+  } catch (e) {
+    console.error('[TOKEN-ROTATION] Rotation failed:', e.message);
+  }
+}
+
+// Start rotation timer
+setInterval(rotateOmegaCarrierToken, TOKEN_ROTATION_INTERVAL_MS);
+console.log('[TOKEN-ROTATION] Auto-rotation armed — interval: 24h');
 
 function signAdminToken(adminId, role) {
   return jwt.sign({ sub: adminId, role, iss: 'exergynet-admin' }, ADMIN_JWT_SECRET, { expiresIn: '8h' });
@@ -1536,6 +1803,41 @@ function requireAdmin(...roles) {
     }
   };
 }
+
+// ── GET /api/admin/token-rotation (SSE stream) ──────────────────────────────
+// Super admins subscribe to receive rotation events in real time.
+app.get('/api/admin/token-rotation', requireAdmin('super_admin'), (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+  res.write(`data: ${JSON.stringify({ event: 'connected', current_preview: (process.env.OMEGA_CARRIER_TOKEN || '').slice(0, 16) + '...' })}\n\n`);
+  tokenRotationSubscribers.add(res);
+  req.on('close', () => tokenRotationSubscribers.delete(res));
+});
+
+// ── POST /api/admin/token-rotation/trigger ───────────────────────────────────
+// Manually trigger an immediate rotation (super_admin only).
+app.post('/api/admin/token-rotation/trigger', requireAdmin('super_admin'), async (req, res) => {
+  await rotateOmegaCarrierToken();
+  res.json({
+    ok: true,
+    message: 'Token rotated immediately.',
+    preview: (process.env.OMEGA_CARRIER_TOKEN || '').slice(0, 16) + '...',
+    rotated_at: new Date().toISOString(),
+  });
+});
+
+// ── GET /api/admin/token-rotation/status ────────────────────────────────────
+// Returns current token preview and next rotation time.
+app.get('/api/admin/token-rotation/status', requireAdmin('super_admin'), (req, res) => {
+  res.json({
+    omega_email: OMEGA_EMAIL,
+    current_preview: (process.env.OMEGA_CARRIER_TOKEN || '').slice(0, 16) + '...',
+    rotation_interval_hours: 24,
+    subscribers: tokenRotationSubscribers.size,
+  });
+});
 
 // ── POST /admin/login ────────────────────────────────────────────────
 app.post('/api/admin/login', async (req, res) => {
@@ -1595,7 +1897,7 @@ app.get('/api/admin/developers', requireAdmin('super_admin', 'ops', 'support'), 
 });
 
 // ── PUT /admin/developers/:id/active ─────────────────────────────────
-app.put('/api/admin/developers/:id/active', requireAdmin('super_admin', 'support'), async (req, res) => {
+app.put('/api/admin/developers/:id/active', requireAdmin('super_admin', 'support'), requireOTET('developer_active:'), async (req, res) => {
   const { active } = req.body || {};
   if (typeof active !== 'boolean') return res.status(400).json({ error: 'active (boolean) required' });
   try {
@@ -1612,7 +1914,7 @@ app.put('/api/admin/developers/:id/active', requireAdmin('super_admin', 'support
 });
 
 // ── POST /admin/developers/:id/credit ────────────────────────────────
-app.post('/api/admin/developers/:id/credit', requireAdmin('super_admin'), async (req, res) => {
+app.post('/api/admin/developers/:id/credit', requireAdmin('super_admin'), requireOTET('developer_credit:'), async (req, res) => {
   const { usdc_micro } = req.body || {};
   if (!usdc_micro || typeof usdc_micro !== 'number' || usdc_micro <= 0) {
     return res.status(400).json({ error: 'usdc_micro (positive number) required' });
@@ -1699,7 +2001,7 @@ app.get('/api/admin/instructions', requireAdmin('super_admin', 'support'), async
 
 // ── GET /admin/engine ──────────────────────────────────────────────────
 app.get('/api/admin/engine', requireAdmin('super_admin', 'ops'), async (req, res) => {
-  const vanguardUrl = process.env.SEI_VANGUARD_URL || 'http://localhost:3000';
+  const vanguardUrl = process.env.SEI_VANGUARD_URL || 'http://20.127.220.199:3000';
   const vanguardKey = process.env.SEI_VANGUARD_KEY;
   try {
     const ctrl = new AbortController();
@@ -1738,7 +2040,7 @@ app.get('/api/admin/keys', requireAdmin('super_admin'), async (req, res) => {
 });
 
 // ── DELETE /admin/keys/:id (revoke) ──────────────────────────────────────
-app.delete('/api/admin/keys/:id', requireAdmin('super_admin'), async (req, res) => {
+app.delete('/api/admin/keys/:id', requireAdmin('super_admin'), requireOTET('key_revoke:'), async (req, res) => {
   try {
     const deadHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), SALT_ROUNDS);
     const result = await pool.query(
@@ -1842,7 +2144,7 @@ app.get('/api/admin/apps/review-queue', requireAdmin('super_admin','ops','suppor
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/api/admin/apps/approve', requireAdmin('super_admin','ops'), async (req, res) => {
+app.post('/api/admin/apps/approve', requireAdmin('super_admin','ops'), requireOTET('app_approve:'), async (req, res) => {
   const appKey = String((req.body && req.body.app_key) || '');
   if (!appKey) return res.status(400).json({ error: 'app_key required' });
   try {
@@ -1853,7 +2155,7 @@ app.post('/api/admin/apps/approve', requireAdmin('super_admin','ops'), async (re
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/api/admin/apps/reject', requireAdmin('super_admin','ops'), async (req, res) => {
+app.post('/api/admin/apps/reject', requireAdmin('super_admin','ops'), requireOTET('app_reject:'), async (req, res) => {
   const appKey = String((req.body && req.body.app_key) || '');
   const reason = String((req.body && req.body.reason) || '').slice(0, 300);
   if (!appKey) return res.status(400).json({ error: 'app_key required' });
@@ -1866,7 +2168,7 @@ app.post('/api/admin/apps/reject', requireAdmin('super_admin','ops'), async (req
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/api/admin/apps/rescan', requireAdmin('super_admin','ops'), async (req, res) => {
+app.post('/api/admin/apps/rescan', requireAdmin('super_admin','ops'), requireOTET('app_rescan:'), async (req, res) => {
   const appKey = String((req.body && req.body.app_key) || '');
   if (!appKey) return res.status(400).json({ error: 'app_key required' });
   await pool.query("UPDATE app_catalog SET review_status='pending_review' WHERE app_key=$1 AND review_status<>'active'", [appKey]);
@@ -1878,6 +2180,403 @@ app.post('/api/admin/apps/rescan', requireAdmin('super_admin','ops'), async (req
 app.get('/api/admin/apps/console', (req, res) => {
   res.set('Content-Type', 'text/html');
   res.send(CONSOLE_HTML);
+});
+
+// ── LNES-17: OTET Build Ledger Endpoints ─────────────────────────────────────
+
+// GET /api/admin/build/witness-file?path=<absolute-path-on-server>
+// Chapter XXVI: Challenge phase. Agent calls this FIRST to prove it will read
+// the file NOW. Returns file content + a 32-byte nonce. The nonce is stored
+// server-side, keyed by the admin token. It expires in 10 minutes.
+app.get('/api/admin/build/witness-file', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  const file_path = req.query.path;
+  if (!file_path) return res.status(400).json({ error: 'path query param required' });
+
+  // Whitelist: resolve() first to collapse traversal sequences, then check roots
+  const nodePath = require('path');
+  const ALLOWED_ROOTS = [
+    '/home/ubuntu/biological_proxy/',
+    '/home/ubuntu/exergynet-portal/src/',
+    '/home/ubuntu/omega_carrier/',
+    '/home/ubuntu/sovereign-tts/',
+  ];
+  // A-01: path.resolve() collapses ../ traversal before the whitelist check
+  const resolved_path = nodePath.resolve(file_path);
+  const allowed = ALLOWED_ROOTS.some(r => resolved_path.startsWith(r));
+  if (!allowed) {
+    console.warn(`[WITNESS] PATH TRAVERSAL ATTEMPT blocked: ${file_path} → ${resolved_path}`);
+    return res.status(403).json({ error: 'Path traversal detected. Access denied.' });
+  }
+  // A-02: ban secret file extensions regardless of location
+  const SECRET_EXTENSIONS = ['.env', '.pem', '.key', '.p12', '.pfx', '.cer', '.secret'];
+  const SECRET_NAMES = ['.env', '.env.local', '.env.production', '.env.development'];
+  const basename = nodePath.basename(resolved_path);
+  if (SECRET_EXTENSIONS.some(ext => resolved_path.endsWith(ext)) || SECRET_NAMES.includes(basename)) {
+    console.warn(`[WITNESS] SECRET FILE ACCESS blocked: ${resolved_path}`);
+    return res.status(403).json({ error: 'Secret file access forbidden.' });
+  }
+  // Use the resolved path from here on
+  const file_path_safe = resolved_path;
+
+  if (!fs.existsSync(file_path_safe)) return res.status(404).json({ error: 'File not found on server.' });
+
+  try {
+    const nonce = crypto.randomBytes(32).toString('hex');
+    const admin_token = req.headers['authorization']?.replace('Bearer ', '') || '';
+    const stat = fs.statSync(file_path_safe);
+    const is_directory = stat.isDirectory();
+
+    let witness_content;
+    if (is_directory) {
+      // Chapter XXVII: directory witness — content is comma-separated filename list
+      const entries = fs.readdirSync(file_path_safe).sort();
+      witness_content = entries.join('\x00'); // B-03: null-byte separator — filenames can contain commas
+    } else {
+      witness_content = fs.readFileSync(file_path_safe, 'utf8');
+    }
+
+    const witness_hash = crypto.createHash('sha256').update(witness_content + nonce).digest('hex');
+    const cache_key = admin_token + ':' + file_path_safe;
+
+    witnessNonceCache.set(cache_key, {
+      nonce,
+      file_path,
+      is_directory,
+      witness_content,
+      file_content_hash: witness_hash,
+      expires_at: Date.now() + 10 * 60 * 1000,
+    });
+
+    console.log(`[WITNESS] Challenge issued | path=${file_path_safe} | type=${is_directory ? 'DIR' : 'FILE'} | nonce=${nonce.slice(0,8)}…`);
+    res.json({
+      file_path: file_path_safe,
+      is_directory,
+      ...(is_directory
+        ? { directory_entries: witness_content.split('\x00').filter(Boolean), entry_count: witness_content.split('\x00').filter(Boolean).length }
+        : { file_content: witness_content }),
+      nonce,
+      challenge_note: is_directory
+        ? 'Compute SHA-256(directory_entries_string + nonce) and pass as witness_hash. Use create_mode:true in issue-otet.'
+        : 'Compute SHA-256(file_content + nonce) and pass as witness_hash in POST /api/admin/build/issue-otet',
+      expires_in_seconds: 600,
+    });
+  } catch (err) {
+    console.error('[WITNESS]', err);
+    res.status(500).json({ error: 'Witness challenge failed' });
+  }
+});
+
+// POST /api/admin/build/issue-otet
+// Agent calls this BEFORE editing any record. Returns a single-use OTET
+// cryptographically bound to the target's current state hash.
+app.post('/api/admin/build/issue-otet', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  const { service_name, target_id, current_state, witness_hash, content_hash: supplied_content_hash, file_path } = req.body || {};
+  if (!service_name || !target_id) {
+    return res.status(400).json({ error: 'service_name and target_id are required' });
+  }
+
+  // Chapter XXVI/XXVII: If file_path provided, enforce Witness-Hash Challenge.
+  // If no file_path, fall back to legacy current_state hash (DB-record edits).
+  const { create_mode } = req.body || {};
+  let state_hash;
+  if (file_path) {
+    if (!witness_hash) {
+      return res.status(423).json({
+        error: 'LNES-17 Witness Violation: witness_hash required for file edits. Call GET /api/admin/build/witness-file?path=... first.',
+      });
+    }
+    const admin_token = req.headers['authorization']?.replace('Bearer ', '') || '';
+    const cache_key = admin_token + ':' + file_path;
+    const cached = witnessNonceCache.get(cache_key);
+
+    if (!cached) {
+      return res.status(403).json({ error: 'No active witness challenge for this path. Call witness-file first.' });
+    }
+    if (cached.expires_at < Date.now()) {
+      witnessNonceCache.delete(cache_key);
+      return res.status(403).json({ error: 'Witness challenge expired. Call witness-file again.' });
+    }
+    if (witness_hash !== cached.file_content_hash) {
+      witnessNonceCache.delete(cache_key);
+      console.warn(`[WITNESS] HASH MISMATCH — Agent caught lying. path=${file_path} | create_mode=${!!create_mode}`);
+      return res.status(403).json({ error: 'WITNESS HASH MISMATCH. Agent does not possess current directory/file state. Access violently denied.' });
+    }
+
+    // Chapter XXVII: create_mode — Proof of Void
+    if (create_mode) {
+      if (!cached.is_directory) {
+        witnessNonceCache.delete(cache_key);
+        return res.status(400).json({ error: 'create_mode requires witnessing the parent DIRECTORY, not a file.' });
+      }
+      // Extract new filename from target_id: "NEW:/path/to/file.js"
+      const NEW_PREFIX = 'NEW:';
+      if (!target_id.startsWith(NEW_PREFIX)) {
+        witnessNonceCache.delete(cache_key);
+        return res.status(400).json({ error: 'create_mode requires target_id in format "NEW:/absolute/path/to/newfile.js"' });
+      }
+      const new_file_path = target_id.slice(NEW_PREFIX.length);
+      const new_filename = new_file_path.split('/').pop();
+      // Verify the file does NOT already exist in the witnessed directory listing
+      const existing_entries = cached.witness_content.split('\x00').filter(Boolean);
+      if (existing_entries.includes(new_filename)) {
+        witnessNonceCache.delete(cache_key);
+        console.warn(`[VOID] CONFLICT — file already exists: ${new_filename} in ${file_path}`);
+        return res.status(409).json({
+          error: `CONFLICT: File "${new_filename}" already exists in the witnessed directory. Use Edit Mode, not create_mode.`,
+          existing_files: existing_entries,
+        });
+      }
+      console.log(`[VOID] Proof of Void verified | new_file=${new_filename} | dir=${file_path}`);
+    }
+
+    // Witness verified — consume the nonce
+    state_hash = cached.file_content_hash;  // nonce-bound hash (for tamper detection)
+    witnessNonceCache.delete(cache_key);
+    console.log(`[WITNESS] VERIFIED | path=${file_path} | create_mode=${!!create_mode} | hash=${state_hash.slice(0,16)}…`);
+  } else {
+    // Legacy path: DB-record edits. Caller provides current_state JSON.
+    const state_input = current_state ? JSON.stringify(current_state) : target_id;
+    state_hash = crypto.createHash('sha256').update(state_input).digest('hex');
+  }
+
+  try {
+    const otet = 'otet-' + crypto.randomBytes(24).toString('hex');
+    // content_hash: plain SHA256(file_content) without nonce — used for pre_hash check in agent-edit
+    const stored_content_hash = supplied_content_hash || null;
+    await pool.query(
+      `INSERT INTO build_audit_ledger (otet, service_name, target_id, state_hash, content_hash, status, expires_at)
+       VALUES ($1, $2, $3, $4, $5, 'UNSPENT', NOW() + INTERVAL '24 hours')`,
+      [otet, service_name, target_id, state_hash, stored_content_hash]
+    );
+    console.log(`[OTET] Issued: ${otet} | service=${service_name} | target=${target_id} | witness=${!!file_path}`);
+    res.json({ otet, service_name, target_id, state_hash, status: 'UNSPENT', witness_verified: !!file_path, create_mode: !!create_mode, expires_note: 'Single-use. Submit as x-otet header on mutating request.' });
+  } catch (err) {
+    console.error('[OTET issue]', err);
+    res.status(500).json({ error: 'OTET issuance failed' });
+  }
+});
+
+// POST /api/admin/build/spend-otet
+// Spend a token and optionally trigger Vanguard Scribe (Chapter XXIII).
+// Body: { otet, post_state? (object), lines_added?, lines_removed? }
+// If post_state provided, Vanguard computes a semantic diff and appends
+// the result to service_evolution_v2.json on disk.
+app.post('/api/admin/build/spend-otet', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  const { otet, post_state, lines_added, lines_removed } = req.body || {};
+  if (!otet) return res.status(400).json({ error: 'otet required' });
+  const { rows } = await pool.query(
+    `SELECT * FROM build_audit_ledger WHERE otet = $1`, [otet]
+  );
+  if (rows.length === 0) return res.status(404).json({ error: 'OTET not found' });
+  if (rows[0].status !== 'UNSPENT') return res.status(409).json({ error: `OTET already ${rows[0].status}` });
+
+  await spendOTET(otet);
+  const spent_at = new Date().toISOString();
+
+  // ── Chapter XXIII: Vanguard Scribe ────────────────────────────────────────
+  // If post_state provided, call Vanguard to produce a semantic diff narrative
+  // and append it to service_evolution_v2.json.
+  let scribe_entry = null;
+  if (post_state) {
+    try {
+      const pre_hash = rows[0].state_hash;
+      const post_hash = crypto.createHash('sha256').update(JSON.stringify(post_state)).digest('hex');
+      const vanguard_url = process.env.SEI_VANGUARD_URL || 'http://20.127.220.199:3000';
+      const vanguard_key = process.env.SEI_VANGUARD_KEY || '';
+
+      const prompt = `You are the Vanguard Scribe — the sovereign auditor of the ExergyNet build process.
+A verified OTET edit has just occurred on service: ${rows[0].service_name}, target: ${rows[0].target_id}.
+
+PRE-EDIT STATE HASH: ${pre_hash}
+POST-EDIT STATE HASH: ${post_hash}
+Lines added: ${lines_added ?? 'unknown'}, Lines removed: ${lines_removed ?? 'unknown'}
+
+Write a concise (2–4 sentence) semantic diff narrative describing what changed, why it matters to the architecture, and what invariants were preserved or introduced. Output only the narrative — no preamble.`;
+
+      const vr = await fetch(`${vanguard_url}/v1/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${vanguard_key}` },
+        body: JSON.stringify({ model: 'vanguard', messages: [{ role: 'user', content: prompt }], stream: false, max_tokens: 300 }),
+        signal: AbortSignal.timeout(12000),
+      });
+      const vd = await vr.json().catch(() => ({}));
+      const narrative = vd?.choices?.[0]?.message?.content?.trim() || 'Scribe unavailable — diff recorded by hash only.';
+
+      scribe_entry = {
+        otet,
+        service_name: rows[0].service_name,
+        target_id: rows[0].target_id,
+        pre_hash,
+        post_hash,
+        lines_added: lines_added ?? null,
+        lines_removed: lines_removed ?? null,
+        narrative,
+        spent_at,
+      };
+
+      // Append to service_evolution_v2.json
+      const EVOLUTION_PATH = '/home/ubuntu/biological_proxy/service_evolution_v2.json';
+      let ledger = [];
+      if (fs.existsSync(EVOLUTION_PATH)) {
+        try { ledger = JSON.parse(fs.readFileSync(EVOLUTION_PATH, 'utf8')); } catch (_) { ledger = []; }
+      }
+      ledger.unshift(scribe_entry);  // newest first
+      fs.writeFileSync(EVOLUTION_PATH, JSON.stringify(ledger, null, 2));
+      console.log(`[SCRIBE] Evolution recorded: ${otet} | ${rows[0].service_name} → ${narrative.slice(0, 80)}…`);
+    } catch (scribe_err) {
+      console.warn('[SCRIBE] Vanguard diff failed:', scribe_err.message);
+    }
+  }
+
+  res.json({ status: 'SPENT', otet, spent_at, scribe_entry });
+});
+
+// POST /api/admin/build/agent-edit
+// Claude Code OTET harness endpoint — final step of agent edit discipline.
+// Claude must: witness-file → issue-otet → make edit → call this to record.
+// Requires: admin auth + valid OTET scoped to "agent_edit:<file_path>"
+// Body: { otet, file_path, pre_hash, post_hash, narrative, lines_added, lines_removed, service_name }
+app.post('/api/admin/build/agent-edit', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  const { otet, file_path, content, pre_hash, post_hash, narrative, lines_added, lines_removed, service_name } = req.body || {};
+  if (!otet || !file_path) return res.status(400).json({ error: 'otet and file_path required' });
+
+  // Validate OTET exists and is unspent
+  const { rows } = await pool.query(
+    `SELECT * FROM build_audit_ledger WHERE otet = $1`, [otet]
+  );
+  if (rows.length === 0) return res.status(404).json({ error: 'OTET not found' });
+  if (rows[0].status !== 'UNSPENT') return res.status(409).json({ error: `OTET already ${rows[0].status}` });
+
+  // Scope check: target_id must start with "agent_edit:"
+  if (!rows[0].target_id.startsWith('agent_edit:')) {
+    return res.status(403).json({ error: 'OTET not scoped for agent_edit. Reissue with target_id="agent_edit:<file>"' });
+  }
+
+  // Verify the file_path in body matches what was witnessed
+  const witnessed_path = rows[0].target_id.replace('agent_edit:', '');
+  if (witnessed_path !== file_path) {
+    return res.status(403).json({ error: `OTET path mismatch. Witnessed: ${witnessed_path}, submitted: ${file_path}` });
+  }
+
+  await spendOTET(otet);
+  const spent_at = new Date().toISOString();
+
+  // If content provided — write it to the file (API-only write path, LNES-17)
+  if (content !== undefined && content !== null) {
+    const nodePath = require('path');
+    const WRITE_ALLOWED_ROOTS = [
+      '/home/ubuntu/biological_proxy/',
+      '/home/ubuntu/exergynet-portal/src/',
+      '/home/ubuntu/omega_carrier/',
+      '/home/ubuntu/sovereign-tts/',
+      '/home/ubuntu/exergynet-ledger/',
+    ];
+    const resolved = nodePath.resolve(file_path);
+    const writeAllowed = WRITE_ALLOWED_ROOTS.some(r => resolved.startsWith(r));
+    if (!writeAllowed) {
+      return res.status(403).json({ error: 'Write path not in LNES-17 allowed roots.' });
+    }
+    // Verify pre_hash matches what was witnessed (bait-and-switch guard)
+    // Uses content_hash (plain SHA256 of file content, no nonce) stored at issue-otet time.
+    if (pre_hash && rows[0].content_hash) {
+      if (pre_hash !== rows[0].content_hash) {
+        return res.status(403).json({
+          error: `PRE-HASH MISMATCH: witnessed content hash does not match submitted pre_hash. Bait-and-switch attempt blocked.`,
+          expected: rows[0].content_hash.slice(0, 16) + '...',
+          received: pre_hash.slice(0, 16) + '...',
+        });
+      }
+    }
+
+    try {
+      fs.writeFileSync(resolved, content, 'utf8');
+      console.log(`[AGENT-WRITE] File written via API | path=${resolved} | bytes=${Buffer.byteLength(content)}`);
+    } catch (write_err) {
+      return res.status(500).json({ error: 'File write failed: ' + write_err.message });
+    }
+  }
+
+  // Compute post_hash from written content or supplied value
+  const actual_post_hash = post_hash ||
+    (content !== undefined ? crypto.createHash('sha256').update(content).digest('hex') : 'unknown');
+
+  // Write to Vanguard Scribe
+  const scribe_entry = {
+    otet,
+    service_name: service_name || rows[0].service_name,
+    target_id: file_path,
+    agent: 'claude-code',
+    pre_hash: pre_hash || rows[0].state_hash,
+    post_hash: actual_post_hash,
+    lines_added: lines_added ?? null,
+    lines_removed: lines_removed ?? null,
+    narrative: narrative || 'Agent edit — no narrative provided.',
+    spent_at,
+    api_write: content !== undefined,
+  };
+
+  try {
+    const EVOLUTION_PATH = '/home/ubuntu/biological_proxy/service_evolution_v2.json';
+    let ledger = [];
+    if (fs.existsSync(EVOLUTION_PATH)) {
+      try { ledger = JSON.parse(fs.readFileSync(EVOLUTION_PATH, 'utf8')); } catch (_) { ledger = []; }
+    }
+    ledger.unshift(scribe_entry);
+    fs.writeFileSync(EVOLUTION_PATH, JSON.stringify(ledger, null, 2));
+    console.log(`[AGENT-EDIT] Scribe recorded | file=${file_path} | otet=${otet.slice(0,16)}… | narrative="${(narrative||'').slice(0,60)}…"`);
+  } catch (e) {
+    console.warn('[AGENT-EDIT] Scribe write failed:', e.message);
+  }
+
+  res.json({ status: 'recorded', otet, file_path, spent_at, scribe_entry });
+});
+
+// GET /api/admin/build/evolution
+// Vanguard Scribe manifest — semantic diff history (Chapter XXIII).
+app.get('/api/admin/build/evolution', requireAdmin('super_admin', 'ops'), (req, res) => {
+  const EVOLUTION_PATH = '/home/ubuntu/biological_proxy/service_evolution_v2.json';
+  if (!fs.existsSync(EVOLUTION_PATH)) return res.json([]);
+  try {
+    const ledger = JSON.parse(fs.readFileSync(EVOLUTION_PATH, 'utf8'));
+    res.json(ledger);
+  } catch (_) {
+    res.status(500).json({ error: 'Evolution manifest corrupted' });
+  }
+});
+
+// GET /api/admin/build/otet-status/:otet
+app.get('/api/admin/build/otet-status/:otet', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  const { rows } = await pool.query(
+    `SELECT * FROM build_audit_ledger WHERE otet = $1`, [req.params.otet]
+  );
+  if (rows.length === 0) return res.status(404).json({ error: 'OTET not found' });
+  res.json(rows[0]);
+});
+
+// GET /api/admin/build/ledger
+// Full audit log — paginated, newest first.
+app.get('/api/admin/build/ledger', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  const limit  = Math.min(parseInt(req.query.limit  || '50'), 200);
+  const offset = parseInt(req.query.offset || '0');
+  const service = req.query.service || null;
+  try {
+    const where  = service ? `WHERE service_name = $3` : '';
+    const params = service ? [limit, offset, service] : [limit, offset];
+    const { rows } = await pool.query(
+      `SELECT otet, service_name, target_id, state_hash, issued_at, spent_at, status
+       FROM build_audit_ledger
+       ${where}
+       ORDER BY issued_at DESC LIMIT $1 OFFSET $2`,
+      params
+    );
+    const total = await pool.query(
+      `SELECT COUNT(*) FROM build_audit_ledger ${service ? 'WHERE service_name=$1' : ''}`,
+      service ? [service] : []
+    );
+    res.json({ entries: rows, total: parseInt(total.rows[0].count), limit, offset });
+  } catch (err) {
+    res.status(500).json({ error: 'Ledger query failed' });
+  }
 });
 
 // ── Music Drops — static file serve ─────────────────────────────────────────
@@ -1915,7 +2614,7 @@ app.get('/api/music/drops', async (req, res) => {
 });
 
 // ── Music Drops — POST publish ────────────────────────────────────────────────
-app.post('/api/music/drops',
+app.post('/api/music/drops', requireOTET('music_drop_create:'),
   dropsUpload.fields([
     { name: 'audio', maxCount: 1 },
     { name: 'video', maxCount: 1 },
@@ -1962,9 +2661,320 @@ app.post('/api/music/drops/:id/play', async (req, res) => {
 });
 
 // ── Music Drops — POST mark spaces_ready (link portal drop → Spaces room) ────
-app.post('/api/music/drops/:id/spaces', async (req, res) => {
+app.post('/api/music/drops/:id/spaces', requireOTET('music_drop_spaces:'), async (req, res) => {
   await pool.query('UPDATE music_drops SET spaces_ready = TRUE WHERE id = $1', [req.params.id]).catch(() => {});
   res.json({ ok: true });
+});
+
+// ── $RHO Bond — POST /api/rho/sump ───────────────────────────────────────────
+// Landing zone for the 5% recursion tax from the Omega Carrier (strike_rho_recursion tool).
+// Logs sump to rho_buyback_queue. When queue total reaches RHO_SUMP_THRESHOLD µUSDC,
+// triggers the Siphon Market Strike (Uniswap-v3 $RHO swap on Base L2 — Phase 2).
+const RHO_SUMP_THRESHOLD = parseInt(process.env.RHO_SUMP_THRESHOLD || '50000', 10);
+
+app.post('/api/rho/sump', requireAuth, async (req, res) => {
+  const { node_id, task_id, sump } = req.body || {};
+  const amount = parseInt(sump, 10);
+
+  if (!amount || amount <= 0) {
+    return res.status(400).json({ error: 'sump must be a positive integer (micro-USDC)' });
+  }
+
+  try {
+    // Step 1: Record in the buyback ledger
+    const insert = await pool.query(
+      `INSERT INTO rho_buyback_queue (node_id, task_id, amount, status)
+       VALUES ($1, $2, $3, 'PENDING') RETURNING id`,
+      [node_id || null, task_id || null, amount]
+    );
+    const sump_id = insert.rows[0].id;
+
+    console.log(`[RHO_SUMP] Ingesting 5% Recursion Tax: ${amount}µ from node=${node_id} task=${task_id} id=${sump_id}`);
+
+    // Step 2: Check if threshold reached — trigger Siphon Market Strike
+    const totalResult = await pool.query(
+      `SELECT COALESCE(SUM(amount), 0) AS total FROM rho_buyback_queue WHERE status = 'PENDING'`
+    );
+    const pendingTotal = parseInt(totalResult.rows[0].total, 10);
+
+    let market_strike = null;
+    if (pendingTotal >= RHO_SUMP_THRESHOLD) {
+      // Phase 2: call Uniswap-v3 router on Base L2 to swap USDC → $RHO
+      // For now: mark all PENDING as QUEUED_FOR_STRIKE and log — swap contract TBD
+      await pool.query(
+        `UPDATE rho_buyback_queue SET status = 'QUEUED_FOR_STRIKE' WHERE status = 'PENDING'`
+      );
+      market_strike = {
+        triggered: true,
+        pending_total_micro_usdc: pendingTotal,
+        action: 'swap_for_rho',
+        network: 'base_l2',
+        note: 'Uniswap-v3 swap pending — Siphon contract address required to execute',
+      };
+      console.log(`[RHO_SUMP] THRESHOLD HIT: ${pendingTotal}µ queued for $RHO market strike`);
+    }
+
+    res.json({
+      status: 'signaled',
+      sump_id,
+      amount_micro_usdc: amount,
+      pending_queue_total: pendingTotal,
+      market_strike,
+      message: '$RHO buyback queued.',
+    });
+  } catch (err) {
+    console.error('[RHO_SUMP]', err);
+    res.status(500).json({ error: 'Sump ingestion failed' });
+  }
+});
+
+// ── $RHO Bond — GET /api/rho/sump/status ─────────────────────────────────────
+app.get('/api/rho/sump/status', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT status, COUNT(*) AS count, COALESCE(SUM(amount), 0) AS total
+       FROM rho_buyback_queue GROUP BY status ORDER BY status`
+    );
+    const pending = await pool.query(
+      `SELECT COALESCE(SUM(amount), 0) AS total FROM rho_buyback_queue WHERE status = 'PENDING'`
+    );
+    res.json({
+      breakdown: result.rows,
+      pending_micro_usdc: parseInt(pending.rows[0].total, 10),
+      threshold_micro_usdc: RHO_SUMP_THRESHOLD,
+      threshold_pct: Math.min(100, Math.round((parseInt(pending.rows[0].total, 10) / RHO_SUMP_THRESHOLD) * 100)),
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Status query failed' });
+  }
+});
+
+// ── $RHO Bond — POST /api/rho/strike (Strike Valve) ──────────────────────────
+// Privileged: sets PENDING rows to PROCESSING and logs a simulation strike.
+// Phase 2: will trigger Uniswap-v3 swap on Base L2 via Sovereign Siphon Rust binary.
+app.post('/api/rho/strike', async (req, res) => {
+  const { admin_key } = req.body || {};
+  const RHO_STRIKE_KEY = process.env.RHO_STRIKE_KEY || process.env.APEX_TOPUP_KEY;
+  if (!admin_key || admin_key !== RHO_STRIKE_KEY) {
+    return res.status(403).json({ error: 'Forbidden — invalid admin_key' });
+  }
+
+  try {
+    // Snapshot current PENDING total before sweep
+    const totalRes = await pool.query(
+      `SELECT COALESCE(SUM(amount), 0) AS total FROM rho_buyback_queue WHERE status = 'PENDING'`
+    );
+    const pending_total = parseInt(totalRes.rows[0].total, 10);
+
+    if (pending_total < RHO_SUMP_THRESHOLD) {
+      return res.status(400).json({
+        error: 'Thermodynamic Starvation — threshold not reached',
+        pending_total_micro_usdc: pending_total,
+        threshold_micro_usdc: RHO_SUMP_THRESHOLD,
+      });
+    }
+
+    // Move PENDING → PROCESSING
+    await pool.query(
+      `UPDATE rho_buyback_queue SET status = 'PROCESSING' WHERE status = 'PENDING'`
+    );
+
+    const tx_uuid = require('crypto').randomUUID();
+    const strike_time = new Date().toISOString();
+
+    // Simulation strike log — Phase 2: replace with Uniswap-v3 call
+    console.log(`[RHO_STRIKE] TX_UUID=${tx_uuid} amount=${pending_total}µUSDC time=${strike_time} [SIMULATION]`);
+
+    res.json({
+      status: 'strike_executed',
+      strike_id: tx_uuid,
+      tx_uuid,
+      swept_micro_usdc: pending_total,
+      strike_time,
+      note: 'Simulation strike. Phase 2: Uniswap-v3 Base L2 swap pending contract address.',
+    });
+  } catch (err) {
+    console.error('[RHO_STRIKE] error:', err);
+    res.status(500).json({ error: 'Strike execution failed' });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ARTICLES — public read + admin write
+// ─────────────────────────────────────────────────────────────────────────────
+
+function slugify(title) {
+  return title.toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 80);
+}
+
+function calcReadTime(html) {
+  const text = html.replace(/<[^>]+>/g, ' ');
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 238));
+}
+
+// GET /api/blog/articles — public feed (published only)
+app.get('/api/blog/articles', async (req, res) => {
+  try {
+    const limit  = Math.min(parseInt(req.query.limit)  || 20, 60);
+    const offset = parseInt(req.query.offset) || 0;
+    const tag    = req.query.tag || null;
+    const featured = req.query.featured === 'true';
+
+    let where = `WHERE status = 'published'`;
+    const params = [];
+    if (tag) { params.push(tag); where += ` AND $${params.length} = ANY(tags)`; }
+    if (featured) where += ` AND featured = true`;
+
+    const { rows } = await pool.query(
+      `SELECT id, slug, title, subtitle, excerpt, cover_url, author_name, author_avatar,
+              tags, featured, reading_time_mins, published_at, created_at
+       FROM articles ${where}
+       ORDER BY featured DESC, published_at DESC
+       LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      [...params, limit, offset]
+    );
+    const total = await pool.query(`SELECT COUNT(*) FROM articles ${where}`, params);
+    res.json({ articles: rows, total: parseInt(total.rows[0].count), limit, offset });
+  } catch (e) {
+    console.error('[BLOG] list error:', e);
+    res.status(500).json({ error: 'Failed to fetch articles' });
+  }
+});
+
+// GET /api/blog/articles/:slug — public single article
+app.get('/api/blog/articles/:slug', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT * FROM articles WHERE slug = $1 AND status = 'published'`,
+      [req.params.slug]
+    );
+    if (!rows[0]) return res.status(404).json({ error: 'Article not found' });
+    res.json({ article: rows[0] });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to fetch article' });
+  }
+});
+
+// GET /api/admin/blog/articles — admin list (all statuses)
+app.get('/api/admin/blog/articles', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  try {
+    const limit  = Math.min(parseInt(req.query.limit)  || 50, 100);
+    const offset = parseInt(req.query.offset) || 0;
+    const status = req.query.status || null;
+
+    let where = status ? `WHERE status = $1` : '';
+    const params = status ? [status] : [];
+
+    const { rows } = await pool.query(
+      `SELECT id, slug, title, subtitle, excerpt, cover_url, author_name,
+              tags, status, featured, reading_time_mins, published_at, created_at, updated_at
+       FROM articles ${where}
+       ORDER BY updated_at DESC
+       LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      [...params, limit, offset]
+    );
+    const total = await pool.query(`SELECT COUNT(*) FROM articles ${where}`, params);
+    res.json({ articles: rows, total: parseInt(total.rows[0].count) });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to fetch articles' });
+  }
+});
+
+// POST /api/admin/blog/articles — create
+app.post('/api/admin/blog/articles', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  try {
+    const { title, subtitle, content = '', excerpt, cover_url, author_name = 'ExergyNet',
+            author_avatar, tags = [], status = 'draft', featured = false } = req.body || {};
+    if (!title?.trim()) return res.status(400).json({ error: 'Title required' });
+
+    let slug = slugify(title);
+    // deduplicate slug
+    const existing = await pool.query('SELECT id FROM articles WHERE slug LIKE $1', [`${slug}%`]);
+    if (existing.rows.length) slug = `${slug}-${existing.rows.length + 1}`;
+
+    const reading_time_mins = calcReadTime(content);
+    const published_at = status === 'published' ? new Date().toISOString() : null;
+
+    const { rows } = await pool.query(
+      `INSERT INTO articles (slug, title, subtitle, content, excerpt, cover_url, author_name,
+         author_avatar, tags, status, featured, reading_time_mins, published_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+       RETURNING *`,
+      [slug, title.trim(), subtitle || null, content, excerpt || null, cover_url || null,
+       author_name, author_avatar || null, tags, status, featured, reading_time_mins, published_at]
+    );
+    res.json({ article: rows[0] });
+  } catch (e) {
+    console.error('[BLOG] create error:', e);
+    res.status(500).json({ error: 'Failed to create article' });
+  }
+});
+
+// PUT /api/admin/blog/articles/:id — update
+app.put('/api/admin/blog/articles/:id', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  try {
+    const { rows: existing } = await pool.query('SELECT * FROM articles WHERE id = $1', [req.params.id]);
+    if (!existing[0]) return res.status(404).json({ error: 'Article not found' });
+
+    const cur = existing[0];
+    const { title, subtitle, content, excerpt, cover_url, author_name,
+            author_avatar, tags, status, featured } = req.body || {};
+
+    const newTitle   = title   ?? cur.title;
+    const newContent = content ?? cur.content;
+    const newStatus  = status  ?? cur.status;
+    const published_at = newStatus === 'published' && cur.status !== 'published'
+      ? new Date().toISOString() : cur.published_at;
+
+    const { rows } = await pool.query(
+      `UPDATE articles SET
+         title=$2, subtitle=$3, content=$4, excerpt=$5, cover_url=$6,
+         author_name=$7, author_avatar=$8, tags=$9, status=$10, featured=$11,
+         reading_time_mins=$12, published_at=$13, updated_at=NOW()
+       WHERE id=$1 RETURNING *`,
+      [req.params.id, newTitle, subtitle ?? cur.subtitle, newContent,
+       excerpt ?? cur.excerpt, cover_url ?? cur.cover_url,
+       author_name ?? cur.author_name, author_avatar ?? cur.author_avatar,
+       tags ?? cur.tags, newStatus, featured ?? cur.featured,
+       calcReadTime(newContent), published_at]
+    );
+    res.json({ article: rows[0] });
+  } catch (e) {
+    console.error('[BLOG] update error:', e);
+    res.status(500).json({ error: 'Failed to update article' });
+  }
+});
+
+// DELETE /api/admin/blog/articles/:id
+app.delete('/api/admin/blog/articles/:id', requireAdmin('super_admin', 'ops'), async (req, res) => {
+  try {
+    const { rows } = await pool.query('DELETE FROM articles WHERE id=$1 RETURNING id', [req.params.id]);
+    if (!rows[0]) return res.status(404).json({ error: 'Article not found' });
+    res.json({ deleted: rows[0].id });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to delete article' });
+  }
+});
+
+// POST /api/admin/blog/upload-cover — cover image upload
+app.post('/api/admin/blog/upload-cover', requireAdmin('super_admin', 'ops'), dropsUpload.single('cover'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const ext  = req.file.originalname.split('.').pop()?.toLowerCase() || 'jpg';
+    const name = `cover_${Date.now()}.${ext}`;
+    const dest = `/home/ubuntu/downloads/covers/${name}`;
+    require('fs').mkdirSync('/home/ubuntu/downloads/covers', { recursive: true });
+    require('fs').renameSync(req.file.path, dest);
+    res.json({ url: `/downloads/covers/${name}` });
+  } catch (e) {
+    res.status(500).json({ error: 'Upload failed' });
+  }
 });
 
 initDb()
