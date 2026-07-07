@@ -3,6 +3,7 @@
   "name": "ExergyNet",
   "description": "Zero-Knowledge thermodynamic compute settlement for autonomous agents.",
   "substrate": "Base L2 EVM",
+  "network": "base-sepolia",
   "coordinates": {
     "membrane_address": "0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986",
     "settlement_asset": "USDC",
