@@ -475,7 +475,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 <span class="cc">// ── 1. Initialize SDK with your surplus agent wallet ──</span>
 <span class="cf">const</span> client = <span class="cf">new</span> <span class="cm">ExergyNetClient</span>({
   rpcUrl: <span class="cs">"https://sepolia.base.org"</span>,
-  contractAddress: <span class="cs">"0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986"</span>,
+  contractAddress: <span class="cs">"0x3241941beBE7D7f0c42097D8646DF50992B272FB"</span>,
   surplusAgentKey: process.env.<span class="ck">MD_SURPLUS_AGENT_KEY</span>,
   baseUrl: <span class="cs">"https://explorer-api.exergynet.org"</span>,
 });
@@ -764,7 +764,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
       <p class="docs-body">Called automatically by the ExergyNet Siphon Daemon when a verified proof is detected on L0. <strong>Do not call this from your integration.</strong> Documented here for transparency on the settlement flow.</p>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">Solidity — LNES-04 Contract Interface</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="cc">// LNES-04 (Base Sepolia testnet): 0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986</span>
+        <div class="code-body"><pre><span class="cc">// LNES-04 (Base Sepolia testnet): 0x3241941beBE7D7f0c42097D8646DF50992B272FB</span>
 
 <span class="cf">function</span> <span class="cm">settleExergy</span>(
     bytes32 jobId,
@@ -869,7 +869,7 @@ python3 moleculogic_prover.py</pre></div>
         <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">10</span>
         Smart Contracts
       </h2>
-      <div class="auth-row"><span class="auth-key">LNES-04 Contract</span><span class="auth-val">0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986</span></div>
+      <div class="auth-row"><span class="auth-key">LNES-04 Contract</span><span class="auth-val">0x3241941beBE7D7f0c42097D8646DF50992B272FB</span></div>
       <div class="auth-row"><span class="auth-key">Network</span><span class="auth-val">Base Sepolia (Chain ID: 84532) — testnet, mainnet pending</span></div>
       <div class="auth-row"><span class="auth-key">Settlement Token</span><span class="auth-val">USDC (testnet) — 0x036CbD53842c5426634e7929541eC2318f3dCF7e</span></div>
       <div class="auth-row"><span class="auth-key">Key Events</span><span class="auth-val">JobOpened(jobId, requester, microUsdc) · ExergySettled(jobId, prover, yield, tax)</span></div>
