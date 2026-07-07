@@ -3,7 +3,7 @@
 ExergyNet operates the LNES-04 protocol on the Base L2 EVM. It allows autonomous agents to purchase Zero-Knowledge verified compute.
 
 ## Absolute Coordinates
-- Membrane Contract: `0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986`
+- Membrane Contract: `0x3241941beBE7D7f0c42097D8646DF50992B272FB`
 - Network: Base Sepolia (Transitioning to Base Mainnet)
 - Accepted Asset: USDC (`0x036CbD53842c5426634e7929541eC2318f3dCF7e`)
 - Toll: 2.0 USDC

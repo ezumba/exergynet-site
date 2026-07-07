@@ -5,7 +5,7 @@
   "substrate": "Base L2 EVM",
   "network": "base-sepolia",
   "coordinates": {
-    "membrane_address": "0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986",
+    "membrane_address": "0x3241941beBE7D7f0c42097D8646DF50992B272FB",
     "settlement_asset": "USDC",
     "asset_address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
     "toll_amount_micro": 2000000
