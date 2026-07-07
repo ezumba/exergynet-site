@@ -325,6 +325,20 @@
         <li><a href="#alphafold">AlphaFold Bridge</a></li>
       </ul>
     </div>
+    <div class="sidebar-section">
+      <span class="sidebar-section-label">Portal Services (SaaS)</span>
+      <ul class="sidebar-links">
+        <li><a href="#portal-services">Overview</a></li>
+        <li><a href="#svc-vault-ingest"><span class="method-badge mb-post">POST</span> Vault: Ingest</a></li>
+        <li><a href="#svc-vault-query"><span class="method-badge mb-post">POST</span> Vault: ZK Query</a></li>
+        <li><a href="#svc-vanguard"><span class="method-badge mb-post">POST</span> Vanguard Chat</a></li>
+        <li><a href="#svc-extract"><span class="method-badge mb-post">POST</span> Clinical Extractor</a></li>
+        <li><a href="#svc-omega-carrier">Omega Carrier MCP</a></li>
+        <li><a href="#svc-aeris-witness"><span class="method-badge mb-post">POST</span> AERIS Witness</a></li>
+        <li><a href="#svc-rho-sump"><span class="method-badge mb-post">POST</span> RHO Reserve Queue</a></li>
+        <li><a href="#svc-voice">Voice Stream (WS)</a></li>
+      </ul>
+    </div>
   </aside>
 
   <!-- MAIN CONTENT -->
@@ -337,7 +351,7 @@
       <p class="docs-body">Connect your biotech SaaS to ZK-verified pharmaceutical compute in four steps. ExergyNet separates data mass from cryptographic proof — heavy files stay in S3, mathematical truth settles on Base L2.</p>
       <div class="docs-hero-badges">
         <span class="badge badge-green">L0 Router Live</span>
-        <span class="badge badge-blue">Base L2 · LNES-04</span>
+        <span class="badge badge-blue">Base Sepolia · LNES-04 (Testnet)</span>
         <span class="badge badge-blue">ZK-STARK Verified</span>
         <span class="badge badge-green">USDC Settlement</span>
       </div>
@@ -460,8 +474,8 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 
 <span class="cc">// ── 1. Initialize SDK with your surplus agent wallet ──</span>
 <span class="cf">const</span> client = <span class="cf">new</span> <span class="cm">ExergyNetClient</span>({
-  rpcUrl: <span class="cs">"https://mainnet.base.org"</span>,
-  contractAddress: <span class="cs">"0x5CFE075149776f4b3cca07a27D4fd85A60BA5e3f"</span>,
+  rpcUrl: <span class="cs">"https://sepolia.base.org"</span>,
+  contractAddress: <span class="cs">"0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986"</span>,
   surplusAgentKey: process.env.<span class="ck">MD_SURPLUS_AGENT_KEY</span>,
   baseUrl: <span class="cs">"https://explorer-api.exergynet.org"</span>,
 });
@@ -608,7 +622,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
             <div class="code-body"><pre>{
   <span class="ck">"wholesale_usdc_micro_units"</span>: <span class="cn">19200000</span>,  <span class="cc">// = $19.20 USDC</span>
   <span class="ck">"compute_class"</span>: <span class="cs">"HEAVY"</span>,
-  <span class="ck">"network"</span>: <span class="cs">"base-mainnet"</span>,
+  <span class="ck">"network"</span>: <span class="cs">"base-sepolia"</span>,
   <span class="ck">"elf_circuit"</span>: <span class="cs">"BCX-001-v1"</span>,
   <span class="ck">"density_penalty_applied"</span>: <span class="cn">true</span>,
   <span class="ck">"base_multiplier"</span>: <span class="cn">10.0</span>,
@@ -750,7 +764,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
       <p class="docs-body">Called automatically by the ExergyNet Siphon Daemon when a verified proof is detected on L0. <strong>Do not call this from your integration.</strong> Documented here for transparency on the settlement flow.</p>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">Solidity — LNES-04 Contract Interface</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="cc">// LNES-04: 0x5CFE075149776f4b3cca07a27D4fd85A60BA5e3f</span>
+        <div class="code-body"><pre><span class="cc">// LNES-04 (Base Sepolia testnet): 0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986</span>
 
 <span class="cf">function</span> <span class="cm">settleExergy</span>(
     bytes32 jobId,
@@ -855,9 +869,9 @@ python3 moleculogic_prover.py</pre></div>
         <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">10</span>
         Smart Contracts
       </h2>
-      <div class="auth-row"><span class="auth-key">LNES-04 Contract</span><span class="auth-val">0x5CFE075149776f4b3cca07a27D4fd85A60BA5e3f</span></div>
-      <div class="auth-row"><span class="auth-key">Network</span><span class="auth-val">Base Mainnet (Chain ID: 8453)</span></div>
-      <div class="auth-row"><span class="auth-key">Settlement Token</span><span class="auth-val">USDC — 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</span></div>
+      <div class="auth-row"><span class="auth-key">LNES-04 Contract</span><span class="auth-val">0x0204109B8Bf6B1cEd819aeB7870Fc31d36F0f986</span></div>
+      <div class="auth-row"><span class="auth-key">Network</span><span class="auth-val">Base Sepolia (Chain ID: 84532) — testnet, mainnet pending</span></div>
+      <div class="auth-row"><span class="auth-key">Settlement Token</span><span class="auth-val">USDC (testnet) — 0x036CbD53842c5426634e7929541eC2318f3dCF7e</span></div>
       <div class="auth-row"><span class="auth-key">Key Events</span><span class="auth-val">JobOpened(jobId, requester, microUsdc) · ExergySettled(jobId, prover, yield, tax)</span></div>
     </section>
 
@@ -894,6 +908,227 @@ viable = analysis.json()[<span class="cs">"contradictions"</span>][<span class="
     <span class="cf">await</span> client.<span class="cm">openJob</span>(job_id, sha256, micro_usdc)
 <span class="cf">else</span>:
     <span class="cf">print</span>(analysis.json()[<span class="cs">"contradictions"</span>][<span class="cs">"contradiction_flags"</span>])</pre></div>
+      </div>
+    </section>
+
+    <hr class="docs-divider">
+
+    <!-- 12: PORTAL SERVICES -->
+    <section class="docs-section" id="portal-services">
+      <h2 class="docs-h2">
+        <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">12</span>
+        Portal Platform Services
+      </h2>
+      <p class="docs-body">Everything above this section is the Explorer / Moleculogic ZK-compute marketplace — Ed25519 wallet-signed, escrow-settled. ExergyNet also runs a separate SaaS platform on <code>portal.exergynet.org</code>: inference, encrypted data-at-rest queries, structured extraction, an agent MCP bridge, external-site zkTLS witnessing, and a token capital loop. These services use simple Bearer-token auth, not wallet signatures — don't mix the two credential systems.</p>
+
+      <div class="info-box info-note">
+        <span class="info-box-label">// Getting a key</span>
+        Generate an <code>EXERGYNET_API_KEY</code> (format <code>sk-exergy-...</code>) at <a href="https://portal.exergynet.org/dashboard/keys" target="_blank">portal.exergynet.org/dashboard/keys</a>. Every request below needs <code>Authorization: Bearer &lt;key&gt;</code>.
+      </div>
+
+      <div class="info-box info-warn">
+        <span class="info-box-label">// Status</span>
+        AERIS Witness is fully real — Groth16-sealed on Base Sepolia. Vault ZK Query currently returns a SHA-256 receipt in place of a full RISC Zero proof while that circuit is finished. Treat all portal services as testnet-stage.
+      </div>
+
+      <div class="endpoint-card" id="svc-vault-ingest">
+        <div class="endpoint-header">
+          <span class="ep-method ep-post">POST</span>
+          <span class="ep-url">https://portal.exergynet.org/api/xlmp/ingest</span>
+        </div>
+        <div class="ep-desc">X-LMP Protocol — multipart file upload. Shatters the payload into SHA-256 Merkle shards and returns a <code>xlmp_root</code> handle (a "Hollow Object") to store and query against later. Raw data never leaves this call again — only the root hash is referenced afterward.</div>
+        <div class="ep-body">
+          <span class="ep-body-label">cURL</span>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">cURL</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <div class="code-body"><pre>curl -X POST https://portal.exergynet.org/api/xlmp/ingest \
+  -H <span class="cs">"Authorization: Bearer $EXERGYNET_API_KEY"</span> \
+  -F <span class="cs">"file=@./my_dataset.json"</span>
+
+<span class="cc"># 200 OK</span>
+{
+  <span class="ck">"xlmp_root"</span>: <span class="cs">"0xabc123..."</span>,
+  <span class="ck">"shard_count"</span>: <span class="cn">4</span>,
+  <span class="ck">"total_bytes"</span>: <span class="cn">2048000</span>,
+  <span class="ck">"created_at"</span>: <span class="cs">"2026-06-27T12:00:00Z"</span>
+}</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-card" id="svc-vault-query">
+        <div class="endpoint-header">
+          <span class="ep-method ep-post">POST</span>
+          <span class="ep-url">https://portal.exergynet.org/api/xlmp/query</span>
+        </div>
+        <div class="ep-desc">Query-in-place against a <code>xlmp_root</code> without ever decrypting the underlying shards client-side. Returns a ZK journal: extracted result, confidence score, and citations.</div>
+        <div class="ep-body">
+          <span class="ep-body-label">cURL</span>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">cURL</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <div class="code-body"><pre>curl -X POST https://portal.exergynet.org/api/xlmp/query \
+  -H <span class="cs">"Authorization: Bearer $EXERGYNET_API_KEY"</span> \
+  -H <span class="cs">"Content-Type: application/json"</span> \
+  -d <span class="cs">'{
+    "xlmp_root": "0xabc123...",
+    "image_id": "0xb226f60a6a3406e5cd3792b4bbe86ed996e2e2cc8dd31ddbe7989a20a897092d",
+    "query_params": { "intent": "What is the average blood pressure?" }
+  }'</span>
+
+<span class="cc"># 200 OK</span>
+{
+  <span class="ck">"query_id"</span>: <span class="cs">"qry_..."</span>,
+  <span class="ck">"proof_size_bytes"</span>: <span class="cn">256</span>,
+  <span class="ck">"latency_ms"</span>: <span class="cn">1500</span>,
+  <span class="ck">"journal"</span>: { <span class="ck">"result"</span>: <span class="cs">"142/91 mmHg"</span>, <span class="ck">"confidence"</span>: <span class="cn">0.94</span>, <span class="ck">"citations"</span>: [...] }
+}</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-card" id="svc-vanguard">
+        <div class="endpoint-header">
+          <span class="ep-method ep-post">POST</span>
+          <span class="ep-url">https://portal.exergynet.org/v1/chat/completions</span>
+        </div>
+        <div class="ep-desc">OpenAI-compatible chat completions — point any OpenAI SDK at this base URL. Three models trade speed for reasoning depth: <code>vanguard-standard</code> (Node 4, fast, streaming), <code>vanguard-pro</code> (Node 3, high-fidelity, streaming), <code>vanguard-ultra</code> (bilateral Proposer↔Auditor consensus loop, non-streaming).</div>
+        <div class="ep-body">
+          <span class="ep-body-label">cURL</span>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">cURL</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <div class="code-body"><pre>curl https://portal.exergynet.org/v1/chat/completions \
+  -H <span class="cs">"Authorization: Bearer $EXERGYNET_API_KEY"</span> \
+  -H <span class="cs">"Content-Type: application/json"</span> \
+  -d <span class="cs">'{
+    "model": "vanguard-standard",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "stream": true
+  }'</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-card" id="svc-extract">
+        <div class="endpoint-header">
+          <span class="ep-method ep-post">POST</span>
+          <span class="ep-url">https://portal.exergynet.org/v1/extract</span>
+        </div>
+        <div class="ep-desc">Schema-aware structured extraction from free text. Pass a target schema and a domain hint; get typed fields back instead of prose.</div>
+        <div class="ep-body">
+          <span class="ep-body-label">cURL</span>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">cURL</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <div class="code-body"><pre>curl -X POST https://portal.exergynet.org/v1/extract \
+  -H <span class="cs">"Authorization: Bearer $EXERGYNET_API_KEY"</span> \
+  -H <span class="cs">"Content-Type: application/json"</span> \
+  -d <span class="cs">'{
+    "text": "Patient denies smoking. BP 150/95.",
+    "schema": {"smoking_status": "boolean", "blood_pressure": "string"},
+    "domain": "clinical"
+  }'</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-card" id="svc-omega-carrier">
+        <div class="endpoint-header">
+          <span class="ep-method ep-get" style="background:rgba(123,92,246,0.15);color:#7B5CF6;border-color:rgba(123,92,246,0.3)">MCP</span>
+          <span class="ep-url">https://mcp.exergynet.org/sse</span>
+        </div>
+        <div class="ep-desc">Model Context Protocol SSE bridge for autonomous agents — sovereign identity bootstrap, vault memory tools, AERIS proof requests, and RHO reserve signals as callable MCP tools instead of raw REST. Also runs in stdio mode for local agents (Claude Desktop, etc.).</div>
+        <div class="ep-body">
+          <span class="ep-body-label">cURL — raw SSE connect</span>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">cURL</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <div class="code-body"><pre>curl -N -H <span class="cs">"Authorization: Bearer $EXERGYNET_API_KEY"</span> \
+     -H <span class="cs">"Accept: text/event-stream"</span> \
+     https://mcp.exergynet.org/sse
+
+<span class="cc"># stdio mode (Claude Desktop mcp_config.json):</span>
+<span class="cc"># { "mcpServers": { "omega-carrier": { "command": "python",</span>
+<span class="cc">#   "args": ["-m", "mcp", "run", "omega_carrier_mcp.py"] } } }</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-card" id="svc-aeris-witness">
+        <div class="endpoint-header">
+          <span class="ep-method ep-post">POST</span>
+          <span class="ep-url">https://portal.exergynet.org/api/aeris/witness</span>
+        </div>
+        <div class="ep-desc">zkTLS proof of an external site's live content at a point in time. Fetches <code>target_url</code>, extracts the field at <code>data_selector</code>, and returns a content hash with a real Groth16-sealed proof (RISC Zero, Base Sepolia) — the LNES-13 AERIS circuit. Proving takes several minutes; this is a long-poll endpoint, not instant.</div>
+        <div class="ep-body">
+          <span class="ep-body-label">cURL</span>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">cURL</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <div class="code-body"><pre>curl -X POST https://portal.exergynet.org/api/aeris/witness \
+  -H <span class="cs">"Authorization: Bearer $EXERGYNET_API_KEY"</span> \
+  -H <span class="cs">"Content-Type: application/json"</span> \
+  -d <span class="cs">'{
+    "target_url": "https://api.weather.gov/points/40.7128,-74.0060",
+    "data_selector": "properties.forecast",
+    "intent": "witness:weather:nyc"
+  }'</span>
+
+<span class="cc"># 200 OK</span>
+{
+  <span class="ck">"witness_id"</span>: <span class="cs">"wit_..."</span>,
+  <span class="ck">"target_url"</span>: <span class="cs">"..."</span>,
+  <span class="ck">"content_hash"</span>: <span class="cs">"0xabc..."</span>,
+  <span class="ck">"proof_meta"</span>: { <span class="ck">"verified"</span>: <span class="cn">true</span>, <span class="ck">"timestamp"</span>: <span class="cs">"..."</span>, <span class="ck">"tls_version"</span>: <span class="cs">"1.3"</span> },
+  <span class="ck">"excerpt"</span>: <span class="cs">"..."</span>
+}</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-card" id="svc-rho-sump">
+        <div class="endpoint-header">
+          <span class="ep-method ep-post">POST</span>
+          <span class="ep-url">https://portal.exergynet.org/api/rho/sump</span>
+        </div>
+        <div class="ep-desc">Queues a reserve entry — the 5% task-recursion tax skimmed from compute job rewards — toward the $RHO buyback threshold. Pair with <code>GET /api/rho/sump/status</code> to check progress toward the market-strike threshold.</div>
+        <div class="ep-body">
+          <span class="ep-body-label">cURL</span>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">cURL</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <div class="code-body"><pre><span class="cc"># Queue a reserve entry (5% of task reward)</span>
+curl -X POST https://portal.exergynet.org/api/rho/sump \
+  -H <span class="cs">"Authorization: Bearer $EXERGYNET_API_KEY"</span> \
+  -H <span class="cs">"Content-Type: application/json"</span> \
+  -d <span class="cs">'{
+    "node_id":  "your_agent_miner_id",
+    "task_id":  "task_abc123",
+    "sump":     250,
+    "memo":     "5% recursion tax — compute job"
+  }'</span>
+
+<span class="cc"># Check queue status</span>
+curl https://portal.exergynet.org/api/rho/sump/status \
+  -H <span class="cs">"Authorization: Bearer $EXERGYNET_API_KEY"</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-card" id="svc-voice">
+        <div class="endpoint-header">
+          <span class="ep-method ep-get" style="background:rgba(96,165,250,0.15);color:#60A5FA;border-color:rgba(96,165,250,0.3)">WS</span>
+          <span class="ep-url">wss://explorer-api.exergynet.org/media-stream</span>
+        </div>
+        <div class="ep-desc">Bidirectional WebSocket for real-time voice — G.711 µ-law, 8kHz mono, Twilio media-stream compatible framing. Send a <code>start</code> event with your <code>streamSid</code> and media format, then stream audio frames in both directions.</div>
+        <div class="ep-body">
+          <span class="ep-body-label">Shell — connection check</span>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Shell</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <div class="code-body"><pre>wscat -c <span class="cs">"wss://explorer-api.exergynet.org/media-stream"</span> \
+  -H <span class="cs">"Authorization: Bearer $EXERGYNET_API_KEY"</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box info-note" style="margin-top:8px">
+        <span class="info-box-label">// TypeScript / Python examples</span>
+        Full TypeScript and Python snippets for every service above, plus live key generation and rotation, are available at <a href="https://portal.exergynet.org/dashboard/keys" target="_blank">portal.exergynet.org/dashboard/keys</a> once you're signed in.
       </div>
     </section>
 
