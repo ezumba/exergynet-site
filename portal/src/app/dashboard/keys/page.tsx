@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { auth, developer, Developer } from '@/lib/api';
+import { API_SERVICES as SERVICES } from '@/lib/apiServicesManifest';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'https://explorer-api.exergynet.org';
 
@@ -55,286 +56,9 @@ function ServiceCodeBlock({ curl, ts, py }: { curl: string; ts: string; py: stri
   );
 }
 
-// ── Service definitions ──────────────────────────────────────────────────────
-
-const VAULT_URL = 'https://portal.exergynet.org';
-
-const SERVICES = [
-  {
-    id: 'vault-ingest',
-    label: 'Vault: Ingest',
-    sub: 'X-LMP Protocol · Merkle shard upload · Hollow Object generation',
-    endpoint: `${VAULT_URL}/api/xlmp/ingest`,
-    routing: 'Next.js Edge · portal.exergynet.org → xlmp_ds_core.ts shard engine',
-    headers: `Authorization: Bearer <key>\nContent-Type: multipart/form-data`,
-    curl: `curl -X POST https://portal.exergynet.org/api/xlmp/ingest \\
-  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
-  -F "file=@./my_dataset.json"
-
-# Response:
-# {
-#   "xlmp_root": "0xabc123...",
-#   "shard_count": 4,
-#   "total_bytes": 2048000,
-#   "created_at": "2026-06-27T12:00:00Z"
-# }`,
-    ts: `const form = new FormData();
-form.append('file', fileBlob, 'dataset.json');
-
-const res = await fetch('https://portal.exergynet.org/api/xlmp/ingest', {
-  method: 'POST',
-  headers: { 'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\` },
-  body: form,
-});
-const { xlmp_root, shard_count, total_bytes } = await res.json();
-// Store xlmp_root — it's your Hollow Object handle`,
-    py: `import requests
-
-with open("dataset.json", "rb") as f:
-    resp = requests.post(
-        "https://portal.exergynet.org/api/xlmp/ingest",
-        headers={"Authorization": f"Bearer {API_KEY}"},
-        files={"file": ("dataset.json", f, "application/json")},
-    )
-data = resp.json()
-xlmp_root = data["xlmp_root"]  # store this handle`,
-  },
-  {
-    id: 'vault-query',
-    label: 'Vault: ZK Query',
-    sub: 'X-LMP Protocol · Groth16 sealed execution · Query-In-Place',
-    endpoint: `${VAULT_URL}/api/xlmp/query`,
-    routing: 'Next.js Edge · portal.exergynet.org → Groth16 verifier (simulated)',
-    headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
-    curl: `curl -X POST https://portal.exergynet.org/api/xlmp/query \\
-  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "xlmp_root": "0xabc123...",
-    "image_id": "0xb226f60a6a3406e5cd3792b4bbe86ed996e2e2cc8dd31ddbe7989a20a897092d",
-    "query_params": { "intent": "What is the average blood pressure?" }
-  }'
-
-# Response:
-# {
-#   "query_id": "qry_...",
-#   "proof_size_bytes": 256,
-#   "latency_ms": 1500,
-#   "journal": { "result": "142/91 mmHg", "confidence": 0.94, "citations": [...] }
-# }`,
-    ts: `const res = await fetch('https://portal.exergynet.org/api/xlmp/query', {
-  method: 'POST',
-  headers: {
-    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    xlmp_root: '0xabc123...',
-    image_id: '0xb226f60a6a3406e5cd3792b4bbe86ed996e2e2cc8dd31ddbe7989a20a897092d',
-    query_params: { intent: 'What is the average blood pressure?' },
-  }),
-});
-const { journal, latency_ms } = await res.json();
-// journal.result — ZK-sealed answer
-// journal.confidence — extraction confidence [0–1]`,
-    py: `import requests
-
-resp = requests.post(
-    "https://portal.exergynet.org/api/xlmp/query",
-    headers={
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json",
-    },
-    json={
-        "xlmp_root": "0xabc123...",
-        "image_id": "0xb226f60a6a3406e5cd3792b4bbe86ed996e2e2cc8dd31ddbe7989a20a897092d",
-        "query_params": {"intent": "What is the average blood pressure?"},
-    },
-)
-journal = resp.json()["journal"]
-print(journal["result"])  # ZK-sealed answer`,
-  },
-  {
-    id: 'standard',
-    label: 'Vanguard Standard',
-    sub: 'Fast completions · Sovereign Inference Engine · Node 4',
-    endpoint: `${API}/v1/chat/completions`,
-    routing: 'Node 4 — 74.235.106.10:50051',
-    headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
-    curl: `curl ${API}/v1/chat/completions \\
-  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "model": "vanguard-standard",
-    "messages": [{"role": "user", "content": "Hello"}],
-    "stream": true
-  }'`,
-    ts: `const res = await fetch(\`\${process.env.EXERGYNET_BASE_URL}/v1/chat/completions\`, {
-  method: 'POST',
-  headers: {
-    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    model: 'vanguard-standard',
-    messages: [{ role: 'user', content: 'Hello' }],
-    stream: true,
-  }),
-});`,
-    py: `import requests
-resp = requests.post(
-    f"{BASE_URL}/v1/chat/completions",
-    headers={"Authorization": f"Bearer {API_KEY}"},
-    json={"model": "vanguard-standard",
-          "messages": [{"role": "user", "content": "Hello"}],
-          "stream": True},
-    stream=True,
-)`,
-  },
-  {
-    id: 'pro',
-    label: 'Vanguard Pro',
-    sub: 'High-fidelity reasoning · Vanguard Pro · Node 3',
-    endpoint: `${API}/v1/chat/completions`,
-    routing: 'Node 3 — 40.124.170.30:50051',
-    headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
-    curl: `curl ${API}/v1/chat/completions \\
-  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "model": "vanguard-pro",
-    "messages": [{"role": "user", "content": "Hello"}],
-    "stream": true
-  }'`,
-    ts: `const res = await fetch(\`\${process.env.EXERGYNET_BASE_URL}/v1/chat/completions\`, {
-  method: 'POST',
-  headers: {
-    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    model: 'vanguard-pro',
-    messages: [{ role: 'user', content: 'Hello' }],
-    stream: true,
-  }),
-});`,
-    py: `import requests
-resp = requests.post(
-    f"{BASE_URL}/v1/chat/completions",
-    headers={"Authorization": f"Bearer {API_KEY}"},
-    json={"model": "vanguard-pro",
-          "messages": [{"role": "user", "content": "Hello"}],
-          "stream": True},
-    stream=True,
-)`,
-  },
-  {
-    id: 'ultra',
-    label: 'Vanguard Ultra',
-    sub: 'Consensus loop · Bilateral Proposer ↔ Auditor debate',
-    endpoint: `${API}/v1/chat/completions`,
-    routing: 'Proposer 74.235.106.10 ↔ Auditor 40.124.170.30',
-    headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
-    curl: `curl ${API}/v1/chat/completions \\
-  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "model": "vanguard-ultra",
-    "messages": [{"role": "user", "content": "Hello"}]
-  }'`,
-    ts: `const res = await fetch(\`\${process.env.EXERGYNET_BASE_URL}/v1/chat/completions\`, {
-  method: 'POST',
-  headers: {
-    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    model: 'vanguard-ultra',
-    messages: [{ role: 'user', content: 'Hello' }],
-  }),
-});`,
-    py: `import requests
-resp = requests.post(
-    f"{BASE_URL}/v1/chat/completions",
-    headers={"Authorization": f"Bearer {API_KEY}"},
-    json={"model": "vanguard-ultra",
-          "messages": [{"role": "user", "content": "Hello"}]},
-)`,
-  },
-  {
-    id: 'extract',
-    label: 'Sovereign Clinical Extractor',
-    sub: 'Structured REST · Schema-aware extraction · SEI',
-    endpoint: `${API}/v1/extract`,
-    routing: 'AskMo Node 1 — 20.127.220.199:3000',
-    headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
-    curl: `curl -X POST ${API}/v1/extract \\
-  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "text": "Patient denies smoking. BP 150/95.",
-    "schema": {"smoking_status": "boolean", "blood_pressure": "string"},
-    "domain": "clinical"
-  }'`,
-    ts: `const res = await fetch(\`\${process.env.EXERGYNET_BASE_URL}/v1/extract\`, {
-  method: 'POST',
-  headers: {
-    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    text: 'Patient denies smoking. BP 150/95.',
-    schema: { smoking_status: 'boolean', blood_pressure: 'string' },
-    domain: 'clinical',
-  }),
-});
-const { extraction } = await res.json();`,
-    py: `import requests
-resp = requests.post(
-    f"{BASE_URL}/v1/extract",
-    headers={"Authorization": f"Bearer {API_KEY}"},
-    json={
-        "text": "Patient denies smoking. BP 150/95.",
-        "schema": {"smoking_status": "boolean", "blood_pressure": "string"},
-        "domain": "clinical",
-    },
-)
-print(resp.json()["extraction"])`,
-  },
-  {
-    id: 'voice',
-    label: 'Acoustic Voice Stream',
-    sub: 'WebSocket · G.711 µ-law · 8kHz mono · Twilio bidirectional',
-    endpoint: `wss://explorer-api.exergynet.org/media-stream`,
-    routing: 'AskMo Node 1 — 20.127.220.199:3000 (Nginx TLS termination)',
-    headers: `Authorization: Bearer <key>\nUpgrade: websocket\nConnection: Upgrade`,
-    curl: `# WebSocket upgrade (use wscat or native ws client)
-wscat -c "wss://explorer-api.exergynet.org/media-stream" \\
-  -H "Authorization: Bearer $EXERGYNET_API_KEY"`,
-    ts: `import WebSocket from 'ws';
-const ws = new WebSocket(
-  'wss://explorer-api.exergynet.org/media-stream',
-  { headers: { Authorization: \`Bearer \${process.env.EXERGYNET_API_KEY}\` } }
-);
-ws.on('open', () => {
-  ws.send(JSON.stringify({
-    event: 'start', streamSid: 'MZ_your_sid',
-    mediaFormat: { encoding: 'audio/x-mulaw', sampleRate: 8000, channels: 1 },
-  }));
-});`,
-    py: `import asyncio, websockets, json
-async def stream():
-    uri = "wss://explorer-api.exergynet.org/media-stream"
-    async with websockets.connect(
-        uri, extra_headers={"Authorization": f"Bearer {API_KEY}"}
-    ) as ws:
-        await ws.send(json.dumps({
-            "event": "start", "streamSid": "MZ_your_sid",
-            "mediaFormat": {"encoding": "audio/x-mulaw", "sampleRate": 8000, "channels": 1},
-        }))
-asyncio.run(stream())`,
-  },
-];
+// ── Service definitions now live in @/lib/apiServicesManifest ───────────────
+// (single source of truth shared with the public api-integration.html page —
+// see that file for why this was extracted)
 
 // ── Main component ───────────────────────────────────────────────────────────
 
@@ -406,20 +130,33 @@ export default function KeysPage() {
 
       {/* ── Current key + rotation ─────────────────────────────────────── */}
       <div className="en-card" style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 10, color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 14 }}>
-          CURRENT KEY
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <div style={{ fontSize: 10, color: 'var(--text-faint)', letterSpacing: '0.08em' }}>
+            {dev?.api_key_preview ? 'CURRENT KEY' : 'API KEY'}
+          </div>
+          {dev?.created_at && (
+            <div style={{ fontSize: 10, color: 'var(--text-faint)' }}>
+              account created {new Date(dev.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </div>
+          )}
         </div>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
-          background: 'var(--bg-input)', borderRadius: 6, border: '1px solid var(--border)', marginBottom: 14,
-        }}>
-          <span style={{ flex: 1, fontSize: 12, color: 'var(--accent)', fontFamily: 'inherit', letterSpacing: '0.04em' }}>
-            {dev?.api_key_preview ?? 'sk-exergy-••••••••••••••••'}
-          </span>
-          <span style={{ fontSize: 10, color: 'var(--text-faint)', flexShrink: 0 }}>preview · full key never stored</span>
-        </div>
+        {dev === null ? (
+          <div style={{ height: 38, background: 'var(--bg-input)', borderRadius: 6, border: '1px solid var(--border)', marginBottom: 14, animation: 'pulse 1.5s ease-in-out infinite' }} />
+        ) : (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
+            background: 'var(--bg-input)', borderRadius: 6, border: '1px solid var(--border)', marginBottom: 14,
+          }}>
+            <span style={{ flex: 1, fontSize: 12, color: 'var(--accent)', fontFamily: 'inherit', letterSpacing: '0.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {dev.api_key_preview || 'no key yet — generate one below'}
+            </span>
+            <span style={{ fontSize: 10, color: 'var(--text-faint)', flexShrink: 0 }}>preview · full key never stored</span>
+          </div>
+        )}
         <div style={{ fontSize: 11, color: 'var(--text-faint)', marginBottom: 14, lineHeight: 1.7 }}>
-          Rotating immediately invalidates this key and generates a new one, shown exactly once — store it securely before dismissing.
+          {dev?.api_key_preview
+            ? 'Rotating immediately invalidates this key and generates a new one, shown exactly once — store it securely before dismissing.'
+            : 'Generate your API key to start using ExergyNet services. The full key is shown once — copy it immediately.'}
         </div>
         {error && (
           <div style={{ background: 'var(--error-bg)', border: '1px solid var(--error-border)', borderRadius: 6, padding: '8px 12px', fontSize: 11, color: 'var(--red)', marginBottom: 12 }}>{error}</div>
@@ -439,7 +176,13 @@ export default function KeysPage() {
           onClick={handleRotate}
           disabled={rotating}
         >
-          {rotating ? 'rotating…' : confirmed ? '⚠ confirm rotate key' : 'rotate api key'}
+          {rotating
+            ? 'generating…'
+            : confirmed
+              ? '⚠ confirm — generate new key'
+              : dev?.api_key_preview
+                ? 'rotate api key'
+                : '+ generate api key'}
         </button>
       </div>
 
@@ -499,7 +242,7 @@ export default function KeysPage() {
           </div>
 
           {/* Routing + headers row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
+          <div className="en-stat-grid-2" style={{ gap: 12, marginBottom: 14 }}>
             <div>
               <div style={{ fontSize: 10, color: 'var(--text-faint)', marginBottom: 6 }}>ROUTING</div>
               <div style={{
@@ -538,8 +281,9 @@ export default function KeysPage() {
           {[
             { key: 'EXERGYNET_API_KEY',        value: dev?.api_key_preview ?? 'sk-exergy-••••••••••••••••',                          note: 'your API key' },
             { key: 'EXERGYNET_BASE_URL',        value: `${API}/v1`,                                                                   note: 'inference endpoint' },
-            { key: 'OPENAI_BASE_URL',           value: `${API}/v1`,                                                                   note: 'if using openai SDK' },
-            { key: 'EXERGYNET_VAULT_IMAGE_ID',  value: '0xb226f60a6a3406e5cd3792b4bbe86ed996e2e2cc8dd31ddbe7989a20a897092d',         note: 'Vault ZK Query image ID' },
+            { key: 'OPENAI_BASE_URL',           value: `${API}/v1`,                                                                   note: 'openai-compatible' },
+            { key: 'EXERGYNET_MCP_SSE',         value: 'https://mcp.exergynet.org/sse',                                               note: 'Omega Carrier MCP' },
+            { key: 'EXERGYNET_VAULT_IMAGE_ID',  value: '0xb226f60a6a3406e5cd3792b4bbe86ed996e2e2cc8dd31ddbe7989a20a897092d',         note: 'Vault ZK image ID' },
           ].map(({ key, value, note }) => (
             <div key={key} style={{
               display: 'flex', alignItems: 'center', gap: 8,
@@ -548,7 +292,7 @@ export default function KeysPage() {
             }}>
               <span style={{ fontSize: 11, color: 'var(--accent)', flexShrink: 0 }}>{key}</span>
               <span style={{ fontSize: 11, color: 'var(--text-faint)', margin: '0 4px' }}>=</span>
-              <span style={{ fontSize: 11, color: 'var(--text-soft)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: 11, color: 'var(--text-soft)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
                 {value}
               </span>
               <span style={{ fontSize: 10, color: 'var(--text-faint)', flexShrink: 0 }}>{note}</span>
