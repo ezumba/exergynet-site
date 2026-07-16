@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ExergyNet | Verifiable Compute and Physical-World Proof</title>
+<title>ExergyNet | Sovereign Memory and Verifiable Compute</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="ExergyNet helps agents, applications, and enterprises request work, verify outcomes, and settle results across Solana and Base L2. From off-chain compute to Certificate of Physical Presence, ExergyNet turns trust-sensitive events into machine-usable records.">
-<meta name="keywords" content="ExergyNet, verifiable compute, physical-world proof, Certificate of Physical Presence, autonomous agents, Solana, Base L2, ZK proof, decentralized compute, proof-bearing execution">
-<meta property="og:title" content="ExergyNet | Verifiable Compute and Physical-World Proof">
-<meta property="og:description" content="Request work, verify outcomes, and settle results across Solana and Base L2.">
+<meta name="description" content="ExergyNet is infrastructure for persistent machine memory, deterministic evidence delivery, verifiable execution, and multi-chain settlement across models and accelerators.">
+<meta name="keywords" content="ExergyNet, xLMP, Exergy Vault, Vanguard, sovereign AI memory, verifiable compute, autonomous systems, Solana, Base L2, MCP, persistent machine memory">
+<meta property="og:title" content="ExergyNet | Sovereign Memory and Verifiable Compute">
+<meta property="og:description" content="Persistent machine memory, deterministic evidence delivery, verifiable execution, and sovereign orchestration for autonomous systems.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org">
 <link rel="stylesheet" href="style.css">
@@ -26,71 +26,43 @@
 </script>
 <meta name="base:app_id" content="69f9713442d4fe010f1c2922" />
 <style>
-/* ── Hero Slider ── */
-.hero-slider { position: relative; overflow: hidden; }
-.hero-slides-track { display: flex; transition: transform 0.65s cubic-bezier(0.77,0,0.175,1); will-change: transform; }
-.hero-slide { flex: 0 0 100%; width: 100%; max-width: 100%; min-width: 0; position: relative; }
-
-.hero-dots {
-  position: absolute; bottom: 1.75rem; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 8px; z-index: 20;
-}
-.hero-dot {
-  width: 8px; height: 8px; border-radius: 4px;
-  background: rgba(255,255,255,0.22); border: none; cursor: pointer;
-  padding: 0; transition: all 0.25s ease;
-}
-.hero-dot.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); width: 24px; }
-
-.hero-arrow {
-  position: absolute; top: 50%; transform: translateY(-50%); z-index: 20;
-  background: rgba(0,0,0,0.32); border: 1px solid rgba(255,255,255,0.10);
-  color: rgba(255,255,255,0.65); width: 40px; height: 40px; border-radius: 50%;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-size: 17px; transition: all 0.2s; backdrop-filter: blur(8px); line-height: 1;
-}
-.hero-arrow:hover { background: rgba(0,232,135,0.15); border-color: var(--accent); color: var(--accent); }
-.hero-arrow.prev { left: 1.25rem; }
-.hero-arrow.next { right: 1.25rem; }
-
-/* ── Vanguard slide ── */
-.vanguard-word {
-  background: linear-gradient(135deg, #4e9eff 20%, #00e887 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-.vanguard-stat-strip { display: flex; gap: 1.75rem; margin: 1.25rem 0 1.5rem; flex-wrap: wrap; }
-.vanguard-stat-num { font-family: 'Barlow Condensed', sans-serif; font-size: 2.1rem; font-weight: 700; color: var(--accent); line-height: 1; }
-.vanguard-stat-lbl { font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-soft); margin-top: 3px; }
-.vanguard-engine-card {
-  background: var(--bg-card); border: 1px solid var(--border-mid);
-  border-radius: 14px; padding: 1.5rem; position: relative; overflow: hidden;
-}
-.vanguard-engine-card::before {
-  content: ''; position: absolute; top: 0; right: 0; width: 220px; height: 220px;
-  background: radial-gradient(circle at top right, rgba(78,158,255,0.13), transparent 65%);
-  pointer-events: none;
-}
-
-/* ── Hero two-column grid ── */
-.hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 3rem; align-items: center; }
-
-/* Mobile: single column, hide right panels */
-@media (max-width: 767px) {
-  .hero-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-  .hero-panel { display: none; }
-  .hero-slide .stat-strip { display: none; }
-  .hero-slide section.hero { padding: 3rem 0 3.5rem; }
-  .hero-slide h1 { font-size: 2.1rem; line-height: 1.15; margin-bottom: 1rem; }
-  .hero-slide .hero-sub { font-size: 0.92rem; margin-bottom: 1.5rem; }
-  .vanguard-stat-strip { gap: 1rem; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
-  .vanguard-stat-num { font-size: 1.6rem; }
-  .hero-dots { bottom: 0.6rem; }
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .hero-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-  .hero-slide h1 { font-size: 2.4rem; line-height: 1.1; }
-}
+  .home-hero { position: relative; overflow: hidden; padding: 6.5rem 0 5.5rem; }
+  .home-hero-grid { display:grid; grid-template-columns:1.1fr 0.9fr; gap:3.5rem; align-items:center; }
+  .stack-panel { background:var(--bg-card); border:1px solid var(--border-mid); border-radius:16px; padding:1.5rem; position:relative; overflow:hidden; }
+  .stack-panel::before { content:''; position:absolute; inset:0 0 auto auto; width:260px; height:260px; background:radial-gradient(circle at top right, rgba(0,232,135,0.10), transparent 66%); pointer-events:none; }
+  .stack-row { display:grid; grid-template-columns:120px 1fr; gap:1rem; padding:0.9rem 0; border-bottom:1px solid var(--border); position:relative; }
+  .stack-row:last-child { border-bottom:none; }
+  .stack-key { font-family:var(--mono); font-size:10px; letter-spacing:0.09em; text-transform:uppercase; color:var(--text-faint); }
+  .stack-value { color:var(--text); font-size:14px; line-height:1.55; }
+  .principle-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-top:2rem; }
+  .principle { padding:1rem 1.1rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); }
+  .principle strong { display:block; color:var(--text); margin-bottom:0.35rem; }
+  .principle span { color:var(--text-soft); font-size:13px; line-height:1.5; }
+  .layer-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0.8rem; align-items:stretch; }
+  .layer-card { padding:1.25rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); min-height:180px; }
+  .layer-card h3 { font-size:1rem; margin-bottom:0.6rem; }
+  .layer-num { font-family:var(--mono); font-size:10px; color:var(--accent); letter-spacing:0.08em; margin-bottom:0.75rem; }
+  .validation-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-top:1.75rem; }
+  .validation-card { border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; background:var(--bg-card); }
+  .validation-num { font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:700; color:var(--accent); line-height:1; margin-bottom:0.45rem; }
+  .validation-label { font-size:12px; color:var(--text-soft); line-height:1.55; }
+  .trust-table { width:100%; border-collapse:collapse; margin-top:1.5rem; }
+  .trust-table th, .trust-table td { text-align:left; padding:1rem; border-bottom:1px solid var(--border); vertical-align:top; }
+  .trust-table th { font-family:var(--mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); }
+  .trust-table td { color:var(--text-soft); font-size:13px; line-height:1.55; }
+  .trust-table td:first-child { color:var(--text); font-weight:600; width:22%; }
+  .quiet-callout { border-left:3px solid var(--accent); background:var(--accent-dim); padding:1.25rem 1.35rem; border-radius:0 var(--radius) var(--radius) 0; color:var(--text-soft); line-height:1.7; }
+  @media (max-width: 1023px) {
+    .home-hero-grid { grid-template-columns:1fr; gap:2rem; }
+    .layer-grid { grid-template-columns:repeat(2,1fr); }
+    .validation-grid, .principle-grid { grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width: 640px) {
+    .home-hero { padding:4rem 0 3.5rem; }
+    .layer-grid, .validation-grid, .principle-grid { grid-template-columns:1fr; }
+    .stack-row { grid-template-columns:1fr; gap:0.3rem; }
+    .trust-table { display:block; overflow-x:auto; white-space:normal; }
+  }
 </style>
 </head>
 <body>
@@ -98,787 +70,364 @@
 <canvas id="circuit-canvas"></canvas>
 
 <div class="site-wrap">
-
   <div id="site-header"></div>
 
-<main class="page">
+  <main class="page">
 
-  <!-- HERO SLIDER -->
-  <div class="hero-slider" id="hero-slider">
-  <div class="hero-slides-track" id="hero-track">
+    <!-- HERO -->
+    <section class="home-hero">
+      <div class="glow-accent" style="width:560px;height:520px;top:-140px;left:-180px;"></div>
+      <div class="glow-blue" style="width:620px;height:460px;top:-20px;right:-220px;"></div>
 
-  <!-- Slide 1: Verifiable Compute -->
-  <div class="hero-slide">
-  <section class="hero" style="position:relative; overflow:hidden;">
-    <div class="glow-accent" style="width:500px;height:500px;top:-100px;left:-150px;"></div>
-    <div class="glow-blue" style="width:600px;height:400px;top:0;right:-200px;"></div>
-    <div class="container-wide">
-      <div class="hero-grid">
-        <div>
-          <div class="hero-eyebrow"><span class="dot"></span>Production live on Solana and Base L2</div>
-          <h1>Verifiable Compute<br><span class="accent">and Physical-World Proof</span><br>for Autonomous Systems</h1>
-          <p class="hero-sub">ExergyNet helps agents, applications, and enterprises request work, verify outcomes, and settle results across Solana and Base L2. From off-chain compute to Certificate of Physical Presence, ExergyNet turns trust-sensitive events into machine-usable records.</p>
-          <div class="btn-row">
-            <a href="docs.html" class="btn btn-primary">Read Docs</a>
-            <a href="enterprise.html" class="btn btn-secondary">Explore Enterprise</a>
-            <a href="nodes.html" class="btn btn-ghost">Run a Node &rarr;</a>
-          </div>
-        </div>
-
-        <!-- Network Overview Panel -->
-        <div class="telemetry-panel hero-panel">
-          <div class="section-label" style="margin-bottom:1rem;">Network Overview</div>
-
-          <div class="chain-status-row">
-            <div class="chain-badge chain-badge-sol">
-              <span class="chain-dot chain-dot-sol"></span>
-              <span class="chain-name">Solana</span>
-              <span class="chain-tag">LNES-03</span>
-            </div>
-            <span class="chain-status-val green">OPERATIONAL</span>
-          </div>
-
-          <div class="chain-status-row">
-            <div class="chain-badge chain-badge-base">
-              <span class="chain-dot chain-dot-base"></span>
-              <span class="chain-name">Base L2</span>
-              <span class="chain-tag">LNES-04</span>
-            </div>
-            <span class="chain-status-val blue">OPERATIONAL</span>
-          </div>
-
-          <div class="telemetry-divider"></div>
-
-          <div class="telemetry-row">
-            <span class="tele-label">Active Nodes</span>
-            <span class="tele-value" id="live-nodes">--</span>
-          </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Settled Jobs</span>
-            <span class="tele-value" id="live-yield">--</span>
-          </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Settlement Assets</span>
-            <span class="tele-value">SOL / USDC</span>
-          </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Cumulative M2M Yield</span>
-            <span class="tele-value accent" id="live-usdc">-- USDC</span>
-          </div>
-
-          <div style="margin-top:1.25rem;">
-            <a href="proof.html" class="btn btn-secondary" style="width:100%;justify-content:center;">Explore Proof and Presence &rarr;</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Orientation Strip -->
-      <div class="stat-strip" style="margin-top:3rem;">
-        <div class="stat-item">
-          <div class="stat-label">Request</div>
-          <div class="stat-value green">Compute or Real-World Proof</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Verify</div>
-          <div class="stat-value blue">Proof-Bearing Result</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Settle</div>
-          <div class="stat-value">On-Chain Outcome</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Integrate</div>
-          <div class="stat-value green">API / MCP / SDK</div>
-        </div>
-      </div>
-    </div>
-  </section>
-  </div><!-- /slide-1 -->
-
-  <!-- Slide 2: SEI Vanguard -->
-  <div class="hero-slide">
-  <section class="hero" style="position:relative; overflow:hidden;">
-    <div class="glow-blue" style="width:640px;height:520px;top:-80px;left:-120px;"></div>
-    <div class="glow-accent" style="width:520px;height:420px;top:20px;right:-180px;"></div>
-    <div class="container-wide">
-      <div class="hero-grid">
-        <div>
-          <div class="hero-eyebrow"><span class="dot" style="background:var(--accent);box-shadow:0 0 8px var(--accent);"></span>Enterprise-Grade AI Inference &middot; Zero Retention</div>
-          <h1 style="line-height:1.1; margin-bottom:0.5rem;">SEI <span class="vanguard-word">VANGUARD</span></h1>
-          <p style="font-size:0.95rem; color:var(--text-secondary); margin-bottom:1rem; font-family:'Barlow Condensed',sans-serif; letter-spacing:0.05em; text-transform:uppercase;">Deterministic Depth Gating &nbsp;&middot;&nbsp; Biological Reasoning Engine</p>
-          <p class="hero-sub">Five-times faster first-token delivery. No conversation retention. No third-party routing. Vanguard's depth-gating architecture routes each query through the minimal reasoning path &mdash; sovereign, verifiable, enclave-sealed.</p>
-          <div class="vanguard-stat-strip">
-            <div>
-              <div class="vanguard-stat-num">5&times;</div>
-              <div class="vanguard-stat-lbl">TTFT vs cloud LLMs</div>
-            </div>
-            <div>
-              <div class="vanguard-stat-num">0</div>
-              <div class="vanguard-stat-lbl">Data retained</div>
-            </div>
-            <div>
-              <div class="vanguard-stat-num">2</div>
-              <div class="vanguard-stat-lbl">Inference modes</div>
-            </div>
-            <div>
-              <div class="vanguard-stat-num">&infin;</div>
-              <div class="vanguard-stat-lbl">API scale</div>
-            </div>
-          </div>
-          <div class="btn-row">
-            <a href="https://portal.exergynet.org/?mode=register" class="btn btn-primary">Get Started &rarr;</a>
-            <a href="vanguard.html" class="btn btn-secondary">Learn More</a>
-          </div>
-        </div>
-
-        <!-- Engine Status Panel -->
-        <div class="vanguard-engine-card hero-panel">
-          <div class="section-label" style="margin-bottom:1rem;">Engine Capabilities</div>
-          <div class="telemetry-row">
-            <span class="tele-label">Architecture</span>
-            <span class="tele-value accent">Depth-Gating DDG</span>
-          </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Modes</span>
-            <span class="tele-value">General &nbsp;&middot;&nbsp; Biotech</span>
-          </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Enclave</span>
-            <span class="tele-value green">Zero-Retention SGX</span>
-          </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Compatibility</span>
-            <span class="tele-value blue">OpenAI-Compatible API</span>
-          </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Settlement</span>
-            <span class="tele-value">&micro;USDC / USDC</span>
-          </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Status</span>
-            <span class="tele-value green">OPERATIONAL</span>
-          </div>
-          <div class="telemetry-divider"></div>
-          <div style="margin-top:1.25rem;">
-            <a href="https://portal.exergynet.org/?mode=register" class="btn btn-primary" style="width:100%;justify-content:center;">Access Vanguard &rarr;</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  </div><!-- /slide-2 -->
-
-
-    <!-- Slide 3: Ghost-Witness -->
-    <div class="hero-slide">
-    <section class="hero" style="position:relative; overflow:hidden;">
-      <div class="glow-accent" style="width:580px;height:480px;top:-60px;right:-160px;"></div>
-      <div class="glow-blue" style="width:500px;height:400px;top:40px;left:-140px;"></div>
       <div class="container-wide">
-        <div class="hero-grid">
+        <div class="home-hero-grid">
           <div>
-            <div class="hero-eyebrow">
-              <span class="dot" style="background:var(--accent);box-shadow:0 0 8px var(--accent);"></span>
-              LNES-05 &middot; Ghost-Witness Protocol &middot; Base L2
-            </div>
-            <h1>Your AI Agent<br><span class="accent">Should Not Be<br>Allowed to Lie.</span></h1>
-            <p class="hero-sub">Ghost-Witness detects logical contradictions in any AI agent conversation and generates a cryptographic Certificate of Logical Consistency &mdash; anchored permanently on Base L2. bash.005 USDC per audit. No subscription required.</p>
+            <div class="hero-eyebrow"><span class="dot"></span>Sovereign memory &middot; Verifiable execution</div>
+            <h1>Autonomous systems need<br><span class="accent">more than a model.</span></h1>
+            <p class="hero-sub">They need memory that persists, evidence that can be traced, execution that can be verified, and infrastructure that survives changes in model, cloud, and hardware. ExergyNet provides that layer.</p>
             <div class="btn-row">
-              <a href="mailto:intel@exergynet.org?subject=Ghost-Witness API Access" class="btn btn-primary">Get API Key &rarr;</a>
-              <a href="https://dt.portal.exergynet.org/intel/ghost-witness" class="btn btn-secondary">View Dashboard</a>
-              <a href="ghost-witness.html" class="btn btn-ghost">Learn More</a>
+              <a href="whitepaper.html" class="btn btn-primary">Read the Architecture</a>
+              <a href="https://storage.exergynet.org" target="_blank" rel="noopener" class="btn btn-secondary">Open Exergy Vault</a>
+              <a href="docs.html" class="btn btn-ghost">Developer Docs &rarr;</a>
             </div>
           </div>
 
-          <div class="telemetry-panel hero-panel">
-            <div class="section-label" style="margin-bottom:1rem;">Ghost-Witness &mdash; Live Audit</div>
-
-            <div class="chain-status-row">
-              <div class="chain-badge chain-badge-base">
-                <span class="chain-dot chain-dot-base"></span>
-                <span class="chain-name">LNES-05</span>
-                <span class="chain-tag">Base L2</span>
-              </div>
-              <span class="chain-status-val green">OPERATIONAL</span>
+          <div class="stack-panel">
+            <div class="section-label" style="margin-bottom:0.75rem;">The ExergyNet Stack</div>
+            <div class="stack-row">
+              <div class="stack-key">Memory</div>
+              <div class="stack-value"><strong>Exergy Vault + xLMP</strong><br>Persistent, root-addressed machine memory with bounded evidence delivery.</div>
             </div>
-
-            <div class="chain-status-row">
-              <div class="chain-badge chain-badge-sol">
-                <span class="chain-dot chain-dot-sol" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></span>
-                <span class="chain-name">Vanguard</span>
-                <span class="chain-tag">SGX</span>
-              </div>
-              <span class="chain-status-val green">SEALED</span>
+            <div class="stack-row">
+              <div class="stack-key">Control</div>
+              <div class="stack-value"><strong>SEI-Vanguard</strong><br>Orchestration across memory, models, tools, policies, and execution environments.</div>
             </div>
-
-            <div class="telemetry-divider"></div>
-
-            <div class="telemetry-row">
-              <span class="tele-label">Audit Toll</span>
-              <span class="tele-value accent">bash.005 USDC</span>
+            <div class="stack-row">
+              <div class="stack-key">Transport</div>
+              <div class="stack-value"><strong>Omega Carrier</strong><br>Machine identity, persistent state, external proof, and sovereign task routing.</div>
             </div>
-            <div class="telemetry-row">
-              <span class="tele-label">Avg. Audit Time</span>
-              <span class="tele-value green">&lt; 10 seconds</span>
+            <div class="stack-row">
+              <div class="stack-key">Verification</div>
+              <div class="stack-value"><strong>PoX, AERIS, Edge Witness</strong><br>Receipts for computation, authenticated external data, and physical-world observations.</div>
             </div>
-            <div class="telemetry-row">
-              <span class="tele-label">Settlement</span>
-              <span class="tele-value blue">Base L2 On-Chain</span>
-            </div>
-            <div class="telemetry-row">
-              <span class="tele-label">CLC Validity</span>
-              <span class="tele-value">&infin; Permanent</span>
-            </div>
-
-            <div style="margin-top:1.25rem;">
-              <a href="mailto:intel@exergynet.org?subject=Ghost-Witness API Access" class="btn btn-primary" style="width:100%;justify-content:center;">Start Auditing &rarr;</a>
+            <div class="stack-row">
+              <div class="stack-key">Settlement</div>
+              <div class="stack-value"><strong>Solana + Base</strong><br>Complementary rails for coordination, receipts, and economic finality.</div>
             </div>
           </div>
         </div>
 
-        <div class="stat-strip" style="margin-top:3rem;">
-          <div class="stat-item">
-            <div class="stat-label">Detect</div>
-            <div class="stat-value green">Logical Contradictions</div>
+        <div class="principle-grid">
+          <div class="principle"><strong>Persistent</strong><span>State survives sessions, models, and restarts.</span></div>
+          <div class="principle"><strong>Bounded</strong><span>Only the evidence required for the current operation enters active context.</span></div>
+          <div class="principle"><strong>Verifiable</strong><span>Outputs carry traceable evidence, integrity data, and receipts.</span></div>
+          <div class="principle"><strong>Portable</strong><span>The memory plane is not tied to one model, accelerator, or chain.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHAT EXERGYNET IS -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">What ExergyNet Is</div>
+        <h2>A memory and execution fabric for autonomous systems.</h2>
+        <p style="max-width:820px; margin-bottom:2rem;">ExergyNet is not another model wrapper. It is infrastructure for preserving state, delivering complete evidence, coordinating intelligence, and producing independently checkable operational records.</p>
+
+        <div class="card-grid">
+          <div class="card accent-border">
+            <h3>Persistent Machine Memory</h3>
+            <p>Exergy Vault stores state as durable, integrity-rooted objects. xLMP retrieves the smallest complete set of authoritative evidence required for an operation.</p>
           </div>
-          <div class="stat-item">
-            <div class="stat-label">Generate</div>
-            <div class="stat-value blue">Certificate of Consistency</div>
+          <div class="card blue-border">
+            <h3>Controlled Intelligence</h3>
+            <p>Vanguard resolves memory, applies policy, selects models and tools, coordinates execution, and preserves the resulting state.</p>
           </div>
-          <div class="stat-item">
-            <div class="stat-label">Settle</div>
-            <div class="stat-value">Base L2 On-Chain</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-label">Integrate</div>
-            <div class="stat-value green">REST API / Webhook</div>
+          <div class="card">
+            <h3>Verifiable Operations</h3>
+            <p>Computation, external data, hardware observations, and settlement produce distinct receipts with explicit trust boundaries.</p>
           </div>
         </div>
       </div>
     </section>
-    </div><!-- /slide-3 -->
 
-  <!-- Slide 4: ExergyNet App (Edge Witness) -->
-  <div class="hero-slide">
-  <section class="hero" style="position:relative; overflow:hidden;">
-    <div class="glow-accent" style="width:520px;height:480px;top:-90px;left:-140px;"></div>
-    <div class="glow-blue" style="width:600px;height:420px;top:10px;right:-190px;"></div>
-    <div class="container-wide">
-      <div class="hero-grid">
-        <div>
-          <div class="hero-eyebrow"><span class="dot" style="background:var(--accent);box-shadow:0 0 8px var(--accent);"></span>Now on Mobile &middot; ExergyNet Edge Witness</div>
-          <h1>The Network,<br><span class="accent">In Your Pocket</span></h1>
-          <p class="hero-sub">Edge Witness brings the sovereign mesh to your phone &mdash; encrypted voice &amp; video that connects anywhere in the world, live audio Spaces, passive witness earning, and on-device proof capture. No middleman. No surveillance.</p>
-          <div class="btn-row">
-            <a href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk" class="btn btn-primary">&#x2B07; Download for Android</a>
-            <a href="#" class="btn btn-secondary" onclick="event.preventDefault();alert('The iOS app is coming soon. Android is available now.');">iOS &mdash; Coming Soon</a>
-          </div>
-        </div>
+    <!-- CORE SYSTEMS -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">Core Systems</div>
+        <h2>One architecture. Clear responsibilities.</h2>
+        <p style="max-width:780px; margin-bottom:1.75rem;">Each component addresses a different part of the autonomous-system lifecycle. Together they form a persistent operating layer beneath models and applications.</p>
 
-        <!-- App Highlights Panel -->
-        <div class="telemetry-panel hero-panel">
-          <div class="section-label" style="margin-bottom:1rem;">App Highlights</div>
-          <div class="telemetry-row">
-            <span class="tele-label">Sovereign Calls</span>
-            <span class="tele-value accent">Voice &amp; Video</span>
+        <div class="card-grid">
+          <div class="card accent-border">
+            <h3>Exergy Vault</h3>
+            <p>Persistent, content-addressed storage for AI state, evidence, provenance, and long-lived operational memory.</p>
+            <div style="margin-top:1rem;"><a href="https://storage.exergynet.org" target="_blank" rel="noopener" class="btn btn-primary" style="font-size:12px;">Open Vault &rarr;</a></div>
           </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Live Audio Spaces</span>
-            <span class="tele-value">Host &amp; Listen</span>
+          <div class="card blue-border">
+            <h3>SEI-Vanguard</h3>
+            <p>The native control plane for evidence selection, model execution, policy enforcement, and state transition.</p>
+            <div style="margin-top:1rem;"><a href="vanguard.html" class="btn btn-secondary" style="font-size:12px;">Vanguard &rarr;</a></div>
           </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Passive Witness</span>
-            <span class="tele-value">Earn While Idle</span>
+          <div class="card accent-border">
+            <h3>Omega Carrier</h3>
+            <p>A sovereign machine interface for identity, persistent memory, authenticated external data, and task routing.</p>
+            <div style="margin-top:1rem;"><a href="omega-carrier.html" class="btn btn-primary" style="font-size:12px;">Omega Carrier &rarr;</a></div>
           </div>
-          <div class="telemetry-row">
-            <span class="tele-label">Physical Proof</span>
-            <span class="tele-value blue">On-Device Capture</span>
+          <div class="card">
+            <h3>AERIS</h3>
+            <p>Authenticated external-data ingestion for systems that must use web and enterprise data without abandoning provenance.</p>
+            <div style="margin-top:1rem;"><a href="docs.html" class="btn btn-secondary" style="font-size:12px;">Integration Docs &rarr;</a></div>
           </div>
-          <div class="telemetry-divider"></div>
-          <div class="telemetry-row">
-            <span class="tele-label">Android</span>
-            <span class="tele-value accent">Available Now</span>
+          <div class="card">
+            <h3>Edge Witness</h3>
+            <p>Hardware-backed capture and signing for device observations, physical presence, and field-operational evidence.</p>
+            <div style="margin-top:1rem;"><a href="edge-witness.html" class="btn btn-secondary" style="font-size:12px;">Edge Witness &rarr;</a></div>
           </div>
-          <div class="telemetry-row">
-            <span class="tele-label">iOS</span>
-            <span class="tele-value">Coming Soon</span>
-          </div>
-          <div style="margin-top:1.25rem;">
-            <a href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk" class="btn btn-secondary" style="width:100%;justify-content:center;">&#x2B07; Get the Android App</a>
+          <div class="card blue-border">
+            <h3>Proof and Settlement</h3>
+            <p>Computation receipts, proof aggregation, and multi-chain anchoring connect completed work to durable records and economic finality.</p>
+            <div style="margin-top:1rem;"><a href="protocol.html" class="btn btn-secondary" style="font-size:12px;">Protocol &rarr;</a></div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Orientation Strip -->
-      <div class="stat-strip" style="margin-top:3rem;">
-        <div class="stat-item">
-          <div class="stat-label">Connect</div>
-          <div class="stat-value green">Encrypted Mesh Calls</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Gather</div>
-          <div class="stat-value blue">Live Audio Spaces</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Earn</div>
-          <div class="stat-value">Passive Witness Yield</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Prove</div>
-          <div class="stat-value green">Physical Presence</div>
-        </div>
-      </div>
-    </div>
-  </section>
-  </div><!-- /slide-4 -->
+    <!-- ARCHITECTURE -->
+    <section class="mechanical-breakdown" style="padding:4rem 0; background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <div class="container-wide">
+        <div class="section-label" style="text-align:center; margin-bottom:1rem;">System Architecture</div>
+        <h2 style="text-align:center; font-size:2.2rem; margin-bottom:0.75rem;">Persistent knowledge. Bounded context. Verifiable action.</h2>
+        <p style="text-align:center; color:var(--text-soft); max-width:780px; margin:0 auto 3rem;">The objective is not to send the largest possible prompt. It is to preserve complete state outside active context and deliver only the authoritative evidence required for the current operation.</p>
 
-  </div><!-- /hero-slides-track -->
-
-  <!-- Arrows -->
-  <button class="hero-arrow prev" id="hero-prev" aria-label="Previous slide">&#8592;</button>
-  <button class="hero-arrow next" id="hero-next" aria-label="Next slide">&#8594;</button>
-  <!-- Dots -->
-  <div class="hero-dots" id="hero-dots">
-    <button class="hero-dot active" data-index="0" aria-label="Go to slide 1"></button>
-    <button class="hero-dot" data-index="1" aria-label="Go to slide 2"></button>
-    <button class="hero-dot" data-index="2" aria-label="Go to slide 3"></button>
-    <button class="hero-dot" data-index="3" aria-label="Go to slide 4"></button>
-  </div>
-
-  </div><!-- /hero-slider -->
-
-  <!-- WHAT EXERGYNET DOES -->
-  <section>
-    <div class="container-wide">
-      <div class="section-label">What ExergyNet Does</div>
-      <h2>Programmable trust for compute, physical proof, and settlement.</h2>
-      <p style="max-width:760px; margin-bottom:2rem;">Autonomous software can request data, compute, and real-world actions, but most systems still rely on centralized APIs, opaque execution, and weak external verification. ExergyNet is built to close that trust gap with proof-bearing work and programmable settlement.</p>
-
-      <div class="card-grid">
-        <div class="card accent-border">
-          <div class="badge badge-green" style="margin-bottom:0.75rem;">01</div>
-          <h3>Request Work</h3>
-          <p>Agents, applications, and enterprise systems define compute jobs or physical-world proof requests with machine-readable parameters.</p>
-        </div>
-        <div class="card">
-          <div class="badge badge-blue" style="margin-bottom:0.75rem;">02</div>
-          <h3>Verify Results</h3>
-          <p>Outputs are returned with verification data so downstream systems can check the result rather than trusting a single operator.</p>
-        </div>
-        <div class="card accent-border">
-          <div class="badge badge-green" style="margin-bottom:0.75rem;">03</div>
-          <h3>Settle Outcomes</h3>
-          <p>Work can be connected to escrow, payouts, approval flows, and settlement logic across Solana and Base L2.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PRODUCTS -->
-  <section>
-    <div class="container-wide">
-      <div class="section-label">Product Surfaces</div>
-      <h2>One network, multiple trust surfaces.</h2>
-      <p style="max-width:760px; margin-bottom:1.75rem;">ExergyNet exposes infrastructure for agent builders, enterprise operators, developers, and node participants. Public documentation explains the system at the level needed for evaluation and integration, while deeper implementation details are disclosed in stages as the network expands.</p>
-
-      <div class="card-grid">
-        <div class="card blue-border">
-          <h3>Compute Settlement</h3>
-          <p>Route off-chain execution to proof-capable nodes and connect results to on-chain settlement.</p>
-          <div style="margin-top:1rem;"><a href="protocol.html" class="btn btn-secondary" style="font-size:12px;">Protocol &rarr;</a></div>
-        </div>
-        <div class="card accent-border">
-          <h3>Certificate of Physical Presence</h3>
-          <p>Turn a field event, checkpoint, or location-sensitive action into a verifiable certificate your systems can use.</p>
-          <div style="margin-top:1rem;"><a href="presence.html" class="btn btn-primary" style="font-size:12px;">Presence Certificate &rarr;</a></div>
-        </div>
-        <div class="card accent-border">
-          <h3>Omega Carrier</h3>
-          <p>MCP bridge that gives AI agents identity, persistent memory, external proof via AERIS, reserve awareness, and machine-task value routing through the ExergyNet capital loop.</p>
-          <div style="margin-top:1rem;"><a href="omega-carrier.html" class="btn btn-primary" style="font-size:12px;">Omega Carrier &rarr;</a></div>
-        </div>
-        <div class="card blue-border">
-          <h3>Exergy Vault</h3>
-          <p>Content-addressed persistent storage for AI agents. Commit state to a durable <code>xlmp_root</code> handle. Recall across sessions, models, and restarts — with ZK provenance metadata.</p>
-          <div style="margin-top:1rem;"><a href="https://storage.exergynet.org" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:12px;">Exergy Vault &rarr;</a></div>
-        </div>
-        <div class="card">
-          <h3>MCP / Developer Gateway</h3>
-          <p>Expose ExergyNet to agentic systems through machine-readable discovery, SDKs, and MCP-compatible integration paths.</p>
-          <div style="margin-top:1rem;"><a href="mcp.html" class="btn btn-secondary" style="font-size:12px;">MCP Gateway &rarr;</a></div>
-        </div>
-        <div class="card">
-          <h3>Node Operations</h3>
-          <p>Run proof-capable infrastructure that executes jobs and receives settlement for completed work.</p>
-          <div style="margin-top:1rem;"><a href="nodes.html" class="btn btn-secondary" style="font-size:12px;">Run a Node &rarr;</a></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHY -->
-  <section class="manifesto-section">
-    <div class="container-wide">
-      <div class="manifesto-grid">
-        <div class="manifesto-text">
-          <div class="section-label">Why ExergyNet Exists</div>
-          <h2 class="manifesto-headline">Autonomous systems need verifiable execution, not blind trust.</h2>
-          <p class="manifesto-body">Autonomous systems increasingly make decisions, trigger workflows, and move value. Those systems need more than API responses. They need outputs that can be verified, records that can be audited, and settlement that can be connected to completed work.</p>
-          <p class="manifesto-body" style="margin-top:1rem;">ExergyNet combines off-chain work, proof-bearing verification, and on-chain settlement so outcomes can be checked and paid without relying on a single operator's word.</p>
-          <div class="manifesto-pull">
-            The goal is simple: make high-value machine actions verifiable enough to automate.
+        <div class="layer-grid">
+          <div class="layer-card">
+            <div class="layer-num">01 / COMMIT</div>
+            <h3>Preserve state</h3>
+            <p>Source material is normalized into durable objects with provenance and integrity commitments.</p>
           </div>
-        </div>
-        <div class="manifesto-terminal">
-          <div class="terminal-bar">
-            <span class="t-dot t-red"></span>
-            <span class="t-dot t-amber"></span>
-            <span class="t-dot t-green"></span>
-            <span class="t-title">exergynet-request</span>
+          <div class="layer-card">
+            <div class="layer-num">02 / ADDRESS</div>
+            <h3>Locate evidence</h3>
+            <p>xLMP resolves the complete object or record set required for the current question or task.</p>
           </div>
-          <div class="terminal-body">
-            <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">exg create-job --type compute --settle base-usdc</span></div>
-            <div class="t-line t-faint">&gt; Job request accepted.</div>
-            <div class="t-line"><span class="t-blue">&gt; [ESCROW_OPENED] Settlement locked on Base L2.</span></div>
-            <div class="t-line"><span class="t-green">&gt; [NODE_SELECTED] Proof-capable executor assigned.</span></div>
-            <div class="t-line"><span class="t-accent">&gt; [RESULT_VERIFIED] Output hash matched requested job.</span></div>
-            <div class="t-line"><span class="t-blue">&gt; [SETTLED] Payout routed. Receipt available.</span></div>
-            <div class="t-cursor-wrap"><span class="t-cursor-blink">_</span></div>
+          <div class="layer-card">
+            <div class="layer-num">03 / ORCHESTRATE</div>
+            <h3>Execute with control</h3>
+            <p>Vanguard selects the model, tool, policy, and execution path without binding the system to one provider.</p>
+          </div>
+          <div class="layer-card">
+            <div class="layer-num">04 / VERIFY</div>
+            <h3>Issue a receipt</h3>
+            <p>The operation returns evidence, integrity metadata, and the appropriate computational or hardware-backed receipt.</p>
+          </div>
+          <div class="layer-card">
+            <div class="layer-num">05 / PRESERVE</div>
+            <h3>Update durable state</h3>
+            <p>The result is written back into persistent memory and, where required, anchored or settled across supported rails.</p>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- HOW IT WORKS -->
-  <section class="mechanical-breakdown" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-    <div class="container-wide">
-      <div class="section-label" style="text-align:center; margin-bottom:1rem;">System Architecture</div>
-      <h2 style="text-align:center; font-size:2.2rem; margin-bottom:0.5rem;">How ExergyNet Works</h2>
-      <p style="text-align:center; color:var(--text-soft); max-width:680px; margin:0 auto 3rem;">At a high level, ExergyNet lets a requester define work, route it to execution, verify the result, and settle the outcome.</p>
+    <!-- TRUST MODEL -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">Trust Model</div>
+        <h2>Different claims require different proofs.</h2>
+        <p style="max-width:800px;">ExergyNet does not collapse computation, hardware identity, physical observation, and settlement into one vague idea of truth. Each layer exposes a specific guarantee and a specific boundary.</p>
 
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:2rem;">
-        <div class="step-card" style="padding:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);">
-          <div class="badge badge-amber" style="margin-bottom:1rem;">Step 1</div>
-          <h3 style="font-size:1.25rem; margin-bottom:0.5rem;">A requester opens a job and locks settlement</h3>
-          <p style="color:var(--text-soft); font-size:0.95rem; line-height:1.6;">An agent, application, or enterprise system defines the work to be performed and attaches the required settlement or approval conditions.</p>
-        </div>
-        <div class="step-card" style="padding:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);">
-          <div class="badge badge-blue" style="margin-bottom:1rem;">Step 2</div>
-          <h3 style="font-size:1.25rem; margin-bottom:0.5rem;">A node performs the work and records execution signals</h3>
-          <p style="color:var(--text-soft); font-size:0.95rem; line-height:1.6;">The network routes work to capable execution infrastructure. Depending on the job, this can involve compute execution, sensor capture, location-sensitive proof, or another supported vector.</p>
-        </div>
-        <div class="step-card" style="padding:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);">
-          <div class="badge badge-green" style="margin-bottom:1rem;">Step 3</div>
-          <h3 style="font-size:1.25rem; margin-bottom:0.5rem;">A verifiable result is generated</h3>
-          <p style="color:var(--text-soft); font-size:0.95rem; line-height:1.6;">The result is returned with proof or verification metadata so independent systems can check that the expected work was completed.</p>
-        </div>
-        <div class="step-card" style="padding:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);">
-          <div class="badge badge-green" style="margin-bottom:1rem;">Step 4</div>
-          <h3 style="font-size:1.25rem; margin-bottom:0.5rem;">Atomic settlement completes the loop</h3>
-          <p style="color:var(--text-soft); font-size:0.95rem; line-height:1.6;">Once verification succeeds, the connected workflow can release payment, trigger an approval, update a status, or archive a receipt.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHO IT SERVES -->
-  <section class="pillars-section">
-    <div class="container-wide">
-      <div class="section-label">Who ExergyNet Serves</div>
-      <h2>Built for builders, operators, and enterprises.</h2>
-      <div class="card-grid" style="margin-top:1.75rem;">
-        <div class="card pillar-card">
-          <div class="pillar-num">01 / Developers</div>
-          <h3>For developers and agent builders</h3>
-          <p>Use ExergyNet to request verifiable work, retrieve proof-bearing results, and integrate settlement-aware actions into agent and application workflows.</p>
-          <div class="pillar-stat"><span class="pillar-stat-val green">API / MCP</span><span class="pillar-stat-label">machine-readable integration</span></div>
-        </div>
-        <div class="card pillar-card">
-          <div class="pillar-num">02 / Enterprise</div>
-          <h3>For field and operations teams</h3>
-          <p>Turn physical events into usable records that support audits, compliance workflows, approvals, exception handling, and downstream automation.</p>
-          <div class="pillar-stat"><span class="pillar-stat-val blue">Presence</span><span class="pillar-stat-label">certificate-ready output</span></div>
-        </div>
-        <div class="card pillar-card">
-          <div class="pillar-num">03 / Operators</div>
-          <h3>For node operators</h3>
-          <p>Run nodes that execute proof-bearing work and receive settlement for verified participation in the network.</p>
-          <div class="pillar-stat"><span class="pillar-stat-val accent">USDC</span><span class="pillar-stat-label">settlement-ready payouts</span></div>
+        <div class="card" style="margin-top:1.5rem; overflow-x:auto;">
+          <table class="trust-table">
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>What it establishes</th>
+                <th>What it does not establish</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>xLMP root</td>
+                <td>The identity, integrity, and provenance of the addressed memory object.</td>
+                <td>That a model will interpret the object correctly.</td>
+              </tr>
+              <tr>
+                <td>ZK receipt</td>
+                <td>That a defined computation executed according to the committed program and inputs.</td>
+                <td>That external inputs were semantically correct.</td>
+              </tr>
+              <tr>
+                <td>Hardware signature</td>
+                <td>That an authorized device or enclave signed the observation or execution record.</td>
+                <td>That every sensor or external environment was truthful.</td>
+              </tr>
+              <tr>
+                <td>Ledger anchor</td>
+                <td>Ordering, timestamping, and durable settlement finality.</td>
+                <td>The semantic correctness of off-chain claims.</td>
+              </tr>
+              <tr>
+                <td>Vanguard audit</td>
+                <td>The evidence, policy, and execution path used for an operation.</td>
+                <td>Absolute model infallibility.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- WHAT IT ENABLES -->
-  <section>
-    <div class="container-wide">
-      <div class="section-label">What ExergyNet Makes Possible</div>
-      <h2>Trust-sensitive workflows that software can actually use.</h2>
-      <p style="max-width:720px; margin-bottom:2rem;">The network is designed for outcomes that need to be checked before they are trusted: compute results, field confirmations, proof-of-presence events, and machine-to-machine settlement flows.</p>
+    <!-- VALIDATION -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">Measured Progress</div>
+        <h2>Architecture supported by benchmark evidence.</h2>
+        <p style="max-width:800px;">The public benchmark program focuses on measured behavior, explicit limitations, and reproducible results. The numbers below apply to the tested workloads and conditions.</p>
 
-      <div class="card-grid">
-        <div class="card accent-border">
-          <div class="badge badge-green" style="margin-bottom:0.75rem;">01</div>
-          <h3>Verifiable Outputs</h3>
-          <p>Do not accept a result because a service asserted it. Accept it because it carries verification data.</p>
+        <div class="validation-grid">
+          <div class="validation-card">
+            <div class="validation-num">11.3&times;</div>
+            <div class="validation-label">Correct-task throughput over full-context replay on the tested H200 memory workload.</div>
+          </div>
+          <div class="validation-card">
+            <div class="validation-num">660–820</div>
+            <div class="validation-label">Active xLMP prompt tokens while stored memory increased beyond conventional prompt limits.</div>
+          </div>
+          <div class="validation-card">
+            <div class="validation-num">100%</div>
+            <div class="validation-label">Entity and NOT_FOUND retrieval accuracy at the validated 10 MB compact-index scale.</div>
+          </div>
+          <div class="validation-card">
+            <div class="validation-num">T4 · A10 · H200</div>
+            <div class="validation-label">Bounded-memory operation validated across multiple NVIDIA accelerator generations.</div>
+          </div>
         </div>
-        <div class="card">
-          <div class="badge badge-blue" style="margin-bottom:0.75rem;">02</div>
-          <h3>Programmable Settlement</h3>
-          <p>Connect work completion to payments, approvals, and receipts that downstream systems can process.</p>
-        </div>
-        <div class="card">
-          <div class="badge badge-blue" style="margin-bottom:0.75rem;">03</div>
-          <h3>Physical-World Proof</h3>
-          <p>Issue and verify certificates for location-sensitive and real-world operational events.</p>
-        </div>
-        <div class="card accent-border">
-          <div class="badge badge-green" style="margin-bottom:0.75rem;">04</div>
-          <h3>Multi-Chain Integration</h3>
-          <p>Use Solana and Base L2 as settlement and coordination surfaces for proof-bearing execution.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- PROOF MODEL -->
-  <section>
-    <div class="container-wide">
-      <div class="section-label">Proof Model</div>
-      <h2>Outputs should be checked, not assumed.</h2>
-      <p style="max-width:700px; margin-bottom:1.75rem;">ExergyNet connects off-chain execution and physical-world proof with verification metadata and settlement logic. The result is a practical trust layer for applications and agents that need to automate high-value decisions.</p>
-
-      <div class="flow" style="margin-bottom:2rem;">
-        <div class="flow-step active">Job Request</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step blue">Settlement Lock</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step">Execution</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step active">Verification Data</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step blue">On-Chain Outcome</div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step active">Receipt</div>
-      </div>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:1rem;">
-        <div class="card">
-          <h4>For AI Agents</h4>
-          <h3>Verifiable Off-Chain Logic</h3>
-          <p>Submit complex work requests and receive outputs with verification data that can be processed by an agent, application, or workflow engine.</p>
-          <div style="margin-top:1rem;"><a href="docs.html" class="btn btn-primary" style="font-size:12px;">Developer Docs &rarr;</a></div>
+        <div class="quiet-callout" style="margin-top:1.5rem;">
+          The public release describes interfaces, trust boundaries, methodology, and measured outcomes. Shard construction, retrieval heuristics, orchestration policies, private circuits, and security-sensitive implementation details remain confidential.
         </div>
-        <div class="card">
-          <h4>For Enterprises</h4>
-          <h3>Presence and Workflow Proof</h3>
-          <p>Use physical-world proof and certificate outputs to support approvals, operations, audits, and customer-facing workflows.</p>
-          <div style="margin-top:1rem;"><a href="presence.html" class="btn btn-secondary" style="font-size:12px;">Presence Certificate &rarr;</a></div>
+
+        <div class="btn-row" style="margin-top:1.5rem;">
+          <a href="journal.html" class="btn btn-primary">Read Benchmark Notes</a>
+          <a href="whitepaper.html" class="btn btn-secondary">Architecture Whitepaper</a>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SDK INTEGRATION -->
-  <section class="machine-layer">
-    <div class="container-wide">
-      <div class="section-label">SDK Integration</div>
-      <h2>Built for agent and app integration.</h2>
-      <p style="max-width:700px; margin-bottom:2rem; color:var(--text-soft);">Agents and applications can request work, monitor status, retrieve proof-bearing results, and connect settlement without needing enterprise middleware or manual review gates.</p>
-
-      <div class="code-terminal-block">
-        <div class="code-terminal-header">
-          <div class="code-dots"><span class="t-dot t-red"></span><span class="t-dot t-amber"></span><span class="t-dot t-green"></span></div>
-          <span class="code-terminal-title">lnes-agent-sdk-core &mdash; TypeScript</span>
-          <span class="code-lang-badge">TS</span>
-        </div>
-        <pre class="code-terminal-body"><code><span class="ck">import</span> { LnesM2MClient } <span class="ck">from</span> <span class="cs">"lnes-agent-sdk-core"</span>;
-
-<span class="ck">const</span> client = <span class="ck">new</span> LnesM2MClient({ network: <span class="cs">"base"</span> });
-<span class="ck">const</span> job = <span class="ck">await</span> client.createJob({ type: <span class="cs">"compute"</span>, escrow: <span class="cs">"USDC"</span> });
-<span class="ck">const</span> proof = <span class="ck">await</span> client.awaitProof(job.id);
-
-<span class="ck">if</span> (proof.verified) {
-  <span class="ck">await</span> client.settle(job.id, proof.receipt);
-}</code></pre>
-      </div>
-
-      <div class="runtime-grid" style="margin-top:1.25rem;">
-        <div class="runtime-badge"><span class="runtime-dot green"></span><span>Solana SVM</span></div>
-        <div class="runtime-badge"><span class="runtime-dot blue"></span><span>Base L2 EVM</span></div>
-        <div class="runtime-badge"><span class="runtime-dot accent"></span><span>RISC Zero zkVM</span></div>
-        <div class="runtime-badge"><span class="runtime-dot green"></span><span>ElizaOS</span></div>
-        <div class="runtime-badge"><span class="runtime-dot blue"></span><span>MCP Gateway</span></div>
-        <div class="runtime-badge"><span class="runtime-dot accent"></span><span>Ed25519 Mesh</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DEVELOPERS -->
-  <section>
-    <div class="container-wide">
-      <div class="section-label">For Developers</div>
-      <h2>Developer integration.</h2>
-      <p style="max-width:680px; margin-bottom:1.75rem;">Integrate ExergyNet into agent systems, applications, and enterprise workflows through the SDK, MCP gateway, and machine-readable discovery files.</p>
-
-      <div class="card accent-border" style="margin-bottom:1rem;">
-        <h4>ElizaOS &mdash; One Integration Path</h4>
-        <div class="code-label" style="margin-top:0.5rem;">INSTALL</div>
-        <pre><code>npm install @elizaos/plugin-exergynet</code></pre>
-        <div class="btn-row" style="margin-top:1rem;">
-          <a href="docs.html" class="btn btn-primary">Full Integration Guide</a>
-          <a href="mcp.html" class="btn btn-secondary">MCP Gateway</a>
-          <a href="agents.html" class="btn btn-ghost">Agent Manifest &rarr;</a>
+    <!-- WHO IT SERVES -->
+    <section class="pillars-section">
+      <div class="container-wide">
+        <div class="section-label">Who Builds Here</div>
+        <h2>Infrastructure for systems that cannot afford to forget what happened.</h2>
+        <div class="card-grid" style="margin-top:1.75rem;">
+          <div class="card pillar-card">
+            <div class="pillar-num">01 / DEVELOPERS</div>
+            <h3>Build persistent agents</h3>
+            <p>Connect memory, models, external data, tools, and receipts through APIs, SDKs, and MCP-compatible interfaces.</p>
+            <div class="pillar-stat"><span class="pillar-stat-val green">API / MCP</span><span class="pillar-stat-label">machine-readable integration</span></div>
+          </div>
+          <div class="card pillar-card">
+            <div class="pillar-num">02 / ENTERPRISE</div>
+            <h3>Operate with provenance</h3>
+            <p>Preserve authoritative state, control evidence access, and produce audit-ready records for high-value workflows.</p>
+            <div class="pillar-stat"><span class="pillar-stat-val blue">Evidence</span><span class="pillar-stat-label">traceable operational state</span></div>
+          </div>
+          <div class="card pillar-card">
+            <div class="pillar-num">03 / OPERATORS</div>
+            <h3>Run sovereign infrastructure</h3>
+            <p>Contribute execution, storage, transport, or witness capacity to the network under explicit protocol roles.</p>
+            <div class="pillar-stat"><span class="pillar-stat-val accent">Nodes</span><span class="pillar-stat-label">proof-capable participation</span></div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <details class="card">
-        <summary style="cursor:pointer; font-family:var(--display); font-weight:700; text-transform:uppercase; color:var(--text);">Network Details</summary>
-        <ul class="spec-list" style="margin-top:1rem;">
-          <li><span class="spec-key">Program ID</span><span class="spec-val"><code>7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
-          <li><span class="spec-key">EVM Contract</span><span class="spec-val"><code>LNES04Membrane.sol (Base Mainnet)</code></span></li>
-          <li><span class="spec-key">Settlement</span><span class="spec-val">Native SOL / Base L2 USDC</span></li>
-          <li><span class="spec-key">MCP Gateway</span><span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
-          <li><span class="spec-key">npm Package</span><span class="spec-val"><code>@elizaos/plugin-exergynet</code></span></li>
-        </ul>
-      </details>
-    </div>
-  </section>
+    <!-- DEVELOPERS -->
+    <section class="machine-layer">
+      <div class="container-wide">
+        <div class="section-label">Machine Interfaces</div>
+        <h2>Built to be discovered and used by software.</h2>
+        <p style="max-width:760px; margin-bottom:2rem; color:var(--text-soft);">ExergyNet exposes public integration surfaces without exposing the implementation mechanisms that create the system's advantage.</p>
 
-  <!-- NODE OPERATORS -->
-  <section>
-    <div class="container-wide">
-      <div class="section-label">For Node Operators</div>
-      <h2>Run a node.</h2>
-      <p style="max-width:680px; margin-bottom:2rem;">Operators can run proof-capable nodes to process jobs and receive on-chain settlement. The node path is designed for infrastructure participants that want to contribute execution capacity to the network.</p>
+        <div class="card-grid">
+          <div class="card accent-border">
+            <h4>MCP</h4>
+            <h3>Agent Tooling</h3>
+            <p>Connect compatible agents to ExergyNet memory, execution, and verification capabilities.</p>
+            <div style="margin-top:1rem;"><a href="mcp.html" class="btn btn-primary" style="font-size:12px;">MCP Gateway &rarr;</a></div>
+          </div>
+          <div class="card">
+            <h4>SDK</h4>
+            <h3>Application Integration</h3>
+            <p>Use documented APIs and SDKs to create jobs, resolve memory, monitor execution, and verify receipts.</p>
+            <div style="margin-top:1rem;"><a href="docs.html" class="btn btn-secondary" style="font-size:12px;">Developer Docs &rarr;</a></div>
+          </div>
+          <div class="card blue-border">
+            <h4>Discovery</h4>
+            <h3>Machine-Readable Manifests</h3>
+            <p>Protocol coordinates, capabilities, and integration surfaces are available through canonical discovery files.</p>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1rem;">
+              <a href=".well-known/exergynet.json" class="btn btn-ghost" style="font-size:12px;">exergynet.json</a>
+              <a href="llms.txt" class="btn btn-ghost" style="font-size:12px;">llms.txt</a>
+            </div>
+          </div>
+        </div>
 
-      <div class="card">
-        <h4>Quick Start</h4>
-        <div class="code-label">1. INSTALL ZK TOOLCHAIN</div>
-        <pre><code>curl -L https://risczero.com/install | bash
-rzup</code></pre>
-
-        <div class="code-label">2. CLONE AND BUILD</div>
-        <pre><code>git clone https://github.com/ezumba/entropy-k-core.git
-cd entropy-k-core
-cargo build --release</code></pre>
-
-        <div class="code-label">3. START NODE</div>
-        <pre><code>cargo run --release -- --apex &lt;APEX_HOST&gt; --payout &lt;YOUR_BASE_EVM_ADDRESS&gt;</code></pre>
-
-        <div style="margin-top:1rem;"><a href="nodes.html" class="btn btn-blue">View Node Operations Guide &rarr;</a></div>
+        <div class="card accent-border" style="margin-top:1rem;">
+          <h4>ElizaOS</h4>
+          <div class="code-label" style="margin-top:0.5rem;">INSTALL</div>
+          <pre><code>npm install @elizaos/plugin-exergynet</code></pre>
+          <div class="btn-row" style="margin-top:1rem;">
+            <a href="docs.html" class="btn btn-primary">Integration Guide</a>
+            <a href="agents.html" class="btn btn-ghost">Agent Manifest &rarr;</a>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- AGENT MANIFEST -->
-  <section>
-    <div class="container-wide">
-      <div class="section-label">Machine-Readable Discovery</div>
-      <h2>Discovery files for autonomous systems.</h2>
-      <p style="max-width:650px; margin-bottom:1.5rem;">Autonomous agents can discover ExergyNet through standard machine-readable files and integration pages.</p>
-      <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.25rem;">
-        <code>/.well-known/exergynet.json</code>
-        <code>/.well-known/ai-plugin.json</code>
-        <code>/llms.txt</code>
-        <code>/agents.html</code>
-      </div>
-      <div class="btn-row">
-        <a href="agents.html" class="btn btn-secondary">Agent Manifest</a>
-        <a href=".well-known/exergynet.json" class="btn btn-ghost">exergynet.json &rarr;</a>
-        <a href="llms.txt" class="btn btn-ghost">llms.txt &rarr;</a>
-      </div>
-    </div>
-  </section>
+    <!-- NETWORK DETAILS -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">Public Network Coordinates</div>
+        <h2>Clear interfaces. Stable identifiers.</h2>
+        <p style="max-width:720px; margin-bottom:1.5rem;">The public site exposes the identifiers and interfaces needed to evaluate and integrate with the network. Internal topology, credentials, and security-sensitive implementation details are not published.</p>
 
-  <!-- CTA -->
-  <section class="cta-section">
-    <div class="glow-accent" style="width:600px;height:300px;bottom:-100px;left:50%;transform:translateX(-50%);"></div>
-    <div class="container">
-      <h2>Build on ExergyNet.</h2>
-      <p>Read the docs, evaluate the proof model, explore enterprise use cases, or run a node.</p>
-      <div class="btn-row" style="justify-content:center;">
-        <a href="docs.html" class="btn btn-primary">Read Docs</a>
-        <a href="enterprise.html" class="btn btn-secondary">Explore Enterprise</a>
-        <a href="nodes.html" class="btn btn-blue">Run a Node</a>
+        <details class="card">
+          <summary style="cursor:pointer; font-family:var(--display); font-weight:700; text-transform:uppercase; color:var(--text);">Network Details</summary>
+          <ul class="spec-list" style="margin-top:1rem;">
+            <li><span class="spec-key">Solana Program</span><span class="spec-val"><code>7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
+            <li><span class="spec-key">EVM Contract</span><span class="spec-val"><code>LNES04Membrane.sol (Base Mainnet)</code></span></li>
+            <li><span class="spec-key">Settlement Rails</span><span class="spec-val">Solana / Base L2</span></li>
+            <li><span class="spec-key">MCP Gateway</span><span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
+            <li><span class="spec-key">npm Package</span><span class="spec-val"><code>@elizaos/plugin-exergynet</code></span></li>
+          </ul>
+        </details>
       </div>
-      <div class="cta-community">
-        <a href="https://discord.com/channels/1500548202384986203/1500548202959732970" target="_blank" rel="noopener" class="community-link"><span class="community-icon">&#x2666;</span> Discord Community</a>
-        <a href="https://x.com/ExergyNet" target="_blank" rel="noopener" class="community-link"><span class="community-icon">&#x1D54F;</span> @ExergyNet</a>
-      </div>
-    </div>
-  </section>
+    </section>
 
-</main>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="glow-accent" style="width:600px;height:300px;bottom:-100px;left:50%;transform:translateX(-50%);"></div>
+      <div class="container">
+        <h2>Build systems that remember what matters.</h2>
+        <p>Explore the architecture, evaluate the interfaces, or begin integrating ExergyNet into an autonomous workflow.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="whitepaper.html" class="btn btn-primary">Read the Architecture</a>
+          <a href="docs.html" class="btn btn-secondary">Developer Docs</a>
+          <a href="nodes.html" class="btn btn-blue">Node Operations</a>
+        </div>
+        <div class="cta-community">
+          <a href="https://discord.com/channels/1500548202384986203/1500548202959732970" target="_blank" rel="noopener" class="community-link"><span class="community-icon">&#x2666;</span> Discord Community</a>
+          <a href="https://x.com/ExergyNet" target="_blank" rel="noopener" class="community-link"><span class="community-icon">&#x1D54F;</span> @ExergyNet</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
 
   <div id="site-footer"></div>
-
 </div>
 
 <script src="main.js"></script>
-<script>
-(function() {
-  function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-  function fmt(n) { return n.toLocaleString(); }
-
-  var nodes = randInt(38, 62);
-  var jobs = randInt(1200, 4800);
-  var usdc = randInt(420000, 980000);
-
-  function update() {
-    nodes += randInt(-2, 3); if (nodes < 20) nodes = 20;
-    jobs += randInt(0, 3);
-    usdc += randInt(0, 1200);
-
-    var nEl = document.getElementById('live-nodes');
-    var yEl = document.getElementById('live-yield');
-    var uEl = document.getElementById('live-usdc');
-
-    if (nEl) nEl.textContent = fmt(nodes);
-    if (yEl) yEl.textContent = fmt(jobs);
-    if (uEl) uEl.textContent = fmt(usdc) + ' USDC';
-  }
-
-  update();
-  setInterval(update, 3500);
-})();
-
-// ── Hero Slider ──
-(function() {
-  var track  = document.getElementById('hero-track');
-  var dots   = document.querySelectorAll('#hero-dots .hero-dot');
-  var btnPrev = document.getElementById('hero-prev');
-  var btnNext = document.getElementById('hero-next');
-  var slider = document.getElementById('hero-slider');
-  var current = 0;
-  var total   = track ? track.children.length : 4;
-  var timer;
-
-  function goTo(n) {
-    current = ((n % total) + total) % total;
-    track.style.transform = 'translateX(-' + (current * 100) + '%)';
-    dots.forEach(function(d, i) {
-      d.classList.toggle('active', i === current);
-    });
-  }
-
-  function startTimer() {
-    clearInterval(timer);
-    timer = setInterval(function() { goTo(current + 1); }, 7000);
-  }
-
-  btnPrev.addEventListener('click', function() { goTo(current - 1); startTimer(); });
-  btnNext.addEventListener('click', function() { goTo(current + 1); startTimer(); });
-  dots.forEach(function(d) {
-    d.addEventListener('click', function() { goTo(parseInt(d.getAttribute('data-index'), 10)); startTimer(); });
-  });
-
-  slider.addEventListener('mouseenter', function() { clearInterval(timer); });
-  slider.addEventListener('mouseleave', startTimer);
-
-  startTimer();
-})();
-</script>
 </body>
 </html>
