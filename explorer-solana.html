@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ExergyNet L0 Explorer</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
   <style>
     :root {
       --bg: #050706;
@@ -303,8 +307,8 @@
       <div>
         <h1>EXERGYNET L0 EXPLORER</h1>
         <div class="subtitle">
-          Live thermodynamic substrate telemetry. Reads ExergyNet L0 blocks, miner identities,
-          thermal anchors, derived yield, state hashes, and sovereign ledger balances.
+          Live sovereign substrate telemetry. Reads ExergyNet L0 blocks, miner identities,
+          verification weights, derived yield, state hashes, and sovereign ledger balances.
         </div>
       </div>
       <div class="status-pill" id="connectionStatus">CONNECTING</div>
@@ -330,8 +334,8 @@
       </div>
 
       <div class="card">
-        <div class="card-label">Thermal Flux</div>
-        <div class="card-value" id="flux">0 mC</div>
+        <div class="card-label">Verification Weight</div>
+        <div class="card-value" id="flux">0 u</div>
         <div class="card-sub">sum of visible anchors</div>
       </div>
 
@@ -387,7 +391,7 @@
       <aside>
         <section class="panel">
           <div class="panel-head">
-            <div class="panel-title">Thermal Flux Curve</div>
+            <div class="panel-title">Verification Weight Curve</div>
           </div>
           <div class="detail">
             <canvas id="fluxChart" width="700" height="220"></canvas>
@@ -650,7 +654,7 @@ function selectBlock(index) {
     <div class="kv">
       <div class="k">Height</div><div class="mono-green">${selectedBlock.height}</div>
       <div class="k">Miner</div><div class="addr">${selectedBlock.miner}</div>
-      <div class="k">Thermal Anchor</div><div>${Number(selectedBlock.heat).toLocaleString()} mC</div>
+      <div class="k">Verification Weight</div><div>${Number(selectedBlock.heat).toLocaleString()} u</div>
       <div class="k">Reward</div><div class="mono-amber">${Number(selectedBlock.reward).toLocaleString()} EXG</div>
       <div class="k">State Hash</div><div class="hash mono-blue">${selectedBlock.hash}</div>
       <div class="k">Status</div><div><span class="badge">${selectedBlock.status}</span></div>
@@ -702,7 +706,7 @@ function renderChart() {
   ctx.stroke();
 
   ctx.fillStyle = "#7f9b8f";
-  ctx.fillText("mC thermal anchor, last " + blocks.length + " blocks", 24, 18);
+  ctx.fillText("verification weight, last " + blocks.length + " blocks", 24, 18);
 }
 
 function renderRaw() {
@@ -785,7 +789,7 @@ async function renderRoute() {
           <div class="k">Route</div><div class="mono-green">#/block/${height}</div>
           <div class="k">Height</div><div class="mono-green">${b.height}</div>
           <div class="k">Miner</div><div class="addr mono-green">${b.miner}</div>
-          <div class="k">Thermal Anchor</div><div>${Number(b.heat).toLocaleString()} mC</div>
+          <div class="k">Verification Weight</div><div>${Number(b.heat).toLocaleString()} u</div>
           <div class="k">Reward</div><div class="mono-amber">${Number(b.reward).toLocaleString()} EXG</div>
           <div class="k">State Hash</div><div class="hash mono-blue">${b.hash}</div>
           <div class="k">Status</div><div><span class="badge">${b.status}</span></div>

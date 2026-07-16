@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>API Integration Docs — ExergyNet Developer Portal</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <meta name="description" content="Complete B2B integration reference for the ExergyNet decentralized compute network. Connect your biotech SaaS to ZK-verified pharmaceutical simulation in four steps.">
 <link rel="stylesheet" href="style.css">
 <script>
@@ -361,7 +365,7 @@
     <section class="docs-section" id="overview">
       <h2 class="docs-h2">
         <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">01</span>
-        The Thermodynamic Pipeline
+        The Sovereign Compute Pipeline
       </h2>
       <p class="docs-body">ExergyNet operates on one physical axiom: <strong>electricity cost is the only irreducible cost of computation.</strong> All other cloud pricing — corporate margins, hardware depreciation, profit extraction — is eliminated by routing work to a global swarm of prover nodes that compete on electricity price alone.</p>
       <p class="docs-body">The network enforces a strict separation: heavy data (SDF/PDB files, docking pose outputs) lives in AWS S3. The mathematical proof that the computation was executed correctly is settled on Base L2 as a ZK-STARK receipt. Your FDA submission references the proof hash — not the raw data.</p>
@@ -372,7 +376,7 @@
           <div class="flow-step-content">
             <div class="flow-step-label">// Estimate</div>
             <div class="flow-step-title">Query the Pricing Oracle</div>
-            <p class="flow-step-body">POST your file metadata to <code>/api/v1/estimate</code>. The L0 Router calculates the live wholesale USDC cost based on simulation type, molecular weight, and atom count. This is the thermodynamic cost — electricity + ZK-proof gas — with zero corporate markup. Apply your own SaaS multiplier to set your retail price.</p>
+            <p class="flow-step-body">POST your file metadata to <code>/api/v1/estimate</code>. The L0 Router calculates the live wholesale USDC cost based on simulation type, molecular weight, and atom count. This is the raw compute cost — electricity + ZK-proof gas — with zero corporate markup. Apply your own SaaS multiplier to set your retail price.</p>
           </div>
         </div>
         <div class="flow-step">

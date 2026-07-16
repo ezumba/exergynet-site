@@ -16,6 +16,8 @@ const PAGE_MAP: Record<string, string> = {
   '/music':                 'Drops — Community Music',
   '/dashboard/apps':        'My Apps',
   '/dashboard/aeris':       'AERIS',
+  '/dashboard/vanguard':    'Vanguard',
+  '/dashboard/vault':       'Vault',
 };
 
 function HamburgerIcon() {
@@ -74,10 +76,12 @@ export default function Topbar() {
       </button>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-faint)', letterSpacing: '0.01em' }}>
-          ExergyNet
-        </span>
-        <span style={{ color: 'var(--border-mid)', fontSize: 14 }}>/</span>
+        <img
+          src={theme === 'dark' ? '/nav-logo-green.png' : '/nav-logo-navy.png'}
+          alt="ExergyNet"
+          style={{ height: 18, width: 'auto', display: 'block' }}
+        />
+        <span className="topbar-brand-prefix" style={{ color: 'var(--border-mid)', fontSize: 14 }}>/</span>
         <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', letterSpacing: '-0.01em' }}>
           {pageTitle}
         </span>
