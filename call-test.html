@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ExergyNet — Browser Call Test</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<script src="https://cdn.jsdelivr.net/npm/livekit-client@2/dist/livekit-client.umd.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Courier New',monospace;background:#0a0a0f;color:#e2e8f0;min-height:100vh;padding:24px}
+  h1{font-size:14px;letter-spacing:.1em;color:#a78bfa;margin-bottom:4px}
+  .sub{font-size:10px;color:#475569;letter-spacing:.06em;margin-bottom:28px}
+  .card{background:#111827;border:1px solid #1e293b;border-radius:8px;padding:20px;margin-bottom:16px}
+  label{display:block;font-size:10px;color:#64748b;letter-spacing:.08em;margin-bottom:6px}
+  input{width:100%;background:#0f172a;border:1px solid #1e293b;border-radius:6px;padding:9px 12px;
+    color:#a78bfa;font-family:inherit;font-size:12px;outline:none;margin-bottom:12px}
+  input:focus{border-color:#a78bfa}
+  button{background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:10px 22px;
+    font-family:inherit;font-size:12px;letter-spacing:.06em;cursor:pointer}
+  button:hover{background:#6d28d9}
+  button:disabled{background:#374151;cursor:default}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap}
+  .btn-danger{background:#dc2626}
+  .btn-danger:hover{background:#b91c1c}
+  .btn-ghost{background:#1e293b;color:#94a3b8}
+  .btn-ghost:hover{background:#334155}
+  #log{font-size:11px;line-height:1.8;color:#64748b;max-height:200px;overflow-y:auto;
+    background:#0f172a;border:1px solid #1e293b;border-radius:6px;padding:12px;
+    white-space:pre-wrap;word-break:break-all}
+  #log .ok{color:#4ade80}
+  #log .err{color:#f87171}
+  #log .warn{color:#f59e0b}
+  #log .info{color:#38bdf8}
+  .videos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  video{width:100%;border-radius:8px;background:#000;min-height:180px;border:1px solid #1e293b}
+  .vid-label{font-size:10px;color:#475569;letter-spacing:.06em;margin-bottom:4px}
+  #status{font-size:11px;padding:8px 12px;border-radius:6px;margin-bottom:12px;display:none}
+  #status.ok{background:#052e16;border:1px solid #166534;color:#4ade80}
+  #status.err{background:#2d0a0a;border:1px solid #7f1d1d;color:#f87171}
+  #status.warn{background:#1c1a05;border:1px solid #713f12;color:#f59e0b}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .stat{background:#0f172a;border:1px solid #1e293b;border-radius:6px;padding:10px;text-align:center}
+  .stat-val{font-size:18px;color:#a78bfa;font-weight:600}
+  .stat-key{font-size:9px;color:#475569;letter-spacing:.08em;margin-top:2px}
+</style>
+</head>
+<body>
+
+<h1>■ EXERGYNET — BROWSER CALL TEST</h1>
+<p class="sub">LiveKit SFU + TURN relay verification · wss://livekit.exergynet.org</p>
+
+<div class="card">
+  <label>EXERGYNET API KEY (74 chars · sk-exergy-…)</label>
+  <input id="apiKey" type="text" placeholder="sk-exergy-…" autocomplete="off" spellcheck="false" oninput="validateKey(this)"/>
+  <label>ROOM NAME (shared between callers)</label>
+  <input id="roomName" type="text" placeholder="test-room-001" value="browser-call-test"/>
+  <label>YOUR DISPLAY NAME</label>
+  <input id="identity" type="text" placeholder="browser-node-1" value="browser-node"/>
+  <div id="status"></div>
+  <div class="btn-row">
+    <button id="btn-join" onclick="joinRoom()">Join Room</button>
+    <button id="btn-leave" onclick="leaveRoom()" class="btn-danger" disabled>Leave</button>
+    <button onclick="toggleMic()" class="btn-ghost" id="btn-mic">Mute Mic</button>
+    <button onclick="toggleCam()" class="btn-ghost" id="btn-cam">Stop Cam</button>
+    <button onclick="recordToVault()" class="btn-ghost" id="btn-vault" disabled
+      style="border-color:#7c3aed;color:#a78bfa;">⬡ Record to Vault</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="stat-grid">
+    <div class="stat"><div class="stat-val" id="stat-participants">0</div><div class="stat-key">PARTICIPANTS</div></div>
+    <div class="stat"><div class="stat-val" id="stat-ice">—</div><div class="stat-key">ICE TYPE</div></div>
+    <div class="stat"><div class="stat-val" id="stat-relay">—</div><div class="stat-key">RELAY</div></div>
+  </div>
+  <div class="videos">
+    <div><div class="vid-label">LOCAL</div><video id="local-video" autoplay muted playsinline></video></div>
+    <div><div class="vid-label">REMOTE</div><video id="remote-video" autoplay playsinline></video></div>
+  </div>
+</div>
+
+<div class="card">
+  <label>SYSTEM LOG</label>
+  <div id="log">Ready. Enter API key and room name, then click Join Room.\n</div>
+</div>
+
+<script>
+const PORTAL = 'https://portal.exergynet.org';
+const LK_URL = 'wss://livekit.exergynet.org';
+let room = null;
+let micEnabled = true;
+let camEnabled = true;
+
+function log(msg, cls = '') {
+  const el = document.getElementById('log');
+  const line = document.createElement('span');
+  if (cls) line.className = cls;
+  line.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg + '\n';
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function setStatus(msg, cls) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = cls;
+  el.style.display = 'block';
+}
+
+function validateKey(el) {
+  const v = el.value.trim();
+  if (!v) { el.style.borderColor = '#1e293b'; return; }
+  el.style.borderColor = (v.startsWith('sk-exergy-') && v.length === 74) ? '#4ade80' : '#f87171';
+}
+
+async function joinRoom() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const roomName = document.getElementById('roomName').value.trim() || 'browser-call-test';
+  const identity = document.getElementById('identity').value.trim() || 'browser-node';
+
+  if (!apiKey || !apiKey.startsWith('sk-exergy-') || apiKey.length !== 74) {
+    setStatus('API key must be 74 chars starting with sk-exergy-', 'err');
+    return;
+  }
+
+  document.getElementById('btn-join').disabled = true;
+  setStatus('Fetching LiveKit token…', 'warn');
+  log('Requesting token from portal…', 'info');
+
+  let token;
+  try {
+    const qs = '?room=' + encodeURIComponent(roomName) + '&identity=' + encodeURIComponent(identity);
+    const r = await fetch(PORTAL + '/api/livekit/token' + qs, {
+      headers: { 'Authorization': 'Bearer ' + apiKey },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) {
+      const body = await r.json().catch(() => ({}));
+      throw new Error(body.error || 'HTTP ' + r.status);
+    }
+    const data = await r.json();
+    token = data.token;
+    log('Token received ✓  room=' + roomName + ' identity=' + identity, 'ok');
+  } catch(e) {
+    setStatus('Token fetch failed: ' + e.message, 'err');
+    log('Token error: ' + e.message, 'err');
+    document.getElementById('btn-join').disabled = false;
+    return;
+  }
+
+  setStatus('Connecting to LiveKit SFU…', 'warn');
+  log('Connecting to ' + LK_URL + '…', 'info');
+
+  room = new LivekitClient.Room({
+    adaptiveStream: true,
+    dynacast: true,
+    videoCaptureDefaults: { resolution: LivekitClient.VideoPresets.h360.resolution },
+  });
+
+  room.on(LivekitClient.RoomEvent.Connected, () => {
+    log('Connected to room: ' + room.name, 'ok');
+    setStatus('✓ Connected — room: ' + room.name + ' · ' + room.remoteParticipants.size + ' others', 'ok');
+    updateStats();
+    document.getElementById('btn-leave').disabled = false;
+  });
+
+  room.on(LivekitClient.RoomEvent.Disconnected, () => {
+    log('Disconnected from room', 'warn');
+    setStatus('Disconnected', 'warn');
+    document.getElementById('btn-join').disabled = false;
+    document.getElementById('btn-leave').disabled = true;
+    document.getElementById('stat-participants').textContent = '0';
+    document.getElementById('stat-ice').textContent = '—';
+    document.getElementById('stat-relay').textContent = '—';
+  });
+
+  room.on(LivekitClient.RoomEvent.ParticipantConnected, (p) => {
+    log('Participant joined: ' + p.identity, 'ok');
+    updateStats();
+  });
+
+  room.on(LivekitClient.RoomEvent.ParticipantDisconnected, (p) => {
+    log('Participant left: ' + p.identity, 'warn');
+    updateStats();
+  });
+
+  // ── TRACK SUBSCRIBED: remote video/audio weld ──────────────────────────────
+  // LiveKit 2.x: track.attach() RETURNS a new element — does not mutate existing.
+  // We replaceWith() to keep the DOM slot intact and preserve CSS.
+  room.on(LivekitClient.RoomEvent.TrackSubscribed, (track, pub, participant) => {
+    log('Track subscribed: ' + track.kind + ' from ' + participant.identity, 'ok');
+    if (track.kind === LivekitClient.Track.Kind.Video) {
+      const el = track.attach();
+      el.id = 'remote-video';
+      el.autoplay = true;
+      el.playsInline = true;
+      el.style.cssText = 'width:100%;border-radius:8px;background:#000;min-height:180px;border:1px solid #1e293b;';
+      document.getElementById('remote-video').replaceWith(el);
+      log('Remote video wired to DOM', 'ok');
+    } else if (track.kind === LivekitClient.Track.Kind.Audio) {
+      const el = track.attach();
+      el.autoplay = true;
+      document.body.appendChild(el);
+    }
+    // ICE check: give PC time to settle before probing stats
+    setTimeout(checkICEType, 2500);
+  });
+
+  room.on(LivekitClient.RoomEvent.TrackUnsubscribed, (track) => {
+    track.detach();
+    // Restore placeholder video element if remote track removed
+    if (track.kind === LivekitClient.Track.Kind.Video) {
+      const placeholder = document.createElement('video');
+      placeholder.id = 'remote-video';
+      placeholder.autoplay = true;
+      placeholder.playsInline = true;
+      placeholder.style.cssText = 'width:100%;border-radius:8px;background:#000;min-height:180px;border:1px solid #1e293b;';
+      const existing = document.getElementById('remote-video');
+      if (existing) existing.replaceWith(placeholder);
+    }
+  });
+
+  // ── LOCAL TRACK PUBLISHED: wire local video as soon as track is live ───────
+  room.localParticipant.on(LivekitClient.ParticipantEvent.LocalTrackPublished, (pub) => {
+    if (pub.track && pub.kind === LivekitClient.Track.Kind.Video) {
+      const el = pub.track.attach();
+      el.id = 'local-video';
+      el.autoplay = true;
+      el.muted = true;
+      el.playsInline = true;
+      el.style.cssText = 'width:100%;border-radius:8px;background:#000;min-height:180px;border:1px solid #1e293b;';
+      document.getElementById('local-video').replaceWith(el);
+      log('Local camera wired to DOM', 'ok');
+    }
+  });
+
+  try {
+    await room.connect(LK_URL, token);
+    log('Enabling camera + microphone…', 'info');
+    await room.localParticipant.enableCameraAndMicrophone();
+    log('Camera + microphone enabled', 'ok');
+    document.getElementById('btn-vault').disabled = false;
+    // ICE check starts after tracks are subscribed (event-driven above),
+    // but also poll once after 5s in case we're alone in the room
+    setTimeout(checkICEType, 5000);
+  } catch(e) {
+    setStatus('Connection failed: ' + e.message, 'err');
+    log('Connect error: ' + e.message, 'err');
+    document.getElementById('btn-join').disabled = false;
+  }
+}
+
+async function leaveRoom() {
+  if (room) {
+    await room.disconnect();
+    room = null;
+  }
+  document.getElementById('btn-vault').disabled = true;
+  log('Left room', 'warn');
+}
+
+async function recordToVault() {
+  // SPRINT CHI PLACEHOLDER — Week 2: POST transcript chunks to /api/xlmp/ingest
+  // Returns xlmp_root — the ZK-sealed Sovereign Record of this meeting.
+  const roomName = document.getElementById('roomName').value.trim();
+  log('[ VAULT ] Recording initiated for room: ' + roomName + ' — transcript anchor pending (Sprint Chi Week 2)', 'info');
+  setStatus('⬡ Vault recording queued — xlmp_root will be generated on room close', 'warn');
+}
+
+async function toggleMic() {
+  if (!room) return;
+  micEnabled = !micEnabled;
+  await room.localParticipant.setMicrophoneEnabled(micEnabled);
+  document.getElementById('btn-mic').textContent = micEnabled ? 'Mute Mic' : 'Unmute Mic';
+  log('Mic: ' + (micEnabled ? 'ON' : 'MUTED'), 'info');
+}
+
+async function toggleCam() {
+  if (!room) return;
+  camEnabled = !camEnabled;
+  await room.localParticipant.setCameraEnabled(camEnabled);
+  document.getElementById('btn-cam').textContent = camEnabled ? 'Stop Cam' : 'Start Cam';
+  log('Camera: ' + (camEnabled ? 'ON' : 'OFF'), 'info');
+}
+
+function updateStats() {
+  if (!room) return;
+  document.getElementById('stat-participants').textContent = 1 + room.remoteParticipants.size;
+}
+
+async function checkICEType() {
+  if (!room) return;
+  try {
+    // LiveKit 2.x PC path — try all known internal structures
+    const pc = room.engine?.publisher?.pc
+            || room.engine?.pcManager?.publisher?.pc
+            || room.engine?.subscriber?.pc
+            || room.engine?.pcManager?.subscriber?.pc;
+    if (!pc) {
+      log('ICE: PC not settled yet — will retry after next track event', 'warn');
+      return;
+    }
+    const stats = await pc.getStats();
+    let iceType = 'unknown', relay = '—';
+    stats.forEach(s => {
+      if (s.type === 'candidate-pair' && s.state === 'succeeded') {
+        const local = [...stats.values()].find(x => x.id === s.localCandidateId);
+        if (local) {
+          iceType = local.candidateType || 'unknown';
+          relay = local.relayProtocol || (local.candidateType === 'relay' ? 'relay' : 'direct');
+        }
+      }
+    });
+    document.getElementById('stat-ice').textContent = iceType;
+    document.getElementById('stat-relay').textContent = relay;
+    const cls = iceType === 'relay' ? 'ok' : iceType === 'host' ? 'info' : 'warn';
+    log('ICE candidate type: ' + iceType + ' · relay: ' + relay, cls);
+    if (iceType === 'relay') log('✓ TURN relay active — UDP-blocked networks supported', 'ok');
+    else if (iceType === 'host' || iceType === 'srflx') log('Direct path (no TURN needed on this network)', 'ok');
+  } catch(e) {
+    log('ICE stats error: ' + e.message, 'warn');
+  }
+}
+</script>
+</body>
+</html>

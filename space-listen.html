@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Live Space · ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <meta property="og:title" content="🎙️ Live Space on ExergyNet">
 <meta property="og:description" content="Listen to a live audio Space — no app needed.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
@@ -189,6 +193,75 @@ img.emoji{width:1.1em;height:1.1em;vertical-align:-.15em;display:inline}
 
 /* Err box */
 .err-box{background:var(--red-d);border:.5px solid rgba(224,82,82,.3);border-radius:12px;padding:12px 14px;margin-top:10px;color:var(--red);font-size:13px}
+
+/* ── Top-bar icon buttons (chat + vanguard) ──────────────────────────────── */
+.tb-btn{background:var(--surface2);border:.5px solid var(--border2);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;flex-shrink:0;position:relative;transition:background .15s}
+.tb-btn:hover{background:var(--surface3)}
+.tb-btn.active{background:var(--teal-d);border-color:var(--teal)}
+.tb-badge{position:absolute;top:-4px;right:-4px;background:var(--red);border-radius:50%;width:14px;height:14px;font-size:8px;font-weight:800;color:#fff;display:none;align-items:center;justify-content:center}
+.tb-badge.has{display:flex}
+
+/* ── Chat slide panel ────────────────────────────────────────────────────── */
+#chat-panel{display:none;position:fixed;bottom:0;left:0;right:0;z-index:120;background:var(--surface);border-top:.5px solid var(--border2);flex-direction:column;height:55vh;box-shadow:0 -12px 40px rgba(0,0,0,.6)}
+#chat-panel.open{display:flex}
+@media(min-width:721px){
+  #chat-panel{left:auto;top:var(--nav-h);bottom:0;width:320px;border-top:none;border-left:.5px solid var(--border2);height:auto;box-shadow:-12px 0 40px rgba(0,0,0,.4)}
+}
+.chat-hdr{padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:.5px solid var(--border);flex-shrink:0}
+.chat-hdr-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase}
+.chat-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 2px}
+#chat-feed{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+#chat-feed::-webkit-scrollbar{width:3px}
+#chat-feed::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.chat-msg{display:flex;flex-direction:column;gap:1px;animation:fadeUp .2s ease-out}
+.chat-msg-meta{font-size:10px;font-weight:700}
+.chat-msg-meta.mine{color:var(--teal);text-align:right}
+.chat-msg-meta.theirs{color:var(--ghost)}
+.chat-msg-text{font-size:13px;line-height:1.45;color:var(--text);word-break:break-word;background:var(--surface2);border-radius:10px;padding:6px 10px;display:inline-block;max-width:85%}
+.chat-msg.mine-wrap{align-items:flex-end}
+.chat-empty{color:var(--hint);font-size:13px;text-align:center;padding:20px 0;font-style:italic}
+.chat-input-row{padding:8px 12px;border-top:.5px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:var(--surface)}
+.chat-inp{flex:1;background:var(--surface2);border:.5px solid var(--border2);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--text);outline:none}
+.chat-inp:focus{border-color:var(--teal)}
+.chat-send{background:var(--teal);color:#031b14;border:none;border-radius:9px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0}
+.chat-signin-bar{padding:10px 14px;text-align:center;font-size:12px;color:var(--muted)}
+.chat-signin-bar button{background:var(--surface2);border:.5px solid var(--teal);color:var(--teal);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px}
+
+/* ── Vanguard slide panel ─────────────────────────────────────────────────── */
+#vg-panel{display:none;position:fixed;bottom:0;left:0;right:0;z-index:130;background:var(--bg);border-top:.5px solid var(--border2);flex-direction:column;height:70vh;box-shadow:0 -12px 40px rgba(0,0,0,.7)}
+#vg-panel.open{display:flex}
+@media(min-width:721px){
+  #vg-panel{left:auto;top:var(--nav-h);bottom:0;width:360px;border-top:none;border-left:.5px solid var(--border2);height:auto}
+}
+.vg-hdr{padding:12px 16px 10px;display:flex;align-items:center;gap:10px;border-bottom:.5px solid var(--border);flex-shrink:0}
+.vg-hdr-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;flex-shrink:0}
+.vg-hdr-label{font-size:13px;font-weight:700;color:var(--teal);flex:1}
+.vg-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer}
+#vg-feed{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+#vg-feed::-webkit-scrollbar{width:3px}
+#vg-feed::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.vg-bubble{padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.5;max-width:88%;animation:fadeUp .2s ease-out;word-break:break-word}
+.vg-bubble.user{background:var(--teal-d);border:.5px solid rgba(0,200,150,.2);align-self:flex-end;color:var(--text)}
+.vg-bubble.assistant{background:var(--surface2);border:.5px solid var(--border2);color:var(--text)}
+.vg-bubble.thinking{opacity:.5;font-style:italic}
+.vg-empty{color:var(--hint);font-size:13px;text-align:center;padding:24px 14px;line-height:1.6}
+.vg-input-row{padding:8px 12px 12px;border-top:.5px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:var(--bg)}
+.vg-inp{flex:1;background:var(--surface2);border:.5px solid var(--border2);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--text);outline:none}
+.vg-inp:focus{border-color:var(--teal)}
+.vg-send{background:var(--teal);color:#031b14;border:none;border-radius:9px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0}
+.vg-signin-bar{padding:16px 14px;text-align:center}
+.vg-signin-bar p{color:var(--muted);font-size:13px;margin-bottom:10px}
+.vg-signin-bar button{background:var(--teal);color:#031b14;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer}
+
+/* ── Toast notification ───────────────────────────────────────────────────── */
+.space-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:999;background:var(--surface);border:.5px solid var(--border2);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,.5);animation:fadeUp .25s ease-out;pointer-events:none;white-space:nowrap}
+
+/* ── Connecting overlay ──────────────────────────────────────────────────── */
+#connecting-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(8,13,18,.8);align-items:center;justify-content:center;flex-direction:column;gap:14px;backdrop-filter:blur(4px)}
+#connecting-overlay.show{display:flex}
+.conn-spinner{width:40px;height:40px;border:3px solid var(--border2);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.conn-label{font-size:14px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -269,6 +342,8 @@ img.emoji{width:1.1em;height:1.1em;vertical-align:-.15em;display:inline}
     <div class="live-chip"><span class="dot"></span>LIVE</div>
     <div class="space-title" id="top-room-label">Space</div>
     <div class="count-chip"><span class="dot"></span><span id="top-listener-count">1</span> listening</div>
+    <button class="tb-btn" id="chat-toggle-btn" title="Space chat" onclick="toggleChatPanel()">💬<span class="tb-badge" id="chat-badge"></span></button>
+    <button class="tb-btn" id="vg-toggle-btn" title="Ask Vanguard AI" onclick="toggleVgPanel()">🤖</button>
     <button class="leave-btn" id="leave-btn">Leave</button>
   </div>
 
@@ -319,16 +394,48 @@ img.emoji{width:1.1em;height:1.1em;vertical-align:-.15em;display:inline}
 </div>
 
 <!-- Listener sheet toggle (mobile) -->
-<button class="lc-mobile-toggle" id="lc-toggle-btn" style="display:none" title="Show listeners">
+<button class="lc-mobile-toggle" id="lc-toggle-btn" title="Show listeners">
   👥
 </button>
+
+<!-- Chat panel -->
+<div id="chat-panel">
+  <div class="chat-hdr">
+    <span class="chat-hdr-label">Space Chat</span>
+    <button class="chat-close" onclick="toggleChatPanel()">✕</button>
+  </div>
+  <div id="chat-feed">
+    <div class="chat-empty" id="chat-empty">No messages yet — say hello!</div>
+  </div>
+  <div id="chat-send-area"></div>
+</div>
+
+<!-- Vanguard AI panel -->
+<div id="vg-panel">
+  <div class="vg-hdr">
+    <span class="vg-hdr-dot"></span>
+    <span class="vg-hdr-label">Vanguard AI</span>
+    <button class="vg-close" onclick="toggleVgPanel()">✕</button>
+  </div>
+  <div id="vg-feed">
+    <div class="vg-empty" id="vg-empty">Ask Vanguard anything about this Space or the ExergyNet ecosystem.</div>
+  </div>
+  <div id="vg-input-area"></div>
+</div>
+
+<!-- Reconnecting overlay -->
+<div id="connecting-overlay">
+  <div class="conn-spinner"></div>
+  <div class="conn-label" id="conn-label">Connecting…</div>
+</div>
 
 <!-- LiveKit SDK -->
 <script src="https://cdn.jsdelivr.net/npm/livekit-client@2/dist/livekit-client.umd.min.js"></script>
 <script>
 // ── Config ────────────────────────────────────────────────────────────────────
-var TOKEN_URL = 'https://explorer-api.exergynet.org/space/guest-token';
-var LK_URL    = 'wss://livekit.exergynet.org';
+var TOKEN_URL     = 'https://livekit.exergynet.org/api/v1/livekit/guest-token';
+var AUTH_TOKEN_URL = 'https://livekit.exergynet.org/api/v1/livekit/token';
+var LK_URL        = 'wss://livekit.exergynet.org';
 
 // ── URL params ────────────────────────────────────────────────────────────────
 var params = new URLSearchParams(location.search);
@@ -349,6 +456,13 @@ var _metaMap      = {};    // identity → metadata object
 var _txLines      = [];    // transcript history
 var _TX_MAX       = 120;
 var _listenerProfiles = {}; // identity → { name, role, images[] }
+var _spaceTitle       = '';  // display title of current room
+var _chatOpen         = false;
+var _vgOpen           = false;
+var _unreadChat       = 0;
+var _vgHistory        = [];  // {role, content}[] for Vanguard context
+var _vgThinking       = false;
+var _chatCanSend      = false; // true when we have canPublishData token
 
 // ── iOS audio unlock ──────────────────────────────────────────────────────────
 // ── Space background sound engine (mirrors BgSoundPlayer.kt synthesis) ────────
@@ -559,7 +673,6 @@ function _resolveName(p) {
 function _getRole(p) {
   var meta = _getMeta(p.identity);
   if (meta.role) return meta.role;
-  if (p.permissions && p.permissions.canPublish) return 'speaker';
   return 'listener';
 }
 function _myDisplayName() {
@@ -609,7 +722,7 @@ function _renderStage(speakers) {
     var tagClass = _roleTagClass(s.role);
     var icon = _roleIcon(s.role, s.isGhost);
     var avContent = _avImgHtml(_getMeta(s.id), icon);
-    html += '<div class="s-pip">';
+    html += '<div class="s-pip" data-identity="' + esc(s.id) + '" onclick="openProfilePanel(this)" style="cursor:pointer" title="View ' + esc(s.name) + '\'s profile">';
     html += '<div class="av ' + avClass + '">' + avContent + '</div>';
     html += '<div class="sname">' + esc(s.name) + '</div>';
     html += '<div class="stag ' + tagClass + '">' + esc(s.role) + '</div>';
@@ -643,8 +756,11 @@ function _renderListeners(listeners, totalCount) {
     html += '<div class="lname">' + esc(l.name) + '</div>';
     html += '</div>';
   });
-  // Self pip
-  html += '<div class="lpip" data-identity="__self" title="You"><div class="lav ghost-lav">👻</div><div class="lname">You</div></div>';
+  // Self pip — show actual name if signed in
+  var selfName = _spaceMeName || 'You';
+  var selfIcon = _spaceMeName ? '👤' : '👻';
+  var selfCls  = _spaceMeName ? '' : 'ghost-lav';
+  html += '<div class="lpip" data-identity="__self" title="You"><div class="lav ' + selfCls + '">' + selfIcon + '</div><div class="lname">' + esc(selfName.slice(0,8)) + '</div></div>';
   // Overflow
   if (listeners.length > _MAX_VISIBLE_LISTENERS) {
     html += '<div class="overflow-chip">+' + (listeners.length - _MAX_VISIBLE_LISTENERS).toLocaleString() + ' more</div>';
@@ -714,6 +830,8 @@ function addTranscriptLine(speakerIdentity, speakerName, role, text, isPartial) 
 
   feed.appendChild(line);
   _twemoji(line);
+  // Prune DOM to match _TX_MAX so long sessions don't leak nodes
+  while (feed.children.length > _TX_MAX + 10) feed.removeChild(feed.firstChild);
   feed.scrollTop = feed.scrollHeight;
 }
 
@@ -829,8 +947,10 @@ function doSpaceSignIn() {
     _spaceMeName = res.d.display_name || res.d.username || email.split('@')[0];
     localStorage.setItem('exergynet_jwt', _spaceJwt);
     localStorage.setItem('exergynet_display_name', _spaceMeName);
-    // Redirect back to the room — page reloads as signed-in
-    window.location.href = window.location.href;
+    document.getElementById('signin-modal').classList.remove('open');
+    onSignedIn(_spaceMeName);
+    // Upgrade LK connection to get canPublishData token (no reload needed)
+    upgradeToDataParticipant();
   })
   .catch(function() {
     btn.textContent = 'Sign in →'; btn.disabled = false;
@@ -842,8 +962,16 @@ function onSignedIn(name) {
   var gate = document.getElementById('ghost-gate');
   if (gate) gate.innerHTML =
     '<span style="color:var(--teal);font-size:13px;font-weight:700">✓ ' + esc(name) + '</span>' +
-    '<span style="color:var(--muted);font-size:12px;flex:1">You\'re listening live</span>' +
-    '<button onclick="localStorage.removeItem(\'exergynet_jwt\');localStorage.removeItem(\'exergynet_display_name\');window.location.reload()" style="background:var(--surface2);border:.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--muted);cursor:pointer">Sign out</button>';
+    '<span style="color:var(--muted);font-size:12px;flex:1">Listening live</span>' +
+    '<button onclick="doSpaceSignOut()" style="background:var(--surface2);border:.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--muted);cursor:pointer">Sign out</button>';
+  _renderChatSendArea();
+  _renderVgInputArea();
+}
+
+function doSpaceSignOut() {
+  localStorage.removeItem('exergynet_jwt');
+  localStorage.removeItem('exergynet_display_name');
+  window.location.reload();
 }
 
 // Auto-apply signed-in state on page load if JWT cached
@@ -857,6 +985,236 @@ document.addEventListener('keydown', function(e) {
     doSpaceSignIn();
   }
 });
+
+// ── Token upgrade: get canPublishData token for signed-in user ────────────────
+async function upgradeToDataParticipant() {
+  if (!_spaceJwt || !roomId) return;
+  var suffix = (performance.now() * 1000 | 0).toString(16).slice(-6);
+  var safeName = (_spaceMeName || 'user').replace(/[^A-Za-z0-9_\-]/g, '_').slice(0, 20);
+  var identity = 'web_' + safeName + '_' + suffix;
+  try {
+    var resp = await fetch(
+      AUTH_TOKEN_URL + '?room=' + encodeURIComponent(roomId) +
+        '&identity=' + encodeURIComponent(identity)
+    );
+    if (!resp.ok) return;
+    var data = await resp.json();
+    if (!data.token) return;
+    // Reconnect with upgraded token
+    if (lkRoom) {
+      var overlay = document.getElementById('connecting-overlay');
+      var lbl = document.getElementById('conn-label');
+      if (overlay) overlay.classList.add('show');
+      if (lbl) lbl.textContent = 'Upgrading connection…';
+      try {
+        await lkRoom.disconnect();
+        myIdentity = identity;
+        _chatCanSend = true;
+        await lkRoom.connect(LK_URL, data.token, { autoSubscribe: true });
+        _renderChatSendArea();
+        _showSpaceToast('You can now send chat messages', 2500);
+      } catch(e) { console.error('[space] reconnect failed', e); }
+      if (overlay) overlay.classList.remove('show');
+    } else {
+      // Not yet in room — store for startListening
+      window._upgradedToken = data.token;
+      window._upgradedIdentity = identity;
+      _chatCanSend = true;
+    }
+  } catch(e) { console.error('[space] token upgrade error', e); }
+}
+
+// ── Toast notification ────────────────────────────────────────────────────────
+function _showSpaceToast(msg, duration) {
+  var t = document.createElement('div');
+  t.className = 'space-toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, duration || 2500);
+}
+
+// ── Chat panel ────────────────────────────────────────────────────────────────
+function toggleChatPanel() {
+  _chatOpen = !_chatOpen;
+  _vgOpen = false;
+  var chatEl = document.getElementById('chat-panel');
+  var vgEl   = document.getElementById('vg-panel');
+  var btn    = document.getElementById('chat-toggle-btn');
+  if (chatEl) chatEl.classList.toggle('open', _chatOpen);
+  if (vgEl)   vgEl.classList.remove('open');
+  if (btn)    btn.classList.toggle('active', _chatOpen);
+  var vgBtn = document.getElementById('vg-toggle-btn');
+  if (vgBtn) vgBtn.classList.remove('active');
+  // Clear unread badge when opening
+  if (_chatOpen) {
+    _unreadChat = 0;
+    var badge = document.getElementById('chat-badge');
+    if (badge) badge.classList.remove('has');
+  }
+}
+
+function _renderChatSendArea() {
+  var area = document.getElementById('chat-send-area');
+  if (!area) return;
+  if (_spaceJwt && _chatCanSend) {
+    area.innerHTML =
+      '<div class="chat-input-row">' +
+      '<input class="chat-inp" id="chat-inp" placeholder="Say something…" maxlength="400" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();sendSpaceChat();}" />' +
+      '<button class="chat-send" onclick="sendSpaceChat()">Send</button>' +
+      '</div>';
+  } else if (_spaceJwt && !_chatCanSend) {
+    area.innerHTML =
+      '<div class="chat-signin-bar">Upgrading connection for chat…</div>';
+  } else {
+    area.innerHTML =
+      '<div class="chat-signin-bar">' +
+      'Listening in ghost mode — messages from the room appear here.' +
+      '<br><button onclick="showSignInGate()">Sign in to send</button>' +
+      '</div>';
+  }
+}
+
+function addChatLine(senderName, text, isMe) {
+  var feed = document.getElementById('chat-feed');
+  if (!feed) return;
+  var empty = document.getElementById('chat-empty');
+  if (empty) { empty.style.display = 'none'; }
+  var wrap = document.createElement('div');
+  wrap.className = 'chat-msg' + (isMe ? ' mine-wrap' : '');
+  var meta = document.createElement('div');
+  meta.className = 'chat-msg-meta ' + (isMe ? 'mine' : 'theirs');
+  meta.textContent = isMe ? 'You' : senderName;
+  var bubble = document.createElement('div');
+  bubble.className = 'chat-msg-text';
+  bubble.textContent = text;
+  wrap.appendChild(meta); wrap.appendChild(bubble);
+  feed.appendChild(wrap);
+  feed.scrollTop = feed.scrollHeight;
+  // Unread badge
+  if (!_chatOpen) {
+    _unreadChat++;
+    var badge = document.getElementById('chat-badge');
+    if (badge) { badge.textContent = _unreadChat > 9 ? '9+' : String(_unreadChat); badge.classList.add('has'); }
+  }
+}
+
+async function sendSpaceChat() {
+  if (!lkRoom || !_chatCanSend) return;
+  var inp = document.getElementById('chat-inp');
+  if (!inp) return;
+  var text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  var msg = JSON.stringify({ sender: myIdentity, senderName: _spaceMeName || 'Me', text: text });
+  try {
+    await lkRoom.localParticipant.publishData(
+      new TextEncoder().encode(msg),
+      { reliable: true, topic: 'space.chat' }
+    );
+    addChatLine(_spaceMeName || 'Me', text, true);
+  } catch(e) {
+    console.error('[space] send chat failed', e);
+    _showSpaceToast('Failed to send — check connection', 3000);
+  }
+}
+
+// ── Vanguard panel ────────────────────────────────────────────────────────────
+function toggleVgPanel() {
+  _vgOpen = !_vgOpen;
+  _chatOpen = false;
+  var vgEl   = document.getElementById('vg-panel');
+  var chatEl = document.getElementById('chat-panel');
+  var btn    = document.getElementById('vg-toggle-btn');
+  if (vgEl)   vgEl.classList.toggle('open', _vgOpen);
+  if (chatEl) chatEl.classList.remove('open');
+  if (btn)    btn.classList.toggle('active', _vgOpen);
+  var chatBtn = document.getElementById('chat-toggle-btn');
+  if (chatBtn) chatBtn.classList.remove('active');
+}
+
+function _renderVgInputArea() {
+  var area = document.getElementById('vg-input-area');
+  if (!area) return;
+  if (_spaceJwt) {
+    area.innerHTML =
+      '<div class="vg-input-row">' +
+      '<input class="vg-inp" id="vg-inp" placeholder="Ask Vanguard…" maxlength="500" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();vgSend();}" />' +
+      '<button class="vg-send" onclick="vgSend()">Ask</button>' +
+      '</div>';
+  } else {
+    area.innerHTML =
+      '<div class="vg-signin-bar">' +
+      '<p>Sign in to use the Vanguard AI assistant in this Space.</p>' +
+      '<button onclick="showSignInGate()">Sign in</button>' +
+      '</div>';
+  }
+}
+
+function _addVgBubble(text, role, isThinking) {
+  var feed = document.getElementById('vg-feed');
+  if (!feed) return null;
+  var empty = document.getElementById('vg-empty');
+  if (empty) empty.style.display = 'none';
+  var bubble = document.createElement('div');
+  bubble.className = 'vg-bubble ' + role + (isThinking ? ' thinking' : '');
+  bubble.textContent = text;
+  feed.appendChild(bubble);
+  feed.scrollTop = feed.scrollHeight;
+  return bubble;
+}
+
+async function vgSend() {
+  if (_vgThinking) return;
+  var inp = document.getElementById('vg-inp');
+  if (!inp) return;
+  var text = inp.value.trim();
+  if (!text) return;
+  if (!_spaceJwt) { showSignInGate(); return; }
+  inp.value = '';
+  _vgThinking = true;
+  _addVgBubble(text, 'user', false);
+  var thinkBubble = _addVgBubble('…', 'assistant', true);
+  var sysCtx = 'You are Vanguard, the ExergyNet sovereign AI assistant. Keep answers concise and relevant.';
+  if (_spaceTitle) sysCtx += ' The user is attending a live Space titled "' + _spaceTitle + '".';
+  var messages = [{ role: 'system', content: sysCtx }].concat(_vgHistory).concat([{ role: 'user', content: text }]);
+  try {
+    var resp = await fetch('https://explorer-api.exergynet.org/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _spaceJwt },
+      body: JSON.stringify({ model: 'vanguard-engine', stream: true, messages: messages })
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    _vgHistory.push({ role: 'user', content: text });
+    var reader = resp.body.getReader();
+    var decoder = new TextDecoder();
+    var fullText = '';
+    if (thinkBubble) { thinkBubble.classList.remove('thinking'); thinkBubble.textContent = ''; }
+    var reading = true;
+    while (reading) {
+      var chunk = await reader.read();
+      if (chunk.done) { reading = false; break; }
+      var lines = decoder.decode(chunk.value, { stream: true }).split('\n');
+      lines.forEach(function(line) {
+        if (!line.startsWith('data: ')) return;
+        var d = line.slice(6).trim();
+        if (d === '[DONE]') { reading = false; return; }
+        try {
+          var delta = JSON.parse(d);
+          var token = delta.choices && delta.choices[0] && delta.choices[0].delta && delta.choices[0].delta.content;
+          if (token) {
+            fullText += token;
+            if (thinkBubble) thinkBubble.textContent = fullText;
+            var feed = document.getElementById('vg-feed');
+            if (feed) feed.scrollTop = feed.scrollHeight;
+          }
+        } catch(e) {}
+      });
+    }
+    _vgHistory.push({ role: 'assistant', content: fullText || thinkBubble.textContent });
+  } catch(e) {
+    if (thinkBubble) { thinkBubble.textContent = 'Error: ' + (e.message || 'Could not reach Vanguard.'); thinkBubble.style.color = 'var(--red)'; }
+  }
+  _vgThinking = false;
+}
 
 // ── Render invite card ────────────────────────────────────────────────────────
 function renderInvite() {
@@ -960,10 +1318,21 @@ async function startListening(displayName) {
       if (!lkRoom.canPlaybackAudio) _showUnlockBanner();
     })
     .on(LK.RoomEvent.Disconnected, function(reason) {
-      document.getElementById('invite-wrap').style.display = 'flex';
-      document.getElementById('listen-wrap').classList.remove('active');
-      renderInvite();
-      if (reason && reason !== 'CLIENT_INITIATED') showError('Disconnected: ' + reason);
+      // Clean up audio elements to prevent leaks on reconnect
+      audioElements.forEach(function(el){ try { el.pause(); el.src=''; el.remove(); } catch(e){} });
+      audioElements = [];
+      _bgStop();
+      if (reason && reason !== 'CLIENT_INITIATED' && reason !== 'ROOM_DELETED') {
+        document.getElementById('invite-wrap').style.display = 'flex';
+        document.getElementById('listen-wrap').classList.remove('active');
+        renderInvite();
+        showError('Disconnected: ' + reason);
+      } else if (reason === 'ROOM_DELETED') {
+        document.getElementById('invite-wrap').style.display = 'flex';
+        document.getElementById('listen-wrap').classList.remove('active');
+        renderInvite();
+        _showSpaceToast('This Space has ended', 4000);
+      }
     })
     .on(LK.RoomEvent.TrackSubscribed, function(track) {
       if (track.kind === LK.Track.Kind.Audio) {
@@ -1016,6 +1385,15 @@ async function startListening(displayName) {
             updateUI();
           }
         } catch(e) {}
+      } else if (topic === 'space.chat') {
+        // Format: { sender, senderName, text }
+        try {
+          var cm = JSON.parse(text);
+          if (cm.text) {
+            var isMe = cm.sender === myIdentity;
+            addChatLine(cm.senderName || cm.sender || 'Node', cm.text, isMe);
+          }
+        } catch(e) {}
       }
     })
     .on(LK.RoomEvent.ParticipantConnected,       function() { updateUI(); })
@@ -1028,16 +1406,56 @@ async function startListening(displayName) {
       updateUI();
     });
 
-  try {
-    var url = TOKEN_URL + '?room=' + encodeURIComponent(roomId);
-    if (displayName) url += '&name=' + encodeURIComponent(displayName);
-    var resp = await fetch(url);
-    if (!resp.ok) throw new Error('Token error ' + resp.status);
-    var data = await resp.json();
-    myIdentity = data.identity;
-    if (data.nameMap) Object.assign(_nameMap, data.nameMap);
+  // Render chat/vanguard send areas based on current auth state
+  _renderChatSendArea();
+  _renderVgInputArea();
 
-    await lkRoom.connect(LK_URL, data.token, { autoSubscribe: true });
+  try {
+    var lkToken, lkIdentity;
+    // Use pre-upgraded token if sign-in happened before entering room
+    if (window._upgradedToken && window._upgradedIdentity) {
+      lkToken = window._upgradedToken;
+      lkIdentity = window._upgradedIdentity;
+      window._upgradedToken = null; window._upgradedIdentity = null;
+      _chatCanSend = true;
+    } else if (_spaceJwt) {
+      // Signed-in user: get canPublishData token directly
+      var suffix2 = (performance.now() * 1000 | 0).toString(16).slice(-6);
+      var safeName2 = (_spaceMeName || displayName || 'user').replace(/[^A-Za-z0-9_\-]/g, '_').slice(0, 20);
+      lkIdentity = 'web_' + safeName2 + '_' + suffix2;
+      var authResp = await fetch(
+        AUTH_TOKEN_URL + '?room=' + encodeURIComponent(roomId) +
+          '&identity=' + encodeURIComponent(lkIdentity)
+      );
+      if (authResp.ok) {
+        var authData = await authResp.json();
+        lkToken = authData.token;
+        _chatCanSend = true;
+        _renderChatSendArea();
+      }
+    }
+    // Fallback to guest token if auth token not obtained
+    if (!lkToken) {
+      var url = TOKEN_URL + '?room=' + encodeURIComponent(roomId);
+      if (displayName) url += '&name=' + encodeURIComponent(displayName);
+      var resp = await fetch(url);
+      if (!resp.ok) throw new Error('Token error ' + resp.status);
+      var data = await resp.json();
+      lkToken = data.token;
+      lkIdentity = data.identity;
+      if (data.nameMap) Object.assign(_nameMap, data.nameMap);
+      if (data.title) {
+        _spaceTitle = data.title;
+        document.getElementById('top-room-label').textContent = data.title;
+      }
+    }
+    myIdentity = lkIdentity;
+    await lkRoom.connect(LK_URL, lkToken, { autoSubscribe: true });
+    // Capture room name from LiveKit metadata after connect
+    if (lkRoom.name && !_spaceTitle) {
+      _spaceTitle = lkRoom.name;
+      document.getElementById('top-room-label').textContent = lkRoom.name.length > 30 ? lkRoom.name.slice(0,26)+'…' : lkRoom.name;
+    }
   } catch(err) {
     console.error('[space-listen]', err);
     showError(err.message || 'Could not connect. The Space may have ended.');
@@ -1047,9 +1465,16 @@ async function startListening(displayName) {
 // ── Leave ──────────────────────────────────────────────────────────────────────
 document.getElementById('leave-btn').addEventListener('click', function() {
   if (lkRoom) lkRoom.disconnect();
-  audioElements.forEach(function(el){ el.remove(); });
+  audioElements.forEach(function(el){ try { el.pause(); el.src=''; el.remove(); } catch(e){} });
   audioElements = []; lkRoom = null;
   _txLines = []; _nameMap = {}; _metaMap = {}; _listenerProfiles = {};
+  _chatOpen = false; _vgOpen = false; _unreadChat = 0;
+  _vgHistory = []; _vgThinking = false; _chatCanSend = false; _spaceTitle = '';
+  var chatPanel = document.getElementById('chat-panel');
+  var vgPanel   = document.getElementById('vg-panel');
+  if (chatPanel) chatPanel.classList.remove('open');
+  if (vgPanel)   vgPanel.classList.remove('open');
+  _bgStop();
   document.getElementById('invite-wrap').style.display = 'flex';
   document.getElementById('listen-wrap').classList.remove('active');
   renderInvite();

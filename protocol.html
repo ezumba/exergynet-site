@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Protocol | ExergyNet</title>
-<meta name="description" content="ExergyNet LNES-06 Protocol — Dual-network Unidirectional Sump, Proof-of-Exergy consensus, x402/Base primary settlement, and ZK-STARK mechanics on Solana.">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="ExergyNet LNES-06 Protocol — Dual-network Unidirectional Sump, Proof-of-Exergy consensus, x402/Base primary settlement, and ZK-STARK mechanics on Solana. Sovereign, deterministic, hardware-bound compute verification.">
 <link rel="stylesheet" href="style.css">
 <style>
   /* ── Protocol-page local enhancements ── */
@@ -189,7 +193,7 @@
     <div class="container">
       <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>LNES-06 v1.2 · Protocol Reference</div>
       <h1>Protocol<br><span class="accent">Reference</span></h1>
-      <p class="hero-sub">Complete technical specification for the LNES-06 multi-network architecture. Dual-settlement via x402/Base (primary) and Solana Unidirectional Sump. Proof-of-Exergy consensus. RISC Zero ZK-STARK settlement mechanics.</p>
+      <p class="hero-sub">Complete technical specification for the LNES-06 multi-network architecture. Dual-settlement via x402/Base (primary) and Solana Unidirectional Sump. Proof-of-Exergy consensus. RISC Zero ZK-STARK settlement mechanics. Hardware-bound, deterministic compute verification.</p>
 
       <!-- Live network status bar -->
       <div style="display:flex; gap:1rem; margin-top:2rem; flex-wrap:wrap;">
@@ -438,10 +442,10 @@
     <section>
       <div class="section-label">Consensus</div>
       <h2>Proof-of-Exergy</h2>
-      <p style="max-width:680px; margin-bottom:1.5rem;">PoX replaces Proof-of-Work (hash waste) and Proof-of-Stake (capital plutocracy) with a thermodynamically-anchored truth primitive. Physical entropy generation is the proof of work.</p>
+      <p style="max-width:680px; margin-bottom:1.5rem;">PoX replaces Proof-of-Work (hash waste) and Proof-of-Stake (capital plutocracy) with a hardware-bound deterministic-commitment primitive. Verified compute execution is the proof of work.</p>
       <div class="card accent-border" style="margin-bottom:1.5rem;">
         <h4>Exergy Definition</h4>
-        <p style="font-size:14px; line-height:1.7;">In thermodynamics, exergy is the maximum useful work possible during a process that brings a system into equilibrium with a heat reservoir. ExergyNet binds CPU thermal flux — measured in millidegrees Celsius — to the cryptographic verification of each compute payload. Sensors on Android witness nodes supply real electromagnetic field vectors, network density measurements, and geospatial entropy as the physical proof substrate. These vectors are incontrovertible: they cannot be simulated without the physical hardware present in the real-world location at the time of capture.</p>
+        <p style="font-size:14px; line-height:1.7;">Exergy is the Logical Energy of a Verified State Transition — the useful, unrecoverable work performed moving a claim from unproven to cryptographically sealed. ExergyNet binds each compute payload — hashed and sealed inside a RISC Zero circuit — to a deterministic, hardware-executed commitment. Sensors on Android witness nodes supply real electromagnetic field vectors, network density measurements, and geospatial data as the proof substrate.</p>
       </div>
       <div class="card">
         <h4>Sensor Vector Opcodes</h4>
@@ -458,6 +462,30 @@
           </tbody>
         </table>
       </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         PROOF OF REALITY — H200 LOCALITY BENCHMARK
+    ══════════════════════════════════════════════ -->
+    <section>
+      <div class="section-label">Measured, Not Claimed</div>
+      <h2>Proof of Reality — Compute-Local Memory</h2>
+      <p style="max-width:680px; margin-bottom:1.5rem;">Independently benchmarked on a dedicated NVIDIA H200: moving the same byte-identical 512 KiB memory shard from cloud-network storage (AWS S3) to compute-local NVMe, across 72,000 measured reads with zero integrity failures.</p>
+      <div class="stat-block" style="margin-bottom:1.5rem;">
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--accent);">33×</div>
+          <div class="stat-label">Local NVMe vs. warm<br>S3 connection (cache-evicted)</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--blue);">~200×</div>
+          <div class="stat-label">Local NVMe vs. cold<br>S3 connection (fresh TCP/TLS)</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--accent);">~5,880×</div>
+          <div class="stat-label">Cache-resident local<br>vs. warm S3 connection</div>
+        </div>
+      </div>
+      <p style="font-size:13px; color:var(--text-faint);">Data locality removes the network round-trip from the accelerator's critical path — this is a systems-architecture result, independent of any single model or vendor.</p>
     </section>
 
     <!-- ══════════════════════════════════════════════

@@ -178,6 +178,11 @@ main            { position: relative; z-index: 1; flex: 1; }
 }
 .nav-logo:hover { color: var(--accent); }
 
+.nav-logo-img { height: 26px; width: auto; display: block; }
+.nav-logo-img-light { display: none; }
+[data-theme="light"] .nav-logo-img-dark { display: none; }
+[data-theme="light"] .nav-logo-img-light { display: block; }
+
 .nav-logo-mark {
   width: 26px; height: 26px;
   border: 2px solid var(--accent);
