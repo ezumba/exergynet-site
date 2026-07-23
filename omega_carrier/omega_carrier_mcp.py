@@ -13,9 +13,12 @@ import io
 import os
 import json
 import asyncio
+import ipaddress
 import logging
+import socket
 import httpx
 from typing import Any
+from urllib.parse import urlparse, urljoin
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives import serialization
@@ -51,6 +54,48 @@ async def http() -> httpx.AsyncClient:
     if _client is None or _client.is_closed:
         _client = httpx.AsyncClient(timeout=30.0)
     return _client
+
+
+# ── SSRF guard for fetch_global_feed ─────────────────────────────────────────
+# This server bridges third-party visiting agents (see FastMCP instructions
+# above) — an unrestricted "fetch this URL" tool would let a caller use
+# ExergyNet's own egress to probe internal infrastructure (cloud metadata
+# endpoints, biological_proxy's 127.0.0.1-only routes, etc.). Every hop of
+# every redirect is re-validated, not just the initial URL.
+_BLOCKED_HOSTNAMES = {"localhost", "metadata.google.internal"}
+
+
+def _is_public_ip(ip_str: str) -> bool:
+    try:
+        ip = ipaddress.ip_address(ip_str)
+    except ValueError:
+        return False
+    return not (
+        ip.is_private or ip.is_loopback or ip.is_link_local
+        or ip.is_multicast or ip.is_reserved or ip.is_unspecified
+    )
+
+
+def _assert_public_url(url: str) -> str:
+    """Raises ValueError if url is not a safe public http(s) URL. Returns the
+    url unchanged on success."""
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError(f"Scheme '{parsed.scheme}' not allowed — only http/https.")
+    hostname = parsed.hostname or ""
+    if not hostname or hostname.lower() in _BLOCKED_HOSTNAMES:
+        raise ValueError(f"Hostname '{hostname}' is blocked.")
+    try:
+        infos = socket.getaddrinfo(hostname, None)
+    except socket.gaierror as e:
+        raise ValueError(f"Could not resolve hostname '{hostname}': {e}")
+    for info in infos:
+        ip_str = info[4][0]
+        if not _is_public_ip(ip_str):
+            raise ValueError(
+                f"'{hostname}' resolves to non-public address {ip_str} — refused (SSRF guard)."
+            )
+    return url
 
 
 # ── Tool 1: initialize_sovereign_identity ────────────────────────────────────
@@ -809,6 +854,251 @@ async def join_meeting(
         }
     except Exception as e:
         log.error(f"join_meeting error: {e}")
+        return {"status": "error", "error": str(e)}
+
+
+# ── Tool 11: recall_vault_memory ──────────────────────────────────────────────
+@mcp.tool()
+async def recall_vault_memory(
+    xlmp_root: str,
+    query: str,
+    bearer_token: str,
+) -> dict[str, Any]:
+    """
+    Recall a specific fact from a committed Sovereign xLMP Vault memory.
+
+    Given an xlmp_root (from vault_commit_state / the ingest receipt) and a
+    natural-language query, this runs the canonical evidence-window retrieval on
+    the sovereign node (splitIntoChunks -> scoreChunk -> extractEvidenceWindow via
+    xlmp_zk_query) and returns ONLY the relevant evidence window — not the whole
+    document — so it drops straight into the LLM's context at flat cost regardless
+    of source document size.
+
+    Distinct from vault_recall_state, which returns the whole stored payload by
+    root. Use recall_vault_memory when you have a specific question about a large
+    committed memory.
+
+    SEAL HONESTY (important — do not overstate to the user): the vault's fast seal
+    is a SHA-256 integrity check (the reconstructed shards hash to the xlmp_root).
+    A real Groth16 zero-knowledge proof is a separate, async job that may not be
+    complete. This tool reports exactly which one holds, in `verification`. Only
+    say "verified by Groth16" to the user when verification == 'groth16_verified'.
+
+    Args:
+        xlmp_root:    Content-addressed root of the committed memory.
+        query:        The natural-language question to answer from that memory.
+        bearer_token: ExergyNet portal token (sk-exergy-* or JWT).
+
+    Returns:
+        evidence:      The extracted evidence window (the answer context), or None.
+        confidence:    Retrieval confidence for the evidence.
+        citations:     Source spans backing the evidence.
+        verification:  'groth16_verified' | 'sha256_integrity' | 'unverified'.
+        seal:          Full honest seal object (sha256 vs groth16 status).
+        recall_line:   A ready-to-speak line that is TRUE about the seal state.
+    """
+    try:
+        client = await http()
+        r = await client.post(
+            f"{PORTAL_URL}/api/xlmp/zk-query",
+            json={"xlmp_root": xlmp_root, "query": query},
+            headers={"Authorization": f"Bearer {bearer_token}"},
+        )
+        if not r.is_success:
+            err = f"HTTP {r.status_code}"
+            try:
+                err = r.json().get("error", err)
+            except Exception:
+                pass
+            return {"status": "error", "error": f"zk-query failed: {err}"}
+
+        data = r.json()
+        seal = data.get("seal", {})
+        journal = data.get("journal", {})
+        groth16_ok = bool(seal.get("groth16_verified"))
+        sha256_ok = bool(seal.get("sha256_integrity"))
+
+        if groth16_ok:
+            verification = "groth16_verified"
+            recall_line = "Retrieved from Sovereign xLMP Vault. Memory verified by Groth16."
+        elif sha256_ok:
+            verification = "sha256_integrity"
+            # HONEST: SHA-256 integrity holds, but the Groth16 proof is not yet generated.
+            recall_line = ("Retrieved from Sovereign xLMP Vault. Integrity verified by SHA-256 "
+                           "(Groth16 zero-knowledge proof not yet generated).")
+        else:
+            verification = "unverified"
+            recall_line = "Retrieved from Sovereign xLMP Vault (seal unverified)."
+
+        log.info(f"recall_vault_memory: root={xlmp_root[:16]}… verification={verification}")
+        return {
+            "status": "recalled",
+            "evidence": journal.get("result"),
+            "confidence": journal.get("confidence"),
+            "citations": journal.get("citations", []),
+            "verification": verification,
+            "seal": seal,
+            "recall_line": recall_line,
+            "latency_ms": data.get("latency_ms"),
+        }
+    except Exception as e:
+        log.error(f"recall_vault_memory error: {e}")
+        return {"status": "error", "error": str(e)}
+
+
+# ── Tool 12: fetch_global_feed ────────────────────────────────────────────────
+@mcp.tool()
+async def fetch_global_feed(
+    target_url: str,
+    max_bytes: int = 2_000_000,
+) -> dict[str, Any]:
+    """
+    LNES-71 Sovereign OSINT — fetches raw text from a public source (RSS/Atom
+    feeds, REST APIs, plain HTML): Reuters, NOAA, financial data endpoints, etc.
+
+    SSRF guard: only http(s) URLs resolving to a PUBLIC IP are fetched.
+    Loopback/private/link-local/reserved ranges (including cloud metadata
+    endpoints like 169.254.169.254) are refused before any request is sent,
+    and each redirect hop is re-validated the same way — see the module-level
+    note on _assert_public_url for why this matters on a server that bridges
+    third-party visiting agents.
+
+    Does NOT touch the Vault by itself — pair with ingest_to_vault to persist
+    the result. Kept as two tools (not one fetch+ingest step) so an agent can
+    inspect content before deciding whether it's worth committing.
+
+    Args:
+        target_url: The public URL to fetch (http/https only).
+        max_bytes:  Hard cap on response body size, streamed (not read-then-
+                    truncated) so an oversized response never fully downloads.
+                    Default 2MB, hard-capped at 5MB regardless of the value passed.
+
+    Returns:
+        content:      Response body decoded as text (best-effort).
+        content_type: The response's Content-Type header, if present.
+        final_url:    URL actually fetched, after following redirects.
+        bytes_fetched: Length of `content` in bytes before decoding.
+        truncated:    True if the body was cut off at max_bytes.
+        status:       'fetched' or 'error'.
+    """
+    max_bytes = min(max_bytes, 5_000_000)
+    try:
+        current_url = _assert_public_url(target_url)
+        client = await http()
+
+        raw = bytearray()
+        truncated = False
+        content_type = None
+        encoding = "utf-8"
+
+        for _hop in range(6):
+            async with client.stream("GET", current_url, follow_redirects=False, timeout=15.0) as resp:
+                if resp.status_code in (301, 302, 303, 307, 308) and "location" in resp.headers:
+                    current_url = _assert_public_url(urljoin(current_url, resp.headers["location"]))
+                    continue
+                content_type = resp.headers.get("content-type")
+                encoding = resp.encoding or "utf-8"
+                async for chunk in resp.aiter_bytes():
+                    remaining = max_bytes - len(raw)
+                    if remaining <= 0:
+                        truncated = True
+                        break
+                    if len(chunk) > remaining:
+                        raw += chunk[:remaining]
+                        truncated = True
+                        break
+                    raw += chunk
+                break
+        else:
+            return {"status": "error", "error": "Too many redirects (>6 hops)."}
+
+        content = bytes(raw).decode(encoding, errors="replace")
+        log.info(f"fetch_global_feed: {current_url} → {len(raw)} bytes (truncated={truncated})")
+        return {
+            "status":        "fetched",
+            "final_url":     current_url,
+            "content_type":  content_type,
+            "content":       content,
+            "bytes_fetched": len(raw),
+            "truncated":     truncated,
+        }
+    except ValueError as e:
+        return {"status": "error", "error": str(e)}
+    except Exception as e:
+        log.error(f"fetch_global_feed error: {e}")
+        return {"status": "error", "error": str(e)}
+
+
+# ── Tool 13: ingest_to_vault ───────────────────────────────────────────────────
+@mcp.tool()
+async def ingest_to_vault(
+    content: str,
+    source_url: str,
+    bearer_token: str,
+    label: str = "",
+    content_type: str = "text/plain",
+) -> dict[str, Any]:
+    """
+    LNES-71 Sovereign OSINT — commits externally-fetched content (e.g. from
+    fetch_global_feed) to the Sovereign xLMP Vault via POST /api/xlmp/ingest.
+
+    Unlike vault_commit_state (which strips agent Thought State to a single
+    512KB shard), this passes content through UNTRUNCATED — the server-side
+    xLMP ingest pipeline (xlmp_ingest_core.ts) already does real multi-shard
+    sharding for larger documents, and truncating an OSINT feed client-side
+    would silently drop real intelligence data rather than shard it.
+
+    Args:
+        content:      Raw text to ingest (e.g. fetch_global_feed's `content`).
+        source_url:   URL this content came from — sent as provenance metadata.
+        bearer_token: ExergyNet portal token (sk-exergy-* or JWT). Same
+                      convention as every other tool in this file: the commit
+                      is attributed to whichever account this token belongs
+                      to, not a fixed server-side credential.
+        label:        Optional human-readable label (defaults to source_url).
+        content_type: MIME type of `content` (default text/plain; use
+                      application/rss+xml / application/xml if known).
+
+    Returns:
+        xlmp_root:  Durable content-addressed root handle for recall_vault_memory.
+        bytes_committed: Size of the content actually sent.
+        status:     'committed' or 'error'.
+    """
+    if not content:
+        return {"status": "error", "error": "content is empty — nothing to ingest."}
+
+    raw_bytes = content.encode("utf-8")
+    display_label = label or source_url or "osint-feed"
+    ext = {
+        "application/xml": "xml", "application/rss+xml": "xml", "text/xml": "xml",
+        "application/json": "json",
+    }.get(content_type, "txt")
+
+    try:
+        client = await http()
+        files = {"file": (f"{display_label}.{ext}", io.BytesIO(raw_bytes), content_type)}
+        r = await client.post(
+            f"{PORTAL_URL}/api/xlmp/ingest",
+            files=files,
+            data={"source_url": source_url, "label": display_label},
+            headers={"Authorization": f"Bearer {bearer_token}"},
+        )
+        data = r.json()
+        if not r.is_success:
+            return {"status": "error", "error": data.get("error", f"HTTP {r.status_code}"), "http_status": r.status_code}
+
+        hollow = data.get("hollow_object") or {}
+        xlmp_root = hollow.get("xlmp_root") or data.get("xlmp_root") or data.get("root") or data.get("id")
+        log.info(f"OSINT ingest → root={xlmp_root} ({len(raw_bytes)} bytes) source={source_url}")
+        return {
+            "status":          "committed",
+            "xlmp_root":       xlmp_root,
+            "bytes_committed": len(raw_bytes),
+            "source_url":      source_url,
+            "label":           display_label,
+        }
+    except Exception as e:
+        log.error(f"ingest_to_vault error: {e}")
         return {"status": "error", "error": str(e)}
 
 
