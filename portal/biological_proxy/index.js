@@ -1,3 +1,10 @@
+// ⚠ NOT what runs on AskMo (20.127.220.199) despite the identical directory/file
+// name — AskMo runs a completely different, more advanced TypeScript codebase.
+// See ../../deployed-snapshots/README.md before assuming this file describes
+// live behavior for anything Vanguard-related. This file IS live (presumably
+// on Portal EC2), but its own /api/v1/vanguard-nav route (~line 1707) is NOT
+// what the Android app actually calls in production — that's a separate Rust
+// service on Carrier EC2 (see deployed-snapshots/carrier-exergynet_api/).
 require('dotenv').config({ path: __dirname + '/.env' });
 'use strict';
 const multer = require('multer');
@@ -40,7 +47,8 @@ const crypto    = require('crypto');
 const { AccessToken: LKAccessToken, RoomServiceClient } = require('livekit-server-sdk');
 
 const LK_API_KEY    = process.env.LIVEKIT_API_KEY    || 'exergynet';
-const LK_API_SECRET = process.env.LIVEKIT_API_SECRET || 'LNES06RHObridgeSecret2026exergynetSFU';
+const LK_API_SECRET = process.env.LIVEKIT_API_SECRET;
+if (!LK_API_SECRET) { console.error('[FATAL] LIVEKIT_API_SECRET env var is not set'); process.exit(1); }
 
 const app  = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -57,6 +65,22 @@ function authRateLimit(req, res, next) {
   if (entry.count > 15) return res.status(429).json({ error: 'Too many requests, try again later.' });
   next();
 }
+
+// ── Meet rate limiter — shared across write endpoints ────────────────────────
+// Keyed by IP. 60 write requests per minute per IP per endpoint class.
+const _meetHits = new Map();
+function meetRateLimit(req, res, next) {
+  const key = req.ip + ':' + req.path.split('/').slice(0, 5).join('/');
+  const now = Date.now();
+  const entry = _meetHits.get(key) || { count: 0, reset: now + 60_000 };
+  if (now > entry.reset) { entry.count = 0; entry.reset = now + 60_000; }
+  entry.count++;
+  _meetHits.set(key, entry);
+  if (entry.count > 60) return res.status(429).json({ error: 'Rate limit exceeded. Slow down.' });
+  next();
+}
+// Purge every 5 min
+setInterval(() => { const now = Date.now(); for (const [k, v] of _meetHits) { if (now > v.reset + 5000) _meetHits.delete(k); } }, 300_000);
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const JWT_SECRET    = process.env.JWT_SECRET || 'dev-secret-CHANGE-IN-PROD';
@@ -136,19 +160,19 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
 });
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({
-  origin: ['https://portal.exergynet.org', 'https://dt.portal.exergynet.org', 'http://localhost:4000', 'http://localhost:3000'],
-  credentials: true
-}));
+app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '2mb' }));
 
 // ── PostgreSQL pool ────────────────────────────────────────────────────────────
 const pool = new Pool({
-  host:     process.env.PGHOST     || 'localhost',
-  port:     parseInt(process.env.PGPORT || '5432'),
-  database: process.env.PGDATABASE || 'biological_proxy',
-  user:     process.env.PGUSER     || 'ubuntu',
-  password: process.env.PGPASSWORD || undefined,
+  host:                 process.env.PGHOST     || 'localhost',
+  port:                 parseInt(process.env.PGPORT || '5432'),
+  database:             process.env.PGDATABASE || 'biological_proxy',
+  user:                 process.env.PGUSER     || 'ubuntu',
+  password:             process.env.PGPASSWORD || undefined,
+  max:                  25,
+  idleTimeoutMillis:    30000,
+  connectionTimeoutMillis: 5000,
 });
 
 async function initDb() {
@@ -177,6 +201,47 @@ async function initDb() {
     ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS profile_image_b64  TEXT;
     ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS profile_gallery          JSONB NOT NULL DEFAULT '[]'::jsonb;
     ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS stripe_session_credited  JSONB NOT NULL DEFAULT '[]'::jsonb;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS lat                      DOUBLE PRECISION;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS lng                      DOUBLE PRECISION;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS foundation_ip            TEXT;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS first_seen_at            TIMESTAMPTZ;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS rho_micro_balance        BIGINT NOT NULL DEFAULT 0;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS phone_verified           BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS daily_transfer_usdc      BIGINT NOT NULL DEFAULT 0;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS daily_transfer_reset_at  TIMESTAMPTZ;
+    ALTER TABLE biological_developers ADD COLUMN IF NOT EXISTS scopes                   JSONB NOT NULL DEFAULT '[]'::jsonb;
+
+    CREATE TABLE IF NOT EXISTS transfers (
+      id           TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      sender_id    TEXT NOT NULL REFERENCES biological_developers(id),
+      receiver_id  TEXT NOT NULL REFERENCES biological_developers(id),
+      asset        TEXT NOT NULL CHECK (asset IN ('usdc_micro','rho_micro')),
+      amount       BIGINT NOT NULL,
+      created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_transfers_sender   ON transfers(sender_id,   created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_transfers_receiver ON transfers(receiver_id, created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS node_registrations (
+      id           TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      developer_id TEXT NOT NULL REFERENCES biological_developers(id),
+      node_id      TEXT NOT NULL UNIQUE,
+      device_type  TEXT NOT NULL,
+      linked_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      last_seen_at TIMESTAMPTZ
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_node_registrations_developer_id ON node_registrations(developer_id);
+
+    CREATE TABLE IF NOT EXISTS rho_buyback_queue (
+      id         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      node_id    TEXT NOT NULL,
+      task_id    TEXT,
+      amount     BIGINT NOT NULL DEFAULT 0,
+      status     TEXT NOT NULL DEFAULT 'PENDING',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
 
     CREATE TABLE IF NOT EXISTS en_jobs (
       id               TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -278,8 +343,114 @@ async function initDb() {
     CREATE INDEX IF NOT EXISTS articles_status_idx   ON articles(status);
     CREATE INDEX IF NOT EXISTS articles_slug_idx     ON articles(slug);
     CREATE INDEX IF NOT EXISTS articles_featured_idx ON articles(featured);
+
+    CREATE TABLE IF NOT EXISTS meet_rooms (
+      id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      room_name       TEXT NOT NULL,
+      host_id         TEXT REFERENCES biological_developers(id),
+      xlmp_root       TEXT,
+      status          TEXT NOT NULL DEFAULT 'ACTIVE',
+      created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS meet_rooms_host_idx    ON meet_rooms(host_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS meet_rooms_status_idx  ON meet_rooms(status);
+
+    CREATE TABLE IF NOT EXISTS meet_messages (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      room_id    UUID NOT NULL REFERENCES meet_rooms(id) ON DELETE CASCADE,
+      identity   TEXT NOT NULL,
+      message    TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS meet_messages_room_idx ON meet_messages(room_id, created_at ASC);
+
+    ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS is_private BOOLEAN DEFAULT false;
+    ALTER TABLE meet_join_requests ADD COLUMN IF NOT EXISTS requester_ip TEXT NOT NULL DEFAULT 'unknown';
+    ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ;
+    ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS duration_minutes INTEGER DEFAULT 60;
+    ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'UTC';
+    ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS room_description TEXT;
+    ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+    CREATE INDEX IF NOT EXISTS meet_rooms_scheduled_idx ON meet_rooms(scheduled_at) WHERE scheduled_at IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS meet_rooms_host_scheduled_idx ON meet_rooms(host_id, scheduled_at);
+
+    CREATE TABLE IF NOT EXISTS meet_join_requests (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      room_id    UUID NOT NULL REFERENCES meet_rooms(id) ON DELETE CASCADE,
+      identity   TEXT NOT NULL,
+      status     TEXT NOT NULL DEFAULT 'pending',
+      token      TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS meet_join_req_room_idx ON meet_join_requests(room_id, status);
+
+    CREATE TABLE IF NOT EXISTS device_bindings (
+      fingerprint       TEXT PRIMARY KEY,
+      exergynet_number  TEXT UNIQUE NOT NULL,
+      platform          TEXT NOT NULL DEFAULT 'android',
+      account_id        TEXT REFERENCES biological_developers(id),
+      first_seen        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      last_seen         TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS device_bindings_account_idx ON device_bindings(account_id);
+    CREATE INDEX IF NOT EXISTS device_bindings_number_idx  ON device_bindings(exergynet_number);
+
+    CREATE TABLE IF NOT EXISTS vanguard_memory (
+      id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      fingerprint TEXT NOT NULL,
+      query       TEXT NOT NULL,
+      response    TEXT NOT NULL,
+      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS vanguard_memory_fp_idx ON vanguard_memory(fingerprint, created_at DESC);
+
+    -- LNES-50.4: Co-Work multi-tenant sessions. owner_id follows the exact
+    -- same pattern as meet_rooms.host_id (requireAuth's req.developerId,
+    -- a TEXT UUID referencing biological_developers). Membership is keyed by
+    -- exact email (never fuzzy-matched -- see the invite route) so a session
+    -- can be shared across a user's own devices via login, not a device
+    -- fingerprint like vanguard_memory above.
+    CREATE TABLE IF NOT EXISTS cowork_sessions (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      owner_id   TEXT NOT NULL REFERENCES biological_developers(id),
+      name       TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS cowork_sessions_owner_idx ON cowork_sessions(owner_id, created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS cowork_members (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      session_id UUID NOT NULL REFERENCES cowork_sessions(id) ON DELETE CASCADE,
+      user_email TEXT NOT NULL,
+      role       TEXT NOT NULL DEFAULT 'member',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS cowork_members_unique_idx ON cowork_members(session_id, user_email);
+    CREATE INDEX IF NOT EXISTS cowork_members_email_idx ON cowork_members(user_email);
+
+    CREATE TABLE IF NOT EXISTS cowork_vault_links (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      session_id UUID NOT NULL REFERENCES cowork_sessions(id) ON DELETE CASCADE,
+      xlmp_root  TEXT NOT NULL,
+      added_by   TEXT,
+      label      TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS cowork_vault_links_unique_idx ON cowork_vault_links(session_id, xlmp_root);
+    ALTER TABLE cowork_vault_links ADD COLUMN IF NOT EXISTS label TEXT;
   `);
   console.log('[DB] Tables ready');
+}
+
+// ── Omega-Meet: shared token helper ──────────────────────────────────────────
+async function generateMeetToken(identity, roomName, role = 'guest') {
+  const isAI   = role === 'ai_listener';
+  const isHost = role === 'host';
+  const metadata = JSON.stringify({ role: isAI ? 'ai_listener' : isHost ? 'host' : 'guest' });
+  const at = new LKAccessToken(LK_API_KEY, LK_API_SECRET, { identity, metadata });
+  at.addGrant({ roomJoin: true, room: roomName, canPublish: !isAI, canSubscribe: true, canPublishData: true });
+  return await at.toJwt();
 }
 
 // ── LNES-17: OTET Middleware ──────────────────────────────────────────────────
@@ -405,10 +576,11 @@ async function requireAuth(req, res, next) {
   }
 }
 
-// ── GET /space/guest-token — anonymous listener token for public Spaces ───────
-// No auth. Issues a canPublish:false LiveKit JWT so any browser can listen in.
-// Rate-limiting should be added before mainnet; this is intentionally open for ghost-mode.
-app.get('/space/guest-token', async (req, res) => {
+// ── GET /space/guest-token — developer-authenticated listener token for Spaces ─
+// [PaaS-Alpha] requireAuth gate: developer must supply a valid sk-exergy-* key
+// or portal JWT. Their users receive the guest token via the developer's backend.
+// Ghost-mode browser listeners must go through an authenticated developer proxy.
+app.get('/space/guest-token', requireAuth, async (req, res) => {
   const room = (req.query.room || '').trim();
   if (!room) return res.status(400).json({ error: 'room required' });
 
@@ -454,6 +626,578 @@ app.get('/space/guest-token', async (req, res) => {
   } catch (err) {
     console.error('[space/guest-token]', err);
     return res.status(500).json({ error: 'Token generation failed' });
+  }
+});
+
+// ── GET /api/v1/livekit/space/promote — host grants a listener speaker permission ─
+// [LNES-68] Mirror endpoint so the Edge Witness Android app can reach portal.exergynet.org
+// instead of the (now removed) standalone token service on livekit.exergynet.org.
+// requireAuth: caller must present their developer API key (sk-exergy-*) or portal JWT.
+app.get('/api/v1/livekit/space/promote', requireAuth, async (req, res) => {
+  const room     = (req.query.room     || '').trim();
+  const identity = (req.query.identity || '').trim();
+  if (!room || !identity) return res.status(400).json({ error: 'room and identity required' });
+  try {
+    const svc = new RoomServiceClient('https://livekit.exergynet.org', LK_API_KEY, LK_API_SECRET);
+    await svc.updateParticipant(room, identity, undefined, {
+      canPublish: true, canSubscribe: true, canPublishData: true,
+    });
+    return res.json({ ok: true, action: 'promote', identity });
+  } catch (err) {
+    console.error('[space/promote]', err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// ── GET /api/v1/livekit/space/demote — revokes a speaker's publish permission ──
+app.get('/api/v1/livekit/space/demote', requireAuth, async (req, res) => {
+  const room     = (req.query.room     || '').trim();
+  const identity = (req.query.identity || '').trim();
+  if (!room || !identity) return res.status(400).json({ error: 'room and identity required' });
+  try {
+    const svc = new RoomServiceClient('https://livekit.exergynet.org', LK_API_KEY, LK_API_SECRET);
+    await svc.updateParticipant(room, identity, undefined, {
+      canPublish: false, canSubscribe: true, canPublishData: false,
+    });
+    return res.json({ ok: true, action: 'demote', identity });
+  } catch (err) {
+    console.error('[space/demote]', err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// ── GET /api/livekit/token — authenticated publisher/subscriber token for calls ─
+// [PaaS-Alpha] requireAuth gate: bcrypt-validates sk-exergy-* keys against DB.
+// When the room name matches a meet_rooms record, Meet rules apply:
+//   - ARCHIVED rooms are rejected (410)
+//   - Private rooms are rejected unless caller is the room host (403)
+//   - Participant cap (50) is enforced (429)
+// DLTN call rooms (dltn_* prefix) and Space rooms bypass Meet checks.
+// Query params: room (required), identity (required), publish (optional, default 1)
+app.get('/api/livekit/token', requireAuth, async (req, res) => {
+  const room     = (req.query.room     || '').trim();
+  const identity = (req.query.identity || '').trim();
+  const publish  = req.query.publish !== '0';
+
+  console.log('[LK-TOKEN-REQUEST] dev=' + req.developerId + ' room=' + room + ' identity=' + identity);
+
+  if (!room || !identity) {
+    return res.status(400).json({ error: 'room and identity are required' });
+  }
+
+  try {
+    // Meet room registry enforcement — skip for DLTN call rooms and Space rooms
+    const isMeetRoom = !room.startsWith('dltn_') && !room.startsWith('space_');
+    if (isMeetRoom) {
+      const meetRow = await pool.query(
+        `SELECT id, status, is_private, host_id FROM meet_rooms WHERE room_name = $1`,
+        [room]
+      );
+      if (meetRow.rows.length) {
+        const mr = meetRow.rows[0];
+        if (mr.status === 'ARCHIVED') {
+          return res.status(410).json({ error: 'room_archived', message: 'This meeting has ended.' });
+        }
+        if (mr.is_private && mr.host_id !== req.developerId) {
+          return res.status(403).json({ error: 'room_is_private', message: 'This is a private meeting. Only the host can join via API token.' });
+        }
+        // Participant cap
+        const PARTICIPANT_CAP = 50;
+        try {
+          const roomSvc = new RoomServiceClient('https://livekit.exergynet.org', LK_API_KEY, LK_API_SECRET);
+          const participants = await roomSvc.listParticipants(room);
+          if (participants.length >= PARTICIPANT_CAP) {
+            return res.status(429).json({ error: 'room_full', message: `This meeting has reached its ${PARTICIPANT_CAP}-participant limit.` });
+          }
+        } catch (capErr) {
+          console.warn('[api/livekit/token] participant cap check failed:', capErr.message);
+        }
+      }
+    }
+
+    const at = new LKAccessToken(LK_API_KEY, LK_API_SECRET, { identity });
+    at.addGrant({
+      roomJoin:       true,
+      room,
+      canPublish:     publish,
+      canSubscribe:   true,
+      canPublishData: true,
+    });
+    const token = await at.toJwt();
+    return res.json({ token, room, identity });
+  } catch (err) {
+    console.error('[api/livekit/token]', err);
+    return res.status(500).json({ error: 'Token generation failed' });
+  }
+});
+
+// ── Omega-Meet: Room Registry ─────────────────────────────────────────────────
+
+// POST /api/meet/rooms — create a room (used by breakout room creation and external clients)
+app.post('/api/meet/rooms', requireAuth, async (req, res) => {
+  const room_name = (req.body?.room_name || '').trim();
+  if (!room_name) return res.status(400).json({ error: 'room_name is required' });
+  try {
+    const r = await pool.query(
+      `INSERT INTO meet_rooms (room_name, host_id) VALUES ($1, $2) RETURNING id, room_name, status, is_private, created_at`,
+      [room_name, req.developerId]
+    );
+    const room = r.rows[0];
+    return res.json({ room, join_url: `https://portal.exergynet.org/meet/${room.id}` });
+  } catch (err) {
+    console.error('[meet/create]', err);
+    return res.status(500).json({ error: 'Room creation failed' });
+  }
+});
+
+// POST /api/meet/rooms/create — host creates a sovereign room
+app.post('/api/meet/rooms/create', requireAuth, async (req, res) => {
+  const room_name      = (req.body?.room_name || '').trim();
+  const is_private     = req.body?.is_private === true || req.body?.is_private === 'true';
+  const scheduled_at   = req.body?.scheduled_at || null;
+  const duration_mins  = parseInt(req.body?.duration_minutes) || 60;
+  const timezone       = (req.body?.timezone || 'UTC').trim().slice(0, 64);
+  const description    = (req.body?.room_description || '').trim().slice(0, 500) || null;
+  if (!room_name) return res.status(400).json({ error: 'room_name is required' });
+  try {
+    const r = await pool.query(
+      `INSERT INTO meet_rooms (room_name, host_id, is_private, scheduled_at, duration_minutes, timezone, room_description)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, room_name, status, is_private, scheduled_at, duration_minutes, timezone, room_description, created_at`,
+      [room_name, req.developerId, is_private, scheduled_at, duration_mins, timezone, description]
+    );
+    const room = r.rows[0];
+    const join_url = `https://portal.exergynet.org/meet/${room.id}`;
+    return res.json({ room, join_url });
+  } catch (err) {
+    console.error('[meet/create]', err);
+    return res.status(500).json({ error: 'Room creation failed' });
+  }
+});
+
+// GET /api/meet/rooms — list host's rooms (upcoming scheduled first, then recent)
+app.get('/api/meet/rooms', requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT id, room_name, status, is_private, xlmp_root, created_at,
+              scheduled_at, duration_minutes, timezone, room_description
+       FROM meet_rooms WHERE host_id = $1
+       ORDER BY
+         CASE WHEN status='ACTIVE' AND scheduled_at > NOW() THEN 0
+              WHEN status='ACTIVE' THEN 1
+              ELSE 2 END,
+         scheduled_at ASC NULLS LAST,
+         created_at DESC
+       LIMIT 50`,
+      [req.developerId]
+    );
+    return res.json({ rooms: r.rows });
+  } catch (err) {
+    console.error('[meet/list]', err);
+    return res.status(500).json({ error: 'List failed' });
+  }
+});
+
+// GET /api/meet/rooms/:id — public room lookup; optionally returns is_host when Bearer JWT provided
+app.get('/api/meet/rooms/:id', async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT id, room_name, status, is_private, host_id, created_at,
+              scheduled_at, duration_minutes, timezone, room_description
+       FROM meet_rooms WHERE id = $1`,
+      [req.params.id]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Room not found' });
+    const row = r.rows[0];
+    let is_host = false;
+    try {
+      const authHeader = req.headers['authorization'];
+      if (authHeader?.startsWith('Bearer ') && !authHeader.slice(7).startsWith('sk-exergy-')) {
+        const payload = jwt.verify(authHeader.slice(7), JWT_SECRET);
+        is_host = payload.sub === row.host_id;
+      }
+    } catch {}
+    const { host_id, ...publicRoom } = row;
+    return res.json({ room: publicRoom, is_host });
+  } catch (err) {
+    console.error('[meet/get]', err);
+    return res.status(500).json({ error: 'Lookup failed' });
+  }
+});
+
+// POST /api/meet/rooms/:id/end — host archives room
+app.post('/api/meet/rooms/:id/end', requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      `UPDATE meet_rooms SET status = 'ARCHIVED' WHERE id = $1 AND host_id = $2 RETURNING id`,
+      [req.params.id, req.developerId]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Room not found or not your room' });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('[meet/end]', err);
+    return res.status(500).json({ error: 'End room failed' });
+  }
+});
+
+// ── Omega-Meet AI Listener control (LNES-06 Option B) ──────────────────────────
+// Host-only proxy to the actual bot control API on AskMo (20.127.220.199) —
+// the bot runs there because that is where whisper-server lives. See
+// meet_transcriber.js and the /api/meet-transcriber/* routes in AskMo's
+// biological_proxy/src/index.ts for the real implementation.
+const ASKMO_TRANSCRIBER_URL = process.env.ASKMO_TRANSCRIBER_URL || 'http://20.127.220.199:3000';
+const MEET_TRANSCRIBER_SECRET = process.env.MEET_TRANSCRIBER_SECRET || 'exergynet-meet-transcriber-2026';
+
+async function requireRoomHost(req, res) {
+  const r = await pool.query('SELECT id, room_name, status, host_id FROM meet_rooms WHERE id = $1', [req.params.id]);
+  if (!r.rows.length) { res.status(404).json({ error: 'Room not found' }); return null; }
+  const room = r.rows[0];
+  if (room.host_id !== req.developerId) { res.status(403).json({ error: 'Only the host can control AI transcription' }); return null; }
+  if (room.status !== 'ACTIVE') { res.status(410).json({ error: 'Room is archived' }); return null; }
+  return room;
+}
+
+app.post('/api/meet/rooms/:id/ai-listener/start', requireAuth, async (req, res) => {
+  try {
+    const room = await requireRoomHost(req, res);
+    if (!room) return;
+    const r = await fetch(`${ASKMO_TRANSCRIBER_URL}/api/meet-transcriber/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-transcriber-secret': MEET_TRANSCRIBER_SECRET },
+      body: JSON.stringify({ room_id: req.params.id }),
+    });
+    const d = await r.json();
+    return res.status(r.status).json(d);
+  } catch (err) {
+    console.error('[meet/ai-listener/start]', err);
+    return res.status(502).json({ error: 'AI listener control unreachable' });
+  }
+});
+
+app.post('/api/meet/rooms/:id/ai-listener/stop', requireAuth, async (req, res) => {
+  try {
+    const room = await requireRoomHost(req, res);
+    if (!room) return;
+    const r = await fetch(`${ASKMO_TRANSCRIBER_URL}/api/meet-transcriber/stop`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-transcriber-secret': MEET_TRANSCRIBER_SECRET },
+      body: JSON.stringify({ room_id: req.params.id }),
+    });
+    const d = await r.json();
+    return res.status(r.status).json(d);
+  } catch (err) {
+    console.error('[meet/ai-listener/stop]', err);
+    return res.status(502).json({ error: 'AI listener control unreachable' });
+  }
+});
+
+app.get('/api/meet/rooms/:id/ai-listener/status', requireAuth, async (req, res) => {
+  try {
+    const room = await requireRoomHost(req, res);
+    if (!room) return;
+    const r = await fetch(`${ASKMO_TRANSCRIBER_URL}/api/meet-transcriber/status?room_id=${encodeURIComponent(req.params.id)}`, {
+      headers: { 'x-transcriber-secret': MEET_TRANSCRIBER_SECRET },
+    });
+    const d = await r.json();
+    return res.status(r.status).json(d);
+  } catch (err) {
+    console.error('[meet/ai-listener/status]', err);
+    return res.status(502).json({ error: 'AI listener control unreachable' });
+  }
+});
+
+// POST /api/meet/rooms/:id/guest-token — no auth; generates subscribe-only guest LK token
+app.post('/api/meet/rooms/:id/guest-token', meetRateLimit, async (req, res) => {
+  const identity = (req.body?.identity || 'guest').trim().slice(0, 64);
+  // RT-01: role is forced to 'guest' — callers cannot self-assign 'ai_listener' to bypass private rooms
+  const role = 'guest';
+  try {
+    const r = await pool.query(
+      `SELECT id, room_name, status, is_private, host_id FROM meet_rooms WHERE id = $1`,
+      [req.params.id]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Room not found' });
+    const room = r.rows[0];
+    if (room.status !== 'ACTIVE') return res.status(410).json({ error: 'Room is archived' });
+
+    const subscribe_only = req.body?.subscribe_only === true;
+
+    // Host bypass: if caller supplies their portal JWT and is the room creator, skip private gate
+    let caller_is_host = false;
+    try {
+      const authHeader = req.headers['authorization'];
+      if (authHeader?.startsWith('Bearer ') && !authHeader.slice(7).startsWith('sk-exergy-')) {
+        const payload = jwt.verify(authHeader.slice(7), JWT_SECRET);
+        caller_is_host = payload.sub === room.host_id;
+      }
+    } catch {}
+
+    // RT-01 fix: private check applies to all callers; subscribe_only (bg audio from breakout) and verified host exempt
+    if (room.is_private && !subscribe_only && !caller_is_host) {
+      return res.status(403).json({ error: 'room_is_private', message: 'This meeting is private. Request access from the host.' });
+    }
+
+    // RT-07: enforce 50-participant cap
+    const PARTICIPANT_CAP = 50;
+    try {
+      const roomSvc = new RoomServiceClient('https://livekit.exergynet.org', LK_API_KEY, LK_API_SECRET);
+      const participants = await roomSvc.listParticipants(room.room_name);
+      if (participants.length >= PARTICIPANT_CAP) {
+        return res.status(429).json({ error: 'room_full', message: `This meeting has reached its ${PARTICIPANT_CAP}-participant limit.` });
+      }
+    } catch (capErr) {
+      // LiveKit unavailable — don't block join, just log
+      console.warn('[meet/guest-token] participant cap check failed:', capErr.message);
+    }
+
+    const metadata = JSON.stringify({ role: subscribe_only ? 'listener' : 'guest', type: 'human' });
+    const at = new LKAccessToken(LK_API_KEY, LK_API_SECRET, { identity, metadata });
+    at.addGrant({ roomJoin: true, room: room.room_name, canPublish: !subscribe_only, canSubscribe: true, canPublishData: !subscribe_only });
+    const token = await at.toJwt();
+    return res.json({ token, room_name: room.room_name, identity, role });
+  } catch (err) {
+    console.error('[meet/guest-token]', err);
+    return res.status(500).json({ error: 'Token generation failed' });
+  }
+});
+
+// ── Omega-Meet: Chat ──────────────────────────────────────────────────────────
+
+// POST /api/meet/rooms/:id/message — participant sends a chat message
+// RT-03: rate limited. RT-04: identity verified against LiveKit participants.
+app.post('/api/meet/rooms/:id/message', meetRateLimit, async (req, res) => {
+  const identity = (req.body?.identity || 'anonymous').trim().slice(0, 64);
+  const message  = (req.body?.message  || '').trim().slice(0, 1000);
+  if (!message) return res.status(400).json({ error: 'message required' });
+  try {
+    const room = await pool.query('SELECT status, room_name FROM meet_rooms WHERE id = $1', [req.params.id]);
+    if (!room.rows.length) return res.status(404).json({ error: 'Room not found' });
+    if (room.rows[0].status === 'ARCHIVED') return res.status(410).json({ error: 'Room is archived' });
+
+    // RT-04: verify identity is an active LiveKit participant
+    try {
+      const roomSvc = new RoomServiceClient('https://livekit.exergynet.org', LK_API_KEY, LK_API_SECRET);
+      const participants = await roomSvc.listParticipants(room.rows[0].room_name);
+      const isInRoom = participants.some(p => p.identity === identity);
+      if (!isInRoom) return res.status(403).json({ error: 'not_in_room', message: 'You must be in the room to send messages.' });
+    } catch (lkErr) {
+      // LiveKit unavailable — allow chat to avoid blocking legitimate users
+      console.warn('[meet/message] LiveKit participant check failed:', lkErr.message);
+    }
+
+    const r = await pool.query(
+      `INSERT INTO meet_messages (room_id, identity, message)
+       VALUES ($1, $2, $3) RETURNING id, identity, message, created_at`,
+      [req.params.id, identity, message]
+    );
+    return res.json({ message: r.rows[0] });
+  } catch (err) {
+    console.error('[meet/message]', err);
+    return res.status(500).json({ error: 'Send failed' });
+  }
+});
+
+// GET /api/meet/rooms/:id/messages?since=<ISO> — poll chat (unauthenticated)
+app.get('/api/meet/rooms/:id/messages', async (req, res) => {
+  const since = req.query.since;
+  try {
+    let r;
+    if (since) {
+      r = await pool.query(
+        `SELECT id, identity, message, created_at FROM meet_messages
+         WHERE room_id = $1 AND created_at > $2 ORDER BY created_at ASC LIMIT 100`,
+        [req.params.id, since]
+      );
+    } else {
+      r = await pool.query(
+        `SELECT id, identity, message, created_at FROM meet_messages
+         WHERE room_id = $1 ORDER BY created_at ASC LIMIT 100`,
+        [req.params.id]
+      );
+    }
+    return res.json({ messages: r.rows });
+  } catch (err) {
+    console.error('[meet/messages]', err);
+    return res.status(500).json({ error: 'Fetch failed' });
+  }
+});
+
+// PATCH /api/meet/rooms/:id/settings — host updates room settings (privacy, name, schedule, etc.)
+app.patch('/api/meet/rooms/:id/settings', requireAuth, async (req, res) => {
+  const body = req.body || {};
+  const sets = []; const vals = [];
+  let i = 1;
+  if (body.room_name       !== undefined) { sets.push(`room_name=$${i++}`);        vals.push(body.room_name.trim().slice(0,255)); }
+  if (body.is_private      !== undefined) { sets.push(`is_private=$${i++}`);       vals.push(!!body.is_private); }
+  if (body.scheduled_at    !== undefined) { sets.push(`scheduled_at=$${i++}`);     vals.push(body.scheduled_at || null); }
+  if (body.duration_minutes!== undefined) { sets.push(`duration_minutes=$${i++}`); vals.push(parseInt(body.duration_minutes)||60); }
+  if (body.timezone        !== undefined) { sets.push(`timezone=$${i++}`);         vals.push((body.timezone||'UTC').trim().slice(0,64)); }
+  if (body.room_description!== undefined) { sets.push(`room_description=$${i++}`); vals.push((body.room_description||'').trim().slice(0,500)||null); }
+  if (!sets.length) return res.status(400).json({ error: 'Nothing to update' });
+  sets.push(`updated_at=NOW()`);
+  vals.push(req.params.id, req.developerId);
+  try {
+    const r = await pool.query(
+      `UPDATE meet_rooms SET ${sets.join(',')} WHERE id=$${i++} AND host_id=$${i++}
+       RETURNING id, room_name, status, is_private, scheduled_at, duration_minutes, timezone, room_description`,
+      vals
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Room not found or not your room' });
+    return res.json({ ok: true, room: r.rows[0] });
+  } catch (err) {
+    console.error('[meet/settings]', err);
+    return res.status(500).json({ error: 'Settings update failed' });
+  }
+});
+
+// POST /api/meet/rooms/:id/join-request — guest submits a join request for a private room
+// RT-03: rate limited. RT-08: dedup by (room_id, identity, requester_ip) to prevent token theft via name collision.
+app.post('/api/meet/rooms/:id/join-request', meetRateLimit, async (req, res) => {
+  const identity = (req.body?.identity || '').trim().slice(0, 64);
+  if (!identity) return res.status(400).json({ error: 'identity required' });
+  const requesterIp = req.ip || 'unknown';
+  try {
+    const room = await pool.query(`SELECT status, is_private FROM meet_rooms WHERE id=$1`, [req.params.id]);
+    if (!room.rows.length) return res.status(404).json({ error: 'Room not found' });
+    if (room.rows[0].status === 'ARCHIVED') return res.status(410).json({ error: 'Room is archived' });
+    if (!room.rows[0].is_private) return res.status(400).json({ error: 'Room is not private' });
+
+    // RT-08: dedup by IP — two different requesters with the same name get separate requests
+    const existing = await pool.query(
+      `SELECT id, status, token FROM meet_join_requests
+       WHERE room_id=$1 AND identity=$2 AND requester_ip=$3 AND status IN ('pending','approved')
+       ORDER BY created_at DESC LIMIT 1`,
+      [req.params.id, identity, requesterIp]
+    );
+    if (existing.rows.length) {
+      const ex = existing.rows[0];
+      return res.json({ requestId: ex.id, status: ex.status, ...(ex.token ? { token: ex.token } : {}) });
+    }
+    const r = await pool.query(
+      `INSERT INTO meet_join_requests (room_id, identity, requester_ip) VALUES ($1, $2, $3) RETURNING id`,
+      [req.params.id, identity, requesterIp]
+    );
+    return res.json({ requestId: r.rows[0].id, status: 'pending' });
+  } catch (err) {
+    // RT-08 column may not exist yet — fall back to old dedup on first deploy
+    if (err.code === '42703') {
+      try {
+        await pool.query(`ALTER TABLE meet_join_requests ADD COLUMN IF NOT EXISTS requester_ip TEXT NOT NULL DEFAULT 'unknown'`);
+      } catch {}
+    }
+    console.error('[meet/join-request]', err);
+    return res.status(500).json({ error: 'Join request failed' });
+  }
+});
+
+// GET /api/meet/rooms/:id/join-request/:reqId — guest polls their request status
+app.get('/api/meet/rooms/:id/join-request/:reqId', async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT status, token FROM meet_join_requests WHERE id=$1 AND room_id=$2`,
+      [req.params.reqId, req.params.id]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Request not found' });
+    const { status, token } = r.rows[0];
+    return res.json({ status, ...(token ? { token } : {}) });
+  } catch (err) {
+    console.error('[meet/join-request/poll]', err);
+    return res.status(500).json({ error: 'Poll failed' });
+  }
+});
+
+// GET /api/meet/rooms/:id/join-requests — host views all pending requests
+app.get('/api/meet/rooms/:id/join-requests', requireAuth, async (req, res) => {
+  try {
+    const room = await pool.query(`SELECT host_id FROM meet_rooms WHERE id=$1`, [req.params.id]);
+    if (!room.rows.length) return res.status(404).json({ error: 'Room not found' });
+    if (room.rows[0].host_id !== req.developerId) return res.status(403).json({ error: 'Not your room' });
+    const r = await pool.query(
+      `SELECT id, identity, created_at FROM meet_join_requests WHERE room_id=$1 AND status='pending' ORDER BY created_at ASC`,
+      [req.params.id]
+    );
+    return res.json({ requests: r.rows });
+  } catch (err) {
+    console.error('[meet/join-requests/list]', err);
+    return res.status(500).json({ error: 'List failed' });
+  }
+});
+
+// POST /api/meet/rooms/:id/join-requests/:reqId/approve — host approves a join request
+app.post('/api/meet/rooms/:id/join-requests/:reqId/approve', requireAuth, async (req, res) => {
+  try {
+    const room = await pool.query(`SELECT room_name, host_id FROM meet_rooms WHERE id=$1`, [req.params.id]);
+    if (!room.rows.length) return res.status(404).json({ error: 'Room not found' });
+    if (room.rows[0].host_id !== req.developerId) return res.status(403).json({ error: 'Not your room' });
+    const jr = await pool.query(
+      `SELECT identity FROM meet_join_requests WHERE id=$1 AND room_id=$2 AND status='pending'`,
+      [req.params.reqId, req.params.id]
+    );
+    if (!jr.rows.length) return res.status(404).json({ error: 'Request not found or already handled' });
+    const token = await generateMeetToken(jr.rows[0].identity, room.rows[0].room_name, 'guest');
+    await pool.query(
+      `UPDATE meet_join_requests SET status='approved', token=$1, updated_at=NOW() WHERE id=$2`,
+      [token, req.params.reqId]
+    );
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('[meet/join-requests/approve]', err);
+    return res.status(500).json({ error: 'Approval failed' });
+  }
+});
+
+// POST /api/meet/rooms/:id/join-requests/:reqId/deny — host denies a join request
+app.post('/api/meet/rooms/:id/join-requests/:reqId/deny', requireAuth, async (req, res) => {
+  try {
+    const room = await pool.query(`SELECT host_id FROM meet_rooms WHERE id=$1`, [req.params.id]);
+    if (!room.rows.length) return res.status(404).json({ error: 'Room not found' });
+    if (room.rows[0].host_id !== req.developerId) return res.status(403).json({ error: 'Not your room' });
+    await pool.query(
+      `UPDATE meet_join_requests SET status='denied', updated_at=NOW() WHERE id=$1 AND room_id=$2`,
+      [req.params.reqId, req.params.id]
+    );
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('[meet/join-requests/deny]', err);
+    return res.status(500).json({ error: 'Deny failed' });
+  }
+});
+
+// POST /api/meet/rooms/:id/vault-anchor — host stores xlmp_root after recording
+app.post('/api/meet/rooms/:id/vault-anchor', requireAuth, async (req, res) => {
+  const xlmp_root = (req.body?.xlmp_root || '').trim();
+  if (!xlmp_root) return res.status(400).json({ error: 'xlmp_root required' });
+  try {
+    const r = await pool.query(
+      `UPDATE meet_rooms SET xlmp_root = $1 WHERE id = $2 AND host_id = $3 RETURNING id`,
+      [xlmp_root, req.params.id, req.developerId]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Room not found or not your room' });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('[meet/vault-anchor]', err);
+    return res.status(500).json({ error: 'Anchor failed' });
+  }
+});
+
+// ── POST /api/meet/vanguard — CORS-safe Vanguard AI proxy for Omega-Meet ────
+// Forwards queries from portal.exergynet.org to the carrier (explorer-api)
+// without the CORS issue caused by direct browser→carrier cross-origin POST.
+// No auth required — the carrier itself is the authority; this is a thin relay.
+app.post('/api/meet/vanguard', async (req, res) => {
+  const { query, context } = req.body || {};
+  if (!query) return res.status(400).json({ error: 'query required' });
+  try {
+    const r = await fetch('https://explorer-api.exergynet.org/api/v1/vanguard-nav', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, context: context || '' }),
+    });
+    const d = await r.json();
+    return res.json(d);
+  } catch (err) {
+    console.error('[meet/vanguard]', err.message);
+    return res.status(502).json({ error: 'Vanguard unreachable', response: '' });
   }
 });
 
@@ -546,12 +1290,30 @@ app.post('/auth/login', authRateLimit, async (req, res) => {
 app.get('/auth/me', requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT email, display_name, usdc_micro_balance FROM biological_developers WHERE id = $1',
+      'SELECT email, display_name, usdc_micro_balance, node_id, lat FROM biological_developers WHERE id = $1',
       [req.developerId]
     );
     if (!result.rows[0]) return res.status(404).json({ error: 'User not found' });
-    const { email, display_name, usdc_micro_balance } = result.rows[0];
+    const { email, display_name, usdc_micro_balance, node_id, lat } = result.rows[0];
     res.json({ id: req.developerId, email, name: display_name, balance: usdc_micro_balance });
+    // Backfill foundation coordinates for existing nodes that predate the geo pipeline
+    if (node_id && lat === null) {
+      const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.ip || '';
+      const isPrivate = !ip || ip.startsWith('127.') || ip.startsWith('10.') || ip.startsWith('192.168.') || ip === '::1';
+      if (!isPrivate) {
+        fetch(`http://ip-api.com/json/${ip}?fields=status,lat,lon`)
+          .then(r => r.json())
+          .then(g => {
+            if (g.status === 'success') {
+              pool.query(
+                `UPDATE biological_developers SET lat=$1, lng=$2, foundation_ip=$3, first_seen_at=NOW()
+                 WHERE id=$4 AND lat IS NULL`,
+                [g.lat, g.lon, ip, req.developerId]
+              ).catch(() => {});
+            }
+          }).catch(() => {});
+      }
+    }
   } catch (err) {
     res.status(500).json({ error: 'Failed to load user' });
   }
@@ -747,27 +1509,51 @@ app.put('/developer/profile-image/active/:idx', requireAuth, async (req, res) =>
 // The app sends the node_id + a hex-encoded EC signature over the account_id
 // so the server can confirm the caller actually holds the private key.
 app.post('/developer/link-node', requireAuth, async (req, res) => {
-  const { node_id } = req.body || {};
+  const { node_id, device_type } = req.body || {};
   if (!node_id || typeof node_id !== 'string' || node_id.length !== 16) {
     return res.status(400).json({ error: 'node_id must be a 16-character string' });
   }
+  const dtype = (['edge_witness', 'desktop_prover', 'ghost_node'].includes(device_type))
+    ? device_type
+    : 'edge_witness';
   try {
-    // Check if node_id belongs to a different account already
+    // Check if node_id is already registered to a different account
     const existing = await pool.query(
-      `SELECT id FROM biological_developers WHERE node_id = $1 AND id != $2`,
-      [node_id, req.developerId]
+      `SELECT developer_id FROM node_registrations WHERE node_id = $1`,
+      [node_id]
     );
-    if (existing.rows.length > 0) {
+    if (existing.rows.length > 0 && existing.rows[0].developer_id !== req.developerId) {
       return res.status(409).json({ error: 'Node already linked to a different account' });
     }
+    // Append to relational registry (upsert: update last_seen_at if already owned by this account)
     await pool.query(
-      `UPDATE biological_developers SET node_id = $1 WHERE id = $2`,
-      [node_id, req.developerId]
+      `INSERT INTO node_registrations (developer_id, node_id, device_type)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (node_id) DO UPDATE SET last_seen_at = NOW()`,
+      [req.developerId, node_id, dtype]
     );
+    // Geolocate registration IP → store as foundation coordinates (fire-and-forget)
+    (async () => {
+      try {
+        const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.ip || '';
+        const isPrivate = !ip || ip.startsWith('127.') || ip.startsWith('10.') || ip.startsWith('192.168.') || ip === '::1';
+        if (!isPrivate) {
+          const geo = await fetch(`http://ip-api.com/json/${ip}?fields=status,lat,lon`);
+          const g = await geo.json();
+          if (g.status === 'success') {
+            await pool.query(
+              `UPDATE biological_developers SET lat=$1, lng=$2, foundation_ip=$3, first_seen_at=NOW()
+               WHERE id=$4 AND lat IS NULL`,
+              [g.lat, g.lon, ip, req.developerId]
+            );
+          }
+        }
+      } catch (_) {}
+    })();
     // Credit $10 (10,000,000 µUSDC) to the L0 miners ledger for every new node link.
     // Fire-and-forget — don't block the response on Apex availability.
     creditApexMiner(node_id, 10_000_000);
-    res.json({ ok: true, node_id });
+    res.json({ ok: true, node_id, device_type: dtype });
   } catch (err) {
     console.error('[link-node]', err);
     res.status(500).json({ error: 'Failed to link node' });
@@ -788,6 +1574,232 @@ app.post('/developer/link-wallet', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('[link-wallet]', err);
     res.status(500).json({ error: 'Failed to link wallet' });
+  }
+});
+
+// ── POST /api/verify/send-code — dispatch 6-digit OTP via Twilio Verify ──────
+app.post('/api/verify/send-code', requireAuth, async (req, res) => {
+  const { phone } = req.body || {};
+  if (!phone || typeof phone !== 'string') {
+    return res.status(400).json({ error: 'phone required (E.164 format, e.g. +13175550123)' });
+  }
+  const sid    = process.env.TWILIO_ACCOUNT_SID;
+  const token  = process.env.TWILIO_AUTH_TOKEN;
+  const vsid   = process.env.TWILIO_VERIFY_SERVICE_SID;
+  if (!sid || !token || !vsid) {
+    return res.status(503).json({ error: 'Twilio not configured' });
+  }
+  try {
+    const resp = await fetch(
+      `https://verify.twilio.com/v2/Services/${vsid}/Verifications`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from(`${sid}:${token}`).toString('base64'),
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ To: phone, Channel: 'sms' }).toString(),
+      }
+    );
+    const body = await resp.json();
+    if (!resp.ok) {
+      console.error('[verify/send-code]', body);
+      return res.status(502).json({ error: body.message || 'Twilio error' });
+    }
+    // Store phone on account (not yet verified)
+    await pool.query(
+      'UPDATE biological_developers SET phone = $1 WHERE id = $2',
+      [phone, req.developerId]
+    );
+    res.json({ ok: true, status: body.status });
+  } catch (err) {
+    console.error('[verify/send-code]', err);
+    res.status(500).json({ error: 'Failed to send code' });
+  }
+});
+
+// ── POST /api/verify/confirm-code — validate OTP, set phone_verified = TRUE ──
+app.post('/api/verify/confirm-code', requireAuth, async (req, res) => {
+  const { code } = req.body || {};
+  if (!code || typeof code !== 'string') {
+    return res.status(400).json({ error: 'code required' });
+  }
+  const sid    = process.env.TWILIO_ACCOUNT_SID;
+  const token  = process.env.TWILIO_AUTH_TOKEN;
+  const vsid   = process.env.TWILIO_VERIFY_SERVICE_SID;
+  if (!sid || !token || !vsid) {
+    return res.status(503).json({ error: 'Twilio not configured' });
+  }
+  try {
+    // Look up the phone stored during send-code
+    const { rows } = await pool.query(
+      'SELECT phone FROM biological_developers WHERE id = $1',
+      [req.developerId]
+    );
+    if (!rows.length || !rows[0].phone) {
+      return res.status(400).json({ error: 'No pending verification — call send-code first' });
+    }
+    const phone = rows[0].phone;
+    const resp = await fetch(
+      `https://verify.twilio.com/v2/Services/${vsid}/VerificationCheck`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from(`${sid}:${token}`).toString('base64'),
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ To: phone, Code: code }).toString(),
+      }
+    );
+    const body = await resp.json();
+    if (!resp.ok || body.status !== 'approved') {
+      return res.status(400).json({ error: 'Invalid or expired code', twilio_status: body.status });
+    }
+    await pool.query(
+      'UPDATE biological_developers SET phone_verified = TRUE WHERE id = $1',
+      [req.developerId]
+    );
+    res.json({ ok: true, phone_verified: true });
+  } catch (err) {
+    console.error('[verify/confirm-code]', err);
+    res.status(500).json({ error: 'Failed to confirm code' });
+  }
+});
+
+// ── POST /api/wallet/transfer — P2P µUSDC/µRHO transfer (KYC + cap gated) ───
+const DAILY_TRANSFER_CAP_USDC = 500_000; // $0.50 bootstrap cap
+app.post('/api/wallet/transfer', requireAuth, async (req, res) => {
+  const { to_email, asset, amount } = req.body || {};
+  if (!to_email || !asset || !amount) {
+    return res.status(400).json({ error: 'to_email, asset, and amount required' });
+  }
+  if (!['usdc_micro', 'rho_micro'].includes(asset)) {
+    return res.status(400).json({ error: 'asset must be usdc_micro or rho_micro' });
+  }
+  const amt = Math.floor(Number(amount));
+  if (!Number.isInteger(amt) || amt <= 0) {
+    return res.status(400).json({ error: 'amount must be a positive integer' });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // 1. Auth: load sender, check phone_verified
+    const { rows: senderRows } = await client.query(
+      `SELECT id, email, phone_verified, usdc_micro_balance, rho_micro_balance,
+              daily_transfer_usdc, daily_transfer_reset_at
+         FROM biological_developers WHERE id = $1 FOR UPDATE`,
+      [req.developerId]
+    );
+    if (!senderRows.length) throw Object.assign(new Error('Sender not found'), { status: 404 });
+    const sender = senderRows[0];
+
+    // 2. KYC guard
+    if (!sender.phone_verified) {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ error: 'Phone verification required before transfers' });
+    }
+
+    // 3. Daily cap guard (USDC transfers only during bootstrap)
+    if (asset === 'usdc_micro') {
+      const now = new Date();
+      const resetAt = sender.daily_transfer_reset_at ? new Date(sender.daily_transfer_reset_at) : null;
+      const isNewDay = !resetAt || (now - resetAt) >= 86_400_000;
+      const currentSpend = isNewDay ? 0 : Number(sender.daily_transfer_usdc);
+      if (currentSpend + amt > DAILY_TRANSFER_CAP_USDC) {
+        await client.query('ROLLBACK');
+        return res.status(429).json({
+          error: 'Daily transfer cap reached (500,000 µUSDC / $0.50)',
+          remaining_today: Math.max(0, DAILY_TRANSFER_CAP_USDC - currentSpend),
+        });
+      }
+      // Update spend tracker
+      await client.query(
+        `UPDATE biological_developers
+           SET daily_transfer_usdc = $1, daily_transfer_reset_at = $2
+           WHERE id = $3`,
+        [isNewDay ? amt : currentSpend + amt, isNewDay ? now : sender.daily_transfer_reset_at, req.developerId]
+      );
+    }
+
+    // 4. Balance check
+    const balanceCol = asset === 'usdc_micro' ? 'usdc_micro_balance' : 'rho_micro_balance';
+    if (Number(sender[balanceCol]) < amt) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Insufficient balance' });
+    }
+
+    // 5. Load receiver
+    const { rows: recvRows } = await client.query(
+      `SELECT id FROM biological_developers WHERE email = $1 FOR UPDATE`,
+      [to_email.toLowerCase()]
+    );
+    if (!recvRows.length) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Recipient not found' });
+    }
+    if (recvRows[0].id === req.developerId) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Cannot transfer to self' });
+    }
+
+    // 6. Atomic debit/credit + transfer log
+    await client.query(
+      `UPDATE biological_developers SET ${balanceCol} = ${balanceCol} - $1 WHERE id = $2`,
+      [amt, req.developerId]
+    );
+    await client.query(
+      `UPDATE biological_developers SET ${balanceCol} = ${balanceCol} + $1 WHERE id = $2`,
+      [amt, recvRows[0].id]
+    );
+    const { rows: txRows } = await client.query(
+      `INSERT INTO transfers (sender_id, receiver_id, asset, amount)
+       VALUES ($1, $2, $3, $4) RETURNING id`,
+      [req.developerId, recvRows[0].id, asset, amt]
+    );
+
+    await client.query('COMMIT');
+
+    const assetLabel = asset === 'usdc_micro' ? 'µUSDC' : 'µRHO';
+    console.log(`[TRANSFER] ${sender.email} → ${to_email} | ${amt} ${assetLabel}`);
+    res.json({ ok: true, transfer_id: txRows[0].id, transferred: amt, asset, to: to_email });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('[wallet/transfer]', err);
+    res.status(err.status || 500).json({ error: err.message || 'Transfer failed' });
+  } finally {
+    client.release();
+  }
+});
+
+// ── GET /developer/transfers — paginated P2P transfer history (sent + received)
+app.get('/developer/transfers', requireAuth, async (req, res) => {
+  const limit  = Math.min(parseInt(req.query.limit)  || 20, 100);
+  const offset = parseInt(req.query.offset) || 0;
+  try {
+    const [rows, totRow] = await Promise.all([
+      pool.query(
+        `SELECT t.id, t.asset, t.amount, t.created_at,
+                CASE WHEN t.sender_id = $1 THEN 'sent' ELSE 'received' END AS direction,
+                CASE WHEN t.sender_id = $1 THEN r.email ELSE s.email END AS counterparty
+           FROM transfers t
+           JOIN biological_developers s ON s.id = t.sender_id
+           JOIN biological_developers r ON r.id = t.receiver_id
+          WHERE t.sender_id = $1 OR t.receiver_id = $1
+          ORDER BY t.created_at DESC
+          LIMIT $2 OFFSET $3`,
+        [req.developerId, limit, offset]
+      ),
+      pool.query(
+        `SELECT COUNT(*) FROM transfers WHERE sender_id = $1 OR receiver_id = $1`,
+        [req.developerId]
+      ),
+    ]);
+    res.json({ transfers: rows.rows, total: parseInt(totRow.rows[0].count), limit, offset });
+  } catch (err) {
+    console.error('[developer/transfers]', err);
+    res.status(500).json({ error: 'Failed to load transfers' });
   }
 });
 
@@ -968,9 +1980,33 @@ app.post('/api/deposit/claim', requireAuth, async (req, res) => {
 
     console.log(`[deposit/claim] credited ${onChainMicro} µUSDC → developer ${req.developerId}`);
     // Sync to L0 miners ledger so the siphon sees the balance.
-    const devRow = await pool.query(`SELECT node_id FROM biological_developers WHERE id = $1`, [req.developerId]);
+    const devRow = await pool.query(`SELECT node_id, email FROM biological_developers WHERE id = $1`, [req.developerId]);
     const nodeId = devRow.rows[0]?.node_id;
     if (nodeId) creditApexMiner(nodeId, onChainMicro);
+
+    // LNES-65/LNES-66: credit portal voice credits proportionally to the USDC deposit.
+    // 1 USD = 10,000 voice credits (same rate as Stripe billing/confirm/route.ts).
+    // Fire-and-forget — biological_proxy DB is already credited; portal sync is best-effort.
+    const devEmail = devRow.rows[0]?.email;
+    const billingAdminToken = process.env.BILLING_ADMIN_TOKEN;
+    if (devEmail && billingAdminToken) {
+      const voiceCredits = Math.round((onChainMicro / 1_000_000) * 10_000);
+      if (voiceCredits > 0) {
+        fetch('https://portal.exergynet.org/api/billing/add-credits', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-billing-admin-token': billingAdminToken,
+          },
+          body: JSON.stringify({ email: devEmail, credits: voiceCredits }),
+        })
+          .then(r => r.ok
+            ? console.log(`[deposit/claim] voice-credits synced ${voiceCredits} → ${devEmail}`)
+            : r.text().then(t => console.error(`[deposit/claim] voice-credits HTTP ${r.status}: ${t.slice(0, 120)}`))
+          )
+          .catch(e => console.error('[deposit/claim] voice-credits sync failed:', e.message));
+      }
+    }
     res.json({
       ok:           true,
       credited_micro: onChainMicro,
@@ -1113,38 +2149,111 @@ app.post('/v1/chat/completions', async (req, res) => {
   const raw = req.headers['authorization']?.replace('Bearer ', '') || '';
   if (!raw) return res.status(401).json({ error: 'Missing authorization' });
 
-  // API key path (sk-exergy-*)
+  // devId is set for billable callers (API key or portal session JWT).
+  // dt-tokens (edge-witness-device) pass through without billing.
+  let devId = null;
+
   if (raw.startsWith('sk-exergy-')) {
+    // API key path — fetch balance for billing
     try {
       const prefix = raw.slice(0, 18);
       const devs = await pool.query(
-        `SELECT id, api_key_hash, active FROM biological_developers WHERE api_key_preview LIKE $1`,
+        `SELECT id, api_key_hash, active, usdc_micro_balance FROM biological_developers WHERE api_key_preview LIKE $1`,
         [prefix + '%']
       );
       let dev = null;
       for (const row of devs.rows) { if (await bcrypt.compare(raw, row.api_key_hash)) { dev = row; break; } }
       if (!dev) return res.status(401).json({ error: 'Invalid API key' });
       if (!dev.active) return res.status(403).json({ error: 'Account inactive' });
+      if (Number(dev.usdc_micro_balance) <= 0) return res.status(402).json({ error: 'Insufficient balance — top up USDC to continue' });
+      devId = dev.id;
     } catch (err) {
       console.error('[v1/chat auth]', err);
       return res.status(500).json({ error: 'Auth check failed' });
     }
   } else {
-    // JWT path (dt-token or portal session JWT)
+    // JWT path — verify signature first
+    let payload;
     try {
-      jwt.verify(raw, JWT_SECRET);
+      payload = jwt.verify(raw, JWT_SECRET);
     } catch {
       return res.status(401).json({ error: 'Invalid or expired token' });
     }
+    // Portal session JWTs have sub=developerId (UUID). dt-tokens have sub='edge-witness-device'.
+    // Only bill portal sessions; let service tokens through without balance check.
+    if (payload.sub && payload.role !== 'vanguard_chat' && payload.sub !== 'edge-witness-device' && payload.sub !== 'claude-code-agent') {
+      try {
+        const { rows } = await pool.query(
+          'SELECT id, active, usdc_micro_balance FROM biological_developers WHERE id = $1',
+          [payload.sub]
+        );
+        if (rows.length > 0) {
+          if (!rows[0].active) return res.status(403).json({ error: 'Account inactive' });
+          if (Number(rows[0].usdc_micro_balance) <= 0) return res.status(402).json({ error: 'Insufficient balance — top up USDC to continue' });
+          devId = rows[0].id;
+        }
+      } catch (err) {
+        console.error('[v1/chat jwt-lookup]', err);
+      }
+    }
   }
 
-  // Proxy to real Vanguard LLM
-  const VG_URL = process.env.SEI_VANGUARD_URL || 'http://20.127.220.199:3000';
-  const VG_KEY = process.env.SEI_VANGUARD_KEY || 'sk-vanguard-apex-internal-v1';
+  // Helper: record job + deduct balance after a successful inference
+  async function recordJob(tokensYielded, prompt) {
+    if (!devId || tokensYielded <= 0) return;
+    const microUsdcCost = Math.max(1, Math.floor(tokensYielded * 400));
+    const promptHash = prompt ? crypto.createHash('sha256').update(String(prompt)).digest('hex').slice(0, 16) : null;
+    try {
+      await pool.query(
+        `UPDATE biological_developers SET usdc_micro_balance = GREATEST(0, usdc_micro_balance - $1) WHERE id = $2`,
+        [microUsdcCost, devId]
+      );
+      await pool.query(
+        `INSERT INTO en_jobs (developer_id, prompt_hash, tokens_yielded, zk_proof_status) VALUES ($1, $2, $3, 'settled')`,
+        [devId, promptHash, tokensYielded]
+      );
+    } catch (e) {
+      console.error('[v1/chat record]', e.message);
+    }
+  }
+
+  // [LNES-20] Cognitive Router — model-gated path selection
+  const requestedModel = req.body?.model || 'vanguard-standard';
+  const PROPOSER_URL   = process.env.SEI_VANGUARD_URL  || 'http://20.127.220.199:3000';
+  const AUDITOR_URL    = process.env.NVIDIA_NIM_URL     || 'http://40.124.170.30:3000';
+  const XAI_URL        = process.env.XAI_VANGUARD_URL  || 'https://api.x.ai/v1/chat/completions';
+  let   VG_KEY         = process.env.SEI_VANGUARD_KEY  || 'sk-vanguard-apex-internal-v1';
+
+  // Probe Auditor liveness (fast 3s timeout); fall back to Proposer if down
+  let VG_URL;
+  if (requestedModel === 'grok-4.5' || requestedModel === 'grok-build-0.1') {
+    // [LNES-61] xAI Grok endpoint — /M tokens, 20% sovereign margin
+    VG_URL = XAI_URL;
+    VG_KEY = process.env.XAI_API_KEY || '';
+    console.log(`[LNES-20] Routing model="${requestedModel}" → xAI Grok ${XAI_URL}`);
+  } else if (requestedModel === 'NVIDIA' || requestedModel === 'vanguard-auditor') {
+    let auditorLive = false;
+    try {
+      const probe = await fetch(`${AUDITOR_URL}/health`, { signal: AbortSignal.timeout(3000) });
+      auditorLive = probe.ok;
+    } catch (_) { auditorLive = false; }
+    if (auditorLive) {
+      VG_URL = AUDITOR_URL;
+      console.log(`[LNES-20] Routing model="${requestedModel}" → Auditor (Nemotron) ${AUDITOR_URL}`);
+    } else {
+      VG_URL = PROPOSER_URL;
+      console.warn(`[LNES-20] Auditor unreachable — failing over model="${requestedModel}" → Proposer ${PROPOSER_URL}`);
+    }
+  } else {
+    // vanguard-standard, vanguard-engine, vanguard, or any unrecognized → Proposer
+    VG_URL = PROPOSER_URL;
+    console.log(`[LNES-20] Routing model="${requestedModel}" → Proposer (Qwen) ${PROPOSER_URL}`);
+  }
 
   const isStreaming   = req.body?.stream === true;
   const isJsonObject  = req.body?.response_format?.type === 'json_object';
   const isClinical    = req.body?.domain === 'clinical' || req.headers['x-vanguard-domain'] === 'clinical';
+  const lastUserMsg   = (() => { const msgs = req.body?.messages; return Array.isArray(msgs) ? (msgs.filter(m => m.role === 'user').pop()?.content ?? '') : ''; })();
 
   // Inject clinical system guard for json_object or clinical domain requests
   let upstreamBody = req.body;
@@ -1177,38 +2286,120 @@ app.post('/v1/chat/completions', async (req, res) => {
     if (!isStreaming) {
       const data = await upstream.json();
       if (isJsonObject || isClinical) {
-        const raw = data.choices?.[0]?.message?.content ?? '';
-        const normalized = normalizeExtractionResponse(raw);
+        const rawContent = data.choices?.[0]?.message?.content ?? '';
+        const normalized = normalizeExtractionResponse(rawContent);
         try {
           JSON.parse(normalized); // validate
           if (data.choices?.[0]?.message) {
             data.choices[0].message.content = normalized;
           }
         } catch {
-          console.error('[v1/chat proxy] json_object normalizer failed to produce valid JSON. raw:', raw.slice(0, 200));
+          console.error('[v1/chat proxy] json_object normalizer failed to produce valid JSON. raw:', rawContent.slice(0, 200));
           return res.status(502).json({ error: 'Model returned non-JSON response for json_object request' });
         }
       }
+      // Record job: prefer model-reported token count, fall back to word count
+      const completionText = data.choices?.[0]?.message?.content ?? '';
+      const tokensYielded = data.usage?.completion_tokens || Math.max(1, completionText.split(/\s+/).filter(Boolean).length);
+      recordJob(tokensYielded, lastUserMsg).catch(() => {});
       return res.json(data);
     }
 
-    // Streaming path: pass through as SSE
+    // Streaming path: intercept SSE chunks to accumulate text for job recording
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
     const reader = upstream.body.getReader();
     const dec = new TextDecoder();
+    let streamedText = '';
+    let buf = '';
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      res.write(dec.decode(value, { stream: true }));
+      const chunk = dec.decode(value, { stream: true });
+      res.write(chunk);
+      // Accumulate delta.content for billing
+      buf += chunk;
+      const lines = buf.split('\n');
+      buf = lines.pop() ?? '';
+      for (const line of lines) {
+        if (!line.startsWith('data:')) continue;
+        const data = line.slice(5).trim();
+        if (data === '[DONE]') continue;
+        try {
+          const token = JSON.parse(data)?.choices?.[0]?.delta?.content;
+          if (token) streamedText += token;
+        } catch {}
+      }
     }
     res.end();
+    // Record after stream ends
+    const tokensYielded = Math.max(1, streamedText.split(/\s+/).filter(Boolean).length);
+    recordJob(tokensYielded, lastUserMsg).catch(() => {});
   } catch (e) {
     console.error('[v1/chat proxy]', e.message);
     if (!res.headersSent) res.status(503).json({ error: 'Vanguard unreachable' });
     else res.end();
+  }
+});
+
+// ── POST /api/v1/vanguard-nav ─ Edge Witness → Vanguard bridge (service-to-service) ──
+// Auth: x-explorer-secret header matched against EXPLORER_BRIDGE_SECRET env var.
+// Body: { query: string, context: string }
+// Returns: { response: string }  (same format Kotlin/Axum expects)
+app.post('/api/v1/vanguard-nav', async (req, res) => {
+  const bridgeSecret = process.env.EXPLORER_BRIDGE_SECRET;
+  if (!bridgeSecret || req.headers['x-explorer-secret'] !== bridgeSecret) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  const { query, context } = req.body || {};
+  if (!query) return res.status(400).json({ error: 'query required' });
+
+  const VG_KEY      = process.env.SEI_VANGUARD_KEY  || 'sk-vanguard-apex-internal-v1';
+  const PROPOSER    = process.env.SEI_VANGUARD_URL   || 'http://20.127.220.199:3000';
+  const AUDITOR     = process.env.NVIDIA_NIM_URL     || 'http://40.124.170.30:3000';
+
+  // Prefer Auditor (A10 GPU, Nemotron-3 — better spoken responses); fall back to Proposer.
+  let VG_URL = AUDITOR;
+  try {
+    const probe = await Promise.race([
+      fetch(`${AUDITOR}/health`).then(r => r.ok ? AUDITOR : null),
+      new Promise(r => setTimeout(() => r(null), 2000)),
+    ]);
+    if (!probe) VG_URL = PROPOSER;
+  } catch { VG_URL = PROPOSER; }
+
+  try {
+    const upstream = await fetch(`${VG_URL}/v1/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${VG_KEY}` },
+      body: JSON.stringify({
+        model: 'vanguard',
+        messages: [
+          { role: 'system', content: context || 'You are Vanguard, an ExergyNet navigation AI.' },
+          { role: 'user',   content: query },
+        ],
+        max_tokens: 120,
+        temperature: 0.5,
+        stream: false,
+      }),
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!upstream.ok) {
+      console.error(`[VANGUARD_NAV] upstream ${upstream.status}`);
+      return res.json({ response: '' });
+    }
+    const data = await upstream.json();
+    let raw = data?.choices?.[0]?.message?.content || '';
+    // Strip markdown so Android TTS never reads punctuation aloud.
+    raw = raw.replace(/[*_`#>~\[\]]/g, '').replace(/\s{2,}/g, ' ').trim();
+    console.log(`[VANGUARD_NAV] query="${query.slice(0,40)}" → ${raw.length} chars`);
+    res.json({ response: raw });
+  } catch (e) {
+    console.error('[VANGUARD_NAV] error:', e.message);
+    res.json({ response: '' });
   }
 });
 
@@ -1329,6 +2520,42 @@ function normalizeExtractionResponse(text) {
 // ── POST /v1/extract — Sovereign Clinical Extraction ─────────────────────────
 // Accepts: { text: string, schema: Record<string, string>, domain?: string }
 // Returns: { extraction: Record<string, { value, confidence, needs_clarification }> }
+// ── GET /v1/nodes/map — real tester node locations (foundation coordinates) ───
+app.get('/v1/nodes/map', async (req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT d.node_id, d.username, d.display_name, d.lat, d.lng,
+             d.foundation_ip, d.first_seen_at, d.created_at,
+             MAX(j.created_at) AS last_job_at
+      FROM biological_developers d
+      LEFT JOIN en_jobs j ON j.developer_id = d.id
+      WHERE d.node_id IS NOT NULL
+        AND d.lat IS NOT NULL
+        AND d.lng IS NOT NULL
+      GROUP BY d.id
+      ORDER BY d.first_seen_at ASC NULLS LAST
+    `);
+    const now = Date.now();
+    res.json(rows.map(r => {
+      const lastJob = r.last_job_at ? new Date(r.last_job_at).getTime() : 0;
+      const ageDays = lastJob ? (now - lastJob) / 86400000 : Infinity;
+      const status = ageDays < 1 ? 'ACTIVE' : ageDays < 7 ? 'SYNCING' : 'OFFLINE';
+      return {
+        nodeId:     r.node_id,
+        label:      r.display_name || r.username || `Node·${r.node_id.slice(0, 8)}`,
+        lat:        parseFloat(r.lat),
+        lng:        parseFloat(r.lng),
+        firstSeen:  r.first_seen_at || r.created_at,
+        lastJobAt:  r.last_job_at,
+        status,
+      };
+    }));
+  } catch (e) {
+    console.error('[nodes/map]', e);
+    res.status(500).json({ error: 'Map query failed' });
+  }
+});
+
 app.post('/v1/extract', requireAuth, async (req, res) => {
   const { text, schema, domain } = req.body || {};
 
@@ -1465,6 +2692,37 @@ app.get('/api/apps', async (req, res) => {
     res.json({ apps, count: apps.length });
   } catch (e) {
     console.error('[/api/apps]', e);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// ── GET /api/apps/public — alias of /api/apps (called by /intel page) ───────
+app.get('/api/apps/public', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT app_key, name, tier, price_micro, usage_price_micro, description,
+              category, tags, icon_url, icon, app_url, featured
+       FROM app_catalog WHERE active = true AND review_status = 'active'
+       ORDER BY featured DESC NULLS LAST, created_at ASC`
+    );
+    const apps = rows.map(r => ({
+      app_key:         r.app_key,
+      name:            r.name,
+      tier:            r.tier,
+      price_usd:       (r.price_micro / 1_000_000).toFixed(2),
+      usage_price_usd: (r.usage_price_micro / 1_000_000).toFixed(4),
+      description:     r.description || null,
+      category:        r.category || null,
+      tags:            r.tags || [],
+      icon_url:        r.icon_url || null,
+      icon_emoji:      r.icon || null,
+      app_url:         r.app_url || null,
+      standalone_url:  null,
+      featured:        r.featured || false,
+    }));
+    res.json({ apps, count: apps.length });
+  } catch (e) {
+    console.error('[/api/apps/public]', e);
     res.status(500).json({ error: 'Internal error' });
   }
 });
@@ -1625,10 +2883,864 @@ app.post('/api/apps/submit', requireAuth, async (req, res) => {
   }
 });
 
+
+// ── GET /api/apps/entitlement — check subscription gate ─────────────────────
+app.get('/api/apps/entitlement', requireAuth, async (req, res) => {
+  try {
+    const appKey = String(req.query.app_key || '');
+    if (!appKey) return res.status(400).json({ error: 'app_key required' });
+    const cat = await pool.query('SELECT tier FROM app_catalog WHERE app_key = $1 AND active = TRUE', [appKey]);
+    if (cat.rows.length === 0) return res.status(404).json({ error: 'app not found' });
+    if (cat.rows[0].tier === 'free') return res.json({ entitled: true, app_key: appKey, tier: 'free' });
+    if (cat.rows[0].tier === 'metered') return res.json({ entitled: true, app_key: appKey, tier: 'metered' });
+    const r = await pool.query(
+      `SELECT status, renews_at FROM app_subscriptions
+       WHERE developer_id = $1 AND app_key = $2 AND status = 'active' AND renews_at > NOW() LIMIT 1`,
+      [req.developerId, appKey]);
+    res.json({ entitled: r.rows.length > 0, app_key: appKey, tier: cat.rows[0].tier, subscription: r.rows[0] || null });
+  } catch (e) { console.error('[/api/apps/entitlement]', e); res.status(500).json({ error: e.message }); }
+});
+
+// ── POST /api/apps/subscribe { app_key } — debit balance, activate sub ──────
+app.post('/api/apps/subscribe', requireAuth, async (req, res) => {
+  const appKey = String((req.body && req.body.app_key) || '');
+  if (!appKey) return res.status(400).json({ error: 'app_key required' });
+  const client = await pool.connect();
+  try {
+    const cat = await client.query('SELECT * FROM app_catalog WHERE app_key = $1 AND active = TRUE', [appKey]);
+    if (cat.rows.length === 0) return res.status(404).json({ error: 'app not found' });
+    const appRow = cat.rows[0];
+    if (appRow.tier !== 'subscription') return res.status(400).json({ error: 'app is not a subscription', tier: appRow.tier });
+    const price = Number(appRow.price_micro);
+
+    const existing = await client.query(
+      `SELECT id FROM app_subscriptions WHERE developer_id=$1 AND app_key=$2 AND status='active' AND renews_at > NOW()`,
+      [req.developerId, appKey]);
+    if (existing.rows.length) return res.json({ status: 'already_subscribed', app_key: appKey });
+
+    // Check balance
+    const dev = await client.query('SELECT usdc_micro_balance FROM biological_developers WHERE id = $1 FOR UPDATE', [req.developerId]);
+    const balance = Number(dev.rows[0]?.usdc_micro_balance ?? 0);
+    if (balance < price) {
+      return res.status(402).json({
+        error: 'insufficient_balance',
+        message: 'Not enough USDC. Fund your balance in the Billing tab.',
+        balance_micro: balance, price_micro: price,
+        shortfall_micro: price - balance,
+      });
+    }
+
+    await client.query('BEGIN');
+    // Debit developer
+    await client.query(
+      'UPDATE biological_developers SET usdc_micro_balance = usdc_micro_balance - $1 WHERE id = $2',
+      [price, req.developerId]);
+    // Activate subscription (30-day period, upsert)
+    const sub = await client.query(
+      `INSERT INTO app_subscriptions (developer_id, app_key, price_micro, status, started_at, renews_at, cancelled_at)
+       VALUES ($1,$2,$3,'active',NOW(),NOW() + INTERVAL '30 days', NULL)
+       ON CONFLICT (developer_id, app_key) DO UPDATE
+         SET status='active', price_micro=$3, started_at=NOW(), renews_at=NOW() + INTERVAL '30 days', cancelled_at=NULL
+       RETURNING renews_at`,
+      [req.developerId, appKey, price]);
+    await client.query('COMMIT');
+    res.json({
+      status: 'subscribed', app_key: appKey, name: appRow.name,
+      charged_micro: price, charged_usd: (price / 1_000_000).toFixed(2),
+      new_balance_micro: balance - price,
+      new_balance_usd: ((balance - price) / 1_000_000).toFixed(4),
+      renews_at: sub.rows[0].renews_at,
+    });
+  } catch (e) {
+    try { await client.query('ROLLBACK'); } catch {}
+    console.error('[/api/apps/subscribe]', e);
+    res.status(500).json({ error: e.message });
+  } finally { client.release(); }
+});
+
+// ── GET /api/apps/subscriptions — caller's active subscriptions ──────────────
+app.get('/api/apps/subscriptions', requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT s.app_key, c.name, s.price_micro, s.status, s.started_at, s.renews_at, s.cancelled_at
+       FROM app_subscriptions s LEFT JOIN app_catalog c ON c.app_key = s.app_key
+       WHERE s.developer_id = $1 AND (s.status = 'active' OR s.renews_at > NOW())
+       ORDER BY s.started_at DESC`, [req.developerId]);
+    res.json({ subscriptions: r.rows.map(s => ({
+      app_key: s.app_key, name: s.name, status: s.status,
+      price_micro: Number(s.price_micro), price_usd: (Number(s.price_micro)/1_000_000).toFixed(2),
+      started_at: s.started_at, renews_at: s.renews_at, cancelled_at: s.cancelled_at,
+    })) });
+  } catch (e) { console.error('[/api/apps/subscriptions]', e); res.status(500).json({ error: e.message }); }
+});
+
+// ── POST /api/apps/unsubscribe { app_key } — cancel (no refund) ─────────────
+app.post('/api/apps/unsubscribe', requireAuth, async (req, res) => {
+  const appKey = String((req.body && req.body.app_key) || '');
+  if (!appKey) return res.status(400).json({ error: 'app_key required' });
+  try {
+    const r = await pool.query(
+      `UPDATE app_subscriptions SET status='cancelled', cancelled_at=NOW()
+       WHERE developer_id=$1 AND app_key=$2 AND status='active' RETURNING renews_at`,
+      [req.developerId, appKey]);
+    if (r.rows.length === 0) return res.json({ status: 'not_subscribed', app_key: appKey });
+    res.json({ status: 'cancelled', app_key: appKey, access_until: r.rows[0].renews_at });
+  } catch (e) { console.error('[/api/apps/unsubscribe]', e); res.status(500).json({ error: e.message }); }
+});
+
+// ── POST /v1/internal/chat — internal Vanguard proxy (portal → AskMo) ────────
+app.post('/v1/internal/chat', async (req, res) => {
+  const secret = req.headers['x-internal-secret'];
+  const expected = process.env.ASKMO_INTERNAL_SECRET;
+  if (!expected || secret !== expected) return res.status(403).json({ error: 'Forbidden' });
+  const base = (process.env.SEI_VANGUARD_URL || 'http://20.127.220.199:3000').replace(/\/$/, '');
+  const apiKey = process.env.SEI_VANGUARD_KEY || 'sk-vanguard-apex-internal-v1';
+  try {
+    const upstream = await fetch(`${base}/v1/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify(req.body),
+      signal: AbortSignal.timeout(60000),
+    });
+    if (!upstream.ok) {
+      const err = await upstream.text();
+      return res.status(502).json({ error: `Upstream ${upstream.status}`, detail: err.slice(0, 200) });
+    }
+    return res.json(await upstream.json());
+  } catch (e) { return res.status(503).json({ error: e.message }); }
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 
 // ═══════════════════════════════════════════════════════════════
 // ADMIN PANEL
+// ═══════════════════════════════════════════════════════════════
+// ── DEVICE IDENTITY — KYC Foundation (LNES-KYC) ──────────────────────────────
+// POST /api/identity/bind  — register or refresh device fingerprint
+//   body: { fingerprint: string, platform: 'android'|'ios' }
+//   returns: { exergynet_number, fingerprint }
+// No auth required — called on app launch before login. The fingerprint
+// itself is the opaque key; account linkage happens separately on login.
+// ─────────────────────────────────────────────────────────────────────────────
+app.post('/api/identity/bind', async (req, res) => {
+  try {
+    const { fingerprint, platform = 'android' } = req.body || {};
+    if (!fingerprint || fingerprint.length < 16) {
+      return res.status(400).json({ error: 'Invalid fingerprint' });
+    }
+
+    // Check if already exists
+    const existing = await pool.query(
+      `SELECT exergynet_number FROM device_bindings WHERE fingerprint = $1`,
+      [fingerprint]
+    );
+
+    if (existing.rows.length > 0) {
+      // Refresh last_seen and return stable number
+      await pool.query(
+        `UPDATE device_bindings SET last_seen = NOW() WHERE fingerprint = $1`,
+        [fingerprint]
+      );
+      return res.json({ exergynet_number: existing.rows[0].exergynet_number, fingerprint });
+    }
+
+    // New device — generate stable EXN number
+    const suffix = fingerprint.slice(-8).toUpperCase();
+    const exergynet_number = `EXN-${suffix}`;
+
+    await pool.query(
+      `INSERT INTO device_bindings (fingerprint, exergynet_number, platform)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (fingerprint) DO UPDATE SET last_seen = NOW()`,
+      [fingerprint, exergynet_number, platform]
+    );
+
+    console.log(`[KYC] New device bound: ${exergynet_number} (${platform})`);
+    return res.json({ exergynet_number, fingerprint });
+  } catch (e) {
+    console.error('[KYC] bind error:', e.message);
+    return res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// Link device fingerprint to a logged-in account (called after successful login)
+app.post('/api/identity/link', requireAuth, async (req, res) => {
+  try {
+    const { fingerprint } = req.body || {};
+    if (!fingerprint) return res.status(400).json({ error: 'Missing fingerprint' });
+
+    // requireAuth sets req.dev (both its API-key and JWT branches) — never req.developer.
+    // This referenced req.developer.id, which is always undefined, so every call to this
+    // endpoint threw and fell into the catch block below, returning 500 unconditionally.
+    await pool.query(
+      `UPDATE device_bindings SET account_id = $1, last_seen = NOW()
+       WHERE fingerprint = $2`,
+      [req.dev.id, fingerprint]
+    );
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('[KYC] link error:', e.message);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// ── PHASE 4: VANGUARD SOVEREIGN FUNCTION LOOP ────────────────────────────────
+// POST /api/v1/vanguard-nav
+// The Vanguard Cognitive Bridge. Implements the OpenAI tool-calling spec with
+// a 2-turn recursive inference loop so the LLM can:
+//   - query live ledger data (query_exergy_ledger)
+//   - command the Android client to take physical actions (execute_client_action)
+// Returns: { speech_text, client_action: {verb, param} | null, response }
+// ══════════════════════════════════════════════════════════════════════════════
+
+const VANGUARD_TOOLS = [
+  {
+    type: 'function',
+    function: {
+      name: 'execute_client_action',
+      description: 'Commands the Android device to perform a physical action.',
+      parameters: {
+        type: 'object',
+        properties: {
+          action_type: {
+            type: 'string',
+            enum: ['navigate', 'screen', 'dial'],
+            description: 'navigate = route to destination; screen = open app screen; dial = open phone dialer.'
+          },
+          target: {
+            type: 'string',
+            description: 'navigate: destination address/place. screen: messages|jobs|drops|dashboard|analytics|settlements. dial: phone number.'
+          }
+        },
+        required: ['action_type', 'target']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'query_exergy_ledger',
+      description: 'Query live ExergyNet ledger state: account balance, job queue, music drops, or network metrics.',
+      parameters: {
+        type: 'object',
+        properties: {
+          query_type: {
+            type: 'string',
+            enum: ['balance', 'jobs', 'drops', 'network_state'],
+            description: 'Which ledger dimension to query.'
+          },
+          account_fingerprint: {
+            type: 'string',
+            description: 'Device fingerprint to identify the account (optional — uses request fingerprint if omitted).'
+          }
+        },
+        required: ['query_type']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'web_search',
+      description: 'Search the live web for current information — news, weather, sports scores, who holds an office today, or anything else outside your training data or the ExergyNet ledger. Use this whenever the driver asks something that needs up-to-date real-world information.',
+      parameters: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+            description: 'The search query, phrased as you would type it into a search engine.'
+          }
+        },
+        required: ['query']
+      }
+    }
+  }
+];
+
+async function executeExergyLedgerQuery(queryType, fingerprint) {
+  switch (queryType) {
+    case 'balance': {
+      if (!fingerprint) return 'No device fingerprint — cannot resolve account.';
+      const b = await pool.query(`SELECT account_id FROM device_bindings WHERE fingerprint = $1`, [fingerprint]);
+      if (!b.rows.length || !b.rows[0].account_id) return 'Account not linked to this device.';
+      const d = await pool.query(`SELECT usdc_micro_balance, rho_micro_balance FROM biological_developers WHERE id = $1`, [b.rows[0].account_id]);
+      if (!d.rows.length) return 'Account not found.';
+      const usdc = (parseInt(d.rows[0].usdc_micro_balance) / 1_000_000).toFixed(2);
+      const rho  = (parseInt(d.rows[0].rho_micro_balance)  / 1_000_000).toFixed(4);
+      return `Balance: $${usdc} USDC, ${rho} RHO.`;
+    }
+    case 'jobs': {
+      if (!fingerprint) return 'No device fingerprint.';
+      const b = await pool.query(`SELECT account_id FROM device_bindings WHERE fingerprint = $1`, [fingerprint]);
+      if (!b.rows.length || !b.rows[0].account_id) return 'Account not linked.';
+      const j = await pool.query(
+        `SELECT COUNT(*) as total,
+                COUNT(*) FILTER (WHERE zk_proof_status IN ('queued','processing')) as active,
+                (SELECT id FROM en_jobs WHERE developer_id = $1 ORDER BY created_at DESC LIMIT 1) as latest_id
+         FROM en_jobs WHERE developer_id = $1`,
+        [b.rows[0].account_id]
+      );
+      return `Jobs: ${j.rows[0].active} active, ${j.rows[0].total} total.`;
+    }
+    case 'drops': {
+      if (!fingerprint) return 'No device fingerprint.';
+      const b = await pool.query(`SELECT account_id FROM device_bindings WHERE fingerprint = $1`, [fingerprint]);
+      if (!b.rows.length || !b.rows[0].account_id) return 'Account not linked.';
+      const dev = await pool.query(`SELECT email FROM biological_developers WHERE id = $1`, [b.rows[0].account_id]);
+      if (!dev.rows.length) return 'Account not found.';
+      const dr = await pool.query(
+        `SELECT COUNT(*) as total, COALESCE(SUM(plays),0) as plays,
+                (SELECT title FROM music_drops WHERE email = $1 ORDER BY published_at DESC LIMIT 1) as latest
+         FROM music_drops WHERE email = $1`,
+        [dev.rows[0].email]
+      );
+      return `Music drops: ${dr.rows[0].total} published, ${dr.rows[0].plays} total plays. Latest: ${dr.rows[0].latest || 'none'}.`;
+    }
+    case 'network_state': {
+      const n = await pool.query(`SELECT COUNT(*) FROM node_registrations WHERE last_seen_at > NOW() - INTERVAL '24 hours'`);
+      return `ExergyNet: ${n.rows[0].count} active nodes in last 24 hours.`;
+    }
+    default:
+      return `Unknown query type: ${queryType}.`;
+  }
+}
+
+// Same SERP_API_KEY / SerpAPI call shape already proven working in
+// intel-console/lib/agent/profileBuilder.ts — reused here, not reinvented.
+// Vanguard had zero live web-search capability before this: every existing
+// intel-console product (Entities, Origin Index, Intel Briefs) collects data
+// on a schedule/watchlist basis and only ever hands Vanguard a static blob to
+// summarize afterward — none of them let the model decide to search live
+// during a conversation. This is that missing live path.
+async function executeWebSearch(query) {
+  console.log(`[WEB_SEARCH] invoked, query="${query}"`);
+  const serpKey = process.env.SERP_API_KEY;
+  if (!serpKey) { console.log('[WEB_SEARCH] SERP_API_KEY not set — skipping'); return 'Web search is not configured on this server.'; }
+  if (!query) return 'No search query provided.';
+  try {
+    const controller = new AbortController();
+    const tId = setTimeout(() => controller.abort(), 8000);
+    let res;
+    try {
+      res = await fetch(`https://serpapi.com/search.json?q=${encodeURIComponent(query)}&num=5&api_key=${serpKey}`, {
+        signal: controller.signal
+      });
+    } finally { clearTimeout(tId); }
+    console.log(`[WEB_SEARCH] SerpAPI HTTP ${res.status}`);
+    if (!res.ok) return `Search failed (HTTP ${res.status}).`;
+    const data = await res.json();
+
+    // Direct-answer sources first — these cover weather, calculators, sports
+    // scores, "who is the president" style facts far better than snippets.
+    if (data.answer_box) {
+      const ab = data.answer_box;
+      const direct = ab.answer || ab.snippet || ab.result ||
+        (Array.isArray(ab.snippet_highlighted_words) ? ab.snippet_highlighted_words.join(', ') : '');
+      if (direct) return String(direct).slice(0, 600);
+    }
+    if (data.knowledge_graph?.description) {
+      return String(data.knowledge_graph.description).slice(0, 600);
+    }
+    if (data.sports_results?.game_spotlight) {
+      const g = data.sports_results.game_spotlight;
+      return `${g.tournament || ''} ${g.status || ''}: ${g.teams?.map(t => `${t.name} ${t.score ?? ''}`).join(' vs ')}`.trim().slice(0, 400);
+    }
+
+    const results = (data.organic_results || []).slice(0, 5);
+    if (!results.length) return 'No search results found for that query.';
+    return results.map(r => `${r.title}: ${r.snippet || ''}`).join('\n').slice(0, 1200);
+  } catch (e) {
+    return `Search error: ${e.message}`;
+  }
+}
+
+app.post('/api/v1/vanguard-nav', async (req, res) => {
+  try {
+    const { query, context, fingerprint } = req.body || {};
+    if (!query) return res.status(400).json({ speech_text: '', response: '', client_action: null, error: 'Missing query' });
+
+    const proposerUrl = process.env.SEI_VANGUARD_URL
+      ? `${process.env.SEI_VANGUARD_URL}/v1/chat/completions`
+      : 'http://20.127.220.199:3000/v1/chat/completions';
+    const apiKey = process.env.SEI_VANGUARD_KEY || 'sk-vanguard-apex-internal-v1';
+
+    const messages = [
+      { role: 'system', content: context || 'You are a voice assistant in a car navigation app.' },
+      { role: 'user',   content: query }
+    ];
+
+    let clientAction = null;
+    let speechText   = '';
+
+    // ── Recursive inference loop (max 2 turns) ────────────────────────────────
+    for (let turn = 0; turn < 2; turn++) {
+      const controller = new AbortController();
+      const tId = setTimeout(() => controller.abort(), 9500);
+      let llmResp;
+      try {
+        llmResp = await fetch(proposerUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+          body: JSON.stringify({
+            model: 'vanguard',
+            messages,
+            tools: VANGUARD_TOOLS,
+            tool_choice: 'auto',
+            max_tokens: 220,
+            temperature: 0.5,
+            stream: false
+          }),
+          signal: controller.signal
+        });
+      } finally { clearTimeout(tId); }
+
+      if (!llmResp.ok) {
+        console.error(`[VANGUARD_LOOP] LLM HTTP ${llmResp.status} turn=${turn}`);
+        break;
+      }
+
+      const llmJson = await llmResp.json();
+      const choice  = llmJson.choices?.[0];
+      if (!choice) break;
+
+      const { finish_reason, message } = choice;
+      console.log(`[VANGUARD_LOOP] turn=${turn} finish_reason=${finish_reason} tool_calls=${(message?.tool_calls || []).map(t => t.function?.name).join(',') || 'none'}`);
+
+      if (finish_reason === 'tool_calls' && message?.tool_calls?.length > 0) {
+        messages.push(message); // append assistant tool-call message
+
+        for (const tc of message.tool_calls) {
+          const fnName = tc.function?.name || '';
+          let fnArgs = {};
+          try { fnArgs = JSON.parse(tc.function?.arguments || '{}'); } catch (_) {}
+
+          if (fnName === 'execute_client_action') {
+            // Android client action — no server-side execution, just capture
+            clientAction = {
+              verb:  fnArgs.action_type || '',
+              param: fnArgs.target      || ''
+            };
+            messages.push({ role: 'tool', tool_call_id: tc.id, content: 'Action dispatched to device.' });
+
+          } else if (fnName === 'query_exergy_ledger') {
+            const fp = fnArgs.account_fingerprint || fingerprint || '';
+            let result = '';
+            try { result = await executeExergyLedgerQuery(fnArgs.query_type, fp); }
+            catch (e) { result = `Ledger error: ${e.message}`; }
+            messages.push({ role: 'tool', tool_call_id: tc.id, content: result });
+
+          } else if (fnName === 'web_search') {
+            let result = '';
+            try { result = await executeWebSearch(fnArgs.query); }
+            catch (e) { result = `Search error: ${e.message}`; }
+            messages.push({ role: 'tool', tool_call_id: tc.id, content: result });
+          }
+        }
+        continue; // second LLM turn with tool results injected
+      }
+
+      // Final spoken response
+      speechText = message?.content || '';
+      break;
+    }
+
+    // Strip markdown so Android TTS reads cleanly
+    speechText = speechText
+      .replace(/\*\*/g, '').replace(/\*/g, '')
+      .replace(/#{1,3} /g, '').replace(/#/g, '')
+      .replace(/^- /gm, '')
+      .replace(/\s{2,}/g, ' ').trim();
+
+    // Also strip any residual Phase-3 ACTION: lines (backward compat fallback)
+    const lines = speechText.split('\n');
+    const actionLine = lines.find(l => l.trim().startsWith('ACTION:'));
+    if (actionLine && !clientAction) {
+      const payload = actionLine.trim().replace('ACTION:', '');
+      const ci = payload.indexOf(':');
+      clientAction = {
+        verb:  ci >= 0 ? payload.slice(0, ci).trim() : payload.trim(),
+        param: ci >= 0 ? payload.slice(ci + 1).trim() : ''
+      };
+      speechText = lines.filter(l => !l.trim().startsWith('ACTION:')).join('\n').trim();
+    }
+
+    console.log(`[VANGUARD_LOOP] "${query.slice(0, 40)}" → "${speechText.slice(0, 60)}" | action=${JSON.stringify(clientAction)}`);
+
+    return res.json({
+      speech_text:   speechText,
+      client_action: clientAction,
+      response:      speechText   // backward-compat field — old Axum clients read this
+    });
+
+  } catch (e) {
+    console.error('[VANGUARD_LOOP] fatal:', e.message);
+    return res.status(500).json({ speech_text: '', response: '', client_action: null });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// ── ACCOUNT SNAPSHOT — Vanguard Context Feed (LNES-CTX) ──────────────────────
+// GET /api/account/snapshot?fingerprint=X
+// Looks up account via device_bindings → returns lightweight state for Vanguard.
+// No auth required — fingerprint is the opaque key; returns {linked:false} if
+// device is not yet bound to an account.
+// ══════════════════════════════════════════════════════════════════════════════
+
+app.get('/api/account/snapshot', async (req, res) => {
+  try {
+    const { fingerprint } = req.query;
+    if (!fingerprint) return res.status(400).json({ error: 'Missing fingerprint' });
+
+    // Resolve account via device_bindings
+    const binding = await pool.query(
+      `SELECT account_id FROM device_bindings WHERE fingerprint = $1`,
+      [fingerprint]
+    );
+    if (!binding.rows.length || !binding.rows[0].account_id) {
+      return res.json({ linked: false });
+    }
+    const accountId = binding.rows[0].account_id;
+
+    // Fetch account row
+    const dev = await pool.query(
+      `SELECT display_name, email, usdc_micro_balance, rho_micro_balance
+       FROM biological_developers WHERE id = $1`,
+      [accountId]
+    );
+    if (!dev.rows.length) return res.json({ linked: false });
+    const d = dev.rows[0];
+
+    // Active jobs (queued or in-flight)
+    const jobsActive = await pool.query(
+      `SELECT COUNT(*) FROM en_jobs
+       WHERE developer_id = $1 AND zk_proof_status IN ('queued','processing')`,
+      [accountId]
+    );
+    const jobsTotal = await pool.query(
+      `SELECT COUNT(*),
+              MAX(created_at) as latest_at,
+              (SELECT tokens_yielded || ' tokens — ' || zk_proof_status
+                 FROM en_jobs WHERE developer_id = $1
+                ORDER BY created_at DESC LIMIT 1) as latest_summary
+       FROM en_jobs WHERE developer_id = $1`,
+      [accountId]
+    );
+
+    // Drops
+    const drops = await pool.query(
+      `SELECT COUNT(*), MAX(plays) as top_plays,
+              (SELECT title FROM music_drops WHERE email = $1 ORDER BY published_at DESC LIMIT 1) as latest_title
+       FROM music_drops WHERE email = $1`,
+      [d.email]
+    );
+
+    const balanceUsdc = (parseInt(d.usdc_micro_balance) / 1_000_000).toFixed(2);
+    const balanceRho  = (parseInt(d.rho_micro_balance)  / 1_000_000).toFixed(4);
+    const activeJobs  = parseInt(jobsActive.rows[0].count);
+    const totalJobs   = parseInt(jobsTotal.rows[0].count);
+    const latestJob   = jobsTotal.rows[0].latest_summary || null;
+    const dropsCount  = parseInt(drops.rows[0].count);
+    const latestDrop  = drops.rows[0].latest_title || null;
+
+    res.json({
+      linked: true,
+      display_name: d.display_name || 'Driver',
+      balance_usdc: balanceUsdc,
+      balance_rho:  balanceRho,
+      active_jobs:  activeJobs,
+      total_jobs:   totalJobs,
+      latest_job:   latestJob,
+      drops_count:  dropsCount,
+      latest_drop:  latestDrop,
+    });
+  } catch (e) {
+    console.error('[SNAPSHOT] error:', e.message);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// ── VANGUARD MEMORY — Conversation History (LNES-MEM) ────────────────────────
+// POST /api/xlmp/vanguard/ingest  — store one exchange (no auth, keyed by fingerprint)
+// GET  /api/xlmp/vanguard/recall  — fetch last N exchanges for a device
+// ══════════════════════════════════════════════════════════════════════════════
+
+app.post('/api/xlmp/vanguard/ingest', async (req, res) => {
+  try {
+    const { fingerprint, query, response: resp } = req.body || {};
+    if (!fingerprint || !query || !resp) {
+      return res.status(400).json({ error: 'Missing fields' });
+    }
+    // Trim to 500 chars each — voice exchanges are short
+    await pool.query(
+      `INSERT INTO vanguard_memory (fingerprint, query, response)
+       VALUES ($1, $2, $3)`,
+      [fingerprint, query.slice(0, 500), resp.slice(0, 500)]
+    );
+    // Keep only last 50 exchanges per device — prune older ones
+    await pool.query(
+      `DELETE FROM vanguard_memory
+       WHERE fingerprint = $1
+         AND id NOT IN (
+           SELECT id FROM vanguard_memory
+           WHERE fingerprint = $1
+           ORDER BY created_at DESC
+           LIMIT 50
+         )`,
+      [fingerprint]
+    );
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('[VANGUARD_MEM] ingest error:', e.message);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+app.get('/api/xlmp/vanguard/recall', async (req, res) => {
+  try {
+    const { fingerprint, limit = 5 } = req.query;
+    if (!fingerprint) return res.status(400).json({ error: 'Missing fingerprint' });
+    const cap = Math.min(parseInt(limit) || 5, 10);
+    const { rows } = await pool.query(
+      `SELECT query, response, created_at
+       FROM vanguard_memory
+       WHERE fingerprint = $1
+       ORDER BY created_at DESC
+       LIMIT $2`,
+      [fingerprint, cap]
+    );
+    // Return in chronological order (oldest first — natural for prompt injection)
+    res.json({ exchanges: rows.reverse() });
+  } catch (e) {
+    console.error('[VANGUARD_MEM] recall error:', e.message);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── COWORK SESSIONS — Multi-tenant workspaces (LNES-50.4) ────────────────────
+// Deliberately separate from vanguard_memory above: sessions are keyed to a
+// logged-in account (email, via requireAuth -> req.developerId -> a lookup),
+// not a device fingerprint. Caddy must route /api/v1/cowork/* to this process
+// (127.0.0.1:5000) — see Caddyfile; without that rule these fall through to
+// the Next.js catch-all and 404 silently, the exact failure mode documented
+// in VANGUARD_INTELLIGENCE_ARCHITECTURE.md Phase 6.
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function requireDeveloperEmail(req, res) {
+  const r = await pool.query('SELECT email FROM biological_developers WHERE id = $1', [req.developerId]);
+  if (!r.rows.length) { res.status(401).json({ error: 'Developer not found' }); return null; }
+  return r.rows[0].email;
+}
+
+// POST /api/v1/cowork/session — create a new workspace, caller becomes owner
+app.post('/api/v1/cowork/session', requireAuth, async (req, res) => {
+  try {
+    const email = await requireDeveloperEmail(req, res);
+    if (!email) return;
+    const name = (req.body?.name || 'Untitled Workspace').toString().trim().slice(0, 100) || 'Untitled Workspace';
+
+    const s = await pool.query(
+      `INSERT INTO cowork_sessions (owner_id, name) VALUES ($1, $2) RETURNING id, name, created_at`,
+      [req.developerId, name]
+    );
+    const session = s.rows[0];
+    await pool.query(
+      `INSERT INTO cowork_members (session_id, user_email, role) VALUES ($1, $2, 'owner')`,
+      [session.id, email]
+    );
+    return res.json({ session: { ...session, owner_id: req.developerId } });
+  } catch (err) {
+    console.error('[cowork/session/create]', err);
+    return res.status(500).json({ error: 'Session creation failed' });
+  }
+});
+
+// GET /api/v1/cowork/sessions — list workspaces the caller belongs to (owner or approved member)
+app.get('/api/v1/cowork/sessions', requireAuth, async (req, res) => {
+  try {
+    const email = await requireDeveloperEmail(req, res);
+    if (!email) return;
+    const r = await pool.query(
+      `SELECT s.id, s.name, s.owner_id, s.created_at, m.role
+       FROM cowork_sessions s
+       JOIN cowork_members m ON m.session_id = s.id
+       WHERE m.user_email = $1 AND m.role != 'pending'
+       ORDER BY s.created_at DESC`,
+      [email]
+    );
+    return res.json({ sessions: r.rows });
+  } catch (err) {
+    console.error('[cowork/sessions/list]', err);
+    return res.status(500).json({ error: 'List failed' });
+  }
+});
+
+// GET /api/v1/cowork/session/:id — details + members + linked documents (members only)
+app.get('/api/v1/cowork/session/:id', requireAuth, async (req, res) => {
+  try {
+    const email = await requireDeveloperEmail(req, res);
+    if (!email) return;
+
+    const session = await pool.query(`SELECT id, name, owner_id, created_at FROM cowork_sessions WHERE id=$1`, [req.params.id]);
+    if (!session.rows.length) return res.status(404).json({ error: 'Session not found' });
+
+    const membership = await pool.query(
+      `SELECT role FROM cowork_members WHERE session_id=$1 AND user_email=$2 AND role != 'pending'`,
+      [req.params.id, email]
+    );
+    if (!membership.rows.length) return res.status(403).json({ error: 'Not a member of this session' });
+
+    const members = await pool.query(
+      `SELECT user_email, role, created_at FROM cowork_members WHERE session_id=$1 ORDER BY created_at ASC`,
+      [req.params.id]
+    );
+    const links = await pool.query(
+      `SELECT xlmp_root, added_by, label, created_at FROM cowork_vault_links WHERE session_id=$1 ORDER BY created_at DESC`,
+      [req.params.id]
+    );
+    return res.json({
+      session: session.rows[0],
+      my_role: membership.rows[0].role,
+      members: members.rows,
+      documents: links.rows,
+    });
+  } catch (err) {
+    console.error('[cowork/session/get]', err);
+    return res.status(500).json({ error: 'Fetch failed' });
+  }
+});
+
+// POST /api/v1/cowork/session/:id/invite — owner adds a user by EXACT email match.
+// Exact equality only (never ILIKE/wildcard) — this is a lookup against every
+// registered account's email, so a fuzzy match would let a caller enumerate
+// accounts that share a prefix/substring. An exact match either hits one row
+// or none.
+app.post('/api/v1/cowork/session/:id/invite', requireAuth, async (req, res) => {
+  try {
+    const targetEmail = (req.body?.email || '').toString().trim().toLowerCase();
+    if (!targetEmail) return res.status(400).json({ error: 'email required' });
+
+    const session = await pool.query(`SELECT owner_id FROM cowork_sessions WHERE id=$1`, [req.params.id]);
+    if (!session.rows.length) return res.status(404).json({ error: 'Session not found' });
+    if (session.rows[0].owner_id !== req.developerId) return res.status(403).json({ error: 'Only the owner can invite' });
+
+    const target = await pool.query(`SELECT email FROM biological_developers WHERE email = $1`, [targetEmail]);
+    if (!target.rows.length) return res.status(404).json({ error: 'No ExergyNet account with that exact email' });
+
+    await pool.query(
+      `INSERT INTO cowork_members (session_id, user_email, role) VALUES ($1, $2, 'member')
+       ON CONFLICT (session_id, user_email) DO UPDATE SET role = 'member'`,
+      [req.params.id, targetEmail]
+    );
+    return res.json({ ok: true, email: targetEmail, role: 'member' });
+  } catch (err) {
+    console.error('[cowork/session/invite]', err);
+    return res.status(500).json({ error: 'Invite failed' });
+  }
+});
+
+// POST /api/v1/cowork/session/:id/join — caller requests access via a shared link (status: pending)
+app.post('/api/v1/cowork/session/:id/join', requireAuth, async (req, res) => {
+  try {
+    const email = await requireDeveloperEmail(req, res);
+    if (!email) return;
+
+    const session = await pool.query(`SELECT id FROM cowork_sessions WHERE id=$1`, [req.params.id]);
+    if (!session.rows.length) return res.status(404).json({ error: 'Session not found' });
+
+    const existing = await pool.query(
+      `SELECT role FROM cowork_members WHERE session_id=$1 AND user_email=$2`,
+      [req.params.id, email]
+    );
+    if (existing.rows.length && existing.rows[0].role !== 'pending') {
+      return res.json({ ok: true, role: existing.rows[0].role }); // already owner/member
+    }
+    await pool.query(
+      `INSERT INTO cowork_members (session_id, user_email, role) VALUES ($1, $2, 'pending')
+       ON CONFLICT (session_id, user_email) DO NOTHING`,
+      [req.params.id, email]
+    );
+    return res.json({ ok: true, role: 'pending' });
+  } catch (err) {
+    console.error('[cowork/session/join]', err);
+    return res.status(500).json({ error: 'Join request failed' });
+  }
+});
+
+// POST /api/v1/cowork/session/:id/approve — SECURITY GATE: owner only. pending -> member.
+app.post('/api/v1/cowork/session/:id/approve', requireAuth, async (req, res) => {
+  try {
+    const targetEmail = (req.body?.email || '').toString().trim().toLowerCase();
+    if (!targetEmail) return res.status(400).json({ error: 'email required' });
+
+    const session = await pool.query(`SELECT owner_id FROM cowork_sessions WHERE id=$1`, [req.params.id]);
+    if (!session.rows.length) return res.status(404).json({ error: 'Session not found' });
+    if (session.rows[0].owner_id !== req.developerId) return res.status(403).json({ error: 'Only the owner can approve members' });
+
+    const r = await pool.query(
+      `UPDATE cowork_members SET role='member' WHERE session_id=$1 AND user_email=$2 AND role='pending' RETURNING user_email`,
+      [req.params.id, targetEmail]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'No pending request for that email' });
+    return res.json({ ok: true, email: targetEmail, role: 'member' });
+  } catch (err) {
+    console.error('[cowork/session/approve]', err);
+    return res.status(500).json({ error: 'Approval failed' });
+  }
+});
+
+// POST /api/v1/cowork/session/:id/reject — owner only. Removes a pending request.
+app.post('/api/v1/cowork/session/:id/reject', requireAuth, async (req, res) => {
+  try {
+    const targetEmail = (req.body?.email || '').toString().trim().toLowerCase();
+    if (!targetEmail) return res.status(400).json({ error: 'email required' });
+
+    const session = await pool.query(`SELECT owner_id FROM cowork_sessions WHERE id=$1`, [req.params.id]);
+    if (!session.rows.length) return res.status(404).json({ error: 'Session not found' });
+    if (session.rows[0].owner_id !== req.developerId) return res.status(403).json({ error: 'Only the owner can reject members' });
+
+    await pool.query(
+      `DELETE FROM cowork_members WHERE session_id=$1 AND user_email=$2 AND role='pending'`,
+      [req.params.id, targetEmail]
+    );
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('[cowork/session/reject]', err);
+    return res.status(500).json({ error: 'Reject failed' });
+  }
+});
+
+// POST /api/v1/cowork/session/:id/documents — link an already-ingested xlmp_root
+// to this session (members only). Context isolation on the frontend relies on
+// this table being the sole source of "which documents belong to this session".
+app.post('/api/v1/cowork/session/:id/documents', requireAuth, async (req, res) => {
+  try {
+    const xlmpRoot = (req.body?.xlmp_root || '').toString().trim();
+    if (!xlmpRoot) return res.status(400).json({ error: 'xlmp_root required' });
+    const label = (req.body?.label || '').toString().trim().slice(0, 200) || null;
+    const email = await requireDeveloperEmail(req, res);
+    if (!email) return;
+
+    const membership = await pool.query(
+      `SELECT role FROM cowork_members WHERE session_id=$1 AND user_email=$2 AND role != 'pending'`,
+      [req.params.id, email]
+    );
+    if (!membership.rows.length) return res.status(403).json({ error: 'Not a member of this session' });
+
+    await pool.query(
+      `INSERT INTO cowork_vault_links (session_id, xlmp_root, added_by, label) VALUES ($1, $2, $3, $4)
+       ON CONFLICT (session_id, xlmp_root) DO UPDATE SET label = COALESCE(EXCLUDED.label, cowork_vault_links.label)`,
+      [req.params.id, xlmpRoot, email, label]
+    );
+    return res.json({ ok: true, label });
+  } catch (err) {
+    console.error('[cowork/session/documents/add]', err);
+    return res.status(500).json({ error: 'Link failed' });
+  }
+});
+
 // ═══════════════════════════════════════════════════════════════
 // ── xLMP VAULT — Sovereign Agent State Storage ────────────────────────────────
 // POST /api/xlmp/ingest  — commit agent state, returns durable xlmp_root handle
@@ -1939,6 +4051,63 @@ app.post('/api/admin/developers/:id/credit', requireAdmin('super_admin'), requir
   }
 });
 
+// ── POST /api/admin/miners/sync-balances — L0 ↔ L1 Reconciliation Valve
+// Fetches full node ledger from Virtual Gamma (bank_api), joins via node_registrations,
+// sums usdc_micro + rho_micro per developer_id, writes to biological_developers.
+app.post('/api/admin/miners/sync-balances', requireAdmin('super_admin'), requireOTET('sync_balances:'), async (req, res) => {
+  try {
+    // 1. Pull master node ledger from Virtual Gamma
+    const bankRes = await fetch('http://127.0.0.1:6000/internal/bank/state', {
+      headers: { 'x-bank-secret': process.env.BANK_ADMIN_SECRET || 'VIRTUAL_GAMMA_INTERNAL' },
+    });
+    if (!bankRes.ok) {
+      return res.status(502).json({ error: `bank_api returned ${bankRes.status}` });
+    }
+    const bankState = await bankRes.json();
+    const ledger = bankState.ledger || {};
+
+    // 2. Load all node → developer mappings from relational registry
+    const { rows: regs } = await pool.query(
+      'SELECT developer_id, node_id FROM node_registrations'
+    );
+
+    // 3. Accumulate per developer
+    const devBalances = {};
+    for (const reg of regs) {
+      const { developer_id, node_id } = reg;
+      if (!devBalances[developer_id]) devBalances[developer_id] = { usdc: 0, rho: 0 };
+      if (ledger[node_id]) {
+        devBalances[developer_id].usdc += parseInt(ledger[node_id].usdc_micro || 0, 10);
+        devBalances[developer_id].rho  += parseInt(ledger[node_id].rho_micro  || 0, 10);
+      }
+    }
+
+    // 4. Write aggregated totals to Portal layer
+    let updateCount = 0;
+    for (const [devId, bals] of Object.entries(devBalances)) {
+      await pool.query(
+        `UPDATE biological_developers
+         SET usdc_micro_balance = $1, rho_micro_balance = $2
+         WHERE id = $3`,
+        [bals.usdc, bals.rho, devId]
+      );
+      updateCount++;
+    }
+
+    console.log(`[SYNC_BALANCES] Swept ${bankState.node_count} nodes → ${updateCount} developer accounts`);
+    res.json({
+      status: 'synced',
+      nodes_in_ledger: bankState.node_count || 0,
+      registrations_scanned: regs.length,
+      developers_updated: updateCount,
+      ts: Date.now(),
+    });
+  } catch (e) {
+    console.error('[SYNC_BALANCES]', e);
+    res.status(500).json({ error: 'Sync failed' });
+  }
+});
+
 // ── GET /admin/settlements ────────────────────────────────────────────
 app.get('/api/admin/settlements', requireAdmin('super_admin', 'ops'), async (req, res) => {
   const limit = Math.min(parseInt(req.query.limit) || 50, 200);
@@ -2188,9 +4357,81 @@ app.get('/api/admin/apps/console', (req, res) => {
 // Chapter XXVI: Challenge phase. Agent calls this FIRST to prove it will read
 // the file NOW. Returns file content + a 32-byte nonce. The nonce is stored
 // server-side, keyed by the admin token. It expires in 10 minutes.
+// ── LNES-17 Carrier relay (Portal -> Carrier EC2, 3.234.120.103) ────────────
+// Extends OTET witness/write coverage to Carrier, which previously had zero
+// write path here (WRITE_ALLOWED_ROOTS below is Portal-local fs only and
+// cannot reach a different machine). Uses a DEDICATED, narrowly-scoped
+// keypair (portal-carrier-otet-relay) authorized on Carrier with a
+// forced command= restriction (/usr/local/bin/carrier_otet_relay.sh) that
+// only permits read/write/hash within CARRIER_ALLOWED_ROOTS -- NOT the
+// unrestricted operator key used for pm2 restarts elsewhere. A file_path
+// prefixed "carrier:" routes witness-file/agent-edit through this relay
+// instead of the local filesystem; everything else (nonce, nulls, OTET
+// issuance, Vanguard Scribe) is unchanged.
+const { spawnSync } = require('child_process');
+const CARRIER_RELAY_KEY = '/home/ubuntu/.ssh/carrier_relay_key';
+const CARRIER_HOST = 'ubuntu@3.234.120.103';
+const CARRIER_ALLOWED_ROOTS = [
+  '/home/ubuntu/exergynet_api/src/',
+  '/home/ubuntu/exergynet_api/Cargo.toml',
+  // LNES-22: extends the relay to the Omega Carrier MCP server so its
+  // systemd-deployed source can go through OTET instead of deploy.sh's raw SSH.
+  '/home/ubuntu/omega_carrier/',
+];
+function isCarrierPathAllowed(p) {
+  return CARRIER_ALLOWED_ROOTS.some(r => p === r || p.startsWith(r));
+}
+function carrierRelay(op, remotePath, inputContent) {
+  const result = spawnSync('ssh', [
+    '-i', CARRIER_RELAY_KEY,
+    '-o', 'StrictHostKeyChecking=accept-new',
+    '-o', 'ConnectTimeout=10',
+    CARRIER_HOST,
+    `${op} ${remotePath}`,
+  ], {
+    input: inputContent !== undefined ? inputContent : undefined,
+    encoding: 'utf8',
+    timeout: 15000,
+    maxBuffer: 10 * 1024 * 1024,
+  });
+  if (result.error) throw new Error(`carrier relay spawn error: ${result.error.message}`);
+  if (result.status !== 0) throw new Error(`carrier relay failed (exit ${result.status}): ${(result.stderr || '').trim()}`);
+  return result.stdout;
+}
+
 app.get('/api/admin/build/witness-file', requireAdmin('super_admin', 'ops'), async (req, res) => {
   const file_path = req.query.path;
   if (!file_path) return res.status(400).json({ error: 'path query param required' });
+
+  // Carrier relay branch — file_path looks like "carrier:/home/ubuntu/exergynet_api/src/main.rs"
+  if (file_path.startsWith('carrier:')) {
+    const carrierPath = file_path.slice('carrier:'.length);
+    if (!isCarrierPathAllowed(carrierPath)) {
+      console.warn(`[WITNESS] CARRIER PATH TRAVERSAL ATTEMPT blocked: ${carrierPath}`);
+      return res.status(403).json({ error: 'Path traversal detected. Access denied.' });
+    }
+    try {
+      const witness_content = carrierRelay('read', carrierPath);
+      const nonce = crypto.randomBytes(32).toString('hex');
+      const admin_token = req.headers['authorization']?.replace('Bearer ', '') || '';
+      const cache_key = admin_token + ':' + file_path;
+      const witness_hash = crypto.createHash('sha256').update(witness_content + nonce).digest('hex');
+      witnessNonceCache.set(cache_key, {
+        nonce, file_path, is_directory: false, witness_content,
+        file_content_hash: witness_hash,
+        expires_at: Date.now() + 10 * 60 * 1000,
+      });
+      console.log(`[WITNESS] Challenge issued | path=${file_path} (CARRIER) | nonce=${nonce.slice(0, 8)}…`);
+      return res.json({
+        file_path, is_directory: false, file_content: witness_content, nonce,
+        challenge_note: 'Compute SHA-256(file_content + nonce) and pass as witness_hash in POST /api/admin/build/issue-otet',
+        expires_in_seconds: 600,
+      });
+    } catch (err) {
+      console.error('[WITNESS] carrier relay read failed:', err.message);
+      return res.status(502).json({ error: 'Carrier relay unreachable: ' + err.message });
+    }
+  }
 
   // Whitelist: resolve() first to collapse traversal sequences, then check roots
   const nodePath = require('path');
@@ -2199,6 +4440,10 @@ app.get('/api/admin/build/witness-file', requireAdmin('super_admin', 'ops'), asy
     '/home/ubuntu/exergynet-portal/src/',
     '/home/ubuntu/omega_carrier/',
     '/home/ubuntu/sovereign-tts/',
+    '/home/ubuntu/livekit-token/',
+    '/home/ubuntu/lnes04-base-membrane/',
+    '/home/ubuntu/lnes_siphon_evm/',
+    '/etc/caddy/',
   ];
   // A-01: path.resolve() collapses ../ traversal before the whitelist check
   const resolved_path = nodePath.resolve(file_path);
@@ -2447,13 +4692,21 @@ app.post('/api/admin/build/agent-edit', requireAdmin('super_admin', 'ops'), asyn
   if (rows.length === 0) return res.status(404).json({ error: 'OTET not found' });
   if (rows[0].status !== 'UNSPENT') return res.status(409).json({ error: `OTET already ${rows[0].status}` });
 
-  // Scope check: target_id must start with "agent_edit:"
-  if (!rows[0].target_id.startsWith('agent_edit:')) {
+  // Scope check: target_id must be scoped to this file, either "agent_edit:"
+  // (editing an existing file) or "NEW:" (LNES-17 Chapter XXVII create_mode).
+  // issue-otet stores create_mode OTETs with the NEW: prefix so it can run its
+  // own "file doesn't already exist yet" check; this endpoint accepts either
+  // since both mean "this OTET authorizes writing exactly this path". Without
+  // this, create_mode was issuable but never actually writable -- agent-edit
+  // rejected every one of its own OTETs.
+  const SCOPE_PREFIXES = ['agent_edit:', 'NEW:'];
+  const matchedPrefix = SCOPE_PREFIXES.find(p => rows[0].target_id.startsWith(p));
+  if (!matchedPrefix) {
     return res.status(403).json({ error: 'OTET not scoped for agent_edit. Reissue with target_id="agent_edit:<file>"' });
   }
 
   // Verify the file_path in body matches what was witnessed
-  const witnessed_path = rows[0].target_id.replace('agent_edit:', '');
+  const witnessed_path = rows[0].target_id.slice(matchedPrefix.length);
   if (witnessed_path !== file_path) {
     return res.status(403).json({ error: `OTET path mismatch. Witnessed: ${witnessed_path}, submitted: ${file_path}` });
   }
@@ -2463,21 +4716,8 @@ app.post('/api/admin/build/agent-edit', requireAdmin('super_admin', 'ops'), asyn
 
   // If content provided — write it to the file (API-only write path, LNES-17)
   if (content !== undefined && content !== null) {
-    const nodePath = require('path');
-    const WRITE_ALLOWED_ROOTS = [
-      '/home/ubuntu/biological_proxy/',
-      '/home/ubuntu/exergynet-portal/src/',
-      '/home/ubuntu/omega_carrier/',
-      '/home/ubuntu/sovereign-tts/',
-      '/home/ubuntu/exergynet-ledger/',
-    ];
-    const resolved = nodePath.resolve(file_path);
-    const writeAllowed = WRITE_ALLOWED_ROOTS.some(r => resolved.startsWith(r));
-    if (!writeAllowed) {
-      return res.status(403).json({ error: 'Write path not in LNES-17 allowed roots.' });
-    }
-    // Verify pre_hash matches what was witnessed (bait-and-switch guard)
-    // Uses content_hash (plain SHA256 of file content, no nonce) stored at issue-otet time.
+    // Verify pre_hash matches what was witnessed (bait-and-switch guard) — shared
+    // by both the Carrier-relay branch and the local-fs branch below.
     if (pre_hash && rows[0].content_hash) {
       if (pre_hash !== rows[0].content_hash) {
         return res.status(403).json({
@@ -2488,11 +4728,43 @@ app.post('/api/admin/build/agent-edit', requireAdmin('super_admin', 'ops'), asyn
       }
     }
 
-    try {
-      fs.writeFileSync(resolved, content, 'utf8');
-      console.log(`[AGENT-WRITE] File written via API | path=${resolved} | bytes=${Buffer.byteLength(content)}`);
-    } catch (write_err) {
-      return res.status(500).json({ error: 'File write failed: ' + write_err.message });
+    if (file_path.startsWith('carrier:')) {
+      const carrierPath = file_path.slice('carrier:'.length);
+      if (!isCarrierPathAllowed(carrierPath)) {
+        return res.status(403).json({ error: 'Write path not in Carrier allowed roots.' });
+      }
+      try {
+        const relay_hash = carrierRelay('write', carrierPath, content).trim();
+        const expected_hash = crypto.createHash('sha256').update(content, 'utf8').digest('hex');
+        if (relay_hash !== expected_hash) {
+          return res.status(500).json({ error: `Carrier write verification failed — relay reports ${relay_hash.slice(0,16)}…, expected ${expected_hash.slice(0,16)}….` });
+        }
+        console.log(`[AGENT-WRITE] File written via Carrier relay | path=${carrierPath} | bytes=${Buffer.byteLength(content)} | verified_hash=${relay_hash.slice(0,16)}…`);
+      } catch (write_err) {
+        return res.status(502).json({ error: 'Carrier relay write failed: ' + write_err.message });
+      }
+    } else {
+      const nodePath = require('path');
+      const WRITE_ALLOWED_ROOTS = [
+        '/home/ubuntu/biological_proxy/',
+        '/home/ubuntu/exergynet-portal/src/',
+        '/home/ubuntu/omega_carrier/',
+        '/home/ubuntu/sovereign-tts/',
+        '/home/ubuntu/exergynet-ledger/',
+        '/home/ubuntu/lnes04-base-membrane/',
+        '/home/ubuntu/lnes_siphon_evm/',
+      ];
+      const resolved = nodePath.resolve(file_path);
+      const writeAllowed = WRITE_ALLOWED_ROOTS.some(r => resolved.startsWith(r));
+      if (!writeAllowed) {
+        return res.status(403).json({ error: 'Write path not in LNES-17 allowed roots.' });
+      }
+      try {
+        fs.writeFileSync(resolved, content, 'utf8');
+        console.log(`[AGENT-WRITE] File written via API | path=${resolved} | bytes=${Buffer.byteLength(content)}`);
+      } catch (write_err) {
+        return res.status(500).json({ error: 'File write failed: ' + write_err.message });
+      }
     }
   }
 
@@ -2506,6 +4778,7 @@ app.post('/api/admin/build/agent-edit', requireAdmin('super_admin', 'ops'), asyn
     service_name: service_name || rows[0].service_name,
     target_id: file_path,
     agent: 'claude-code',
+    origin: 'trustee', // LNES-22: Physical actuation — human-directed agent. See vanguard_review (Logical audit).
     pre_hash: pre_hash || rows[0].state_hash,
     post_hash: actual_post_hash,
     lines_added: lines_added ?? null,
@@ -2528,7 +4801,145 @@ app.post('/api/admin/build/agent-edit', requireAdmin('super_admin', 'ops'), asyn
     console.warn('[AGENT-EDIT] Scribe write failed:', e.message);
   }
 
+  // ── LNES-22: Sensory Trigger ──────────────────────────────────────────────
+  // Fire-and-forget: converts this build event into sensory input for the
+  // independent Vanguard audit process (shadow_listener.py). Never awaited —
+  // an unreachable Vanguard listener must not delay or fail the Trustee's
+  // own OTET write. Re-injected 2026-07-23 — was missing entirely, meaning
+  // vanguard-review's receiver had nothing calling it either way.
+  const VANGUARD_WEBHOOK_URL = process.env.VANGUARD_WEBHOOK_URL || '';
+  if (VANGUARD_WEBHOOK_URL) {
+    fetch(VANGUARD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event: 'otet-event', ...scribe_entry, content: content ?? null }),
+      signal: AbortSignal.timeout(5000),
+    }).then(r => { if (!r.ok) console.warn(`[LNES-22] Vanguard webhook responded ${r.status}`); })
+      .catch(err => console.warn('[LNES-22] Vanguard webhook unreachable (non-fatal):', err.message));
+  }
+
   res.json({ status: 'recorded', otet, file_path, spent_at, scribe_entry });
+});
+
+// ── LNES-22: Sovereign Signature — Verification Gate ────────────────────────
+// Vanguard's independent audit process pushes its review back here, signed with
+// its own Ed25519 key (never held by this server). We verify the signature and
+// pin the public key against VANGUARD_PUBLIC_KEY — a valid self-consistent
+// signature alone isn't enough; it must be from the ONE recognized Vanguard
+// identity, or it's rejected as Synthetic Noise. Canonicalization must match
+// shadow_listener.py's identity.py sign_review() byte-for-byte: recursively
+// sort keys, no whitespace.
+//
+// Live end-to-end retest fired 2026-07-23 immediately after this route and
+// the sensory-trigger webhook above were both restored — confirming the
+// shadow_listener.py round trip closes again (see LNES22_TEST_NOTES.md).
+// Re-injected 2026-07-23 (LNES-22 loop was fractured — this route was
+// entirely missing from production despite shadow_listener.py actively
+// POSTing to it). Verification rewritten to use Node's built-in `crypto`
+// Ed25519 (same SPKI-DER-wrap pattern the KRV valve above already uses in
+// production) instead of the original tweetnacl-based check — tweetnacl is
+// not an installed dependency here, and Node's built-in Ed25519 verifies the
+// exact same standard 64-byte signature format shadow_listener.py already
+// produces, so no client-side change is needed.
+function canonicalJSON(obj) {
+  if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
+  if (Array.isArray(obj)) return '[' + obj.map(canonicalJSON).join(',') + ']';
+  const keys = Object.keys(obj).sort();
+  return '{' + keys.map(k => JSON.stringify(k) + ':' + canonicalJSON(obj[k])).join(',') + '}';
+}
+
+// POST /api/admin/build/vanguard-review
+// No requireAdmin — by design. The Ed25519 signature IS the credential here;
+// Vanguard is a separate sovereign actor, not a browser session with a JWT.
+// LNES-22 remediation Phase 6: replay cache. In-memory only -- resets on
+// process restart, which reopens a narrow replay window right after a
+// restart. Documented, not hidden: durable replay protection needs a store
+// that survives restarts (Postgres/Redis), which is a real follow-up, not
+// done here. Still strictly better than no replay protection at all.
+const _vanguardReviewSeenEventIds = new Set();
+const VANGUARD_REVIEW_MAX_CLOCK_SKEW_MS = 60_000; // tolerate 60s clock drift
+
+app.post('/api/admin/build/vanguard-review', async (req, res) => {
+  const VANGUARD_PUBLIC_KEY = process.env.VANGUARD_PUBLIC_KEY || '';
+  if (!VANGUARD_PUBLIC_KEY) {
+    return res.status(503).json({ error: 'VANGUARD_PUBLIC_KEY not configured — signature verification unavailable.' });
+  }
+  const { vanguard_sig, ...body } = req.body || {};
+  const otet = body.otet;
+  if (!otet || !vanguard_sig || !body.vanguard_pubkey) {
+    return res.status(400).json({ error: 'otet, vanguard_sig, and vanguard_pubkey required.' });
+  }
+
+  // Phase 6 schema/freshness checks -- BEFORE signature verification would
+  // leak nothing extra (these are structural, not secret), and rejecting
+  // malformed/stale envelopes early keeps the crypto.verify call for
+  // envelopes that are at least well-formed.
+  if (!body.event_id || !body.expires_at || !body.issued_at) {
+    return res.status(400).json({ error: 'event_id, issued_at, and expires_at required (LNES-22 replay/freshness hardening).' });
+  }
+  if (_vanguardReviewSeenEventIds.has(body.event_id)) {
+    console.warn(`[LNES-22] REJECTED — replayed event_id: ${body.event_id}`);
+    return res.status(409).json({ error: 'Replayed event_id. Entry rejected.' });
+  }
+  const now = Date.now();
+  const expiresAtMs = Date.parse(body.expires_at);
+  const issuedAtMs = Date.parse(body.issued_at);
+  if (Number.isNaN(expiresAtMs) || Number.isNaN(issuedAtMs)) {
+    return res.status(400).json({ error: 'issued_at/expires_at must be valid RFC3339 timestamps.' });
+  }
+  if (now > expiresAtMs) {
+    console.warn(`[LNES-22] REJECTED — expired review | event_id=${body.event_id} | expired_at=${body.expires_at}`);
+    return res.status(409).json({ error: 'Review expired. Entry rejected.' });
+  }
+  if (issuedAtMs > now + VANGUARD_REVIEW_MAX_CLOCK_SKEW_MS) {
+    console.warn(`[LNES-22] REJECTED — future-dated review | event_id=${body.event_id} | issued_at=${body.issued_at}`);
+    return res.status(409).json({ error: 'Future-dated review beyond clock-skew tolerance. Entry rejected.' });
+  }
+
+  if (body.vanguard_pubkey !== VANGUARD_PUBLIC_KEY) {
+    console.warn(`[LNES-22] REJECTED — unrecognized public key: ${body.vanguard_pubkey}`);
+    return res.status(403).json({ error: 'Unrecognized public key. Entry rejected as Synthetic Noise.' });
+  }
+  let sigValid = false;
+  try {
+    const message = Buffer.from(canonicalJSON(body), 'utf8');
+    const pubKeyDer = Buffer.concat([
+      Buffer.from('302a300506032b6570032100', 'hex'), // Ed25519 SubjectPublicKeyInfo prefix
+      Buffer.from(body.vanguard_pubkey, 'hex'),
+    ]);
+    const pubKey = crypto.createPublicKey({ key: pubKeyDer, format: 'der', type: 'spki' });
+    sigValid = crypto.verify(null, message, pubKey, Buffer.from(vanguard_sig, 'hex'));
+  } catch (e) {
+    console.warn('[LNES-22] Signature verification error:', e.message);
+  }
+  if (!sigValid) {
+    console.warn(`[LNES-22] REJECTED — signature mismatch | otet=${otet}`);
+    return res.status(403).json({ error: 'Signature verification failed. Entry rejected as Synthetic Noise.' });
+  }
+  // Only mark the event_id as seen AFTER signature verification passes --
+  // an attacker replaying a bad signature under a fresh event_id should
+  // keep failing every time, not burn real event_ids off the replay cache.
+  _vanguardReviewSeenEventIds.add(body.event_id);
+  try {
+    const EVOLUTION_PATH = '/home/ubuntu/biological_proxy/service_evolution_v2.json';
+    let ledger = [];
+    if (fs.existsSync(EVOLUTION_PATH)) {
+      try { ledger = JSON.parse(fs.readFileSync(EVOLUTION_PATH, 'utf8')); } catch (_) { ledger = []; }
+    }
+    const vanguard_review = { ...body, vanguard_sig, verified: true, received_at: new Date().toISOString() };
+    const idx = ledger.findIndex(e => e.otet === otet);
+    if (idx >= 0) {
+      ledger[idx].vanguard_review = vanguard_review;
+    } else {
+      ledger.unshift({ otet, origin: 'vanguard-standalone', vanguard_review });
+    }
+    fs.writeFileSync(EVOLUTION_PATH, JSON.stringify(ledger, null, 2));
+    console.log(`[LNES-22] Vanguard Audit VERIFIED and recorded | otet=${otet.slice(0,16)}…`);
+    res.json({ status: 'verified-and-recorded', otet });
+  } catch (e) {
+    console.error('[LNES-22] Ledger write failed:', e.message);
+    res.status(500).json({ error: 'Ledger write failed: ' + e.message });
+  }
 });
 
 // GET /api/admin/build/evolution
@@ -2575,6 +4986,24 @@ app.get('/api/admin/build/ledger', requireAdmin('super_admin', 'ops'), async (re
     );
     res.json({ entries: rows, total: parseInt(total.rows[0].count), limit, offset });
   } catch (err) {
+    res.status(500).json({ error: 'Ledger query failed' });
+  }
+});
+
+// GET /api/admin/build/active-otet-check
+// LNES-17 gate check — SSH agent_shell_gate.sh calls this to allow pm2/deploy commands.
+// Returns { active: true } if any UNSPENT OTET was issued in the last 24 hours.
+app.get('/api/admin/build/active-otet-check', async (req, res) => {
+  const secret = req.headers['x-internal-secret'];
+  if (!secret || secret !== process.env.ASKMO_INTERNAL_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const { rows } = await pool.query(
+      "SELECT COUNT(*) FROM build_audit_ledger WHERE status = 'UNSPENT' AND issued_at > NOW() - INTERVAL '24 hours'"
+    );
+    res.json({ active: parseInt(rows[0].count, 10) > 0 });
+  } catch (e) {
     res.status(500).json({ error: 'Ledger query failed' });
   }
 });
@@ -2862,7 +5291,7 @@ app.get('/api/blog/articles/:slug', async (req, res) => {
 });
 
 // GET /api/admin/blog/articles — admin list (all statuses)
-app.get('/api/admin/blog/articles', requireAdmin('super_admin', 'ops'), async (req, res) => {
+app.get('/api/admin/blog/articles', requireAuth, async (req, res) => {
   try {
     const limit  = Math.min(parseInt(req.query.limit)  || 50, 100);
     const offset = parseInt(req.query.offset) || 0;
@@ -2886,8 +5315,97 @@ app.get('/api/admin/blog/articles', requireAdmin('super_admin', 'ops'), async (r
   }
 });
 
+// POST /api/admin/blog/review — Vanguard content safety review before publish
+// Body: { title, subtitle?, content, tags? }
+// Returns: { approved, verdict, reason, suggestions? }
+app.post('/api/admin/blog/review', requireAuth, async (req, res) => {
+  const { title, subtitle, content } = req.body || {};
+  if (!title || !content) return res.status(400).json({ error: 'title and content required' });
+
+  const VG_URL = process.env.SEI_VANGUARD_URL || 'http://20.127.220.199:3000';
+  const VG_KEY = process.env.SEI_VANGUARD_KEY || 'sk-vanguard-apex-internal-v1';
+
+  const systemPrompt = `You are the ExergyNet Content Guardian — a permissive safety reviewer for the ExergyNet Journal.
+
+Your job: review articles before they are published to exergynet.org/journals. Approve the VAST MAJORITY of content. Be non-restrictive toward technical, business, educational, opinion, and industry commentary.
+
+ONLY flag or reject for genuine harms:
+- Hate speech, slurs, or targeted harassment of individuals
+- Instructions for illegal activity (fraud, hacking, violence)
+- Malware, phishing, or exploit code intended for attack
+- Graphic or explicit sexual content
+- Defamatory false statements presented as fact
+- Commercial spam with no legitimate informational value
+
+DO NOT flag for: strong opinions, criticism of companies or institutions, controversial but legal topics, technical security research, competitive commentary, blunt or provocative language, or anything a reasonable tech publication would print.
+
+Respond ONLY with this exact JSON structure:
+{
+  "approved": true or false,
+  "verdict": "approved" | "flagged" | "rejected",
+  "reason": "one sentence explaining the decision",
+  "suggestions": ["optional array of brief improvement suggestions, only if flagged"]
+}
+
+verdict meanings:
+- "approved": safe to publish immediately
+- "flagged": borderline concern — user should review before publishing
+- "rejected": clear policy violation — do not publish without significant revision`;
+
+  const userContent = `Title: ${title}
+${subtitle ? `Subtitle: ${subtitle}\n` : ''}
+Content:
+${content.slice(0, 8000)}`;
+
+  try {
+    const upstream = await fetch(`${VG_URL}/v1/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${VG_KEY}` },
+      body: JSON.stringify({
+        model: 'vanguard-engine',
+        stream: false,
+        temperature: 0,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: userContent },
+        ],
+      }),
+      signal: AbortSignal.timeout(30000),
+    });
+
+    if (!upstream.ok) {
+      // Vanguard unavailable — auto-approve so publish is never blocked by infra outage
+      console.warn(`[BLOG-REVIEW] Vanguard unavailable (${upstream.status}) — auto-approving`);
+      return res.json({ approved: true, verdict: 'approved', reason: 'Vanguard unavailable — auto-approved.', auto_approved: true });
+    }
+
+    const data = await upstream.json();
+    const raw  = data.choices?.[0]?.message?.content || '{}';
+    let parsed;
+    try { parsed = JSON.parse(raw); } catch (_) {
+      console.warn('[BLOG-REVIEW] Could not parse Vanguard JSON response — auto-approving');
+      return res.json({ approved: true, verdict: 'approved', reason: 'Review parse error — auto-approved.', auto_approved: true });
+    }
+
+    const verdict = parsed.verdict || (parsed.approved === false ? 'flagged' : 'approved');
+    const approved = verdict === 'approved';
+    console.log(`[BLOG-REVIEW] title="${title.slice(0,40)}" verdict=${verdict} approved=${approved}`);
+    res.json({
+      approved,
+      verdict,
+      reason:      parsed.reason      || '',
+      suggestions: parsed.suggestions || [],
+    });
+  } catch (err) {
+    // Network error — auto-approve
+    console.warn('[BLOG-REVIEW] Vanguard request failed — auto-approving:', err.message);
+    res.json({ approved: true, verdict: 'approved', reason: 'Vanguard unreachable — auto-approved.', auto_approved: true });
+  }
+});
+
 // POST /api/admin/blog/articles — create
-app.post('/api/admin/blog/articles', requireAdmin('super_admin', 'ops'), async (req, res) => {
+app.post('/api/admin/blog/articles', requireAuth, async (req, res) => {
   try {
     const { title, subtitle, content = '', excerpt, cover_url, author_name = 'ExergyNet',
             author_avatar, tags = [], status = 'draft', featured = false } = req.body || {};
@@ -2917,7 +5435,7 @@ app.post('/api/admin/blog/articles', requireAdmin('super_admin', 'ops'), async (
 });
 
 // PUT /api/admin/blog/articles/:id — update
-app.put('/api/admin/blog/articles/:id', requireAdmin('super_admin', 'ops'), async (req, res) => {
+app.put('/api/admin/blog/articles/:id', requireAuth, async (req, res) => {
   try {
     const { rows: existing } = await pool.query('SELECT * FROM articles WHERE id = $1', [req.params.id]);
     if (!existing[0]) return res.status(404).json({ error: 'Article not found' });
@@ -2952,7 +5470,7 @@ app.put('/api/admin/blog/articles/:id', requireAdmin('super_admin', 'ops'), asyn
 });
 
 // DELETE /api/admin/blog/articles/:id
-app.delete('/api/admin/blog/articles/:id', requireAdmin('super_admin', 'ops'), async (req, res) => {
+app.delete('/api/admin/blog/articles/:id', requireAuth, async (req, res) => {
   try {
     const { rows } = await pool.query('DELETE FROM articles WHERE id=$1 RETURNING id', [req.params.id]);
     if (!rows[0]) return res.status(404).json({ error: 'Article not found' });
@@ -2963,7 +5481,7 @@ app.delete('/api/admin/blog/articles/:id', requireAdmin('super_admin', 'ops'), a
 });
 
 // POST /api/admin/blog/upload-cover — cover image upload
-app.post('/api/admin/blog/upload-cover', requireAdmin('super_admin', 'ops'), dropsUpload.single('cover'), async (req, res) => {
+app.post('/api/admin/blog/upload-cover', requireAuth, dropsUpload.single('cover'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
     const ext  = req.file.originalname.split('.').pop()?.toLowerCase() || 'jpg';
@@ -2974,6 +5492,101 @@ app.post('/api/admin/blog/upload-cover', requireAdmin('super_admin', 'ops'), dro
     res.json({ url: `/downloads/covers/${name}` });
   } catch (e) {
     res.status(500).json({ error: 'Upload failed' });
+  }
+});
+
+// ── LNES-12 Private Session Lock ──────────────────────────────────────────────
+// POST /api/v1/mesh/call/pair/:nodeA/:nodeB
+// Acquires an exclusive session lock for a sorted node pair before LiveKit join.
+// Prevents a third node from stealing the deterministic room name.
+// Lock auto-expires after 10 minutes.
+const _callSessions = new Map(); // key: sorted pair string → { room, lockedAt }
+const CALL_LOCK_TTL_MS = 10 * 60 * 1000;
+
+function _pairKey(a, b) {
+  return [a, b].sort().join('_');
+}
+function _gcCallSessions() {
+  const now = Date.now();
+  for (const [k, v] of _callSessions) {
+    if (now - v.lockedAt > CALL_LOCK_TTL_MS) _callSessions.delete(k);
+  }
+}
+
+app.post('/v1/mesh/call/pair/:nodeA/:nodeB', (req, res) => {
+  _gcCallSessions();
+  const key  = _pairKey(req.params.nodeA, req.params.nodeB);
+  const room = 'call_' + key;
+  const existing = _callSessions.get(key);
+  if (existing && Date.now() - existing.lockedAt < CALL_LOCK_TTL_MS) {
+    return res.status(409).json({ locked: false, reason: 'session_in_progress', room });
+  }
+  _callSessions.set(key, { room, lockedAt: Date.now() });
+  console.log(`[MESH-LOCK] acquired: ${key}`);
+  res.json({ locked: true, room });
+});
+
+app.delete('/v1/mesh/call/pair/:nodeA/:nodeB', (req, res) => {
+  const key = _pairKey(req.params.nodeA, req.params.nodeB);
+  _callSessions.delete(key);
+  console.log(`[MESH-LOCK] released: ${key}`);
+  res.json({ released: true });
+});
+
+// ── LNES-KRV: Kinetic Rebuild Valve ──────────────────────────────────────────
+// Vanguard Agent posts here to trigger portal rebuild + pm2 restart without SSH.
+// Auth: Ed25519 signature over JSON body using VANGUARD_PUBLIC_KEY env var.
+// Uses Node built-in crypto (no new deps) — Ed25519 available since Node 15.
+app.post('/api/admin/build/rebuild', async (req, res) => {
+  if (!process.env.VANGUARD_PUBLIC_KEY) {
+    return res.status(503).json({ error: 'VANGUARD_PUBLIC_KEY not configured on this server.' });
+  }
+  const signature = req.headers['x-vanguard-sig'];
+  if (!signature) return res.status(401).json({ error: 'Missing x-vanguard-sig header.' });
+  try {
+    const body = JSON.stringify(req.body);
+    const pubKeyDer = Buffer.concat([
+      Buffer.from('302a300506032b6570032100', 'hex'), // Ed25519 SubjectPublicKeyInfo prefix
+      Buffer.from(process.env.VANGUARD_PUBLIC_KEY, 'hex'),
+    ]);
+    const pubKey = crypto.createPublicKey({ key: pubKeyDer, format: 'der', type: 'spki' });
+    const isValid = crypto.verify(null, Buffer.from(body), pubKey, Buffer.from(signature, 'hex'));
+    if (!isValid) return res.status(403).json({ error: 'Sovereign Signature Invalid.' });
+  } catch (e) {
+    return res.status(400).json({ error: 'Signature verification failed: ' + e.message });
+  }
+
+  const target = (req.body && req.body.target) || 'portal';
+  const LOG = '/home/ubuntu/krv_build.log';
+  const TARGETS = {
+    portal: `echo "[KRV] $(date) starting portal build" > ${LOG} && cd /home/ubuntu/exergynet-portal && npm run build >> ${LOG} 2>&1 && echo "[KRV] build ok, restarting portal" >> ${LOG} && pm2 restart exergynet-portal >> ${LOG} 2>&1 && echo "[KRV] done" >> ${LOG}`,
+    proxy:  `echo "[KRV] $(date) restarting proxy" > ${LOG} && pm2 restart biological_proxy`,
+    both:   `echo "[KRV] $(date) starting portal build" > ${LOG} && cd /home/ubuntu/exergynet-portal && npm run build >> ${LOG} 2>&1 && echo "[KRV] build ok, restarting portal" >> ${LOG} && pm2 restart exergynet-portal >> ${LOG} 2>&1 && pm2 restart biological_proxy`,
+  };
+  const cmd = TARGETS[target];
+  if (!cmd) return res.status(400).json({ error: `Unknown target "${target}". Valid: portal, proxy, both.` });
+
+  res.json({ status: 'Strike Accepted. Rebuild Initialized.', target });
+
+  const { exec } = require('child_process');
+  exec(cmd, { timeout: 300000, shell: '/bin/bash' }, (error, stdout, stderr) => {
+    if (error) {
+      fs.appendFileSync(LOG, `\n[KRV_FAIL] ${error.message}\n${stderr}\n`);
+      console.error(`[KRV_FAIL] target=${target} error=${error.message}`);
+    } else {
+      console.log(`[KRV_SUCCESS] target=${target}`);
+    }
+  });
+});
+
+// GET /api/admin/build/build-log — read last KRV build log
+app.get('/api/admin/build/build-log', requireAdmin('super_admin', 'ops'), (req, res) => {
+  const LOG = '/home/ubuntu/krv_build.log';
+  try {
+    const content = fs.existsSync(LOG) ? fs.readFileSync(LOG, 'utf8') : '(no log yet)';
+    res.json({ log: content, path: LOG });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 });
 
