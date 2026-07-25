@@ -284,6 +284,7 @@ export default function KeysPage() {
             { key: 'OPENAI_BASE_URL',           value: `${API}/v1`,                                                                   note: 'openai-compatible' },
             { key: 'EXERGYNET_MCP_SSE',         value: 'https://mcp.exergynet.org/sse',                                               note: 'Omega Carrier MCP' },
             { key: 'EXERGYNET_VAULT_IMAGE_ID',  value: '0xb226f60a6a3406e5cd3792b4bbe86ed996e2e2cc8dd31ddbe7989a20a897092d',         note: 'Vault ZK image ID' },
+            { key: 'VMN_DIST_PATH',              value: '/path/to/vanguard_memory_node/dist/index.js',                                note: 'local VMN MCP — no API key' },
           ].map(({ key, value, note }) => (
             <div key={key} style={{
               display: 'flex', alignItems: 'center', gap: 8,
