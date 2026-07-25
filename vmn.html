@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vanguard Memory Node &mdash; Local AI Memory via MCP | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="xLMP deterministic local memory for AI agents. No cloud. No vector database. No semantic drift. Plug into Claude Desktop in 60 seconds.">
+<meta name="keywords" content="VMN, vanguard memory node, xLMP, MCP memory, local AI memory, Claude Desktop, deterministic memory, AI agent memory">
+<meta property="og:title" content="Vanguard Memory Node — Local AI Memory via MCP">
+<meta property="og:description" content="xLMP delivers deterministic, content-addressed local memory for AI agents. No cloud. No vector database. No semantic drift.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/vmn.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t=localStorage.getItem("exg-theme");
+  if(!t){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}
+  document.documentElement.setAttribute("data-theme",t);
+})();
+</script>
+<style>
+/* ── VMN page styles ── */
+
+.vmn-hero{position:relative;padding:5.5rem 0 4.5rem;overflow:hidden;}
+.vmn-h1{font-family:var(--display);font-size:clamp(3rem,8vw,6.5rem);font-weight:900;line-height:0.92;letter-spacing:-0.03em;margin-bottom:1.5rem;}
+.vmn-h1 .accent{color:var(--accent);}
+.vmn-sub{font-size:1.15rem;line-height:1.7;color:var(--text-soft);max-width:560px;margin-bottom:2rem;}
+.vmn-stat-bar{display:flex;gap:0;flex-wrap:wrap;margin-top:1.75rem;border:1px solid var(--border-mid);border-radius:var(--radius);overflow:hidden;width:fit-content;}
+.vmn-stat-pill{font-family:var(--mono);font-size:11px;letter-spacing:0.07em;color:var(--text-faint);padding:0.45rem 1rem;border-right:1px solid var(--border-mid);background:var(--bg-card);}
+.vmn-stat-pill:last-child{border-right:none;}
+.vmn-stat-pill span{color:var(--accent);}
+
+/* Problem section */
+.vmn-problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem;}
+.vmn-problem-card{background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.75rem 1.5rem;position:relative;overflow:hidden;}
+.vmn-problem-card::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--red) 0%,transparent 100%);}
+.vmn-problem-icon{font-size:1.75rem;margin-bottom:1rem;display:block;}
+.vmn-problem-title{font-family:var(--display);font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:0.6rem;}
+.vmn-problem-body{font-size:13.5px;line-height:1.65;color:var(--text-soft);}
+
+/* How it works */
+.vmn-steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem;}
+.vmn-step{background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.75rem 1.5rem;position:relative;}
+.vmn-step.sovereign{border-color:rgba(255,184,48,0.35);background:rgba(255,184,48,0.04);}
+.vmn-step-num{font-family:var(--display);font-size:3rem;font-weight:900;line-height:1;color:var(--accent);opacity:0.25;margin-bottom:0.75rem;}
+.vmn-step.sovereign .vmn-step-num{color:var(--amber);opacity:0.35;}
+.vmn-step-title{font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:0.6rem;}
+.vmn-step.sovereign .vmn-step-title{color:var(--amber);}
+.vmn-step-body{font-size:13.5px;line-height:1.65;color:var(--text-soft);margin-bottom:1.25rem;}
+.vmn-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:3px;margin-bottom:0.75rem;}
+.vmn-badge.sovereign-badge{background:rgba(255,184,48,0.12);color:var(--amber);border:1px solid rgba(255,184,48,0.3);}
+.vmn-badge.open-badge{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,232,135,0.25);}
+
+/* Code blocks */
+.vmn-terminal{background:#010409;border:1px solid rgba(0,232,135,0.18);border-radius:var(--radius-lg);padding:1.5rem 1.75rem;font-family:var(--mono);font-size:13px;line-height:1.9;color:#c9d1d9;margin:1.25rem 0;position:relative;overflow:hidden;}
+.vmn-terminal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--accent) 0%,transparent 60%);}
+.vmn-terminal .cm{color:#6a737d;}
+.vmn-terminal .kw{color:var(--accent);}
+.vmn-terminal .str{color:#a5d6ff;}
+.vmn-terminal .fn{color:#d2a8ff;}
+.vmn-terminal .prompt{color:var(--accent);user-select:none;}
+.vmn-code-block{background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.5rem 1.75rem;font-family:var(--mono);font-size:13px;line-height:1.8;color:var(--text-soft);margin:1.25rem 0;overflow-x:auto;}
+.vmn-code-note{font-size:12.5px;color:var(--text-faint);margin-top:0.85rem;line-height:1.6;font-family:var(--mono);}
+.vmn-code-note code{color:var(--text-soft);background:var(--bg-card);padding:0.1rem 0.35rem;border-radius:3px;font-size:11px;}
+
+/* Compare table */
+.vmn-compare-wrap{border:1px solid var(--border-mid);border-radius:var(--radius-lg);overflow:hidden;margin-top:2rem;}
+.compare-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.compare-table th{padding:0.9rem 1.25rem;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-faint);border-bottom:1px solid var(--border-mid);background:var(--bg-card-2);}
+.compare-table th.vmn-col{color:var(--accent);background:rgba(0,232,135,0.06);}
+.compare-table td{padding:0.85rem 1.25rem;border-bottom:1px solid var(--border);vertical-align:middle;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table td:first-child{color:var(--text-soft);font-weight:500;}
+.compare-table td.good{color:var(--accent);font-weight:600;}
+.compare-table td.bad{color:var(--text-faint);}
+.compare-table td.mid{color:var(--amber);}
+
+/* Sovereign teaser */
+.vmn-teaser{background:var(--bg-card);border:1px solid rgba(255,184,48,0.25);border-radius:var(--radius-xl);padding:3rem;text-align:center;position:relative;overflow:hidden;}
+.vmn-teaser::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,184,48,0.07) 0%,transparent 65%);pointer-events:none;}
+.vmn-teaser-stats{display:flex;gap:3rem;justify-content:center;margin:2rem 0;}
+.vmn-teaser-stat-num{font-family:var(--display);font-size:2.25rem;font-weight:900;color:var(--amber);line-height:1;margin-bottom:0.35rem;}
+.vmn-teaser-stat-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-faint);}
+
+/* Copy button */
+.btn-copy{position:relative;}
+.btn-copy .copy-confirm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#000;font-weight:700;border-radius:inherit;opacity:0;pointer-events:none;transition:opacity 0.15s;}
+.btn-copy.copied .copy-confirm{opacity:1;}
+
+@media(max-width:1023px){
+  .vmn-problem-grid,.vmn-steps-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  .vmn-hero{padding:4rem 0 3rem;}
+  .vmn-problem-grid,.vmn-steps-grid{grid-template-columns:1fr;}
+  .vmn-teaser{padding:2rem 1.25rem;}
+  .vmn-teaser-stats{flex-direction:column;gap:1.5rem;}
+  .vmn-stat-bar{width:100%;}
+}
+</style>
+</head>
+<body>
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
+  <div id="site-header"></div>
+
+  <main class="page">
+
+    <!-- ── HERO ─────────────────────────────────────────────────────── -->
+    <section class="vmn-hero">
+      <div class="glow-accent" style="width:500px;height:460px;top:-120px;left:-160px;"></div>
+      <div class="glow-blue" style="width:480px;height:380px;top:-60px;right:-200px;"></div>
+      <div class="container">
+        <div class="hero-eyebrow">
+          <span class="dot"></span>
+          LNES-80 &nbsp;/&nbsp; Open Source
+        </div>
+        <h1 class="vmn-h1">Stop Renting<br><span class="accent">Your Memories</span></h1>
+        <p class="vmn-sub">xLMP delivers deterministic, content-addressed local memory for AI agents. No cloud. No vector database. No semantic drift. Your data stays on your NVMe.</p>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-copy" id="install-btn" onclick="copyInstall(this)">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0"><path d="M4 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M6.5 5.5A.5.5 0 0 1 7 5h2a.5.5 0 0 1 0 1H7a.5.5 0 0 1-.5-.5z"/></svg>
+            npm install -g vanguard-memory-node
+            <span class="copy-confirm">Copied!</span>
+          </button>
+          <a href="https://github.com/ezumba/vanguard-memory-node" target="_blank" rel="noopener" class="btn btn-secondary">GitHub &rarr;</a>
+        </div>
+        <div class="vmn-stat-bar">
+          <div class="vmn-stat-pill"><span>v1.0.0</span></div>
+          <div class="vmn-stat-pill">MIT License</div>
+          <div class="vmn-stat-pill">stdio MCP</div>
+          <div class="vmn-stat-pill">Claude Desktop ready</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROBLEM ───────────────────────────────────────────────────── -->
+    <section class="section" style="padding-top:0;">
+      <div class="container">
+        <div class="section-label">The Problem</div>
+        <h2>Context Collapse Is Killing<br>Your AI Workflows</h2>
+        <div class="vmn-problem-grid">
+          <div class="vmn-problem-card">
+            <span class="vmn-problem-icon">&#9889;</span>
+            <div class="vmn-problem-title">Semantic Drift</div>
+            <p class="vmn-problem-body">Vector databases return wrong chunks over long horizons. Your AI argues with architecture decisions from 8 months ago because cosine similarity pulled the wrong embedding.</p>
+          </div>
+          <div class="vmn-problem-card">
+            <span class="vmn-problem-icon">&#128274;</span>
+            <div class="vmn-problem-title">Vendor Lock-In</div>
+            <p class="vmn-problem-body">Your memory lives on someone else&rsquo;s cloud. Every query is a billable API call. Changing providers means re-embedding your entire knowledge base.</p>
+          </div>
+          <div class="vmn-problem-card">
+            <span class="vmn-problem-icon">&#9888;</span>
+            <div class="vmn-problem-title">Privacy Risk</div>
+            <p class="vmn-problem-body">Clinical data, trade secrets, and proprietary codebase context uploaded to external embedding servers. One breach exposes everything.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HOW IT WORKS ──────────────────────────────────────────────── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">How It Works</div>
+        <h2>Three Commands.<br>Permanent Memory.</h2>
+        <div class="vmn-steps-grid">
+
+          <div class="vmn-step">
+            <div class="vmn-badge open-badge">Step 01</div>
+            <div class="vmn-step-num">01</div>
+            <div class="vmn-step-title">Ingest</div>
+            <p class="vmn-step-body">Feed any text to <code>vmn_ingest</code>. xLMP shatters it into 1800-character deterministic shards, SHA-256 addressed and stored on your local NVMe.</p>
+            <div class="vmn-terminal">
+<span class="cm"># MCP tool call</span>
+<span class="fn">vmn_ingest</span>(<span class="str">"your text here"</span>)
+
+<span class="cm"># Returns</span>
+<span class="kw">INGESTED.</span> Shard hash:
+a3f8b2c1d4e5...</div>
+          </div>
+
+          <div class="vmn-step">
+            <div class="vmn-badge open-badge">Step 02</div>
+            <div class="vmn-step-num">02</div>
+            <div class="vmn-step-title">Recall</div>
+            <p class="vmn-step-body">Query with <code>vmn_recall</code>. The xLMP lexical scorer evaluates keyword density across all shards and returns the exact bounded evidence window. No embeddings. No drift.</p>
+            <div class="vmn-terminal">
+<span class="fn">vmn_recall</span>(
+  <span class="str">hash</span>: <span class="str">"a3f8b2c1..."</span>,
+  <span class="str">query</span>: <span class="str">"your query"</span>
+)
+
+<span class="cm"># Returns 900-char evidence window</span></div>
+          </div>
+
+          <div class="vmn-step sovereign">
+            <div class="vmn-badge sovereign-badge">Sovereign Tier &mdash; Coming Soon</div>
+            <div class="vmn-step-num">03</div>
+            <div class="vmn-step-title">Verify</div>
+            <p class="vmn-step-body">Upgrade any shard to a Sovereign Cryptographic Record. ExergyNet LNES-04 generates a ZK-STARK proof for 0.05 USDC. Cryptographically verifiable. Cross-team shareable.</p>
+            <div class="vmn-terminal" style="border-color:rgba(255,184,48,0.2);opacity:0.6;filter:blur(0.4px);">
+<span class="cm"># Coming in LNES-04</span>
+<span class="fn">vmn_verify</span>(<span class="str">hash</span>)
+
+<span class="kw">ZK-STARK proof issued</span>
+<span class="str">Cost: 0.05 USDC</span></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── INSTALL ───────────────────────────────────────────────────── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Install</div>
+        <h2>Up in 60 Seconds</h2>
+
+        <div class="vmn-terminal">
+<span class="cm"># Install globally</span>
+<span class="prompt">$</span> <span class="kw">npm install -g vanguard-memory-node</span>
+
+<span class="cm"># Or run directly with npx</span>
+<span class="prompt">$</span> <span class="kw">npx vanguard-memory-node</span></div>
+
+        <p style="color:var(--text-soft);margin:1.5rem 0 0.75rem;font-size:15px;">Then add to your Claude Desktop config:</p>
+
+        <div class="vmn-code-block"><span style="color:var(--text-faint);">// Mac: ~/Library/Application Support/Claude/claude_desktop_config.json</span>
+<span style="color:var(--text-faint);">// Windows: %APPDATA%\Claude\claude_desktop_config.json</span>
+
+{
+  <span style="color:var(--blue);">"mcpServers"</span>: {
+    <span style="color:var(--blue);">"vanguard-memory"</span>: {
+      <span style="color:var(--blue);">"command"</span>: <span style="color:var(--accent);">"node"</span>,
+      <span style="color:var(--blue);">"args"</span>: [<span style="color:var(--accent);">"/path/to/vanguard_memory_node/dist/index.js"</span>]
+    }
+  }
+}</div>
+
+        <p class="vmn-code-note">WSL on Windows? Use: <code>"command": "wsl"</code> with <code>"args": ["-d", "Ubuntu", "node", "/home/user/vanguard_memory_node/dist/index.js"]</code></p>
+      </div>
+    </section>
+
+    <!-- ── COMPARE TABLE ─────────────────────────────────────────────── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Why xLMP</div>
+        <h2>Deterministic vs Probabilistic Memory</h2>
+        <div class="vmn-compare-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th class="vmn-col">xLMP &mdash; VMN</th>
+                <th>Vector DB (Chroma / Pinecone)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Retrieval method</td>
+                <td class="good">Lexical keyword density</td>
+                <td class="bad">Cosine similarity</td>
+              </tr>
+              <tr>
+                <td>Drift over time</td>
+                <td class="good">None &mdash; deterministic</td>
+                <td class="bad">High &mdash; embeddings decay</td>
+              </tr>
+              <tr>
+                <td>Privacy</td>
+                <td class="good">Local NVMe only</td>
+                <td class="bad">Cloud upload required</td>
+              </tr>
+              <tr>
+                <td>Cost</td>
+                <td class="good">Free (local)</td>
+                <td class="bad">Per-query API cost</td>
+              </tr>
+              <tr>
+                <td>Setup time</td>
+                <td class="good">60 seconds</td>
+                <td class="bad">Hours (embed pipeline)</td>
+              </tr>
+              <tr>
+                <td>Cryptographic proof</td>
+                <td class="mid">Via LNES-04 (coming soon)</td>
+                <td class="bad">Not available</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SOVEREIGN TEASER ──────────────────────────────────────────── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Coming Soon</div>
+        <div class="vmn-teaser">
+          <div class="hero-eyebrow" style="display:inline-flex;margin-bottom:1.5rem;border-color:rgba(255,184,48,0.35);color:var(--amber);background:rgba(255,184,48,0.08);">
+            <span class="dot" style="background:var(--amber);box-shadow:0 0 8px var(--amber);"></span>
+            Sovereign Memory &mdash; ExergyNet LNES-04
+          </div>
+          <h2 style="margin-bottom:1rem;">ZK-Verified, Cross-Team<br>Memory is Coming</h2>
+          <p style="max-width:600px;margin:0 auto;color:var(--text-soft);font-size:15px;line-height:1.7;">When your agent needs cryptographically absolute memory &mdash; for clinical decisions, financial transactions, or team-shared context &mdash; ExergyNet LNES-04 issues a Groth16 ZK-STARK proof for each shard. Mathematically tamper-proof. Shareable across orgs without exposing raw content.</p>
+          <div class="vmn-teaser-stats">
+            <div>
+              <div class="vmn-teaser-stat-num">0.05</div>
+              <div class="vmn-teaser-stat-label">USDC per ZK-proof</div>
+            </div>
+            <div>
+              <div class="vmn-teaser-stat-num">ZK</div>
+              <div class="vmn-teaser-stat-label">STARK verified</div>
+            </div>
+          </div>
+          <a href="https://exergynet.org" class="btn btn-secondary" style="border-color:rgba(255,184,48,0.4);color:var(--amber);">Learn about ExergyNet &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA CLOSE ─────────────────────────────────────────────────── -->
+    <section class="section" style="padding-bottom:5rem;">
+      <div class="container" style="text-align:center;">
+        <div class="hero-eyebrow" style="display:inline-flex;justify-content:center;margin-bottom:1.25rem;">
+          <span class="dot"></span>
+          Vanguard Memory Node &middot; v1.0.0 &middot; Open Source
+        </div>
+        <h2>Your memory. Your NVMe.<br>Your agents.</h2>
+        <p style="max-width:500px;margin:1rem auto 2rem;color:var(--text-soft);font-size:15px;line-height:1.7;">Deploy in 60 seconds. No API keys. No embeddings pipeline. No cloud dependency.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn btn-primary btn-copy" onclick="copyInstall(this)">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0"><path d="M4 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+            npm install -g vanguard-memory-node
+            <span class="copy-confirm">Copied!</span>
+          </button>
+          <a href="https://github.com/ezumba/vanguard-memory-node" target="_blank" rel="noopener" class="btn btn-ghost">View on GitHub &rarr;</a>
+          <a href="https://www.npmjs.com/package/vanguard-memory-node" target="_blank" rel="noopener" class="btn btn-ghost">npm package &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-footer"></div>
+</div>
+
+<script src="main.js"></script>
+<script>
+function copyInstall(btn) {
+  navigator.clipboard.writeText('npm install -g vanguard-memory-node').then(function() {
+    btn.classList.add('copied');
+    setTimeout(function(){ btn.classList.remove('copied'); }, 1800);
+  });
+}
+</script>
+</body>
+</html>
