@@ -96,7 +96,7 @@
             <div class="section-label" style="margin-bottom:0.75rem;">The ExergyNet Stack</div>
             <div class="stack-row">
               <div class="stack-key">Memory</div>
-              <div class="stack-value"><strong>Exergy Vault + xLMP</strong><br>Persistent, root-addressed machine memory with bounded evidence delivery.</div>
+              <div class="stack-value"><strong>Exergy Vault + xLMP</strong><br>Persistent, root-addressed machine memory with bounded evidence delivery. <a href="vmn.html" style="color:var(--accent);">VMN</a> is the open-source local node.</div>
             </div>
             <div class="stack-row">
               <div class="stack-key">Control</div>
@@ -169,6 +169,11 @@
             <div style="margin-top:1rem;"><a href="vanguard.html" class="btn btn-secondary" style="font-size:12px;">Vanguard &rarr;</a></div>
           </div>
           <div class="card accent-border">
+            <h3>Vanguard Memory Node</h3>
+            <p>Open-source local node for xLMP — the AI Memory Control Plane. Deterministic, content-addressed memory via MCP. No cloud required. Deploy in 60 seconds.</p>
+            <div style="margin-top:1rem;"><a href="vmn.html" class="btn btn-primary" style="font-size:12px;">VMN &rarr;</a></div>
+          </div>
+          <div class="card accent-border">
             <h3>Omega Carrier</h3>
             <p>A sovereign machine interface for identity, persistent memory, authenticated external data, and task routing.</p>
             <div style="margin-top:1rem;"><a href="omega-carrier.html" class="btn btn-primary" style="font-size:12px;">Omega Carrier &rarr;</a></div>
@@ -181,7 +186,7 @@
           <div class="card">
             <h3>Edge Witness</h3>
             <p>Hardware-backed capture and signing for device observations, physical presence, and field-operational evidence.</p>
-            <div style="margin-top:1rem;"><a href="edge-witness.html" class="btn btn-secondary" style="font-size:12px;">Edge Witness &rarr;</a></div>
+            <div style="margin-top:1rem;"><a href="docs.html" class="btn btn-secondary" style="font-size:12px;">Edge Witness &rarr;</a></div>
           </div>
           <div class="card blue-border">
             <h3>Proof and Settlement</h3>
@@ -304,11 +309,11 @@
         </div>
 
         <div class="quiet-callout" style="margin-top:1.5rem;">
-          The public release describes interfaces, trust boundaries, methodology, and measured outcomes. Shard construction, retrieval heuristics, orchestration policies, private circuits, and security-sensitive implementation details remain confidential.
+          The public release describes interfaces, trust boundaries, methodology, and measured outcomes. Segment construction, retrieval heuristics, orchestration policies, private circuits, and security-sensitive implementation details remain confidential.
         </div>
 
         <div class="btn-row" style="margin-top:1.5rem;">
-          <a href="journal.html" class="btn btn-primary">Read Benchmark Notes</a>
+          <a href="journals.html" class="btn btn-primary">Read Benchmark Notes</a>
           <a href="whitepaper.html" class="btn btn-secondary">Architecture Whitepaper</a>
         </div>
       </div>
@@ -353,8 +358,8 @@
           <div class="card accent-border">
             <h4>MCP</h4>
             <h3>Agent Tooling</h3>
-            <p>Connect compatible agents to ExergyNet memory, execution, and verification capabilities.</p>
-            <div style="margin-top:1rem;"><a href="mcp.html" class="btn btn-primary" style="font-size:12px;">MCP Gateway &rarr;</a></div>
+            <p>Connect compatible agents to ExergyNet memory, execution, and verification capabilities. For local stdio MCP memory, deploy <a href="vmn.html" style="color:var(--accent);">VMN</a>.</p>
+            <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;"><a href="mcp.html" class="btn btn-primary" style="font-size:12px;">MCP Gateway &rarr;</a><a href="vmn.html" class="btn btn-ghost" style="font-size:12px;">VMN Local &rarr;</a></div>
           </div>
           <div class="card">
             <h4>SDK</h4>
@@ -379,7 +384,7 @@
           <pre><code>npm install @elizaos/plugin-exergynet</code></pre>
           <div class="btn-row" style="margin-top:1rem;">
             <a href="docs.html" class="btn btn-primary">Integration Guide</a>
-            <a href="agents.html" class="btn btn-ghost">Agent Manifest &rarr;</a>
+            <a href="docs.html" class="btn btn-ghost">Agent Manifest &rarr;</a>
           </div>
         </div>
       </div>
