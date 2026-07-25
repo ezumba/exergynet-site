@@ -8,10 +8,10 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="xLMP deterministic local memory for AI agents. No cloud. No vector database. No semantic drift. Plug into Claude Desktop in 60 seconds.">
+<meta name="description" content="xLMP deterministic local memory for AI agents. No cloud required. No vector database. No embedding-model drift. Plug into Claude Desktop in 60 seconds.">
 <meta name="keywords" content="VMN, vanguard memory node, xLMP, MCP memory, local AI memory, Claude Desktop, deterministic memory, AI agent memory">
 <meta property="og:title" content="Vanguard Memory Node — Local AI Memory via MCP">
-<meta property="og:description" content="xLMP delivers deterministic, content-addressed local memory for AI agents. No cloud. No vector database. No semantic drift.">
+<meta property="og:description" content="VMN is the open-source local node for xLMP &mdash; the AI Memory Control Plane. Deterministic, content-addressed local memory for AI agents. No cloud required. No embedding-model drift.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org/vmn.html">
 <link rel="stylesheet" href="style.css">
@@ -94,6 +94,17 @@
 @media(max-width:1023px){
   .vmn-problem-grid,.vmn-steps-grid{grid-template-columns:repeat(2,1fr);}
 }
+
+/* Tiers */
+.vmn-tiers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2rem;}
+.vmn-tier-card{background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.5rem 1.25rem;}
+.vmn-tier-card.tier-open{border-color:rgba(0,232,135,0.2);}
+.vmn-tier-card.tier-sovereign{border-color:rgba(255,184,48,0.25);}
+.vmn-tier-name{font-family:var(--display);font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;}
+.vmn-tier-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:0.75rem;display:block;}
+.vmn-tier-desc{font-size:13px;line-height:1.65;color:var(--text-soft);}
+@media(max-width:900px){.vmn-tiers-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:540px){.vmn-tiers-grid{grid-template-columns:1fr;}}
 @media(max-width:640px){
   .vmn-hero{padding:4rem 0 3rem;}
   .vmn-problem-grid,.vmn-steps-grid{grid-template-columns:1fr;}
@@ -119,8 +130,8 @@
           <span class="dot"></span>
           LNES-80 &nbsp;/&nbsp; Open Source
         </div>
-        <h1 class="vmn-h1">Stop Renting<br><span class="accent">Your Memories</span></h1>
-        <p class="vmn-sub">xLMP delivers deterministic, content-addressed local memory for AI agents. No cloud. No vector database. No semantic drift. Your data stays on your NVMe.</p>
+        <h1 class="vmn-h1">Stop Renting<br><span class="accent">Your AI's Memory</span></h1>
+        <p class="vmn-sub">VMN is the open-source local node for xLMP &mdash; the AI Memory Control Plane. Deterministic, content-addressed local memory for AI agents. No cloud required. No embedding-model drift. Your data stays on your NVMe.</p>
         <div class="btn-row">
           <button class="btn btn-primary btn-copy" id="install-btn" onclick="copyInstall(this)">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0"><path d="M4 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M6.5 5.5A.5.5 0 0 1 7 5h2a.5.5 0 0 1 0 1H7a.5.5 0 0 1-.5-.5z"/></svg>
@@ -146,8 +157,8 @@
         <div class="vmn-problem-grid">
           <div class="vmn-problem-card">
             <span class="vmn-problem-icon">&#9889;</span>
-            <div class="vmn-problem-title">Semantic Drift</div>
-            <p class="vmn-problem-body">Vector databases return wrong chunks over long horizons. Your AI argues with architecture decisions from 8 months ago because cosine similarity pulled the wrong embedding.</p>
+            <div class="vmn-problem-title">Embedding-Model Drift</div>
+            <p class="vmn-problem-body">Your retrieval results change whenever the embedding model updates, chunking strategy shifts, or similarity threshold is retuned. The same query returns different chunks six months later.</p>
           </div>
           <div class="vmn-problem-card">
             <span class="vmn-problem-icon">&#128274;</span>
@@ -174,7 +185,7 @@
             <div class="vmn-badge open-badge">Step 01</div>
             <div class="vmn-step-num">01</div>
             <div class="vmn-step-title">Ingest</div>
-            <p class="vmn-step-body">Feed any text to <code>vmn_ingest</code>. xLMP shatters it into 1800-character deterministic shards, SHA-256 addressed and stored on your local NVMe.</p>
+            <p class="vmn-step-body">Feed any text to <code>vmn_ingest</code>. xLMP breaks it into 1800-character deterministic memory segments, SHA-256 addressed and stored on your local NVMe.</p>
             <div class="vmn-terminal">
 <span class="cm"># MCP tool call</span>
 <span class="fn">vmn_ingest</span>(<span class="str">"your text here"</span>)
@@ -188,7 +199,7 @@ a3f8b2c1d4e5...</div>
             <div class="vmn-badge open-badge">Step 02</div>
             <div class="vmn-step-num">02</div>
             <div class="vmn-step-title">Recall</div>
-            <p class="vmn-step-body">Query with <code>vmn_recall</code>. The xLMP lexical scorer evaluates keyword density across all shards and returns the exact bounded evidence window. No embeddings. No drift.</p>
+            <p class="vmn-step-body">Query with <code>vmn_recall</code>. The xLMP lexical scorer evaluates keyword density across all memory segments and returns the exact bounded evidence window. No embeddings. No drift.</p>
             <div class="vmn-terminal">
 <span class="fn">vmn_recall</span>(
   <span class="str">hash</span>: <span class="str">"a3f8b2c1..."</span>,
@@ -202,13 +213,13 @@ a3f8b2c1d4e5...</div>
             <div class="vmn-badge sovereign-badge">Sovereign Tier &mdash; Coming Soon</div>
             <div class="vmn-step-num">03</div>
             <div class="vmn-step-title">Verify</div>
-            <p class="vmn-step-body">Upgrade any shard to a Sovereign Cryptographic Record. ExergyNet LNES-04 generates a ZK-STARK proof for 0.05 USDC. Cryptographically verifiable. Cross-team shareable.</p>
+            <p class="vmn-step-body">Upgrade any memory segment to a Sovereign Cryptographic Record. ExergyNet LNES-04 issues a RISC Zero receipt, settled on-chain via Groth16. Cryptographically verifiable against the committed memory. Cross-team shareable without exposing raw content.</p>
             <div class="vmn-terminal" style="border-color:rgba(255,184,48,0.2);opacity:0.6;filter:blur(0.4px);">
 <span class="cm"># Coming in LNES-04</span>
 <span class="fn">vmn_verify</span>(<span class="str">hash</span>)
 
-<span class="kw">ZK-STARK proof issued</span>
-<span class="str">Cost: 0.05 USDC</span></div>
+<span class="kw">ZK proof issued (RISC Zero)</span>
+<span class="str">Cost: network pricing</span></div>
           </div>
 
         </div>
@@ -236,13 +247,12 @@ a3f8b2c1d4e5...</div>
 {
   <span style="color:var(--blue);">"mcpServers"</span>: {
     <span style="color:var(--blue);">"vanguard-memory"</span>: {
-      <span style="color:var(--blue);">"command"</span>: <span style="color:var(--accent);">"node"</span>,
-      <span style="color:var(--blue);">"args"</span>: [<span style="color:var(--accent);">"/path/to/vanguard_memory_node/dist/index.js"</span>]
+      <span style="color:var(--blue);">"command"</span>: <span style="color:var(--accent);">"vanguard-memory-node"</span>
     }
   }
 }</div>
 
-        <p class="vmn-code-note">WSL on Windows? Use: <code>"command": "wsl"</code> with <code>"args": ["-d", "Ubuntu", "node", "/home/user/vanguard_memory_node/dist/index.js"]</code></p>
+        <p class="vmn-code-note">Or run without installing: <code>"command": "npx"</code> with <code>"args": ["-y", "vanguard-memory-node"]</code> &nbsp;&middot;&nbsp; WSL: <code>"command": "wsl"</code> with <code>"args": ["-d", "Ubuntu", "--", "vanguard-memory-node"]</code></p>
       </div>
     </section>
 
@@ -267,9 +277,9 @@ a3f8b2c1d4e5...</div>
                 <td class="bad">Cosine similarity</td>
               </tr>
               <tr>
-                <td>Drift over time</td>
-                <td class="good">None &mdash; deterministic</td>
-                <td class="bad">High &mdash; embeddings decay</td>
+                <td>Result consistency</td>
+                <td class="good">Deterministic &mdash; same query, same result</td>
+                <td class="bad">May vary &mdash; model updates, chunking, or threshold changes alter results</td>
               </tr>
               <tr>
                 <td>Privacy</td>
@@ -294,10 +304,47 @@ a3f8b2c1d4e5...</div>
             </tbody>
           </table>
         </div>
+        <p style="margin-top:1rem;font-size:12px;color:var(--text-faint);">* Vector retrieval results may change when embedding models, chunking strategies, indexes, or similarity thresholds change.</p>
       </div>
     </section>
 
-    <!-- ── SOVEREIGN TEASER ──────────────────────────────────────────── -->
+    <!-- ── TIERS ──────────────────────────────────────────── -->
+    <section class="section" style="padding-top:0;">
+      <div class="container">
+        <div class="section-label">Access Tiers</div>
+        <h2>Open Core.<br>Sovereign Infrastructure.</h2>
+        <div class="vmn-tiers-grid">
+
+          <div class="vmn-tier-card tier-open">
+            <div class="vmn-tier-name">Community</div>
+            <span class="vmn-tier-tag">Free &middot; MIT License</span>
+            <p class="vmn-tier-desc">Full VMN core &mdash; local ingest, xLMP recall, stdio MCP. No limits. No telemetry. Self-hosted, open source.</p>
+          </div>
+
+          <div class="vmn-tier-card">
+            <div class="vmn-tier-name">Team</div>
+            <span class="vmn-tier-tag">Coming Soon</span>
+            <p class="vmn-tier-desc">Shared memory vaults across a workspace. Managed sync, access controls, and usage dashboards via the ExergyNet portal.</p>
+          </div>
+
+          <div class="vmn-tier-card tier-sovereign">
+            <div class="vmn-tier-name">Sovereign</div>
+            <span class="vmn-tier-tag">Coming Soon &middot; LNES-04</span>
+            <p class="vmn-tier-desc">ZK-verified memory records &mdash; RISC Zero receipt, Groth16-settled. For clinical, legal, and regulated-context deployments.</p>
+          </div>
+
+          <div class="vmn-tier-card">
+            <div class="vmn-tier-name">Enterprise</div>
+            <span class="vmn-tier-tag">Contact Us</span>
+            <p class="vmn-tier-desc">Private ExergyNet deployment, custom SLA, dedicated memory network node, and integration support for large-scale agent infrastructure.</p>
+          </div>
+
+        </div>
+        <p style="margin-top:1.5rem;font-size:12.5px;color:var(--text-faint);">VMN is open. The ExergyNet memory network and production control plane are commercial infrastructure.</p>
+      </div>
+    </section>
+
+    <!-- ── SOVEREIGN TEASER ────────────────────────────────────────────── -->
     <section class="section">
       <div class="container">
         <div class="section-label">Coming Soon</div>
@@ -307,17 +354,18 @@ a3f8b2c1d4e5...</div>
             Sovereign Memory &mdash; ExergyNet LNES-04
           </div>
           <h2 style="margin-bottom:1rem;">ZK-Verified, Cross-Team<br>Memory is Coming</h2>
-          <p style="max-width:600px;margin:0 auto;color:var(--text-soft);font-size:15px;line-height:1.7;">When your agent needs cryptographically absolute memory &mdash; for clinical decisions, financial transactions, or team-shared context &mdash; ExergyNet LNES-04 issues a Groth16 ZK-STARK proof for each shard. Mathematically tamper-proof. Shareable across orgs without exposing raw content.</p>
+          <p style="max-width:600px;margin:0 auto;color:var(--text-soft);font-size:15px;line-height:1.7;">When your agent needs verifiable memory &mdash; for clinical records, financial audits, or cross-team evidence sharing &mdash; ExergyNet LNES-04 issues a RISC Zero receipt settled on-chain via Groth16 for each memory segment. Cryptographically verifiable against the committed memory. Shareable across orgs without exposing raw content.</p>
           <div class="vmn-teaser-stats">
             <div>
-              <div class="vmn-teaser-stat-num">0.05</div>
-              <div class="vmn-teaser-stat-label">USDC per ZK-proof</div>
+              <div class="vmn-teaser-stat-num">ZK</div>
+              <div class="vmn-teaser-stat-label">RISC Zero receipt</div>
             </div>
             <div>
-              <div class="vmn-teaser-stat-num">ZK</div>
-              <div class="vmn-teaser-stat-label">STARK verified</div>
+              <div class="vmn-teaser-stat-num">On&#x2011;Chain</div>
+              <div class="vmn-teaser-stat-label">Groth16 settled</div>
             </div>
           </div>
+          <p style="font-size:11px;color:var(--text-faint);margin-top:0.5rem;">LNES-04 on testnet &mdash; network pricing displayed before execution</p>
           <a href="https://exergynet.org" class="btn btn-secondary" style="border-color:rgba(255,184,48,0.4);color:var(--amber);">Learn about ExergyNet &rarr;</a>
         </div>
       </div>
@@ -331,7 +379,7 @@ a3f8b2c1d4e5...</div>
           Vanguard Memory Node &middot; v1.0.0 &middot; Open Source
         </div>
         <h2>Your memory. Your NVMe.<br>Your agents.</h2>
-        <p style="max-width:500px;margin:1rem auto 2rem;color:var(--text-soft);font-size:15px;line-height:1.7;">Deploy in 60 seconds. No API keys. No embeddings pipeline. No cloud dependency.</p>
+        <p style="max-width:520px;margin:1rem auto 2rem;color:var(--text-soft);font-size:15px;line-height:1.7;">VMN puts xLMP memory on every developer's machine. ExergyNet connects those memories into the sovereign AI Memory Control Plane.</p>
         <div class="btn-row" style="justify-content:center;">
           <button class="btn btn-primary btn-copy" onclick="copyInstall(this)">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0"><path d="M4 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
