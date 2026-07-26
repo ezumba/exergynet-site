@@ -236,3 +236,67 @@ export function streamCompletion(
     })
     .catch((e: Error) => onError(e.message ?? 'Stream error'));
 }
+
+
+// ── Admin types ───────────────────────────────────────────────────────────────
+
+export type OtetEntry = {
+  otet: string;
+  service_name: string;
+  target_id: string;
+  state_hash: string;
+  issued_at: string;
+  spent_at: string | null;
+  status: 'UNSPENT' | 'SPENT' | 'EXPIRED';
+};
+
+export type ScribeEntry = {
+  otet: string;
+  service_name?: string;
+  target_id?: string;
+  file_path?: string;
+  issued_at: string;
+  spent_at: string;
+  narrative?: string;
+  lines_added?: number;
+  lines_removed?: number;
+  pre_hash?: string;
+  post_hash?: string;
+  content?: string;
+};
+
+// ── Admin API helpers ─────────────────────────────────────────────────────────
+
+function adminFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('en_admin_token') : null;
+  return fetch(`${API}${path}`, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(opts.headers as Record<string, string> | undefined),
+    },
+  }).then(async r => {
+    const body = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error((body as { error?: string }).error ?? `HTTP ${r.status}`);
+    return body as T;
+  });
+}
+
+export const adminApi = {
+  getLedger: (params: { service?: string; limit?: number; offset?: number } = {}) => {
+    const qs = new URLSearchParams();
+    if (params.service) qs.set('service', params.service);
+    if (params.limit !== undefined) qs.set('limit', String(params.limit));
+    if (params.offset !== undefined) qs.set('offset', String(params.offset));
+    return adminFetch<{ entries: OtetEntry[]; total: number }>(`/api/admin/build/ledger?${qs}`);
+  },
+
+  getEvolution: () => adminFetch<ScribeEntry[]>('/api/admin/build/evolution'),
+
+  issueOtet: (body: { service_name: string; target_id: string; state_hash?: string }) =>
+    adminFetch<{ otet: string; status: string; target_id: string; expires_note: string }>(
+      '/api/admin/build/issue-otet',
+      { method: 'POST', body: JSON.stringify(body) },
+    ),
+};
