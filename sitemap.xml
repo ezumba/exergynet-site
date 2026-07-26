@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://exergynet.org/connect.html</loc></url>
-  <url><loc>https://exergynet.org/docs.html</loc></url>
-  <url><loc>https://exergynet.org/enterprise.html</loc></url>
-  <url><loc>https://exergynet.org/vanguard.html</loc></url>
-  <url><loc>https://exergynet.org/explorer.html</loc></url>
-  <url><loc>https://exergynet.org/faq.html</loc></url>
-  <url><loc>https://exergynet.org/footer.html</loc></url>
-  <url><loc>https://exergynet.org/header.html</loc></url>
+  <url><loc>https://exergynet.org/</loc></url>
   <url><loc>https://exergynet.org/index.html</loc></url>
+  <url><loc>https://exergynet.org/vanguard.html</loc></url>
+  <url><loc>https://exergynet.org/vmn.html</loc></url>
+  <url><loc>https://exergynet.org/machines.html</loc></url>
+  <url><loc>https://exergynet.org/omega-carrier.html</loc></url>
   <url><loc>https://exergynet.org/mcp.html</loc></url>
-  <url><loc>https://exergynet.org/nodes.html</loc></url>
-  <url><loc>https://exergynet.org/proof.html</loc></url>
-  <url><loc>https://exergynet.org/protocol.html</loc></url>
-  <url><loc>https://exergynet.org/roadmap.html</loc></url>
+  <url><loc>https://exergynet.org/docs.html</loc></url>
+  <url><loc>https://exergynet.org/api-integration.html</loc></url>
+  <url><loc>https://exergynet.org/developers.html</loc></url>
   <url><loc>https://exergynet.org/sdk.html</loc></url>
-  <url><loc>https://exergynet.org/security.html</loc></url>
+  <url><loc>https://exergynet.org/protocol.html</loc></url>
+  <url><loc>https://exergynet.org/nodes.html</loc></url>
+  <url><loc>https://exergynet.org/roadmap.html</loc></url>
+  <url><loc>https://exergynet.org/proof.html</loc></url>
   <url><loc>https://exergynet.org/token.html</loc></url>
   <url><loc>https://exergynet.org/whitepaper.html</loc></url>
-  <url><loc>https://exergynet.org/certificate_physical_presence.html</loc></url>
+  <url><loc>https://exergynet.org/journals.html</loc></url>
+  <url><loc>https://exergynet.org/ghost-witness.html</loc></url>
+  <url><loc>https://exergynet.org/lnes06.html</loc></url>
+  <url><loc>https://exergynet.org/voice.html</loc></url>
+  <url><loc>https://exergynet.org/apps.html</loc></url>
+  <url><loc>https://exergynet.org/space.html</loc></url>
+  <url><loc>https://exergynet.org/enterprise.html</loc></url>
+  <url><loc>https://exergynet.org/security.html</loc></url>
+  <url><loc>https://exergynet.org/legal.html</loc></url>
+  <url><loc>https://exergynet.org/faq.html</loc></url>
+  <url><loc>https://exergynet.org/connect.html</loc></url>
+  <url><loc>https://exergynet.org/explorer.html</loc></url>
+  <url><loc>https://exergynet.org/explorer-solana.html</loc></url>
   <url><loc>https://exergynet.org/orderbook.html</loc></url>
-  <url><loc>https://exergynet.org/</loc></url>
+  <url><loc>https://exergynet.org/certificate_physical_presence.html</loc></url>
   <url><loc>https://exergynet.org/llms.txt</loc></url>
-  <url><loc>https://exergynet.org/metadata.json</loc></url>
-  <url><loc>https://exergynet.org/exg-metadata.json</loc></url>
   <url><loc>https://exergynet.org/.well-known/exergynet.json</loc></url>
 </urlset>
