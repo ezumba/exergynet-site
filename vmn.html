@@ -45,6 +45,7 @@
 /* How it works */
 .vmn-steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem;}
 .vmn-step{background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.75rem 1.5rem;position:relative;}
+.vmn-step.bridge{border-color:rgba(0,232,135,0.3);background:rgba(0,232,135,0.03);}
 .vmn-step.sovereign{border-color:rgba(255,184,48,0.35);background:rgba(255,184,48,0.04);}
 .vmn-step-num{font-family:var(--display);font-size:3rem;font-weight:900;line-height:1;color:var(--accent);opacity:0.25;margin-bottom:0.75rem;}
 .vmn-step.sovereign .vmn-step-num{color:var(--amber);opacity:0.35;}
@@ -54,6 +55,7 @@
 .vmn-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:3px;margin-bottom:0.75rem;}
 .vmn-badge.sovereign-badge{background:rgba(255,184,48,0.12);color:var(--amber);border:1px solid rgba(255,184,48,0.3);}
 .vmn-badge.open-badge{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,232,135,0.25);}
+.vmn-badge.live-badge{background:rgba(0,232,135,0.12);color:var(--accent);border:1px solid rgba(0,232,135,0.4);}
 
 /* Code blocks */
 .vmn-terminal{background:#010409;border:1px solid rgba(0,232,135,0.18);border-radius:var(--radius-lg);padding:1.5rem 1.75rem;font-family:var(--mono);font-size:13px;line-height:1.9;color:#c9d1d9;margin:1.25rem 0;position:relative;overflow:hidden;}
@@ -90,6 +92,21 @@
 .btn-copy{position:relative;}
 .btn-copy .copy-confirm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#000;font-weight:700;border-radius:inherit;opacity:0;pointer-events:none;transition:opacity 0.15s;}
 .btn-copy.copied .copy-confirm{opacity:1;}
+
+/* Tools grid */
+.vmn-tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-top:2rem;}
+.vmn-tool-card{background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;}
+.vmn-tool-name{font-family:var(--mono);font-size:0.85rem;color:var(--accent);font-weight:600;margin-bottom:0.5rem;}
+.vmn-tool-desc{font-size:13px;line-height:1.6;color:var(--text-soft);}
+.vmn-tool-tag{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:0.15rem 0.5rem;border-radius:3px;margin-top:0.6rem;background:var(--bg-card-2);color:var(--text-faint);border:1px solid var(--border);}
+.vmn-tool-tag.tag-bridge{background:rgba(0,232,135,0.08);color:var(--accent);border-color:rgba(0,232,135,0.25);}
+
+/* Pipeline */
+.vmn-pipeline{background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.5rem 1.75rem;margin-top:1.5rem;font-family:var(--mono);font-size:12.5px;overflow-x:auto;}
+.vmn-pipeline-row{display:flex;align-items:baseline;gap:1rem;padding:0.35rem 0;color:var(--text-faint);}
+.vmn-pipeline-row .pl-stage{color:var(--accent);min-width:190px;}
+.vmn-pipeline-row .pl-arrow{color:var(--border-mid);user-select:none;}
+.vmn-pipeline-row .pl-example{color:var(--text-soft);}
 
 @media(max-width:1023px){
   .vmn-problem-grid,.vmn-steps-grid{grid-template-columns:repeat(2,1fr);}
@@ -141,10 +158,12 @@
           <a href="https://github.com/ezumba/vanguard-memory-node" target="_blank" rel="noopener" class="btn btn-secondary">GitHub &rarr;</a>
         </div>
         <div class="vmn-stat-bar">
-          <div class="vmn-stat-pill"><span>v1.0.0</span></div>
+          <div class="vmn-stat-pill"><span>v1.4.0</span></div>
           <div class="vmn-stat-pill">MIT License</div>
+          <div class="vmn-stat-pill">10 MCP tools</div>
           <div class="vmn-stat-pill">stdio MCP</div>
           <div class="vmn-stat-pill">Claude Desktop ready</div>
+          <div class="vmn-stat-pill">ExergyNet bridge live</div>
         </div>
       </div>
     </section>
@@ -178,50 +197,67 @@
     <section class="section">
       <div class="container">
         <div class="section-label">How It Works</div>
-        <h2>Three Commands.<br>Permanent Memory.</h2>
+        <h2>Local-First. Optionally<br>Globally Connected.</h2>
         <div class="vmn-steps-grid">
 
           <div class="vmn-step">
             <div class="vmn-badge open-badge">Step 01</div>
             <div class="vmn-step-num">01</div>
             <div class="vmn-step-title">Ingest</div>
-            <p class="vmn-step-body">Feed any text to <code>vmn_ingest</code>. xLMP breaks it into 1800-character deterministic memory segments, SHA-256 addressed and stored on your local NVMe.</p>
+            <p class="vmn-step-body">Feed any text to <code>vmn_ingest</code>. xLMP shatters it into 1800-character deterministic memory segments, SHA-256 addressed and stored on your local NVMe. Full BM25 inverted index built in milliseconds.</p>
             <div class="vmn-terminal">
 <span class="cm"># MCP tool call</span>
 <span class="fn">vmn_ingest</span>(<span class="str">"your text here"</span>)
 
 <span class="cm"># Returns</span>
 <span class="kw">INGESTED.</span> Shard hash:
-a3f8b2c1d4e5...</div>
+a3f8b2c1d4e5...
+vault_synced: false</div>
           </div>
 
           <div class="vmn-step">
             <div class="vmn-badge open-badge">Step 02</div>
             <div class="vmn-step-num">02</div>
             <div class="vmn-step-title">Recall</div>
-            <p class="vmn-step-body">Query with <code>vmn_recall</code>. The xLMP lexical scorer evaluates keyword density across all memory segments and returns the exact bounded evidence window. No embeddings. No drift.</p>
+            <p class="vmn-step-body">Query with <code>vmn_recall</code>. The xLMP pipeline normalizes, stems, and alias-expands every token &mdash; so <em>smoking</em>, <em>smoker</em>, and <em>tobacco use</em> all hit the same indexed root. Returns a 900-char evidence window. No drift. Ever.</p>
             <div class="vmn-terminal">
 <span class="fn">vmn_recall</span>(
   <span class="str">hash</span>: <span class="str">"a3f8b2c1..."</span>,
   <span class="str">query</span>: <span class="str">"your query"</span>
 )
 
-<span class="cm"># Returns 900-char evidence window</span></div>
+<span class="cm"># Returns 900-char evidence window</span>
+<span class="cm"># Same query → same result, always</span></div>
           </div>
 
-          <div class="vmn-step sovereign">
-            <div class="vmn-badge sovereign-badge">Sovereign Tier &mdash; Coming Soon</div>
+          <div class="vmn-step bridge">
+            <div class="vmn-badge live-badge">&#x2022; Live &mdash; v1.4.0</div>
             <div class="vmn-step-num">03</div>
-            <div class="vmn-step-title">Verify</div>
-            <p class="vmn-step-body">Upgrade any memory segment to a Sovereign Cryptographic Record. ExergyNet LNES-04 issues a RISC Zero receipt, settled on-chain via Groth16. Cryptographically verifiable against the committed memory. Cross-team shareable without exposing raw content.</p>
-            <div class="vmn-terminal" style="border-color:rgba(255,184,48,0.2);opacity:0.6;filter:blur(0.4px);">
-<span class="cm"># Coming in LNES-04</span>
-<span class="fn">vmn_verify</span>(<span class="str">hash</span>)
+            <div class="vmn-step-title">Sync</div>
+            <p class="vmn-step-body">Push any local shard to the ExergyNet LNES-17 thermodynamic ledger with <code>vmn_sync_vault</code>. Or set <code>AUTO_SYNC_VAULT=true</code> to sync every ingest automatically. Cross-device recall and cryptographic provenance, on your terms.</p>
+            <div class="vmn-terminal">
+<span class="fn">vmn_sync_vault</span>(
+  <span class="str">xlmp_root</span>: <span class="str">"a3f8b2c1..."</span>
+)
 
-<span class="kw">ZK proof issued (RISC Zero)</span>
-<span class="str">Cost: network pricing</span></div>
+<span class="cm"># Returns Canonical Manifest JSON</span>
+<span class="kw">source=exergynet_vault</span>
+<span class="kw">verification=LNES17_HASH</span></div>
           </div>
 
+        </div>
+
+        <!-- Normalization pipeline -->
+        <div style="margin-top:2.5rem;">
+          <div class="section-label" style="margin-bottom:0.75rem;">Normalization Pipeline</div>
+          <p style="font-size:14px;color:var(--text-soft);margin-bottom:0.25rem;">Every token passes through the same 5-stage pipeline at ingest and at query time. Determinism is guaranteed because both sides use identical transformations.</p>
+          <div class="vmn-pipeline">
+            <div class="vmn-pipeline-row"><span class="pl-stage">Unicode NFC</span><span class="pl-arrow">&rarr;</span><span class="pl-example">normalize accents and composed characters</span></div>
+            <div class="vmn-pipeline-row"><span class="pl-stage">Phrase aliases</span><span class="pl-arrow">&rarr;</span><span class="pl-example">blood pressure &rarr; bp &nbsp;&middot;&nbsp; rate limiting &rarr; ratelimit</span></div>
+            <div class="vmn-pipeline-row"><span class="pl-stage">Tokenize</span><span class="pl-arrow">&rarr;</span><span class="pl-example">split on whitespace / punctuation, min length 2</span></div>
+            <div class="vmn-pipeline-row"><span class="pl-stage">Stem (13 rules)</span><span class="pl-arrow">&rarr;</span><span class="pl-example">medications &rarr; medica &nbsp;&middot;&nbsp; smoking &rarr; smok &nbsp;&middot;&nbsp; allergies &rarr; allerg</span></div>
+            <div class="vmn-pipeline-row"><span class="pl-stage">Token alias expand</span><span class="pl-arrow">&rarr;</span><span class="pl-example">smok &harr; tobacco &harr; cigarett &harr; nicotine</span></div>
+          </div>
         </div>
       </div>
     </section>
@@ -247,12 +283,91 @@ a3f8b2c1d4e5...</div>
 {
   <span style="color:var(--blue);">"mcpServers"</span>: {
     <span style="color:var(--blue);">"vanguard-memory"</span>: {
-      <span style="color:var(--blue);">"command"</span>: <span style="color:var(--accent);">"vanguard-memory-node"</span>
+      <span style="color:var(--blue);">"command"</span>: <span style="color:var(--accent);">"npx"</span>,
+      <span style="color:var(--blue);">"args"</span>: [<span style="color:var(--accent);">"-y"</span>, <span style="color:var(--accent);">"vanguard-memory-node"</span>]
     }
   }
 }</div>
 
-        <p class="vmn-code-note">Or run without installing: <code>"command": "npx"</code> with <code>"args": ["-y", "vanguard-memory-node"]</code> &nbsp;&middot;&nbsp; WSL: <code>"command": "wsl"</code> with <code>"args": ["-d", "Ubuntu", "--", "vanguard-memory-node"]</code></p>
+        <p class="vmn-code-note">WSL on Windows: <code>"command": "wsl"</code> with <code>"args": ["-d", "Ubuntu", "npx", "-y", "vanguard-memory-node"]</code></p>
+
+        <p style="color:var(--text-soft);margin:1.75rem 0 0.75rem;font-size:15px;">ExergyNet vault bridge (optional):</p>
+        <div class="vmn-code-block"><span style="color:var(--text-faint);"># Enable auto-sync on every ingest</span>
+<span style="color:var(--blue);">"env"</span>: {
+  <span style="color:var(--blue);">"EXERGYNET_API_KEY"</span>: <span style="color:var(--accent);">"your-api-key"</span>,
+  <span style="color:var(--blue);">"AUTO_SYNC_VAULT"</span>:   <span style="color:var(--accent);">"true"</span>
+}</div>
+      </div>
+    </section>
+
+    <!-- ── TOOLS ─────────────────────────────────────────────────────── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">MCP Tools</div>
+        <h2>10 Tools. Every Agent<br>Workflow Covered.</h2>
+        <div class="vmn-tools-grid">
+
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_ingest</div>
+            <p class="vmn-tool-desc">Store text as a SHA-256 content-addressed shard. Segments, indexes, and catalogs locally. Returns root hash + <code>vault_synced</code> flag.</p>
+            <span class="vmn-tool-tag">core</span>
+          </div>
+
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_recall</div>
+            <p class="vmn-tool-desc">Retrieve a 900-character evidence window from a specific shard. BM25 scoring with stemmed-token fallback. Returns verbatim text &mdash; no hallucination.</p>
+            <span class="vmn-tool-tag">core</span>
+          </div>
+
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_search</div>
+            <p class="vmn-tool-desc">Full-vault keyword search across all ingested objects. Returns ranked results with snippets, scores, and matched terms. Only touches relevant posting buckets.</p>
+            <span class="vmn-tool-tag">core</span>
+          </div>
+
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_list</div>
+            <p class="vmn-tool-desc">List all memory objects with optional namespace filter. Returns title, segment count, and timestamps.</p>
+            <span class="vmn-tool-tag">catalog</span>
+          </div>
+
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_inspect</div>
+            <p class="vmn-tool-desc">Full catalog metadata for a shard: title, namespace, tags, content type, size, excerpt, ingested and updated timestamps.</p>
+            <span class="vmn-tool-tag">catalog</span>
+          </div>
+
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_delete</div>
+            <p class="vmn-tool-desc">Permanently remove an object and all its index entries from the vault. Only touches the posting buckets that contain the object's terms.</p>
+            <span class="vmn-tool-tag">catalog</span>
+          </div>
+
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_stats</div>
+            <p class="vmn-tool-desc">Aggregate vault statistics: entry count, total bytes, active namespaces, oldest and newest ingestion timestamps.</p>
+            <span class="vmn-tool-tag">diagnostics</span>
+          </div>
+
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_index_status</div>
+            <p class="vmn-tool-desc">Current BM25 index state: READY, REBUILD_REQUIRED, REBUILDING, or DEGRADED. Reports version mismatch when normalization or stemmer rules update.</p>
+            <span class="vmn-tool-tag">diagnostics</span>
+          </div>
+
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_rebuild_index</div>
+            <p class="vmn-tool-desc">Rebuild the full BM25 index from authoritative object files. Safe to run at any time &mdash; objects are never modified. Self-healing after any index corruption.</p>
+            <span class="vmn-tool-tag">maintenance</span>
+          </div>
+
+          <div class="vmn-tool-card" style="border-color:rgba(0,232,135,0.25);background:rgba(0,232,135,0.03);">
+            <div class="vmn-tool-name">vmn_sync_vault</div>
+            <p class="vmn-tool-desc">Sync a local object to the ExergyNet LNES-17 ledger. Reads the raw authoritative file and POSTs to the vault endpoint. Returns the Canonical Manifest JSON. Requires <code>EXERGYNET_API_KEY</code>.</p>
+            <span class="vmn-tool-tag tag-bridge">&#x2022; bridge &mdash; v1.4.0</span>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -273,17 +388,17 @@ a3f8b2c1d4e5...</div>
             <tbody>
               <tr>
                 <td>Retrieval method</td>
-                <td class="good">Lexical keyword density</td>
+                <td class="good">Lexical BM25 + stemmed-token fallback</td>
                 <td class="bad">Cosine similarity</td>
               </tr>
               <tr>
                 <td>Result consistency</td>
                 <td class="good">Deterministic &mdash; same query, same result</td>
-                <td class="bad">May vary &mdash; model updates, chunking, or threshold changes alter results</td>
+                <td class="bad">Varies &mdash; model updates, chunking, or threshold changes alter results</td>
               </tr>
               <tr>
                 <td>Privacy</td>
-                <td class="good">Local NVMe only</td>
+                <td class="good">Local NVMe only (bridge is opt-in)</td>
                 <td class="bad">Cloud upload required</td>
               </tr>
               <tr>
@@ -295,6 +410,11 @@ a3f8b2c1d4e5...</div>
                 <td>Setup time</td>
                 <td class="good">60 seconds</td>
                 <td class="bad">Hours (embed pipeline)</td>
+              </tr>
+              <tr>
+                <td>Cross-device sync</td>
+                <td class="good">Via ExergyNet LNES-17 bridge (live)</td>
+                <td class="good">Yes (cloud-native)</td>
               </tr>
               <tr>
                 <td>Cryptographic proof</td>
@@ -318,7 +438,13 @@ a3f8b2c1d4e5...</div>
           <div class="vmn-tier-card tier-open">
             <div class="vmn-tier-name">Community</div>
             <span class="vmn-tier-tag">Free &middot; MIT License</span>
-            <p class="vmn-tier-desc">Full VMN core &mdash; local ingest, xLMP recall, stdio MCP. No limits. No telemetry. Self-hosted, open source.</p>
+            <p class="vmn-tier-desc">Full VMN core &mdash; local ingest, xLMP recall, all 10 MCP tools, 19-case regression gate. No limits. No telemetry. Self-hosted, open source.</p>
+          </div>
+
+          <div class="vmn-tier-card tier-open">
+            <div class="vmn-tier-name">Bridge</div>
+            <span class="vmn-tier-tag">Live &middot; v1.4.0 &middot; API Key Required</span>
+            <p class="vmn-tier-desc">Connect your local vault to the ExergyNet LNES-17 ledger. Cross-device recall and cryptographic provenance via <code>vmn_sync_vault</code> or <code>AUTO_SYNC_VAULT=true</code>.</p>
           </div>
 
           <div class="vmn-tier-card">
@@ -331,12 +457,6 @@ a3f8b2c1d4e5...</div>
             <div class="vmn-tier-name">Sovereign</div>
             <span class="vmn-tier-tag">Coming Soon &middot; LNES-04</span>
             <p class="vmn-tier-desc">ZK-verified memory records &mdash; RISC Zero receipt, Groth16-settled. For clinical, legal, and regulated-context deployments.</p>
-          </div>
-
-          <div class="vmn-tier-card">
-            <div class="vmn-tier-name">Enterprise</div>
-            <span class="vmn-tier-tag">Contact Us</span>
-            <p class="vmn-tier-desc">Private ExergyNet deployment, custom SLA, dedicated memory network node, and integration support for large-scale agent infrastructure.</p>
           </div>
 
         </div>
@@ -376,7 +496,7 @@ a3f8b2c1d4e5...</div>
       <div class="container" style="text-align:center;">
         <div class="hero-eyebrow" style="display:inline-flex;justify-content:center;margin-bottom:1.25rem;">
           <span class="dot"></span>
-          Vanguard Memory Node &middot; v1.0.0 &middot; Open Source
+          Vanguard Memory Node &middot; v1.4.0 &middot; Open Source
         </div>
         <h2>Your memory. Your NVMe.<br>Your agents.</h2>
         <p style="max-width:520px;margin:1rem auto 2rem;color:var(--text-soft);font-size:15px;line-height:1.7;">VMN puts xLMP memory on every developer's machine. ExergyNet connects those memories into the sovereign AI Memory Control Plane.</p>
