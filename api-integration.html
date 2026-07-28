@@ -335,6 +335,7 @@
         <li><a href="#portal-services">Overview</a></li>
         <li><a href="#svc-vault-ingest"><span class="method-badge mb-post">POST</span> Vault: Ingest</a></li>
         <li><a href="#svc-vault-query"><span class="method-badge mb-post">POST</span> Vault: ZK Query</a></li>
+        <li><a href="#svc-vmn-vault-sync"><span class="method-badge mb-post">POST</span> VMN: Vault Sync</a></li>
         <li><a href="#svc-vanguard"><span class="method-badge mb-post">POST</span> Vanguard Chat</a></li>
         <li><a href="#svc-extract"><span class="method-badge mb-post">POST</span> Clinical Extractor</a></li>
         <li><a href="#svc-omega-carrier">Omega Carrier MCP</a></li>
@@ -1010,7 +1011,7 @@ function loadApiServices() {
   fetch('https://portal.exergynet.org/api/docs/services')
     .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
     .then(function(data) {
-      var services = data.services || [];
+      var services = Array.isArray(data) ? data : (data.services || []);
       container.innerHTML = '';
       services.forEach(function(svc) { container.appendChild(renderServiceCard(svc)); });
     })
