@@ -158,9 +158,9 @@
           <a href="https://github.com/ezumba/vanguard-memory-node" target="_blank" rel="noopener" class="btn btn-secondary">GitHub &rarr;</a>
         </div>
         <div class="vmn-stat-bar">
-          <div class="vmn-stat-pill"><span>v1.4.0</span></div>
+          <div class="vmn-stat-pill"><span>v1.5.0</span></div>
           <div class="vmn-stat-pill">MIT License</div>
-          <div class="vmn-stat-pill">10 MCP tools</div>
+          <div class="vmn-stat-pill">11 MCP tools</div>
           <div class="vmn-stat-pill">stdio MCP</div>
           <div class="vmn-stat-pill">Claude Desktop ready</div>
           <div class="vmn-stat-pill">ExergyNet bridge live</div>
@@ -231,7 +231,7 @@ vault_synced: false</div>
           </div>
 
           <div class="vmn-step bridge">
-            <div class="vmn-badge live-badge">&#x2022; Live &mdash; v1.4.0</div>
+            <div class="vmn-badge live-badge">&#x2022; Live &mdash; v1.5.0</div>
             <div class="vmn-step-num">03</div>
             <div class="vmn-step-title">Sync</div>
             <p class="vmn-step-body">Push any local shard to the ExergyNet LNES-17 thermodynamic ledger with <code>vmn_sync_vault</code>. Or set <code>AUTO_SYNC_VAULT=true</code> to sync every ingest automatically. Cross-device recall and cryptographic provenance, on your terms.</p>
@@ -294,9 +294,12 @@ vault_synced: false</div>
         <p style="color:var(--text-soft);margin:1.75rem 0 0.75rem;font-size:15px;">ExergyNet vault bridge (optional):</p>
         <div class="vmn-code-block"><span style="color:var(--text-faint);"># Enable auto-sync on every ingest</span>
 <span style="color:var(--blue);">"env"</span>: {
-  <span style="color:var(--blue);">"EXERGYNET_API_KEY"</span>: <span style="color:var(--accent);">"your-api-key"</span>,
-  <span style="color:var(--blue);">"AUTO_SYNC_VAULT"</span>:   <span style="color:var(--accent);">"true"</span>
-}</div>
+  <span style="color:var(--blue);">"EXERGYNET_API_KEY"</span>:  <span style="color:var(--accent);">"sk-exergy-your-key"</span>,
+  <span style="color:var(--blue);">"EXERGYNET_NETWORK"</span>:  <span style="color:var(--accent);">"mainnet"</span>,
+  <span style="color:var(--blue);">"AUTO_SYNC_VAULT"</span>:    <span style="color:var(--accent);">"true"</span>
+}
+<span style="color:var(--text-faint);"># EXERGYNET_NETWORK: "mainnet" → portal.exergynet.org</span>
+<span style="color:var(--text-faint);">#                    "testnet" → dt.portal.exergynet.org (default)</span></div>
       </div>
     </section>
 
@@ -304,7 +307,7 @@ vault_synced: false</div>
     <section class="section">
       <div class="container">
         <div class="section-label">MCP Tools</div>
-        <h2>10 Tools. Every Agent<br>Workflow Covered.</h2>
+        <h2>11 Tools. Every Agent<br>Workflow Covered.</h2>
         <div class="vmn-tools-grid">
 
           <div class="vmn-tool-card">
@@ -321,7 +324,7 @@ vault_synced: false</div>
 
           <div class="vmn-tool-card">
             <div class="vmn-tool-name">vmn_search</div>
-            <p class="vmn-tool-desc">Full-vault keyword search across all ingested objects. Returns ranked results with snippets, scores, and matched terms. Only touches relevant posting buckets.</p>
+            <p class="vmn-tool-desc">Full-vault keyword search across all ingested objects. Returns ranked results with snippets, scores, and matched terms. Optional <code>namespace</code> filter restricts search to one partition.</p>
             <span class="vmn-tool-tag">core</span>
           </div>
 
@@ -361,10 +364,16 @@ vault_synced: false</div>
             <span class="vmn-tool-tag">maintenance</span>
           </div>
 
+          <div class="vmn-tool-card">
+            <div class="vmn-tool-name">vmn_ingest_file</div>
+            <p class="vmn-tool-desc">Delta-ingest a growing file using a cursor — only new lines since the last call are stored. Zero duplicates. Designed for Stop hooks and continuous log pipelines. Supports <code>namespace</code>, <code>title</code>, and <code>tags</code>.</p>
+            <span class="vmn-tool-tag">automation</span>
+          </div>
+
           <div class="vmn-tool-card" style="border-color:rgba(0,232,135,0.25);background:rgba(0,232,135,0.03);">
             <div class="vmn-tool-name">vmn_sync_vault</div>
-            <p class="vmn-tool-desc">Sync a local object to the ExergyNet LNES-17 ledger. Reads the raw authoritative file and POSTs to the vault endpoint. Returns the Canonical Manifest JSON. Requires <code>EXERGYNET_API_KEY</code>.</p>
-            <span class="vmn-tool-tag tag-bridge">&#x2022; bridge &mdash; v1.4.0</span>
+            <p class="vmn-tool-desc">Sync a local object to the ExergyNet LNES-17 ledger via <code>POST /api/xlmp/vanguard/ingest</code>. Reads the raw authoritative file, content-addresses it, and upserts into <code>xlmp_vault</code>. Set <code>EXERGYNET_NETWORK=mainnet</code> or <code>testnet</code> to choose substrate. Requires <code>EXERGYNET_API_KEY</code>.</p>
+            <span class="vmn-tool-tag tag-bridge">&#x2022; bridge &mdash; v1.5.0</span>
           </div>
 
         </div>
@@ -438,13 +447,13 @@ vault_synced: false</div>
           <div class="vmn-tier-card tier-open">
             <div class="vmn-tier-name">Community</div>
             <span class="vmn-tier-tag">Free &middot; MIT License</span>
-            <p class="vmn-tier-desc">Full VMN core &mdash; local ingest, xLMP recall, all 10 MCP tools, 19-case regression gate. No limits. No telemetry. Self-hosted, open source.</p>
+            <p class="vmn-tier-desc">Full VMN core &mdash; local ingest, xLMP recall, all 11 MCP tools, 30-case regression gate. No limits. No telemetry. Self-hosted, open source.</p>
           </div>
 
           <div class="vmn-tier-card tier-open">
             <div class="vmn-tier-name">Bridge</div>
-            <span class="vmn-tier-tag">Live &middot; v1.4.0 &middot; API Key Required</span>
-            <p class="vmn-tier-desc">Connect your local vault to the ExergyNet LNES-17 ledger. Cross-device recall and cryptographic provenance via <code>vmn_sync_vault</code> or <code>AUTO_SYNC_VAULT=true</code>.</p>
+            <span class="vmn-tier-tag">Live &middot; v1.5.0 &middot; API Key Required</span>
+            <p class="vmn-tier-desc">Connect your local vault to the ExergyNet LNES-17 ledger. Cross-device recall and cryptographic provenance via <code>vmn_sync_vault</code> or <code>AUTO_SYNC_VAULT=true</code>. Mainnet and testnet substrate routing via <code>EXERGYNET_NETWORK</code>.</p>
           </div>
 
           <div class="vmn-tier-card">
@@ -484,6 +493,10 @@ vault_synced: false</div>
               <div class="vmn-teaser-stat-num">On&#x2011;Chain</div>
               <div class="vmn-teaser-stat-label">Groth16 settled</div>
             </div>
+            <div>
+              <div class="vmn-teaser-stat-num">v1.5</div>
+              <div class="vmn-teaser-stat-label">Current release</div>
+            </div>
           </div>
           <p style="font-size:11px;color:var(--text-faint);margin-top:0.5rem;">LNES-04 on testnet &mdash; network pricing displayed before execution</p>
           <a href="https://exergynet.org" class="btn btn-secondary" style="border-color:rgba(255,184,48,0.4);color:var(--amber);">Learn about ExergyNet &rarr;</a>
@@ -496,7 +509,7 @@ vault_synced: false</div>
       <div class="container" style="text-align:center;">
         <div class="hero-eyebrow" style="display:inline-flex;justify-content:center;margin-bottom:1.25rem;">
           <span class="dot"></span>
-          Vanguard Memory Node &middot; v1.4.0 &middot; Open Source
+          Vanguard Memory Node &middot; v1.5.0 &middot; Open Source
         </div>
         <h2>Your memory. Your NVMe.<br>Your agents.</h2>
         <p style="max-width:520px;margin:1rem auto 2rem;color:var(--text-soft);font-size:15px;line-height:1.7;">VMN puts xLMP memory on every developer's machine. ExergyNet connects those memories into the sovereign AI Memory Control Plane.</p>
