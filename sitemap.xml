@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://exergynet.org/</loc></url>
-  <url><loc>https://exergynet.org/index.html</loc></url>
   <url><loc>https://exergynet.org/vanguard.html</loc></url>
   <url><loc>https://exergynet.org/vmn.html</loc></url>
   <url><loc>https://exergynet.org/machines.html</loc></url>
@@ -32,6 +31,4 @@
   <url><loc>https://exergynet.org/explorer-solana.html</loc></url>
   <url><loc>https://exergynet.org/orderbook.html</loc></url>
   <url><loc>https://exergynet.org/certificate_physical_presence.html</loc></url>
-  <url><loc>https://exergynet.org/llms.txt</loc></url>
-  <url><loc>https://exergynet.org/.well-known/exergynet.json</loc></url>
 </urlset>
