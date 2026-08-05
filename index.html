@@ -64,6 +64,15 @@
     .trust-table { display:block; overflow-x:auto; white-space:normal; }
   }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "ExergyNet Corp",
+  "url": "https://exergynet.org",
+  "description": "ExergyNet Corp develops xLMP, the AI Memory Control Plane: persistent, content-addressed state and bounded evidence across models, devices, clouds, and accelerators."
+}
+</script>
 </head>
 <body>
 
@@ -82,13 +91,15 @@
       <div class="container-wide">
         <div class="home-hero-grid">
           <div>
-            <div class="hero-eyebrow"><span class="dot"></span>Sovereign memory &middot; Verifiable execution</div>
-            <h1>Autonomous systems need<br><span class="accent">more than a model.</span></h1>
-            <p class="hero-sub">They need memory that persists, evidence that can be traced, execution that can be verified, and infrastructure that survives changes in model, cloud, and hardware. ExergyNet provides that layer.</p>
+            <div class="hero-eyebrow"><span class="dot"></span>AI Memory Control Plane</div>
+            <h1>xLMP &mdash;<br><span class="accent">The AI Memory Control Plane</span></h1>
+            <p class="hero-sub">Persistent state and bounded evidence across models, systems, and accelerators.</p>
+            <p style="max-width:640px; color:var(--text-soft); line-height:1.7; margin-bottom:1.25rem;">xLMP separates durable memory from temporary model context. It gives persistent state a stable content identity and provides defined paths for provenance, policy, and authority controls without binding application memory to one model provider or accelerator.</p>
+            <p style="max-width:640px; color:var(--text-soft); line-height:1.7; margin-bottom:1.75rem;">In documented H200 testing, xLMP produced 11.3&times; correct-task throughput versus the tested full-context baseline while maintaining a 660&ndash;820-token prompt range as the test corpus grew from approximately 8,000 to 285,000 tokens.</p>
             <div class="btn-row">
-              <a href="whitepaper.html" class="btn btn-primary">Read the Architecture</a>
-              <a href="https://storage.exergynet.org" target="_blank" rel="noopener" class="btn btn-secondary">Open Exergy Vault</a>
-              <a href="docs.html" class="btn btn-ghost">Developer Docs &rarr;</a>
+              <a href="whitepaper.html" class="btn btn-primary">Read the White Paper</a>
+              <a href="docs.html" class="btn btn-secondary">Developer Quickstart</a>
+              <a href="https://portal.exergynet.org" target="_blank" rel="noopener" class="btn btn-ghost">Try the API &rarr;</a>
             </div>
           </div>
 
@@ -145,6 +156,29 @@
           <div class="card">
             <h3>Verifiable Operations</h3>
             <p>Computation, external data, hardware observations, and settlement produce distinct receipts with explicit trust boundaries.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- xLMP THREE PROPERTIES -->
+    <section style="background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:3.5rem 0;">
+      <div class="container-wide">
+        <div class="section-label" style="margin-bottom:1rem;">Memory Object Properties</div>
+        <h2 style="margin-bottom:0.75rem;">xLMP separates three memory properties.</h2>
+        <p style="max-width:780px; color:var(--text-soft); margin-bottom:2rem;">These properties are intentionally separate. A content hash is not provenance. Provenance is not authority. A model recommendation is not permission to act.</p>
+        <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
+          <div class="card accent-border">
+            <h3>Integrity</h3>
+            <p>A SHA-256 content root establishes the identity of committed content and makes later modification detectable.</p>
+          </div>
+          <div class="card blue-border">
+            <h3>Provenance</h3>
+            <p>Where a signed provenance record is present, the source and creation event can be checked against the signer's public key.</p>
+          </div>
+          <div class="card">
+            <h3>Authority</h3>
+            <p>Where the LNES-22 authority layer is enabled, policy and signed authorization determine whether retrieved state may result in a consequential action.</p>
           </div>
         </div>
       </div>
