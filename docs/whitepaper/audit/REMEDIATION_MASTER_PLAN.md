@@ -103,22 +103,24 @@ Each stage has a post-application verification test defined in POST_PATCH_TEST_P
 
 ---
 
-## Stage 4: SEO and Metadata
+## Stage 4: SEO and Metadata — APPLIED 2026-08-05
 
 **Trigger condition:** Stage 3 copy is approved; operator authorizes metadata pass.
 
-| PATCH | FILES | CHANGE TYPE |
-|-------|-------|-------------|
-| P-019 | All major pages | Update `<title>` tags to reflect "AI Memory Control Plane" framing |
-| P-020 | All major pages | Add/update `<meta name="description">` |
-| P-021 | All major pages | Add/update OG tags (og:title, og:description, og:type) |
-| P-022 | All major pages | Add JSON-LD Organization structured data |
-| P-023 | sitemap.xml | Remove fragment files; add 11 missing pages (MEDIUM-002) |
-| P-024 | openapi.yaml | Update API descriptions to align with Stage 1 + Stage 2 corrections |
+| PATCH | FILES | CHANGE TYPE | STATUS |
+|-------|-------|-------------|--------|
+| P-019 | index.html, whitepaper.html, vanguard.html, proof.html | Update `<title>` tags to "AI Memory Control Plane" framing | APPLIED |
+| P-020 | index.html, whitepaper.html, vanguard.html, proof.html, omega-carrier.html | Add/update `<meta name="description">` | APPLIED |
+| P-021 | index.html (OG updated + Twitter card added); whitepaper.html, vanguard.html, proof.html (OG added); omega-carrier.html (OG updated) | Add/update OG tags; Twitter card on index | APPLIED |
+| P-022 | index.html (JSON-LD added in Stage 3) | JSON-LD Organization structured data | APPLIED (Stage 3) |
+| P-023 | sitemap.xml | Removed /index.html duplicate, removed llms.txt and .well-known/exergynet.json non-page entries | APPLIED |
+| P-024 | openapi.yaml | Verified aligned with Stage 1 corrections — no further change needed | VERIFIED |
 
-**One commit.**
+**Commit:** `b87d31f61da9856aa74de3a4c686444d3a4a1897` on branch `feat/stage4-seo-metadata`, merged to `main`, pushed to GitHub Pages 2026-08-05 18:29:15 -0400.
 **Branch:** `feat/stage4-seo-metadata`
-**Approver:** Operator
+**Approver:** Operator (authorized 2026-08-05)
+**Verification:** STAGE4_VERIFICATION_RECORD.md — all 9 blocking checks passed; 2 P3 items (JSON-LD on secondary pages; canonical tags) documented and deferred.
+**Status: VERIFIED — Stage 4 CLOSED.**
 
 ---
 
