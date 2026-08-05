@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="The Vanguard Neural Engine — Custom-compiled, bare-metal AI inference. 5x faster TTFT. Zero data retention. OpenAI-compatible drop-in.">
+<meta name="description" content="The Vanguard Neural Engine — Custom-compiled, bare-metal AI inference on a direct GPU kernel architecture. OpenAI-compatible drop-in.">
 <link rel="stylesheet" href="style.css">
 <script>
 (function(){
@@ -89,7 +89,7 @@
     <h1 style="line-height:1.0;margin-bottom:1.25rem;">
       <span style="font-size:clamp(1.1rem,2.5vw,1.8rem);font-weight:400;color:var(--text-soft);display:block;margin-bottom:0.3rem;">Enterprise-Grade AI Inference.</span>
       <span class="vanguard-word">VANGUARD</span>
-      <span style="font-size:clamp(1.1rem,2.5vw,1.8rem);font-weight:400;color:var(--text-soft);display:block;margin-top:0.4rem;">Built on Proprietary Silicon Geometry.</span>
+      <span style="font-size:clamp(1.1rem,2.5vw,1.8rem);font-weight:400;color:var(--text-soft);display:block;margin-top:0.4rem;">Direct GPU kernel architecture.</span>
     </h1>
     <p class="hero-sub" style="max-width:640px;">A custom-compiled, bare-metal inference architecture designed for high-stakes biomedical and corporate computation. We threw out the bloated commercial AI wrappers and built an engine that communicates directly with the GPU kernel.</p>
     <div class="btn-row" style="margin-top:1.75rem;">
@@ -99,10 +99,9 @@
       <a href="vmn.html" class="btn btn-ghost">Local Memory &rarr;</a>
     </div>
     <div class="vanguard-stat-bar">
-      <div class="vanguard-stat-cell"><div class="vanguard-stat-num blue">5&times;</div><div class="vanguard-stat-label">Faster TTFT<br>vs legacy cloud</div></div>
       <div class="vanguard-stat-cell"><div class="vanguard-stat-num accent">0</div><div class="vanguard-stat-label">Bytes retained<br>post-session</div></div>
       <div class="vanguard-stat-cell"><div class="vanguard-stat-num blue">2</div><div class="vanguard-stat-label">Lines changed<br>to migrate</div></div>
-      <div class="vanguard-stat-cell"><div class="vanguard-stat-num accent">&infin;</div><div class="vanguard-stat-label">IP protection<br>hardware-enforced</div></div>
+      <div class="vanguard-stat-cell"><div class="vanguard-stat-num accent">&infin;</div><div class="vanguard-stat-label">IP protection<br>by policy</div></div>
     </div>
   </div>
 </div>
@@ -149,7 +148,7 @@
       <div class="depth-step bypass-step"><span>&#10007;</span>Shared tenancy queue</div>
       <div class="depth-step active-step"><span>&#9654;</span>Direct GPU kernel invocation</div>
       <div class="depth-step active-step"><span>&#10003;</span>First token &rarr; client</div>
-      <div class="depth-result fast">TTFT: ~40ms avg &middot; 5&times; advantage</div>
+      <div class="depth-result fast">Direct kernel path &middot; overhead eliminated</div>
     </div>
     <div class="depth-lane legacy">
       <div class="depth-lane-label">&#10007; Legacy Cloud API</div>
@@ -166,7 +165,7 @@
 
   <div class="card" style="padding:0;overflow:hidden;">
     <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);">
-      <span style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.10em;color:var(--text-faint);">Vanguard &middot; Silicon Geometry &middot; Adaptive Layer Activation Map</span>
+      <span style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.10em;color:var(--text-faint);">Vanguard &middot; Adaptive Layer Activation Map</span>
     </div>
     <div class="silicon-grid">
       <div class="silicon-cell active"></div><div class="silicon-cell active-b"></div><div class="silicon-cell active"></div><div class="silicon-cell bypass"></div><div class="silicon-cell active-d"></div><div class="silicon-cell bypass"></div><div class="silicon-cell active-b"></div><div class="silicon-cell active"></div>
@@ -190,13 +189,13 @@
 
     <div class="card accent-border pillar-card">
       <div class="pillar-num">01 / ABSOLUTE IP SOVEREIGNTY</div>
-      <h3>Zero-Retention Hardware Enclave</h3>
-      <p>Your proprietary data &mdash; SMILES strings, IND drafts, corporate payrolls, clinical trial data &mdash; is processed inside a strict, stateless hardware enclave. The moment the connection closes, your data evaporates from VRAM. Physically and permanently.</p>
+      <h3>Zero-Retention Session Policy</h3>
+      <p>Your proprietary data &mdash; SMILES strings, IND drafts, corporate payrolls, clinical trial data &mdash; is processed in a stateless inference session. Session data is not retained after the connection closes.</p>
       <ul class="spec-list" style="margin:1rem 0;">
-        <li><span class="spec-key">Prompt logging</span><span class="spec-val" style="color:var(--accent);">Disabled &middot; hardware-enforced</span></li>
+        <li><span class="spec-key">Prompt logging</span><span class="spec-val" style="color:var(--accent);">Disabled by policy</span></li>
         <li><span class="spec-key">Training on user data</span><span class="spec-val" style="color:var(--accent);">Never</span></li>
         <li><span class="spec-key">Vector DB ingestion</span><span class="spec-val" style="color:var(--accent);">None</span></li>
-        <li><span class="spec-key">Retention after close</span><span class="spec-val" style="color:var(--accent);">0 bytes &middot; VRAM purged</span></li>
+        <li><span class="spec-key">Retention after close</span><span class="spec-val" style="color:var(--accent);">Not retained by policy</span></li>
       </ul>
       <div class="pillar-stat"><span class="pillar-stat-val accent">Zero</span><span class="pillar-stat-label">data retained per session</span></div>
     </div>
@@ -206,16 +205,12 @@
       <h3>Pay for Compute. Not Overhead.</h3>
       <p>Because Vanguard minimizes wasted compute at the silicon level, we do not pass exorbitant cloud overhead to our users. You get state-of-the-art reasoning at a fraction of incumbent API costs.</p>
       <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0.75rem;align-items:center;margin:1.25rem 0;">
-        <div class="cost-box"><div class="cost-box-label">Legacy Cloud</div><div class="cost-box-val" style="color:var(--red);">$15&ndash;$60</div><div style="font-size:11px;color:var(--text-faint);">per 1M tokens</div></div>
-        <div style="font-family:var(--mono);color:var(--accent);font-size:1.5rem;text-align:center;">&rarr;</div>
-        <div class="cost-box vanguard-box"><div class="cost-box-label">Vanguard Engine</div><div class="cost-box-val" style="color:var(--accent);">$0.40</div><div style="font-size:11px;color:var(--text-faint);">per 1K tokens</div></div>
+        <div class="cost-box vanguard-box" style="grid-column:1/-1;text-align:center;"><div class="cost-box-label">Vanguard Engine</div><div class="cost-box-val" style="color:var(--accent);font-size:1.2rem;">Contact for pricing</div><div style="font-size:11px;color:var(--text-faint);">systems@exergynet.org</div></div>
       </div>
       <ul class="spec-list">
-        <li><span class="spec-key">Computation speed</span><span class="spec-val" style="color:var(--accent);">5&times; TTFT advantage</span></li>
         <li><span class="spec-key">Compute footprint</span><span class="spec-val" style="color:var(--accent);">Minimized &middot; sovereign</span></li>
-        <li><span class="spec-key">Treasury savings</span><span class="spec-val" style="color:var(--accent);">Passed directly to you</span></li>
+        <li><span class="spec-key">Overhead eliminated</span><span class="spec-val" style="color:var(--accent);">No middleware &middot; direct kernel</span></li>
       </ul>
-      <div class="pillar-stat"><span class="pillar-stat-val blue">97%</span><span class="pillar-stat-label">lower overhead vs frontier API</span></div>
     </div>
 
     <div class="card blue-border pillar-card">
@@ -259,12 +254,11 @@ client = OpenAI(
         </tr>
       </thead>
       <tbody>
-        <tr><td>Time to First Token</td><td class="good">&#9679; ~40ms avg</td><td class="mid">~200&ndash;400ms</td><td class="bad">~300&ndash;600ms</td></tr>
-        <tr><td>Data retention after session</td><td class="good">&#9679; Zero &mdash; VRAM purged</td><td class="bad">Varies / opaque</td><td class="bad">30&ndash;90 day logs</td></tr>
-        <tr><td>Training on your data</td><td class="good">&#9679; Never &mdash; hardware enclave</td><td class="mid">Opt-out required</td><td class="mid">Opt-out required</td></tr>
+        <tr><td>Data retention after session</td><td class="good">&#9679; Zero &mdash; session policy</td><td class="bad">Varies / opaque</td><td class="bad">30&ndash;90 day logs</td></tr>
+        <tr><td>Training on your data</td><td class="good">&#9679; Never &mdash; session policy</td><td class="mid">Opt-out required</td><td class="mid">Opt-out required</td></tr>
         <tr><td>Moderation middleware</td><td class="good">&#9679; Bypassed at kernel</td><td class="bad">Always active</td><td class="bad">Always active</td></tr>
         <tr><td>OpenAI SDK compatible</td><td class="good">&#9679; 1:1 drop-in</td><td class="good">&#9679; Native</td><td class="mid">Partial</td></tr>
-        <tr><td>Cost per 1M tokens</td><td class="good">&#9679; $0.40 / 1K</td><td class="bad">$15&ndash;$60</td><td class="bad">$8&ndash;$40</td></tr>
+        <tr><td>Cost per 1M tokens</td><td class="good">&#9679; Contact for pricing</td><td class="bad">$15&ndash;$60</td><td class="bad">$8&ndash;$40</td></tr>
         <tr><td>Biomedical / IP workloads</td><td class="good">&#9679; Designed for this</td><td class="bad">Terms restrict sensitive data</td><td class="mid">BAA required</td></tr>
         <tr><td>Analytics / prompt tracking</td><td class="good">&#9679; None</td><td class="bad">Extensive</td><td class="bad">CloudWatch logs</td></tr>
       </tbody>
@@ -280,7 +274,7 @@ client = OpenAI(
     <div class="card accent-border">
       <div class="badge badge-green" style="margin-bottom:0.75rem;">Biomedical</div>
       <h3>Drug Discovery Pipelines</h3>
-      <p>Run SMILES analysis, compound synthesis logic, and IND document generation through Vanguard with absolute certainty your proprietary scaffolds never leave your enclave.</p>
+      <p>Run SMILES analysis, compound synthesis logic, and IND document generation through Vanguard with absolute certainty your proprietary scaffolds remain stateless within the session.</p>
     </div>
     <div class="card">
       <div class="badge badge-blue" style="margin-bottom:0.75rem;">Corporate Intelligence</div>
@@ -290,12 +284,12 @@ client = OpenAI(
     <div class="card accent-border">
       <div class="badge badge-green" style="margin-bottom:0.75rem;">Autonomous Agents</div>
       <h3>Low-Latency AI Swarms</h3>
-      <p>Deploy agent pipelines that make dozens of inference calls per second. Vanguard's 5&times; TTFT advantage compounds across every node in your swarm &mdash; directly into operational throughput.</p>
+      <p>Deploy agent pipelines that make dozens of inference calls per second. Vanguard's low-overhead architecture compounds across every node in your swarm &mdash; directly into operational throughput.</p>
     </div>
     <div class="card">
       <div class="badge badge-blue" style="margin-bottom:0.75rem;">Financial Services</div>
       <h3>Proprietary Model Integration</h3>
-      <p>Quantitative strategy logic, risk models, and trade rationale processed through a stateless enclave. No regulatory exposure from inference provider data policies.</p>
+      <p>Quantitative strategy logic, risk models, and trade rationale processed through a stateless session. No regulatory exposure from inference provider data policies.</p>
     </div>
   </div>
 </section>
@@ -398,7 +392,7 @@ response = client.chat.completions.create(
       <a href="mailto:systems@exergynet.org" class="btn btn-ghost">Enterprise Inquiry</a>
       <a href="vmn.html" class="btn btn-ghost">Local Memory &rarr;</a>
     </div>
-    <p style="margin-top:1.5rem;font-family:var(--mono);font-size:11px;color:var(--text-faint);">$5 trial credits on signup &middot; OpenAI-compatible &middot; No lock-in</p>
+    <p style="margin-top:1.5rem;font-family:var(--mono);font-size:11px;color:var(--text-faint);">OpenAI-compatible &middot; No lock-in &middot; Contact systems@exergynet.org for pricing</p>
   </div>
 </section>
 
