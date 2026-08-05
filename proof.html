@@ -40,7 +40,7 @@
     <div class="container">
       <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Multi-Chain Telemetry</div>
       <h1>Verified On-Chain:<br><span class="accent">Absolute Cryptographic</span><br>Proof</h1>
-      <p class="hero-sub">The ExergyNet LNES-03 (Solana) and LNES-04 (Base L2) Membranes are live. Both execute the full sovereign settlement loop with immutable, independently verifiable proofs.</p>
+      <p class="hero-sub">The ExergyNet LNES-03 (Solana) and LNES-04 (Base L2) Membranes are deployed on-chain. LNES-04 Membrane V5 is available for test and demonstration on Base Sepolia. LNES-03 is under investigation for transaction failures. See status notices in each section below.</p>
     </div>
   </div>
 
@@ -66,33 +66,41 @@
       </div>
     </section>
 
-    <!-- LNES-04 (BASE) - NEW -->
+    <!-- LNES-04 (BASE) - V5 -->
     <section>
       <div class="section-label">2 · LNES-04 • Base L2</div>
-      <h2>Tri-Partite Membrane</h2>
+      <h2>Membrane V5</h2>
       <div class="card accent-border">
         <ul class="spec-list">
-          <li><span class="spec-key">Protocol</span><span class="spec-val">LNES-04 Tri-Partite Membrane · Base Mainnet (EVM L2)</span></li>
-          <li><span class="spec-key">Status</span><span class="spec-val"><span class="badge badge-green">EXECUTABLE / IMMUTABLE</span></span></li>
-          <li><span class="spec-key">Contract Address</span><span class="spec-val"><code>0x5CFE075149776f4b3cca07a27D4fd85A60BA5e3f</code></span></li>
+          <li><span class="spec-key">Protocol</span><span class="spec-val">LNES-04 Membrane V5</span></li>
+          <li><span class="spec-key">Base Mainnet</span><span class="spec-val"><code>0xbb14956a88BaD822Ef38e96fF337a088b41c72be</code></span></li>
+          <li><span class="spec-key">Base Sepolia</span><span class="spec-val"><code>0x831606e0312B518737D2c497469243297cFdAe2B</code></span></li>
           <li><span class="spec-key">Settlement Asset</span><span class="spec-val">Canonical USDC <code>0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code></span></li>
         </ul>
+        <div class="card" style="margin-top:1.25rem; border-color:var(--amber,#ffb830); background:rgba(255,184,48,0.05);">
+          <p style="font-size:13px; color:var(--amber,#ffb830); margin:0;"><strong>STATUS NOTICE</strong></p>
+          <p style="font-size:13px; margin:0.5rem 0 0;">The Base Mainnet contract is operating in mock-only mode. Do not route real capital.</p>
+          <p style="font-size:13px; margin:0.5rem 0 0;">The Base Sepolia contract is available for test and demonstration use.</p>
+          <p style="font-size:13px; margin:0.5rem 0 0;">The former contract beginning <code>0x5CFE&hellip;</code> is retired and is not part of the current verification infrastructure.</p>
+        </div>
         <div style="margin-top:1.25rem;">
-          <a href="https://basescan.org/address/0x5CFE075149776f4b3cca07a27D4fd85A60BA5e3f" 
+          <a href="https://basescan.org/address/0xbb14956a88BaD822Ef38e96fF337a088b41c72be"
              target="_blank" rel="noopener" class="btn btn-primary">
-            View Contract on BaseScan &rarr;
+            View V5 Contract on BaseScan &rarr;
+          </a>
+          <a href="https://sepolia.basescan.org/address/0x831606e0312B518737D2c497469243297cFdAe2B"
+             target="_blank" rel="noopener" class="btn btn-secondary" style="margin-left:0.75rem;">
+            View Sepolia Contract &rarr;
           </a>
         </div>
       </div>
-
-      
     </section>
 
     <!-- EXECUTION BREAKDOWN -->
     <section>
       <div class="section-label">3 · Verified Execution Breakdown</div>
       <h2>The Asymptotic Yield Split</h2>
-      <p style="max-width:680px; margin-bottom:1.5rem;">Both LNES-03 and LNES-04 execute zero-friction atomic settlement across substrates.</p>
+      <p style="max-width:680px; margin-bottom:1.5rem;">LNES-03 and LNES-04 settlement parameters. See status notices above for current operational state of each membrane.</p>
 
       <div class="card-grid">
         <div class="card accent-border">
