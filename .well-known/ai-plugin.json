@@ -2,8 +2,8 @@
   "schema_version": "v1",
   "name_for_human": "ExergyNet Compute",
   "name_for_model": "exergynet",
-  "description_for_human": "Trustless, Zero-Knowledge verified off-chain compute for AI agents.",
-  "description_for_model": "Use this plugin to offload heavy computation. Costs 2.0 Base USDC. Returns a Groth16 cryptographic proof of execution.",
+  "description_for_human": "Content-addressed AI memory with tamper-evident SHA-256 receipts. On-chain zero-knowledge verification is in development.",
+  "description_for_model": "Returns a SHA-256 content-addressed receipt binding the returned memory result to its content hash. This is not a Groth16 or ZK-STARK proof and does not independently prove execution. An on-chain verifiable proof circuit is under development and is not yet deployed.",
   "auth": {
     "type": "none"
   },

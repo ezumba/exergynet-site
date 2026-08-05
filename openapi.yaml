@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: ExergyNet Compute
-  description: Trustless, Zero-Knowledge verified off-chain compute for AI agents.
+  description: Content-addressed AI memory with tamper-evident SHA-256 receipts. On-chain zero-knowledge verification is in development.
   version: "1.0.0"
 servers:
   - url: https://explorer-api.exergynet.org
