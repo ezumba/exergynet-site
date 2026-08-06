@@ -370,7 +370,10 @@ Public-claim impact:     None — this benchmark is not claimed anywhere as
 ## BLK-008 — Exposed Vanguard Auditor Benchmark Credential
 
 ```
-Status:                  SECURITY_ROTATION_REQUIRED
+Status:                  PARTIALLY_REMEDIATED — see Remediation Progress
+                         below. One of two production clients still needs
+                         a working credential-delivery path before this
+                         can close.
 Discovered:              2026-07-20 (prior session; re-verified and scope
                          expanded 2026-08-06)
 Subsystem:               LNES58_Multihop_Bench RAG harness
@@ -458,12 +461,74 @@ Prohibited action:       Do not rotate, invalidate, or test the credential
                          that is remediation work, not recon, and is out
                          of scope for this entry.
 Owner:                   Operator (Seven Ezumba)
-Last verified:           2026-08-06
+Last verified:           2026-08-06 (remediation pass — see below)
 Public-claim impact:     None claimed in the white paper. Flag for
                          `LWP_MAINTENANCE_POLICY.md` review only if/when
                          this benchmark's results are cited publicly —
                          not before.
 ```
+
+### Remediation progress (2026-08-06)
+
+**Sanitized by design** — no infrastructure IPs, exact secret file paths,
+credential values, private service topology, or private incident-response
+commands appear below. Full detail (with those specifics) lives in a
+private, ACL-restricted location outside this repository, referenced but
+not reproduced here.
+
+- **Authentication boundary:** A real, enforced authorization boundary has
+  been deployed in front of the Auditor endpoint (previously: none existed
+  — any request succeeded regardless of credentials, confirmed via direct
+  investigation). It now fails closed on missing/malformed/invalid
+  credentials, exempts only a minimal health-check route, and applies
+  independent rate limits per credential identity.
+- **Client migration:** One of two production clients has been migrated to
+  a dedicated credential, patched to remove its hardcoded fallback (now
+  fails closed instead), rebuilt, and restarted — verified healthy after
+  the change. The second client's credential delivery is **blocked** by a
+  legitimate application-level control on that service (its own deployment
+  API refuses to write anything that looks like a secret file, by design)
+  — not yet resolved. That client's source has **not** been touched, since
+  removing its fallback before it has a working credential would break it
+  outright.
+- **Former exposed value:** Confirmed rejected by the new authorization
+  boundary (tested directly; result recorded, value not reproduced).
+- **Identity separation:** A distinct, freshly generated credential now
+  exists for production traffic and a separate one for future benchmark
+  traffic; neither is the old exposed value; the benchmark identity is
+  additionally restricted to inference-only routes, verified.
+- **Rate limiting:** Implemented per-identity (production and benchmark
+  tracked and limited independently), verified.
+- **Managed-secret migration deadline:** Interim file-based secret storage
+  is in place as an explicitly temporary measure. A move to a proper
+  managed secret store (cloud-provider secret manager, per-host) is
+  required within **14 days of 2026-08-06** — i.e. by **2026-08-20**. Doing
+  so requires infrastructure that does not exist yet (an access-control
+  role attachment on the relevant hosts) — that prerequisite work is
+  unstarted.
+- **Remaining work:**
+  1. Resolve the second client's credential-delivery path (needs either
+     new infrastructure or an operator-approved exception to that
+     service's own secret-file protection).
+  2. Historical access-log review completed for the full retained window,
+     but retention does not reach back to the original exposure date —
+     roughly the first 8-9 days after exposure are permanently
+     unobservable. No anomalies found in what *is* retained, which is not
+     the same as ruling out compromise in the unobservable period.
+  3. Local transcript/history remediation: the great majority of affected
+     local records have been redacted. Two items remain open and are
+     tracked privately, not detailed here: one file that could not be
+     safely modified because it appeared to be in active use at the time,
+     and one archived evidence file that was flagged rather than altered,
+     pending a decision on whether it needs to be preserved as-is.
+  4. Complete the managed-secret migration above before its deadline.
+- **Push discipline note:** This repository is public. Earlier entries in
+  this register (and other files) contain real infrastructure detail that
+  has never been pushed to the remote — that is intentional and should
+  stay that way until deliberately reviewed; this section was written
+  sanitized specifically because it's the one meant to be safe to push
+  once reviewed. Do not assume the rest of the file is push-safe by
+  extension.
 
 ---
 
@@ -471,6 +536,7 @@ Public-claim impact:     None claimed in the white paper. Flag for
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-08-06 | BLK-008 status changed SECURITY_ROTATION_REQUIRED → PARTIALLY_REMEDIATED; added a sanitized "Remediation progress" subsection (auth boundary deployed, one of two clients migrated, former value confirmed rejected, identity separation + rate limiting implemented, 14-day managed-secret migration deadline set for 2026-08-20, remaining work enumerated without infrastructure specifics). | Operator authorized and the remediation pass executed this session. Second client's remediation is blocked on an unrelated application-level control on that service, tracked as remaining work rather than closing the entry early. |
 | 2026-08-06 | Added BLK-008 (exposed Vanguard Auditor benchmark credential, SECURITY_ROTATION_REQUIRED). | No existing entry covered the hardcoded `sk-vangu***REDACTED***-v1` (`VANGUARD_KEY`) fallback token; re-verification found it also pushed to `origin/main` via multiple Portal route files, not just the benchmark harness — scope is broader than originally logged in memory on 2026-07-20. |
 | 2026-08-06 | Added BLK-007 (modern RAG benchmark resource isolation), then revised same day with operator-supplied resolution options A/B/C and formal exit criteria. | Phase 1 recon for the modern-RAG-vs-xLMP benchmark directive found, via live SSH checks, that no fleet node has both spare VRAM and spare disk for the R1-R5 arms; registering per this file's own NON-NEGOTIABLE discovery rule before Phase 2 implementation starts. Operator then supplied the resolution-path structure (temporary dedicated node / CPU-only retrieval / fleet reallocation) and the checklist that defines when the blocker is actually resolved. |
 | 2026-08-05 | Register created (6 entries: BLK-001..BLK-006), replacing an earlier undifferentiated "resource-blocked" list that mis-classified several credential/network/dependency blockers as resource blockers. | Operator correction: remediation paths differ by blocker class; a single "resource-blocked" label obscured that. |
