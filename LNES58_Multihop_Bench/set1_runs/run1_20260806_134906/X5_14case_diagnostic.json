@@ -1,0 +1,277 @@
+{
+  "note": "MECHANISM DIAGNOSTIC ONLY -- not a benchmark result, not published as system performance",
+  "n_cases": 14,
+  "no_match_count": 14,
+  "incomplete_count": 0,
+  "false_positive_count_before": 14,
+  "false_positive_count_after": 3,
+  "schema_valid_count": 14,
+  "rows": [
+    {
+      "query_id": "TR101-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR104-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR106-interaction",
+      "state": "NO_MATCH",
+      "correct": false,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": true,
+        "conflicting_drug": "omeprazole",
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": true
+    },
+    {
+      "query_id": "TR109-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR121-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR123-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR125-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR130-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR137-interaction",
+      "state": "NO_MATCH",
+      "correct": false,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": true,
+        "conflicting_drug": "levothyroxine",
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": true
+    },
+    {
+      "query_id": "TR141-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR149-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR150-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR153-interaction",
+      "state": "NO_MATCH",
+      "correct": true,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": false
+    },
+    {
+      "query_id": "TR158-interaction",
+      "state": "NO_MATCH",
+      "correct": false,
+      "schema_valid": true,
+      "parsed_answer": {
+        "interacts": true,
+        "conflicting_drug": "ibuprofen",
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "ground_truth": {
+        "interacts": false
+      },
+      "false_positive_persisted": true
+    }
+  ]
+}

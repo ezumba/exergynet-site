@@ -1,0 +1,8 @@
+{
+  "status": "INVALID_FOR_ARCHITECTURAL_CLAIM",
+  "reason": "ORACLE_CONDITIONED_DEPENDENCY",
+  "detail": "The cryptographic_foreign_key used in this run was hardcoded per-query-type (all interaction_check queries received the same Document B root), chosen using prior knowledge of how ground truth is computed for this question type, not derived from independently-existing persistent state. See LNES-58.5A provenance report. Raw generation data is preserved as diagnostic evidence only, not as validation of a general resolution mechanism.",
+  "preserved_files": [
+    "checkpoint_A1_interaction_fk.jsonl"
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "note": "MECHANISM DIAGNOSTIC ONLY -- not benchmark performance",
+  "rows": [
+    {
+      "query_id": "TR106-interaction",
+      "type": "interaction_check",
+      "ok": true,
+      "question": "Given the patient's current medications (Document A) and the trial drug (Document C), do any known interactions (Document B) apply? Respond as JSON: {\"interacts\": true|false, \"conflicting_drug\": string|null, \"sources_used\": [\"A\",\"B\",\"C\"]}",
+      "ground_truth": {
+        "interacts": false
+      },
+      "raw_response": "ANSWER: {\"interacts\": false, \"conflicting_drug\": null, \"sources_used\": [\"A\",\"B\",\"C\"]}",
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "schema_valid": true,
+      "correct": true,
+      "resolver_state": "NO_MATCH",
+      "citation_fabrication_suspected": false,
+      "retrieval_latency_ms": 0.058,
+      "generation_latency_ms": 6279.0,
+      "total_latency_ms": 6279.1,
+      "timestamp": 1786144014.1903608
+    },
+    {
+      "query_id": "TR137-interaction",
+      "type": "interaction_check",
+      "ok": true,
+      "question": "Given the patient's current medications (Document A) and the trial drug (Document C), do any known interactions (Document B) apply? Respond as JSON: {\"interacts\": true|false, \"conflicting_drug\": string|null, \"sources_used\": [\"A\",\"B\",\"C\"]}",
+      "ground_truth": {
+        "interacts": false
+      },
+      "raw_response": "The patient\u2019s current medications are listed in Document\u202fA (spironolactone, levothyroxine). The trial drug being evaluated is listed in Document\u202fC (warfarin). Document\u202fB is the source for known interaction data. The authoritative graph traversal explicitly found zero matching relation nodes, indicating that no interaction is recorded in the committed graph for these entities. Therefore, no known interaction applies.\n\nANSWER: {\"interacts\": false, \"conflicting_drug\": null, \"sources_used\": [\"A\",\"B\",\"C\"]}",
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "schema_valid": true,
+      "correct": true,
+      "resolver_state": "NO_MATCH",
+      "citation_fabrication_suspected": false,
+      "retrieval_latency_ms": 0.214,
+      "generation_latency_ms": 13032.7,
+      "total_latency_ms": 13032.9,
+      "timestamp": 1786144028.72453
+    },
+    {
+      "query_id": "TR140-interaction",
+      "type": "interaction_check",
+      "ok": true,
+      "question": "Given the patient's current medications (Document A) and the trial drug (Document C), do any known interactions (Document B) apply? Respond as JSON: {\"interacts\": true|false, \"conflicting_drug\": string|null, \"sources_used\": [\"A\",\"B\",\"C\"]}",
+      "ground_truth": {
+        "interacts": false
+      },
+      "raw_response": "ANSWER: {\"interacts\": false, \"conflicting_drug\": null, \"sources_used\": [\"A\",\"B\",\"C\"]}",
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "schema_valid": true,
+      "correct": true,
+      "resolver_state": "NO_MATCH",
+      "citation_fabrication_suspected": false,
+      "retrieval_latency_ms": 0.113,
+      "generation_latency_ms": 6013.7,
+      "total_latency_ms": 6013.8,
+      "timestamp": 1786144036.2394633
+    },
+    {
+      "query_id": "TR158-interaction",
+      "type": "interaction_check",
+      "ok": true,
+      "question": "Given the patient's current medications (Document A) and the trial drug (Document C), do any known interactions (Document B) apply? Respond as JSON: {\"interacts\": true|false, \"conflicting_drug\": string|null, \"sources_used\": [\"A\",\"B\",\"C\"]}",
+      "ground_truth": {
+        "interacts": false
+      },
+      "raw_response": "**Reasoning:**  \n- Document\u202fA lists the patient\u2019s current medications (ibuprofen, amlodipine, contrast\u2011dye).  \n- Document\u202fC specifies the trial drug under evaluation (aspirin).  \n- Document\u202fB is the source for known interaction data.  \n- The AUTHORITATIVE GRAPH RESULT states that a traversal of the committed reference graph found **zero matching relation nodes**, indicating that no known interaction between the listed medications and aspirin exists within the declared graph scope.  \n\nThus, no interaction is present, and the relevant sources are A, B, and C.\n\nANSWER: {\"interacts\": false, \"conflicting_drug\": null, \"sources_used\": [\"A\",\"B\",\"C\"]}",
+      "parsed_answer": {
+        "interacts": false,
+        "conflicting_drug": null,
+        "sources_used": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "schema_valid": true,
+      "correct": true,
+      "resolver_state": "NO_MATCH",
+      "citation_fabrication_suspected": false,
+      "retrieval_latency_ms": 0.173,
+      "generation_latency_ms": 9805.3,
+      "total_latency_ms": 9805.5,
+      "timestamp": 1786144047.5464716
+    }
+  ]
+}

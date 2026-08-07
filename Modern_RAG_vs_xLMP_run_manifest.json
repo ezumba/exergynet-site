@@ -1,0 +1,68 @@
+{
+  "run_id": "run1_20260806_134906",
+  "dataset": {
+    "base_cases_t1": 50,
+    "base_cases_t2": 67,
+    "base_cases_t3": 50,
+    "generated_queries": {
+      "t1": 200,
+      "t2": 201,
+      "t3": 200
+    },
+    "total_queries": 601,
+    "sha256": "b85a943f7cd127925585af82dfc886e01eb240386316638a1ebd749bafd472e1",
+    "seeds": {
+      "t1": 42,
+      "t2": 4242,
+      "t3": 8181
+    },
+    "note": "identical generator calls/seeds/pid-prefixes to the original tier*.py scripts -- not a fresh sample"
+  },
+  "arms": [
+    "S0",
+    "X1",
+    "X2",
+    "O1",
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+  ],
+  "chunking": {
+    "target_chars": 150,
+    "top_k": 5,
+    "note": "default policy only -- sweep is a follow-on pass"
+  },
+  "harness_file_sha256": {
+    "rag_common.py": "22b28785784d9b18d0809cc36b96f8f87159cd35837c3059454ae271d24711d5",
+    "rag_modern.py": "7d33fd140191b612cf666de76f083d89f4b4eed3c621d9cc269daee27b49d2b3",
+    "gold_context.py": "1335c414c8731c5ca225e89d798b281aeae2239eb9a3c0eddebe2d4e35720b59",
+    "set1_benchmark.py": "487e29698449cc31b5b019be2f5b2c811b0b2b1dd44ea2bf92a8d36fabd711f7",
+    "tier1_cross_field.py": "616dffd6f28b96488738a56ba0109c1d773b2617e7ef9cea83f0199d86b5aea4",
+    "tier2_cross_document.py": "f983ec80bee7f87888b93f62beec80124f3d55c753b85fe0170f81684466d79f",
+    "tier3_adversarial.py": "35f76eb29615f3e0ac37b807b7e02636cd2ec2ca414f2bf135c30e3842a9e3f0",
+    "tier1_rag.py": "80449db770b0bd914f11022472993e682d4c3831d9a7a734c6acaebcf8efb1b9",
+    "tier2_rag.py": "25cc5f4d42363af32f0cde0d24439436369b2c1753de4b34a2423b6b4e31ffbe",
+    "tier3_rag.py": "1940e79e6d4f7a0ed35c225a9c2515d768c14eef887dd65f875497cddd95debe"
+  },
+  "auditor_url": "http://127.0.0.1:13000",
+  "model": "vanguard-auditor",
+  "host": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.13",
+    "disk_free_gb_at_start": 38.5,
+    "ram_at_start": {
+      "total_gb": 33.9,
+      "available_gb": 16.7,
+      "percent_used": 50.8
+    }
+  },
+  "stop_condition_floors": {
+    "min_disk_gb": 15.0,
+    "min_ram_gb": 8.0,
+    "latency_spike_factor": 2.0,
+    "latency_spike_window_s": 300,
+    "error_rate_window": 20,
+    "error_rate_threshold": 0.2
+  }
+}

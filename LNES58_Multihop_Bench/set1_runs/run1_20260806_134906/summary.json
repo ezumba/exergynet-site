@@ -1,0 +1,108 @@
+{
+  "run_id": "run1_20260806_134906",
+  "arm_results": {
+    "S0": {
+      "arm": "S0",
+      "status": "already_complete",
+      "n": 601
+    },
+    "X1": {
+      "arm": "X1",
+      "status": "already_complete",
+      "n": 601
+    },
+    "X2": {
+      "arm": "X2",
+      "status": "already_complete",
+      "n": 601
+    },
+    "O1": {
+      "arm": "O1",
+      "status": "already_complete",
+      "n": 601
+    },
+    "R1": {
+      "arm": "R1",
+      "status": "complete",
+      "n_this_run": 211,
+      "n_total": 601
+    },
+    "R2": {
+      "arm": "R2",
+      "status": "complete",
+      "n_this_run": 601,
+      "n_total": 601
+    },
+    "R3": {
+      "arm": "R3",
+      "status": "complete",
+      "n_this_run": 601,
+      "n_total": 601
+    },
+    "R4": {
+      "arm": "R4",
+      "status": "complete",
+      "n_this_run": 601,
+      "n_total": 601
+    }
+  },
+  "by_arm": {
+    "S0": {
+      "n": 598,
+      "n_error_rows": 3,
+      "accuracy": 0.8712,
+      "schema_valid_pct": 99.0,
+      "avg_total_latency_ms": 7885.5
+    },
+    "X1": {
+      "n": 596,
+      "n_error_rows": 5,
+      "accuracy": 0.9144,
+      "schema_valid_pct": 98.3,
+      "avg_total_latency_ms": 8493.9
+    },
+    "X2": {
+      "n": 598,
+      "n_error_rows": 3,
+      "accuracy": 0.9064,
+      "schema_valid_pct": 98.7,
+      "avg_total_latency_ms": 7574.7
+    },
+    "O1": {
+      "n": 601,
+      "n_error_rows": 0,
+      "accuracy": 0.9068,
+      "schema_valid_pct": 98.7,
+      "avg_total_latency_ms": 7755.8
+    },
+    "R1": {
+      "n": 598,
+      "n_error_rows": 3,
+      "accuracy": 0.9331,
+      "schema_valid_pct": 99.0,
+      "avg_total_latency_ms": 13453.1
+    },
+    "R2": {
+      "n": 601,
+      "n_error_rows": 0,
+      "accuracy": 0.9251,
+      "schema_valid_pct": 99.0,
+      "avg_total_latency_ms": 12182.0
+    },
+    "R3": {
+      "n": 601,
+      "n_error_rows": 0,
+      "accuracy": 0.9334,
+      "schema_valid_pct": 99.2,
+      "avg_total_latency_ms": 19548.4
+    },
+    "R4": {
+      "n": 601,
+      "n_error_rows": 0,
+      "accuracy": 0.9318,
+      "schema_valid_pct": 98.8,
+      "avg_total_latency_ms": 15023.6
+    }
+  },
+  "completed_at": "2026-08-07T16:57:45Z"
+}

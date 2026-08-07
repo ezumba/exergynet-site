@@ -1,0 +1,5 @@
+{
+  "stopped": true,
+  "reason": "ram_available=5.2GB < 8.0GB floor",
+  "timestamp": 1786036451.4714303
+}

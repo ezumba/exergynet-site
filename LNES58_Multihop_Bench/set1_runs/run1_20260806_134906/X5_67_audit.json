@@ -1,0 +1,75 @@
+{
+  "arm": "X5",
+  "n": 67,
+  "accuracy": 0.9403,
+  "schema_valid_pct": 100.0,
+  "state_counts": {
+    "MATCH": 42,
+    "NO_MATCH": 25,
+    "INCOMPLETE": 0
+  },
+  "match_accuracy": 1.0,
+  "nomatch_accuracy": 0.84,
+  "false_positive_hallucinations_after_nomatch": 4,
+  "false_negative_after_match": 0,
+  "confusion_matrix": {
+    "MATCH": {
+      "relation_required": 42,
+      "no_relation_required": 0
+    },
+    "NO_MATCH": {
+      "relation_required": 0,
+      "no_relation_required": 25
+    },
+    "INCOMPLETE": {
+      "relation_required": 0,
+      "no_relation_required": 0
+    }
+  },
+  "entity_extraction_recall": 1.0,
+  "relation_node_recall": 1.0,
+  "all_required_evidence_recall": 1.0,
+  "negative_result_correctness": 1.0,
+  "root_verification_failures": 0,
+  "budget_overflows": 0,
+  "mean_relation_nodes_per_query": 0.657,
+  "mean_evidence_tokens_per_query": 49.3,
+  "graph_traversal_latency_ms": {
+    "mean": 0.18,
+    "median": 0.15,
+    "p95": 0.32,
+    "backing_implementation": "InMemoryVaultRootResolver (in-memory dict lookup + SHA-256 verification) -- not production Exergy Vault storage, which does not exist as a testable backend. This figure must not be generalized to production Vault lookup performance."
+  },
+  "generation_latency_ms": {
+    "mean": 7224.62,
+    "median": 6904.8,
+    "p95": 11539.1
+  },
+  "total_latency_ms": {
+    "mean": 7224.8,
+    "median": 6905.0,
+    "p95": 11539.3
+  },
+  "comparison_67_query_subset": {
+    "X2_frozen": {
+      "accuracy": 0.7463,
+      "n": 67
+    },
+    "X4_frozen": {
+      "accuracy": 0.791,
+      "n": 67
+    },
+    "X5": {
+      "accuracy": 0.9403,
+      "n": 67
+    },
+    "R3_frozen": {
+      "accuracy": 1.0,
+      "n": 67
+    },
+    "R4_frozen": {
+      "accuracy": 0.9851,
+      "n": 67
+    }
+  }
+}

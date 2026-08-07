@@ -1,0 +1,51 @@
+{
+  "chain": [
+    "DOC_B_TEXT (source_root: 105d08e79bb9e608158d5e79429f991d6ccabd4482ee043a64e6470e9aa2b5ab)",
+    "entity_graph_builder.build_reference_graph() -- generic '- A + B: C' line parser, no query/answer/grader import",
+    "5 RelationNodes, each content-addressed",
+    "freeze_entity_graph.py -- hashed and written to disk BEFORE build_queries() is imported anywhere in that file",
+    "67 per-record entity manifests, extracted from doc_a/doc_c text only",
+    "entity_graph_traversal_v2.traverse_v2(record_id, frozen_graph, graph_manifest_hash) -- record_id only, never query text/type",
+    "MATCH: verified relation nodes, root-reverified | NO_MATCH: NegativeResolutionReceipt, content-addressed | INCOMPLETE: IncompleteResolutionReceipt",
+    "render_explicit_null_assertion() / render_incomplete_assertion() -- generated FROM the receipt, not free-form",
+    "model invocation via rag_common.call_auditor()"
+  ],
+  "freeze_record": {
+    "reference_graph_source_root": "105d08e79bb9e608158d5e79429f991d6ccabd4482ee043a64e6470e9aa2b5ab",
+    "relation_node_count": 5,
+    "relation_manifest_sha256": "b5dc9ba958906ffd9fd5b1ba7c0175da1bbf0f6a851e93e62bed31a964a44db5",
+    "entity_manifest_count": 67,
+    "patient_entity_manifests_sha256": "a2bec04a25d0b70e9530e806e309389ddf39e30078dccb91fbec9188aadf7905",
+    "parser_code_sha256": "bba97fcbf182d43bd356e18af043b6db75df9209e849aedc7155f4d90e74eccf",
+    "queries_read_before_this_point": false
+  },
+  "no_leakage_proof": {
+    "static": "freeze_entity_graph.py imports make_trio and DOC_B_TEXT only from tier2_cross_document -- build_queries is never imported in that file",
+    "negative_control": "entity_graph_traversal.py self-test against fabricated entity sets (chronic kidney disease stage 3, acetaminophen) -- 0 false-positive matches",
+    "positive_control": "TR100 (clarithromycin, levothyroxine, simvastatin) correctly resolved to the clarithromycin+simvastatin relation node"
+  },
+  "cross_language_conformance": {
+    "v1_fixtures": "9/9 match (empty, one_valid, two_valid_ordered, duplicate, malformed, unresolved, mismatch, budget_fk_overflow, budget_byte_overflow)",
+    "v2_fixtures": "6/6 match (MATCH, NO_MATCH, INCOMPLETE_ENTITY_FAILURE, INCOMPLETE_ROOT_MISSING, INCOMPLETE_ROOT_MISMATCH, INCOMPLETE_BUDGET)",
+    "language": "Exact behavioral parity was observed across the canonical conformance fixtures tested -- not characterized as a mathematical proof."
+  },
+  "x3_status": "INVALID_FOR_ARCHITECTURAL_CLAIM, REASON: ORACLE_CONDITIONED_DEPENDENCY -- preserved as diagnostic evidence only, checkpoint_A1_interaction_fk.jsonl untouched",
+  "x4_status": "DETERMINISTIC ENTITY GRAPH -- POSITIVE RELATION EVIDENCE ONLY -- preserved, checkpoint_X4_interaction_entity_graph.jsonl untouched",
+  "x5_summary": {
+    "accuracy": "63/67 = 94.03%",
+    "match_accuracy": "42/42 = 100%",
+    "nomatch_accuracy": "21/25 = 84%",
+    "incomplete_count": 0,
+    "confusion_matrix_diagonal_perfect": true,
+    "entity_extraction_recall": "100%",
+    "relation_node_recall": "100%",
+    "all_required_evidence_recall": "100%",
+    "root_verification_failures": 0,
+    "budget_overflows": 0
+  },
+  "comparison_67_query_subset": {
+    "X2_frozen": "74.63%", "X4_frozen": "79.10%", "X5": "94.03%",
+    "R3_frozen": "100.00%", "R4_frozen": "98.51%"
+  },
+  "note": "This manifest documents the provenance chain for LNES-58.7's X5 arm. Does not modify or supersede any frozen 601-query 8-arm benchmark artifact."
+}
