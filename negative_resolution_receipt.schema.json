@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LNES-58.7 Negative/Incomplete Resolution Receipt",
+  "oneOf": [
+    {
+      "title": "NegativeResolutionReceipt",
+      "type": "object",
+      "required": ["receipt_type", "graph_root", "graph_version", "graph_manifest_hash",
+        "subject_entity_ids", "relation_type", "result", "traversal_version", "traversal_depth",
+        "roots_verified", "traversal_complete", "budget_exhausted", "source_scope",
+        "run_timestamp", "receipt_root"],
+      "properties": {
+        "receipt_type": { "const": "NEGATIVE_RELATION_RESULT" },
+        "graph_root": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "graph_version": { "type": "string" },
+        "graph_manifest_hash": { "type": "string" },
+        "subject_entity_ids": { "type": "array", "items": { "type": "string" } },
+        "relation_type": { "type": "string" },
+        "result": { "const": "NO_MATCH" },
+        "traversal_version": { "type": "string" },
+        "traversal_depth": { "type": "integer", "const": 1 },
+        "roots_verified": { "const": true },
+        "traversal_complete": { "const": true },
+        "budget_exhausted": { "const": false },
+        "source_scope": { "type": "string" },
+        "run_timestamp": { "type": "number" },
+        "receipt_root": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      },
+      "description": "Meaning is strictly: 'No matching relation exists within the declared committed graph scope.' Does NOT mean no such relation exists anywhere, no real-world interaction exists, or no external evidence could contradict this result."
+    },
+    {
+      "title": "IncompleteResolutionReceipt",
+      "type": "object",
+      "required": ["receipt_type", "graph_root", "graph_version", "graph_manifest_hash",
+        "subject_entity_ids", "relation_type", "result", "reason", "traversal_version",
+        "traversal_depth", "roots_verified", "traversal_complete", "budget_exhausted",
+        "source_scope", "run_timestamp", "receipt_root"],
+      "properties": {
+        "receipt_type": { "const": "INCOMPLETE_RELATION_RESULT" },
+        "graph_root": { "type": ["string", "null"] },
+        "graph_version": { "type": "string" },
+        "graph_manifest_hash": { "type": ["string", "null"] },
+        "subject_entity_ids": { "type": "array", "items": { "type": "string" } },
+        "relation_type": { "type": "string" },
+        "result": { "const": "INCOMPLETE" },
+        "reason": {
+          "enum": ["missing_graph_root", "unresolved_dependency", "malformed_root",
+            "root_verification_mismatch", "unavailable_graph", "entity_extraction_failure",
+            "unsupported_relation_schema", "traversal_depth_limit", "budget_exhausted",
+            "incomplete_graph_scope", "internal_resolver_failure"]
+        },
+        "traversal_version": { "type": "string" },
+        "traversal_depth": { "type": "integer" },
+        "roots_verified": { "type": "boolean" },
+        "traversal_complete": { "const": false },
+        "budget_exhausted": { "type": "boolean" },
+        "source_scope": { "type": "string" },
+        "run_timestamp": { "type": "number" },
+        "receipt_root": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      },
+      "description": "MUST NEVER be collapsed into a NO_MATCH result. Means the system could not establish either MATCH or NO_MATCH."
+    }
+  ]
+}

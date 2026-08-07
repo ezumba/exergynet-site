@@ -1,0 +1,12 @@
+{
+  "freeze_timestamp": "2026-08-07T21:45:00Z",
+  "reference_graph_source_root": "105d08e79bb9e608158d5e79429f991d6ccabd4482ee043a64e6470e9aa2b5ab",
+  "relation_node_count": 5,
+  "relation_manifest_sha256": "b5dc9ba958906ffd9fd5b1ba7c0175da1bbf0f6a851e93e62bed31a964a44db5",
+  "entity_manifest_count": 67,
+  "patient_entity_manifests_sha256": "a2bec04a25d0b70e9530e806e309389ddf39e30078dccb91fbec9188aadf7905",
+  "parser_code_sha256": "bba97fcbf182d43bd356e18af043b6db75df9209e849aedc7155f4d90e74eccf",
+  "parser_version": "entity_graph_builder.v1",
+  "normalization_rule": "lowercase, strip whitespace, no stemming",
+  "queries_read_before_this_point": false
+}

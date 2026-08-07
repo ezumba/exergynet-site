@@ -1,0 +1,415 @@
+{
+  "artifact": "Modern_RAG_vs_xLMP_Comprehensive_Audit",
+  "run_id": "run1_20260806_134906",
+  "dataset": "601 real queries (T1=200, T2=201, T3=200), LNES-58 Multihop Bench",
+  "arms_status": {
+    "S0": {
+      "n_ok": 598,
+      "complete": true
+    },
+    "R1": {
+      "n_ok": 598,
+      "complete": true
+    },
+    "R2": {
+      "n_ok": 601,
+      "complete": true
+    },
+    "R3": {
+      "n_ok": 601,
+      "complete": true
+    },
+    "R4": {
+      "n_ok": 601,
+      "complete": true
+    },
+    "X1": {
+      "n_ok": 596,
+      "complete": true
+    },
+    "X2": {
+      "n_ok": 598,
+      "complete": true
+    },
+    "O1": {
+      "n_ok": 601,
+      "complete": true
+    }
+  },
+  "all_arms_complete": true,
+  "per_arm": {
+    "S0": {
+      "arm": "S0",
+      "label": "TF-IDF sparse baseline",
+      "n_total": 601,
+      "n_ok": 598,
+      "n_errors": 3,
+      "complete": true,
+      "accuracy": 0.8712,
+      "schema_valid_pct": 99.0,
+      "accuracy_to_latency_ratio": 11.048,
+      "accuracy_to_latency_ratio_note": "accuracy% / total end-to-end latency in seconds -- higher is more accuracy per second of wall-clock compute",
+      "retrieval_latency": {
+        "mean_ms": 0.7,
+        "median_ms": 0.6,
+        "p95_ms": 1.3,
+        "min_ms": 0.2,
+        "max_ms": 6.3
+      },
+      "inference_latency": {
+        "mean_ms": 7884.8,
+        "median_ms": 5245.1,
+        "p95_ms": 24865.3,
+        "min_ms": 2236.9,
+        "max_ms": 46396.5
+      },
+      "total_latency": {
+        "mean_ms": 7885.5,
+        "median_ms": 5246.1,
+        "p95_ms": 24866.2,
+        "min_ms": 2237.3,
+        "max_ms": 46397.5
+      }
+    },
+    "R1": {
+      "arm": "R1",
+      "label": "Dense (Qwen3-Embedding)",
+      "n_total": 601,
+      "n_ok": 598,
+      "n_errors": 3,
+      "complete": true,
+      "accuracy": 0.9331,
+      "schema_valid_pct": 99.0,
+      "accuracy_to_latency_ratio": 6.936,
+      "accuracy_to_latency_ratio_note": "accuracy% / total end-to-end latency in seconds -- higher is more accuracy per second of wall-clock compute",
+      "retrieval_latency": {
+        "mean_ms": 5477.6,
+        "median_ms": 4186.7,
+        "p95_ms": 10366.0,
+        "min_ms": 930.6,
+        "max_ms": 77072.8
+      },
+      "inference_latency": {
+        "mean_ms": 7975.5,
+        "median_ms": 5591.2,
+        "p95_ms": 25523.8,
+        "min_ms": 2029.7,
+        "max_ms": 46337.8
+      },
+      "total_latency": {
+        "mean_ms": 13453.1,
+        "median_ms": 10826.9,
+        "p95_ms": 35083.6,
+        "min_ms": 3336.5,
+        "max_ms": 81111.2
+      }
+    },
+    "R2": {
+      "arm": "R2",
+      "label": "Hybrid RRF (BM25+dense)",
+      "n_total": 601,
+      "n_ok": 601,
+      "n_errors": 0,
+      "complete": true,
+      "accuracy": 0.9251,
+      "schema_valid_pct": 99.0,
+      "accuracy_to_latency_ratio": 7.594,
+      "accuracy_to_latency_ratio_note": "accuracy% / total end-to-end latency in seconds -- higher is more accuracy per second of wall-clock compute",
+      "retrieval_latency": {
+        "mean_ms": 4135.4,
+        "median_ms": 3280.5,
+        "p95_ms": 8440.4,
+        "min_ms": 1139.0,
+        "max_ms": 14430.2
+      },
+      "inference_latency": {
+        "mean_ms": 8046.7,
+        "median_ms": 5595.9,
+        "p95_ms": 26013.8,
+        "min_ms": 1993.0,
+        "max_ms": 46429.8
+      },
+      "total_latency": {
+        "mean_ms": 12182.0,
+        "median_ms": 9749.9,
+        "p95_ms": 31429.0,
+        "min_ms": 3936.0,
+        "max_ms": 54447.2
+      }
+    },
+    "R3": {
+      "arm": "R3",
+      "label": "Hybrid + Reranker",
+      "n_total": 601,
+      "n_ok": 601,
+      "n_errors": 0,
+      "complete": true,
+      "accuracy": 0.9334,
+      "schema_valid_pct": 99.2,
+      "accuracy_to_latency_ratio": 4.775,
+      "accuracy_to_latency_ratio_note": "accuracy% / total end-to-end latency in seconds -- higher is more accuracy per second of wall-clock compute",
+      "retrieval_latency": {
+        "mean_ms": 11895.5,
+        "median_ms": 12486.6,
+        "p95_ms": 27348.1,
+        "min_ms": 1214.9,
+        "max_ms": 35372.8
+      },
+      "inference_latency": {
+        "mean_ms": 7652.9,
+        "median_ms": 5296.2,
+        "p95_ms": 23401.6,
+        "min_ms": 1951.2,
+        "max_ms": 45783.4
+      },
+      "total_latency": {
+        "mean_ms": 19548.4,
+        "median_ms": 17953.0,
+        "p95_ms": 44169.7,
+        "min_ms": 3754.6,
+        "max_ms": 73279.6
+      }
+    },
+    "R4": {
+      "arm": "R4",
+      "label": "Hybrid + Reranker + Parent-Document Expansion",
+      "n_total": 601,
+      "n_ok": 601,
+      "n_errors": 0,
+      "complete": true,
+      "accuracy": 0.9318,
+      "schema_valid_pct": 98.8,
+      "accuracy_to_latency_ratio": 6.202,
+      "accuracy_to_latency_ratio_note": "accuracy% / total end-to-end latency in seconds -- higher is more accuracy per second of wall-clock compute",
+      "retrieval_latency": {
+        "mean_ms": 7041.7,
+        "median_ms": 6909.3,
+        "p95_ms": 13337.2,
+        "min_ms": 1234.8,
+        "max_ms": 18725.3
+      },
+      "inference_latency": {
+        "mean_ms": 7981.9,
+        "median_ms": 5634.3,
+        "p95_ms": 25646.2,
+        "min_ms": 1968.1,
+        "max_ms": 46561.9
+      },
+      "total_latency": {
+        "mean_ms": 15023.6,
+        "median_ms": 14077.0,
+        "p95_ms": 38809.2,
+        "min_ms": 3656.5,
+        "max_ms": 61365.5
+      }
+    },
+    "X1": {
+      "arm": "X1",
+      "label": "xLMP Complete-Object",
+      "n_total": 601,
+      "n_ok": 596,
+      "n_errors": 5,
+      "complete": true,
+      "accuracy": 0.9144,
+      "schema_valid_pct": 98.3,
+      "accuracy_to_latency_ratio": 10.765,
+      "accuracy_to_latency_ratio_note": "accuracy% / total end-to-end latency in seconds -- higher is more accuracy per second of wall-clock compute",
+      "retrieval_latency": {
+        "mean_ms": 0.0,
+        "median_ms": 0.0,
+        "p95_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.3
+      },
+      "inference_latency": {
+        "mean_ms": 8493.9,
+        "median_ms": 6284.4,
+        "p95_ms": 27253.7,
+        "min_ms": 2051.5,
+        "max_ms": 46893.8
+      },
+      "total_latency": {
+        "mean_ms": 8493.9,
+        "median_ms": 6284.4,
+        "p95_ms": 27253.7,
+        "min_ms": 2051.5,
+        "max_ms": 46893.8
+      }
+    },
+    "X2": {
+      "arm": "X2",
+      "label": "xLMP Bounded-Evidence-Resolver",
+      "n_total": 601,
+      "n_ok": 598,
+      "n_errors": 3,
+      "complete": true,
+      "accuracy": 0.9064,
+      "schema_valid_pct": 98.7,
+      "accuracy_to_latency_ratio": 11.966,
+      "accuracy_to_latency_ratio_note": "accuracy% / total end-to-end latency in seconds -- higher is more accuracy per second of wall-clock compute",
+      "retrieval_latency": {
+        "mean_ms": 0.0,
+        "median_ms": 0.0,
+        "p95_ms": 0.1,
+        "min_ms": 0.0,
+        "max_ms": 1.2
+      },
+      "inference_latency": {
+        "mean_ms": 7574.7,
+        "median_ms": 5377.8,
+        "p95_ms": 24805.4,
+        "min_ms": 1670.7,
+        "max_ms": 46338.7
+      },
+      "total_latency": {
+        "mean_ms": 7574.7,
+        "median_ms": 5377.8,
+        "p95_ms": 24805.5,
+        "min_ms": 1670.8,
+        "max_ms": 46338.7
+      }
+    },
+    "O1": {
+      "arm": "O1",
+      "label": "Gold-Evidence Oracle",
+      "n_total": 601,
+      "n_ok": 601,
+      "n_errors": 0,
+      "complete": true,
+      "accuracy": 0.9068,
+      "schema_valid_pct": 98.7,
+      "accuracy_to_latency_ratio": 11.692,
+      "accuracy_to_latency_ratio_note": "accuracy% / total end-to-end latency in seconds -- higher is more accuracy per second of wall-clock compute",
+      "retrieval_latency": {
+        "mean_ms": 0.0,
+        "median_ms": 0.0,
+        "p95_ms": 0.1,
+        "min_ms": 0.0,
+        "max_ms": 1.9
+      },
+      "inference_latency": {
+        "mean_ms": 7755.8,
+        "median_ms": 5691.4,
+        "p95_ms": 24843.0,
+        "min_ms": 1839.5,
+        "max_ms": 46420.8
+      },
+      "total_latency": {
+        "mean_ms": 7755.8,
+        "median_ms": 5691.5,
+        "p95_ms": 24843.0,
+        "min_ms": 1839.5,
+        "max_ms": 46420.8
+      }
+    }
+  },
+  "reranking_tax_analysis": {
+    "R2": {
+      "label": "Hybrid RRF (BM25+dense)",
+      "retrieval_mean_ms": 4135.4,
+      "inference_mean_ms": 8046.7,
+      "retrieval_share_of_total_pct": 33.9
+    },
+    "R3": {
+      "label": "Hybrid + Reranker",
+      "retrieval_mean_ms": 11895.5,
+      "inference_mean_ms": 7652.9,
+      "retrieval_share_of_total_pct": 60.9
+    },
+    "R4": {
+      "label": "Hybrid + Reranker + Parent-Document Expansion",
+      "retrieval_mean_ms": 7041.7,
+      "inference_mean_ms": 7981.9,
+      "retrieval_share_of_total_pct": 46.9
+    },
+    "X1": {
+      "label": "xLMP Complete-Object",
+      "retrieval_mean_ms": 0.0,
+      "inference_mean_ms": 8493.9,
+      "retrieval_share_of_total_pct": 0.0
+    },
+    "X2": {
+      "label": "xLMP Bounded-Evidence-Resolver",
+      "retrieval_mean_ms": 0.0,
+      "inference_mean_ms": 7574.7,
+      "retrieval_share_of_total_pct": 0.0
+    },
+    "O1": {
+      "label": "Gold-Evidence Oracle",
+      "retrieval_mean_ms": 0.0,
+      "inference_mean_ms": 7755.8,
+      "retrieval_share_of_total_pct": 0.0
+    },
+    "S0": {
+      "label": "TF-IDF sparse baseline",
+      "retrieval_mean_ms": 0.7,
+      "inference_mean_ms": 7884.8,
+      "retrieval_share_of_total_pct": 0.0
+    },
+    "R1": {
+      "label": "Dense (Qwen3-Embedding)",
+      "retrieval_mean_ms": 5477.6,
+      "inference_mean_ms": 7975.5,
+      "retrieval_share_of_total_pct": 40.7
+    }
+  },
+  "parent_document_vs_bounded_evidence_resolver": {
+    "R4_accuracy": 0.9318,
+    "R4_schema_valid_pct": 98.8,
+    "R4_complete": true,
+    "X2_accuracy": 0.9064,
+    "X2_schema_valid_pct": 98.7,
+    "X2_complete": true,
+    "accuracy_delta_X2_minus_R4": -0.0254,
+    "note": "Delta reported as measured; no per-row failure-mode analysis (e.g. medication/adverse-effect separation) has been performed -- would require reading individual R4 incorrect rows against the source documents, not done in this pass."
+  },
+  "complete_object_vs_gold_oracle": {
+    "X1_accuracy": 0.9144,
+    "O1_accuracy": 0.9068,
+    "delta": 0.0076,
+    "characterization": "X1 accuracy matches O1 within the noise of a single 601-query run",
+    "note": "This reports a measured accuracy match/mismatch on one benchmark run, not a formal proof of any theoretical bound. A single empirical result does not establish a maximum, regardless of how close the numbers land."
+  },
+  "efficiency_frontier_ranking": [
+    {
+      "arm": "X2",
+      "label": "xLMP Bounded-Evidence-Resolver",
+      "accuracy_to_latency_ratio": 11.966
+    },
+    {
+      "arm": "O1",
+      "label": "Gold-Evidence Oracle",
+      "accuracy_to_latency_ratio": 11.692
+    },
+    {
+      "arm": "S0",
+      "label": "TF-IDF sparse baseline",
+      "accuracy_to_latency_ratio": 11.048
+    },
+    {
+      "arm": "X1",
+      "label": "xLMP Complete-Object",
+      "accuracy_to_latency_ratio": 10.765
+    },
+    {
+      "arm": "R2",
+      "label": "Hybrid RRF (BM25+dense)",
+      "accuracy_to_latency_ratio": 7.594
+    },
+    {
+      "arm": "R1",
+      "label": "Dense (Qwen3-Embedding)",
+      "accuracy_to_latency_ratio": 6.936
+    },
+    {
+      "arm": "R4",
+      "label": "Hybrid + Reranker + Parent-Document Expansion",
+      "accuracy_to_latency_ratio": 6.202
+    },
+    {
+      "arm": "R3",
+      "label": "Hybrid + Reranker",
+      "accuracy_to_latency_ratio": 4.775
+    }
+  ]
+}

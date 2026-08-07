@@ -1,0 +1,24 @@
+[2026-08-07 18:23:04] === 14-case diagnostic (mechanism check only, NOT a benchmark result) ===
+[2026-08-07 18:23:11]   [TR101-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:23:26]   [TR104-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:23:38]   [TR106-interaction] state=NO_MATCH correct=False fp_persisted=True
+[2026-08-07 18:23:44]   [TR109-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:23:49]   [TR121-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:23:57]   [TR123-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:24:05]   [TR125-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:24:15]   [TR130-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:24:28]   [TR137-interaction] state=NO_MATCH correct=False fp_persisted=True
+[2026-08-07 18:24:40]   [TR141-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:24:56]   [TR149-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:25:04]   [TR150-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:25:10]   [TR153-interaction] state=NO_MATCH correct=True fp_persisted=False
+[2026-08-07 18:25:22]   [TR158-interaction] state=NO_MATCH correct=False fp_persisted=True
+[2026-08-07 18:25:24] {
+  "note": "MECHANISM DIAGNOSTIC ONLY -- not a benchmark result, not published as system performance",
+  "n_cases": 14,
+  "no_match_count": 14,
+  "incomplete_count": 0,
+  "false_positive_count_before": 14,
+  "false_positive_count_after": 3,
+  "schema_valid_count": 14
+}
