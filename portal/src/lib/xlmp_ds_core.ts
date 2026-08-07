@@ -118,15 +118,92 @@ export function xlmp_index_list(owner: string): OwnedHollowObject[] {
   return [...byRoot.values()].sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
 }
 
-export function xlmp_get_content(root: string): string | undefined {
-  if (_contentCache.has(root)) return _contentCache.get(root);
-  try {
-    const text = fs.readFileSync(_rootPath(root), 'utf8');
-    _contentCache.set(root, text); // warm the cache
-    return text;
-  } catch {
-    return undefined;
+// ── LNES-58.10: content-root verification ──────────────────────────────────
+// xlmp_get_content previously trusted the object selected by filename/root
+// and returned it without recomputing its commitment. computeXlmpRoot is
+// the single source of truth for the algorithm -- xlmp_shatter_payload
+// (ingest) and xlmp_get_content (retrieval) both call it, so there is no
+// separate reimplementation to drift out of sync.
+//
+// Algorithm (unchanged from the original xlmp_shatter_payload -- existing
+// stored roots remain valid):
+//   1. UTF-8 encode the canonical text into a Buffer.
+//   2. Split into consecutive 512 KiB shards (fixed byte-size boundaries,
+//      not content-aware; final shard may be shorter).
+//   3. Per shard: SHA-256(shard bytes) -> hex digest.
+//   4. Root: SHA-256(UTF-8 bytes of the concatenation of all shard hex
+//      digests, in shard order).
+// This is a SEQUENTIAL HASH CHAIN over shard digests, not a binary Merkle
+// tree: there is no pairwise combination and no odd-leaf special case, and
+// verification requires recomputing every shard hash -- this construction
+// has no logarithmic partial-inclusion proof.
+export function computeXlmpRoot(payload: Buffer): { root: string; shard_count: number } {
+  const shard_size = 1024 * 512;
+  const shards: Buffer[] = [];
+  for (let i = 0; i < payload.length; i += shard_size) {
+    shards.push(payload.subarray(i, i + shard_size));
   }
+  const hash = crypto.createHash('sha256');
+  shards.forEach(shard => {
+    const shardHash = crypto.createHash('sha256').update(shard).digest('hex');
+    hash.update(shardHash);
+  });
+  return { root: hash.digest('hex'), shard_count: shards.length };
+}
+
+// Fatal to the current retrieval/request only -- caught by the existing API
+// route try/catch (see /api/xlmp/query), never allowed to crash the
+// process. Distinct from "not found": this means an object WAS found under
+// that root/filename, but its content does not hash to the root requested.
+export class MemoryIntegrityViolation extends Error {
+  readonly code = 'XLMP_ROOT_MISMATCH' as const;
+  readonly requested_root: string;
+  readonly computed_root: string;
+  constructor(requested_root: string, computed_root: string) {
+    super(
+      `xLMP content-root verification failed: requested ${requested_root.slice(0, 16)}... ` +
+      `but stored content hashes to ${computed_root.slice(0, 16)}.... ` +
+      `Verification means "retrieved content matches the requested committed content root" -- ` +
+      `it does not by itself mean the content is true, authorized, or provenance-verified.`
+    );
+    this.name = 'MemoryIntegrityViolation';
+    this.requested_root = requested_root;
+    this.computed_root = computed_root;
+  }
+}
+
+const XLMP_ROOT_SYNTAX_RE = /^[0-9a-f]{64}$/i;
+
+// Cache trust boundary: _contentCache is written from exactly two places --
+// (a) xlmp_store_content at ingest time, where root and text are freshly
+// paired by construction (root was just computed FROM this exact text, so
+// no verification is needed there), and (b) here, after explicit
+// recomputation-and-match on a disk read. No other code path writes to
+// this cache. Given that, a cache HIT does not need to be re-verified on
+// every call -- Design B from LNES-58.10 Phase 5: verify before insertion,
+// cache entries are immutably keyed by their verified root.
+export function xlmp_get_content(root: string): string | undefined {
+  if (!XLMP_ROOT_SYNTAX_RE.test(root)) return undefined; // malformed root -- rejected before filesystem retrieval
+
+  if (_contentCache.has(root)) return _contentCache.get(root);
+
+  let text: string;
+  try {
+    text = fs.readFileSync(_rootPath(root), 'utf8');
+  } catch {
+    return undefined; // includes ENOENT -- preserves existing not-found behavior
+  }
+
+  const { root: computedRoot } = computeXlmpRoot(Buffer.from(text, 'utf8'));
+  if (computedRoot.toLowerCase() !== root.toLowerCase()) {
+    // FAIL CLOSED. Do not cache. Do not return the payload. Do not allow
+    // execution to continue to resolveIntent/synthesizeFromDocument/
+    // vanguardRace -- the thrown error halts xlmp_zk_query at this line.
+    throw new MemoryIntegrityViolation(root, computedRoot);
+  }
+
+  _contentCache.set(root, text); // now verified -- safe to trust on future hits
+  return text;
 }
 
 // ── Real RISC Zero Groth16 integrity proving (async) ──────────────────────────
@@ -242,26 +319,14 @@ export function xlmp_request_proof(root: string): ProofJobState {
 
 // ── Shatter payload into Merkle root ──────────────────────────────────────────
 export const xlmp_shatter_payload = async (payload: Buffer): Promise<HollowObject> => {
-  const shard_size = 1024 * 512;
-  const shards: Buffer[] = [];
+  const { root: xlmp_root, shard_count } = computeXlmpRoot(payload);
 
-  for (let i = 0; i < payload.length; i += shard_size) {
-    shards.push(payload.subarray(i, i + shard_size));
-  }
-
-  const hash = crypto.createHash("sha256");
-  shards.forEach(shard => {
-    const shardHash = crypto.createHash("sha256").update(shard).digest("hex");
-    hash.update(shardHash);
-  });
-  const xlmp_root = hash.digest("hex");
-
-  console.log(`[xLMP-DS] Shattered ${shards.length} shard(s). Root: ${xlmp_root}`);
+  console.log(`[xLMP-DS] Shattered ${shard_count} shard(s). Root: ${xlmp_root}`);
 
   return {
     xlmp_root,
     byte_size: payload.length,
-    shard_count: shards.length,
+    shard_count,
     timestamp: new Date().toISOString(),
   };
 };
