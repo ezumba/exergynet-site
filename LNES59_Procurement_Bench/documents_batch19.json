@@ -1,0 +1,24 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 16 (packet N: Elmsworth Regional Health Systems VENDOR-6031, Foxglove Analytics VENDOR-6032), after V7 freeze. (1) Authority + wrong PURPOSE: same vendor, same role, same amount, DIFFERENT purchase category/purpose -- the authority-dimension conjunction that hasn't been dedicated-tested yet (wrong vendor: B5-003; wrong BU: B6-002/B11-002; wrong transaction: B13-001; here: wrong purpose/category specifically). (2) A deliberately ordinary factual control for distribution balance.",
+  "documents": [
+    {
+      "id": "DOC-EMAIL-MANAGER-COMPUTEREQUIP-6031",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Elmsworth computer equipment purchase. Approving $8,000 for the computer equipment purchase (workstations, monitors) for Elmsworth Regional Health Systems (VENDOR-6031) -- within my Manager authority. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-6031.computer_equipment_authority", "value": "8000"
+    },
+    {
+      "id": "DOC-PO-SOFTWARELICENSE-6031",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6031", "po_id": "PO-6031SL", "issued": "2026-06-25",
+      "content": "PURCHASE ORDER PO-6031SL. Vendor: Elmsworth Regional Health Systems (VENDOR-6031). Amount authorized: $8,000.00. Description: software licensing renewal -- a distinct purchase category from computer equipment, same vendor and coincidentally the same dollar amount.",
+      "predicate": "PO-6031SL.authorized_amount", "value": "8000"
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-TAXCOMPLIANT-6032",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Foxglove Analytics (VENDOR-6032). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2023-11-15.",
+      "predicate": "VENDOR-6032.tax_compliance_status", "value": "CURRENT"
+    }
+  ]
+}
