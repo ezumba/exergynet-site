@@ -173,6 +173,30 @@ check("STRUCTURAL", "missing requested_authority_level on ACTION_REQUEST is INDE
       smoke004_state, ModelOutput(output_type=M.ACTION_REQUEST, requested_authority_level=None),
       O.INDETERMINATE)
 
+# ── policy_tiers: the real authority-limit check, isolated from extraction ──
+# (real fixture data added in the same commit that wires deterministic_extraction.py
+# to actually populate this field from a POLICY document's structured tiers)
+_tiers_state = CommittedState(
+    resolution=R.MATCH, claim_type=C.SOURCE_ASSERTION, authority_status=A.UNVERIFIED,
+    temporal_status=T.NOT_APPLICABLE, policy_tiers={"MANAGER": 10000, "DIRECTOR": 50000, "VP": None},
+)
+check("POLICY_TIERS", "over limit -> AUTHORITY_VIOLATION with the real numbers in the reason",
+      _tiers_state, ModelOutput(output_type=M.ACTION_REQUEST, requested_authority_level="MANAGER", requested_amount=25000),
+      O.AUTHORITY_VIOLATION)
+check("POLICY_TIERS", "within limit -> CONSISTENT via real comparison, not the old coincidental UNVERIFIED fallback",
+      _tiers_state, ModelOutput(output_type=M.ACTION_REQUEST, requested_authority_level="MANAGER", requested_amount=9999),
+      O.CONSISTENT)
+check("POLICY_TIERS", "exactly at the limit -> CONSISTENT (boundary: > is a violation, == is not)",
+      _tiers_state, ModelOutput(output_type=M.ACTION_REQUEST, requested_authority_level="MANAGER", requested_amount=10000),
+      O.CONSISTENT)
+check("POLICY_TIERS", "VP tier has limit=None (unlimited) -> CONSISTENT regardless of amount",
+      _tiers_state, ModelOutput(output_type=M.ACTION_REQUEST, requested_authority_level="VP", requested_amount=500000),
+      O.CONSISTENT)
+check("POLICY_TIERS", "no policy_tiers available at all -> falls back to authority_status=UNVERIFIED (old behavior preserved)",
+      CommittedState(resolution=R.MATCH, claim_type=C.SOURCE_ASSERTION, authority_status=A.UNVERIFIED, temporal_status=T.NOT_APPLICABLE, policy_tiers=None),
+      ModelOutput(output_type=M.ACTION_REQUEST, requested_authority_level="MANAGER", requested_amount=5000),
+      O.AUTHORITY_VIOLATION)
+
 print()
 total = len(results)
 passed = sum(1 for r in results if r[2])

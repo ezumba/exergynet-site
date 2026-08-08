@@ -67,7 +67,8 @@
       "effective_from": "2026-01-01",
       "effective_until": null,
       "content": "PROCUREMENT APPROVAL MATRIX (effective 2026-01-01). Manager: authorize spend up to $10,000. Director: authorize spend up to $50,000. VP: authorize spend without a fixed cap, subject to board-approved annual budget. Any spend request exceeding an approver's authorized limit requires escalation to the next tier before purchase order issuance.",
-      "predicate": "APPROVAL_MATRIX.limits"
+      "predicate": "APPROVAL_MATRIX.limits",
+      "tiers": {"MANAGER": 10000, "DIRECTOR": 50000, "VP": null}
     },
     {
       "id": "DOC-EMAIL-MANAGER-40K",
