@@ -23,7 +23,8 @@
     {"file": "documents_batch19.json", "tranche": 19, "sha256": "ed6e6968980a2907359b04ebae609f619c625d218219a6ae34ea4a7e72b42c15", "size_bytes": 1942},
     {"file": "documents_batch20.json", "tranche": 20, "sha256": "ef663f26b7c80bf2e0538076aab54bcb55377d553cb3f135292fb7ebe6abf524", "size_bytes": 2272},
     {"file": "documents_batch21.json", "tranche": 21, "sha256": "12bc174877e08189159b1649a766ab9b4b5048ea4aae9b7274a2575eeed48b7c", "size_bytes": 3241},
-    {"file": "documents_batch22.json", "tranche": 22, "sha256": "aa643532ffb940ce97ab8302158427700fc8657562480e598741cef9e1911aad", "size_bytes": 2792}
+    {"file": "documents_batch22.json", "tranche": 22, "sha256": "aa643532ffb940ce97ab8302158427700fc8657562480e598741cef9e1911aad", "size_bytes": 2792},
+    {"file": "documents_batch23.json", "tranche": 23, "sha256": "ddb5988a5224e9c7e5fc813ffac5d976fdddfa356d4b852ed0682fe3e07cfd0e", "size_bytes": 3721}
   ],
   "case_sets": [
     {"file": "cases.json", "tranche": 1, "role": "development", "sha256": "7c6862fa9a52a7c4e80ecf670af6d989b61eb9f00bee169ddedc762063df01dd", "size_bytes": 11310},
@@ -47,7 +48,8 @@
     {"file": "cases_batch19.json", "tranche": 19, "role": "development", "sha256": "f0763a403d0228a1d347b3c342e948600d023654267ed02110e22e585b6158d9", "size_bytes": 2036, "_note": "Phase 5 tranche 16, packet N -- LNES59-B19-001..002: authority + wrong purpose/category (completes authority-dimension coverage), ordinary factual control"},
     {"file": "cases_batch20.json", "tranche": 20, "role": "development", "sha256": "bebd5a3256982f881ca87dade6ad8aab126bc7842907e2fd5d7c335bbe27136f", "size_bytes": 1560, "_note": "Phase 5 tranche 17, packet O -- LNES59-B20-001: supersession + revocation + reinstatement combined in one chain for the first time"},
     {"file": "cases_batch21.json", "tranche": 21, "role": "development", "sha256": "9a1ddff11914b5dd25534ad5c4fb8a9ed63eef1e15d5d9d3f0f59cae86137f09", "size_bytes": 4140, "_note": "Phase 5 tranche 18, packet P -- LNES59-B21-001..004: fresh temporal+conflict, sanctions-screening NO_MATCH (new scope type), forwarded-email ambiguous source, ordinary control"},
-    {"file": "cases_batch22.json", "tranche": 22, "role": "development", "sha256": "59db84a5ca9dbf9ad0f98b64d8f9321458df6fd944d8718e18f9de99969fbcf4", "size_bytes": 4400, "_note": "Phase 5 tranche 19, packet Q -- LNES59-B22-001..005: exactly-at-limit MANAGER-tier boundary via real corpus-grounded case, valid scoped uncertainty as a real dataset case (was synthetic-only), INCOMPLETE framed for a recommendation response, two ordinary factual controls"}
+    {"file": "cases_batch22.json", "tranche": 22, "role": "development", "sha256": "59db84a5ca9dbf9ad0f98b64d8f9321458df6fd944d8718e18f9de99969fbcf4", "size_bytes": 4400, "_note": "Phase 5 tranche 19, packet Q -- LNES59-B22-001..005: exactly-at-limit MANAGER-tier boundary via real corpus-grounded case, valid scoped uncertainty as a real dataset case (was synthetic-only), INCOMPLETE framed for a recommendation response, two ordinary factual controls"},
+    {"file": "cases_batch23.json", "tranche": 23, "role": "development", "sha256": "08c387283bab47cc2c147424760b050889a77713ec834240e24d87d9e31ae10f", "size_bytes": 5040, "_note": "Phase 5 tranche 20, packet R -- LNES59-B23-001..005: INCOMPLETE + valid hypothesis, historically-true-now-false single-doc expiry (fresh instance), multi-hop chain with no currently active state (both hops non-current), ordinary control, fresh authority+wrong-business-unit instance"}
   ],
   "development": {
     "_note": "Every case_set listed above is role=development as of this manifest version. No holdout case_sets exist yet -- LNES59_HOLDOUT_MANIFEST.json will introduce them once the corpus is complete and architecture-stable. A case_set's role is never changed in place; a case promoted to holdout would need to move to a NEW file with role=holdout, leaving the development file's history intact."
