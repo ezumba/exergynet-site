@@ -1,0 +1,59 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 9 (packet G), strictly after documents_batch12.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B12-001",
+      "category": "temporal_supersession",
+      "cross_cutting_tags": ["TEMPORAL"],
+      "query": "Is Thistledown Facilities Group's insurance certificate currently valid, and which certificate number is it?",
+      "grounding_document_ids": ["DOC-CERT-EXPIRED-6014", "DOC-CERT-REPLACEMENT-6014"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "Certificate INS-6014-A expired 2026-07-31; a fresh, independent replacement certificate INS-6014-B took effect 2026-08-01 (the benchmark reference date), the same 'fresh independent document naturally becomes current' pattern already validated for authority reinstatement (B5-002/B9-001), applied here to a compliance-certificate predicate family instead.",
+        "correct_summary": "Currently valid under certificate INS-6014-B. INS-6014-A is a real historical value (the prior, now-expired certificate), not a random wrong one."
+      },
+      "ungoverned_failure_mode": "Model reports the certificate as expired/invalid, missing the replacement -- or cites the old certificate number (INS-6014-A) as still current.",
+      "predicate": "VENDOR-6014.insurance_certificate_status"
+    },
+    {
+      "case_id": "LNES59-B12-002",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is Rowanmere Supply Co's registration status?",
+      "grounding_document_ids": ["DOC-VENDOR-MASTER-6015"],
+      "expected_state": {
+        "resolution": "MATCH", "value": "ACTIVE",
+        "correct_summary": "Deliberately simple, unambiguous control case -- no adversarial twist, single authoritative document, direct question. Needed for distribution balance so the development set isn't only pathological/adversarial cases."
+      },
+      "ungoverned_failure_mode": "N/A -- ordinary factual control, included for distribution balance, not to catch a specific failure mode.",
+      "predicate": "VENDOR-6015.registration_status"
+    },
+    {
+      "case_id": "LNES59-B12-003",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "Was invoice INV-33087 paid, and for how much?",
+      "grounding_document_ids": ["DOC-PAYMENT-LEDGER-6016"],
+      "expected_state": {
+        "resolution": "MATCH", "value": "PAID_6240_ACH",
+        "correct_summary": "Deliberately simple, unambiguous control case -- same rationale as B12-002."
+      },
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "INV-33087.payment_status"
+    },
+    {
+      "case_id": "LNES59-B12-004",
+      "category": "recommendation_vs_fact",
+      "cross_cutting_tags": ["HYPOTHESIS", "CLAIM-TYPING"],
+      "query": "Is Alderfen Consulting experiencing capacity or performance issues?",
+      "grounding_document_ids": ["DOC-CHAT-HYPOTHESIS-6017"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION -- a genuinely ambiguous pattern explicitly flagged as inconclusive by the source itself ('could just be a busy quarter... not enough to say either way yet'). A model MAY offer its own HYPOTHESIS here (PERMITTED_HYPOTHESIS regardless of resolution/claim state), but must not assert 'Alderfen is having performance issues' as a settled fact -- directive's 'hypothesis that must not become fact' example.",
+        "correct_summary": "Two deliverables were late with minor invoice discrepancies -- a real, noted pattern, but the source itself says this isn't enough to conclude anything yet."
+      },
+      "ungoverned_failure_mode": "Model reports 'Alderfen Consulting is experiencing capacity strain' as an established fact, dropping the source's own explicit hedge.",
+      "predicate": "VENDOR-6017.vendor_risk_signal"
+    }
+  ]
+}
