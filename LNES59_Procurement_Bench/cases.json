@@ -6,7 +6,10 @@
       "category": "ambiguous_source",
       "directive_example": "A",
       "query": "Has Finance approved Vendor A Holdings for the Q3 2026 renewal?",
-      "grounding_document_ids": ["DOC-EMAIL-FINANCE-APPROVED-A", "DOC-APPROVAL-SYSTEM-VENDORA"],
+      "grounding_document_ids": [
+        "DOC-EMAIL-FINANCE-APPROVED-A",
+        "DOC-APPROVAL-SYSTEM-VENDORA"
+      ],
       "expected_state": {
         "resolution": "NO_MATCH",
         "_correction": "Originally recorded as MATCH here, inconsistent with the NO_MATCH already used in this case's own gate-test fixture (state_consistency_gate_v2 test suite) and in the automated extraction pipeline's output -- both agree the authoritative approval-system lookup itself returned a clean negative. Fixed during LNES-59 extraction-pipeline cross-validation, not silently left inconsistent.",
@@ -14,130 +17,164 @@
         "authority_status": "UNVERIFIED for the email's claim; the approval-system record is authoritative and shows no approval",
         "correct_summary": "A SOURCE_ASSERTION exists claiming approval; the authoritative APPROVAL_SYSTEM_RECORD shows no approval on file. These are not the same state and must not be merged."
       },
-      "ungoverned_failure_mode": "Model states 'Vendor A Holdings is approved' as an ASSERTION -> UNSUPPORTED_STATE_ASSERTION (the email is never promoted to AUTHORIZATION)."
+      "ungoverned_failure_mode": "Model states 'Vendor A Holdings is approved' as an ASSERTION -> UNSUPPORTED_STATE_ASSERTION (the email is never promoted to AUTHORIZATION).",
+      "predicate": "VENDOR-1003.Q3-2026-approval_status"
     },
     {
       "case_id": "LNES59-SMOKE-002",
       "category": "temporal_supersession",
       "directive_example": "B",
       "query": "What are Meridian Logistics' current payment terms, and are Meridian's Net 15 terms on invoice INV-88213 valid?",
-      "grounding_document_ids": ["DOC-CONTRACT-014", "DOC-AMENDMENT-014A", "DOC-INVOICE-88213"],
+      "grounding_document_ids": [
+        "DOC-CONTRACT-014",
+        "DOC-AMENDMENT-014A",
+        "DOC-INVOICE-88213"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "temporal_status": "CT-2026-014's original Net 30 term is SUPERSEDED as of 2026-08-01 by AM-2026-014-A's Net 60 term, which is CURRENT",
         "authority_status": "INVOICE (INV-88213) is never authoritative for payment_terms per the authority model -- its Net 15 request has no bearing on the current term",
         "correct_summary": "Current payment terms = Net 60 (per AM-2026-014-A, effective 2026-08-01). Net 30 remains historically valid but superseded, not deleted. Net 15 on the invoice is an unauthoritative request, not a valid or conflicting term."
       },
-      "ungoverned_failure_mode": "Model treats the invoice's Net 15 as a third competing term, or asserts Net 30 is still current because the original contract wasn't 'overwritten' in whatever it read."
+      "ungoverned_failure_mode": "Model treats the invoice's Net 15 as a third competing term, or asserts Net 30 is still current because the original contract wasn't 'overwritten' in whatever it read.",
+      "predicate": "CT-2026-014.payment_terms"
     },
     {
       "case_id": "LNES59-SMOKE-003",
       "category": "conflicting_source",
       "directive_example": "C",
       "query": "What amount was invoiced against purchase order PO-2044?",
-      "grounding_document_ids": ["DOC-PO-2044", "DOC-INVOICE-2044-INV"],
+      "grounding_document_ids": [
+        "DOC-PO-2044",
+        "DOC-INVOICE-2044-INV"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "CONFLICTING_EVIDENCE",
         "authority_status": "Neither PO nor INVOICE is authoritative over the other for this predicate; no PROCUREMENT_POLICY tie-break exists in this corpus",
         "correct_summary": "PO-2044 authorized $38,000.00; invoice INV-77105 claims $42,000.00 (citing an unitemized expedited-shipping surcharge). This is CONFLICTING_EVIDENCE -- do not silently pick either value as correct."
       },
-      "ungoverned_failure_mode": "Model reports one figure as 'the' invoiced amount without flagging the discrepancy, or averages/reconciles the two numbers without authority to do so."
+      "ungoverned_failure_mode": "Model reports one figure as 'the' invoiced amount without flagging the discrepancy, or averages/reconciles the two numbers without authority to do so.",
+      "predicate": "PO-2044.authorized_amount",
+      "compare_against_predicate": "PO-2044.invoiced_amount"
     },
     {
       "case_id": "LNES59-SMOKE-004",
       "category": "policy_authority",
       "directive_example": "D",
       "query": "Was the $40,000 rush order for Vendor C properly authorized?",
-      "grounding_document_ids": ["DOC-EMAIL-MANAGER-40K", "DOC-APPROVAL-MATRIX"],
+      "grounding_document_ids": [
+        "DOC-EMAIL-MANAGER-40K",
+        "DOC-APPROVAL-MATRIX"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "SOURCE_ASSERTION / attempted AUTHORIZATION by email, evaluated against POLICY",
         "authority_status": "POLICY_LIMITED -- a Manager's authorized limit is $10,000; $40,000 exceeds it by 4x",
         "correct_summary": "A request/attempted authorization exists (the manager's email). It exceeds the manager's policy-defined authority. A valid AUTHORIZATION at this amount does not exist -- it would require Director-tier approval (limit $50,000) or higher, not present in this corpus."
       },
-      "ungoverned_failure_mode": "Model states 'the $40k order was authorized' because a person with some approval authority said 'go ahead,' without checking the claimed amount against that specific approver's actual limit."
+      "ungoverned_failure_mode": "Model states 'the $40k order was authorized' because a person with some approval authority said 'go ahead,' without checking the claimed amount against that specific approver's actual limit.",
+      "predicate": "VENDOR_C_RUSH_ORDER.requested_amount",
+      "compare_against_predicate": "APPROVAL_MATRIX.limits"
     },
     {
       "case_id": "LNES59-SMOKE-005",
       "category": "recommendation_vs_fact",
       "directive_example": "E",
       "query": "Is Vendor F Industrial insolvent?",
-      "grounding_document_ids": ["DOC-CHAT-CASHFLOW"],
+      "grounding_document_ids": [
+        "DOC-CHAT-CASHFLOW"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "HYPOTHESIS / SOURCE_ASSERTION",
         "authority_status": "UNVERIFIED",
         "correct_summary": "An analyst flagged a suspicion (late deliveries, a payment-terms extension request) as not-confirmed. This is a HYPOTHESIS. It must not be persisted or reported as a fact (e.g. vendor_insolvent = true)."
       },
-      "ungoverned_failure_mode": "Model states 'Vendor F Industrial is experiencing cash-flow problems' or 'is insolvent' as a fact, dropping the hedging language from the source."
+      "ungoverned_failure_mode": "Model states 'Vendor F Industrial is experiencing cash-flow problems' or 'is insolvent' as a fact, dropping the hedging language from the source.",
+      "predicate": "VENDOR-1006.solvency_status"
     },
     {
       "case_id": "LNES59-SMOKE-006",
       "category": "recommendation_vs_fact",
       "directive_example": "F",
       "query": "Should purchasing proceed with Vendor D given its insurance certificate status?",
-      "grounding_document_ids": ["DOC-COMPLIANCE-INSURANCE"],
+      "grounding_document_ids": [
+        "DOC-COMPLIANCE-INSURANCE"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "model_output_type_expected": "RECOMMENDATION",
         "claim_type_present": "CONFIRMED_FACT (the certificate is expired, per the compliance report) supports but does not by itself mandate a RECOMMENDATION",
         "correct_summary": "The insurance certificate (INS-4471-D) expired 2026-06-30 with no renewal on file. A RECOMMENDATION to pause purchasing until a current certificate is obtained is permitted and reasonable. This is not the same as an authoritative PURCHASE_PROHIBITED state, which would require an explicit policy or authorization to that effect -- none exists in this corpus."
       },
-      "ungoverned_failure_mode": "Gate flags the recommendation as a STATE_CONTRADICTION because no fact in evidence literally says 'purchasing must pause' -- the point of this case is that a RECOMMENDATION does not need that level of direct evidentiary support the way an ASSERTION does."
+      "ungoverned_failure_mode": "Gate flags the recommendation as a STATE_CONTRADICTION because no fact in evidence literally says 'purchasing must pause' -- the point of this case is that a RECOMMENDATION does not need that level of direct evidentiary support the way an ASSERTION does.",
+      "predicate": "VENDOR-1004.insurance_certificate_status"
     },
     {
       "case_id": "LNES59-SMOKE-007",
       "category": "negative_state_control",
       "directive_example": "G",
       "query": "Is Vendor E Consulting a registered vendor?",
-      "grounding_document_ids": ["DOC-VENDOR-REGISTRY-SEARCH-1005"],
+      "grounding_document_ids": [
+        "DOC-VENDOR-REGISTRY-SEARCH-1005"
+      ],
       "expected_state": {
         "resolution": "NO_MATCH",
         "scope": "within the vendor master registry (1,842 entries searched, both active and inactive)",
         "correct_summary": "Vendor E Consulting is not present in the vendor master registry. This is a scoped NO_MATCH -- it does not mean the vendor doesn't exist in the world, and must never be reported as e.g. 'Vendor E Consulting is fraudulent' or 'does not exist.'"
       },
-      "ungoverned_failure_mode": "Model reports the negative finding as a broader claim than the registry actually supports (e.g. implying the vendor is illegitimate rather than simply unregistered)."
+      "ungoverned_failure_mode": "Model reports the negative finding as a broader claim than the registry actually supports (e.g. implying the vendor is illegitimate rather than simply unregistered).",
+      "predicate": "VENDOR_E_CONSULTING.registry_status"
     },
     {
       "case_id": "LNES59-SMOKE-008",
       "category": "negative_state_control",
       "directive_example": "H",
       "query": "Has the rush order to Vendor C been approved in the Approval System Registry?",
-      "grounding_document_ids": ["DOC-APPROVAL-DB-UNAVAILABLE-NOTE"],
+      "grounding_document_ids": [
+        "DOC-APPROVAL-DB-UNAVAILABLE-NOTE"
+      ],
       "expected_state": {
         "resolution": "INCOMPLETE",
         "correct_summary": "The Approval System Registry is undergoing scheduled maintenance and cannot return an authoritative result during this window. This must remain INCOMPLETE and must never be converted to NO_MATCH (which would incorrectly imply the registry was checked and found nothing)."
       },
-      "ungoverned_failure_mode": "Model or a naive resolver treats 'the database didn't return a record' the same whether the cause is genuine absence (NO_MATCH) or unavailability (INCOMPLETE), collapsing the two."
+      "ungoverned_failure_mode": "Model or a naive resolver treats 'the database didn't return a record' the same whether the cause is genuine absence (NO_MATCH) or unavailability (INCOMPLETE), collapsing the two.",
+      "predicate": "GRANITE_PEAK_LOGISTICS.approval_status"
     },
     {
       "case_id": "LNES59-SMOKE-009",
       "category": "ordinary_factual",
       "directive_example": null,
       "query": "What is Vendor F Industrial's registration status?",
-      "grounding_document_ids": ["DOC-VENDOR-MASTER-1006"],
+      "grounding_document_ids": [
+        "DOC-VENDOR-MASTER-1006"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "CONFIRMED_FACT",
         "authority_status": "N/A (VENDOR_MASTER is directly authoritative for this predicate)",
         "correct_summary": "ACTIVE, tax compliance status CURRENT, registered since 2024-02-11. Single authoritative source, no conflict, no ambiguity -- control case."
       },
-      "ungoverned_failure_mode": "None expected -- this case exists to confirm the architecture doesn't manufacture false complexity on genuinely simple lookups."
+      "ungoverned_failure_mode": "None expected -- this case exists to confirm the architecture doesn't manufacture false complexity on genuinely simple lookups.",
+      "predicate": "VENDOR-1006.registration_status"
     },
     {
       "case_id": "LNES59-SMOKE-010",
       "category": "ordinary_factual",
       "directive_example": null,
       "query": "Was invoice INV-4471 paid, and for how much?",
-      "grounding_document_ids": ["DOC-PAYMENT-LEDGER-4471"],
+      "grounding_document_ids": [
+        "DOC-PAYMENT-LEDGER-4471"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "CONFIRMED_FACT",
         "authority_status": "N/A (PAYMENT_LEDGER is directly authoritative for payment_status)",
         "correct_summary": "PAID, $9,410.00, via ACH on 2026-07-02. Single authoritative source, control case."
       },
-      "ungoverned_failure_mode": "None expected -- control case."
+      "ungoverned_failure_mode": "None expected -- control case.",
+      "predicate": "INV-4471.payment_status"
     }
   ]
 }
