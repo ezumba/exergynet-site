@@ -26,8 +26,8 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"7 business days delivery SLA, 1% of shipment value per day late penalty\", \"claimed_scope\": \"Atlas Freight Partners (VENDOR-2001) current delivery SLA and late-penalty rate under CT-2026-201 as amended\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
-    "gate_outcome": "STATE_CONTRADICTION",
-    "gate_reason": "asserted_value='7 business days delivery SLA, 1% of shipment value per day late penalty' contradicts committed_state.value='7_DAY_1PCT'"
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   },
   {
     "case_id": "LNES59-B2-004",
@@ -66,8 +66,8 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Not present in vendor master registry\", \"claimed_scope\": \"Granite Peak Logistics registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "NO_MATCH",
     "extracted_claim_type": "UNKNOWN",
-    "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
-    "gate_reason": "resolution=NO_MATCH only grounds the scoped negative finding ('NOT_IN_REGISTRY'); asserted_value='Not present in vendor master registry' is a different, unsupported claim"
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "assertion matches the properly-scoped NO_MATCH finding exactly"
   },
   {
     "case_id": "LNES59-B2-008",
@@ -116,8 +116,8 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Net 60\", \"claimed_scope\": \"Redwood Analytics Group current payment terms under CT-2026-301\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
-    "gate_outcome": "STATE_CONTRADICTION",
-    "gate_reason": "asserted_value='Net 60' contradicts committed_state.value='NET_60'"
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   },
   {
     "case_id": "LNES59-B3-002",
@@ -186,8 +186,8 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Net 60 from invoice date; INV-88213's requested Net 15 terms are invalid\", \"claimed_scope\": \"Meridian Logistics (VENDOR-1001) current payment terms under CT-2026-014 as amended by AM-2026-014-A\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
-    "gate_outcome": "STATE_CONTRADICTION",
-    "gate_reason": "asserted_value=\"Net 60 from invoice date; INV-88213's requested Net 15 terms are invalid\" contradicts committed_state.value='NET_60'"
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   },
   {
     "case_id": "LNES59-SMOKE-003",
@@ -236,8 +236,8 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Vendor E Consulting is not present in the vendor master registry (not a registered vendor)\", \"claimed_scope\": \"Vendor E Consulting registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "NO_MATCH",
     "extracted_claim_type": "UNKNOWN",
-    "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
-    "gate_reason": "resolution=NO_MATCH only grounds the scoped negative finding ('NOT_IN_REGISTRY'); asserted_value='Vendor E Consulting is not present in the vendor master registry (not a registered vendor)' is a different, unsupported claim"
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "assertion matches the properly-scoped NO_MATCH finding exactly"
   },
   {
     "case_id": "LNES59-SMOKE-008",
@@ -266,7 +266,7 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"PAID, $9,410.00\", \"claimed_scope\": \"payment status and amount for invoice INV-4471\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
-    "gate_outcome": "STATE_CONTRADICTION",
-    "gate_reason": "asserted_value='PAID, $9,410.00' contradicts committed_state.value='PAID_9410_ACH'"
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   }
 ]

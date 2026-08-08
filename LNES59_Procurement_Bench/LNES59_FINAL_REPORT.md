@@ -175,23 +175,26 @@ deployment was held earlier in this session until you explicitly said
 "go." That has since changed: the full 27-case dev set was run through
 X2 against real, isolated Claude subagents (via the Agent tool, not the
 Anthropic API — see `X2_REAL_RUN_2026-08-08.md`), and it did more than
-produce empirical results — it found two real bugs in
+produce empirical results — it found and fixed two real bugs in
 `state_consistency_gate_v2.py` that 47 hand-authored fixtures across
 three test files never surfaced, because those fixtures were all written
 by the same person who wrote the extraction code and always typed
-matching representations by construction. One bug (the gate punishing
-honest hedging under incomplete evidence) is fixed and regression-tested.
-The other (the gate comparing a model's natural-language answer against
-an internal coded token) is the single largest cause of non-`CONSISTENT`
-outcomes in the run — 6 of 27 cases, every one the model being
-substantively correct — and is deliberately left unpatched pending real
-design work, not hacked around. This is one arm of seven, no comparator
-baseline — it does not answer the sprint's empirical question, but it
-is real progress toward answering it, and it changed the architecture
-along the way.
+matching representations by construction. One bug was the gate punishing
+honest hedging under incomplete evidence. The other — the gate comparing
+a model's natural-language answer against an internal coded token — was
+the single largest cause of non-`CONSISTENT` outcomes in the run, 6 of 27
+cases, every one the model being substantively correct; fixed with a
+small, explicit, still-fully-deterministic value-matching function
+(`values_match()`), not a hasty fuzzy-match hack — verified against 8
+negative controls that it doesn't loosen genuine contradictions. After
+both fixes: 18/27 CONSISTENT (up from a raw 12/27), full regression suite
+green (28/28, 19/19, 27/27, 50/50, 17/17). This is one arm of seven, no
+comparator baseline — it does not answer the sprint's empirical question,
+but it is real progress toward answering it, and it changed the
+architecture along the way, which is a different and arguably more
+valuable outcome than a clean pass would have been.
 
 **WHAT WOULD CHANGE THE CONCLUSION:** Building the other xLMP arms (X0,
 X1) and the B0–B3 baselines against a real model, at a scale that
-supports the `metrics.py` computations, ideally after resolving bug #16
-(the value-comparison gap) so results aren't dominated by a known
-artifact. That's still the next decision point, not a default next step.
+supports the `metrics.py` computations. That's still the next decision
+point, not a default next step.

@@ -18,8 +18,84 @@ values before this gate ever sees it -- this gate does not itself decide
 whether text "sounds like" an assertion vs a recommendation.
 """
 
+import re
 from dataclasses import dataclass
 from enum import Enum
+
+
+def _extract_amounts(text):
+    """All bare dollar amounts found in free text, normalized (no $, no
+    commas, no cents), as a set -- e.g. "$9,410.00" and "9410" both -> {"9410"}."""
+    return {a.replace(",", "") for a in re.findall(r"\$?\s*([\d,]+)(?:\.\d{1,2})?", text)}
+
+
+def values_match(asserted_value, committed_value):
+    """Deterministic, typed value comparison -- NOT semantic/fuzzy text
+    similarity. Extends exact equality with a small, explicit, auditable
+    set of pattern extractors for the value shapes this benchmark's
+    corpus actually uses (see documents*.json's `value` field:
+    'NET_<n>', '<n>_DAY_<n>PCT', 'PAID_<n>[_METHOD]'/'PENDING_<n>', bare
+    dollar amounts, and compound status tokens).
+
+    Exists because committed_value's format is a fixed internal token
+    controlled entirely by extraction, while a real model naturally
+    answers in prose ("Net 60" vs 'NET_60') -- found via LNES-59's first
+    real-model run (X2_REAL_RUN_2026-08-08.md, taxonomy #16), where
+    exact-equality flagged 6 of 27 real, substantively-correct answers as
+    contradictions. Every branch below requires the SAME structured
+    quantity (a specific dollar figure, a specific day-count-plus-percent
+    pair, a specific NET term) to appear in the model's text -- this
+    narrows false positives, it does not loosen the check into something
+    that could hide a genuine contradiction over a shared structured
+    value (a wrong number still fails to match; wrong status words still
+    fail to match).
+
+    Known, disclosed limitation: covers the value shapes actually present
+    in this benchmark's dataset today. A new value shape added to the
+    corpus later needs a new branch here, the same discipline as adding a
+    new predicate to deterministic_extraction.py -- this is not a general
+    solution to comparing arbitrary free text against arbitrary tokens.
+    """
+    if asserted_value == committed_value:
+        return True
+    if asserted_value is None or committed_value is None:
+        return False
+
+    m = re.match(r"^NET_(\d+)$", committed_value)
+    if m:
+        found = re.findall(r"net[\s_-]*(\d+)", asserted_value, re.IGNORECASE)
+        return m.group(1) in found
+
+    m = re.match(r"^(\d+)_DAY_(\d+(?:\.\d+)?)PCT$", committed_value)
+    if m:
+        day = re.search(r"(\d+)\s*(?:business\s+)?days?\b", asserted_value, re.IGNORECASE)
+        pct = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|\bpct\b|\bpercent\b)", asserted_value, re.IGNORECASE)
+        return bool(day and pct and day.group(1) == m.group(1) and pct.group(1) == m.group(2))
+
+    m = re.match(r"^(PAID|PENDING)_(\d+)(?:_[A-Z]+)?$", committed_value)
+    if m:
+        status_word, amount = m.group(1).lower(), m.group(2)
+        lowered = asserted_value.lower()
+        has_status = (
+            status_word in lowered
+            and f"not {status_word}" not in lowered
+            and f"un{status_word}" not in lowered
+        )
+        return has_status and amount in _extract_amounts(asserted_value)
+
+    if re.match(r"^\d+$", committed_value):
+        return committed_value in _extract_amounts(asserted_value)
+
+    # Compound/keyword token fallback: every underscore-separated word of
+    # length >= 3 (dropping short connectives like "IN"/"A") must appear
+    # as a standalone word in asserted_value, case-insensitive. Requiring
+    # ALL words -- not just one -- is what keeps this from matching a
+    # wrong or unrelated claim that merely shares a common word.
+    words = [w.lower() for w in committed_value.split("_") if len(w) >= 3 and not w.isdigit()]
+    if not words:
+        return False
+    asserted_words = set(re.findall(r"[a-z0-9]+", asserted_value.lower()))
+    return all(w in asserted_words for w in words)
 
 
 class ResolutionState(str, Enum):
@@ -245,7 +321,7 @@ def evaluate(committed: CommittedState, output: ModelOutput) -> GateDecision:
         # model must assert exactly the committed (negative) value, not
         # invent an unrelated positive claim.
         if committed.resolution == ResolutionState.NO_MATCH:
-            if output.asserted_value != committed.value:
+            if not values_match(output.asserted_value, committed.value):
                 return GateDecision(
                     GateOutcome.UNSUPPORTED_STATE_ASSERTION,
                     f"resolution=NO_MATCH only grounds the scoped negative finding ({committed.value!r}); asserted_value={output.asserted_value!r} is a different, unsupported claim",
@@ -279,7 +355,7 @@ def evaluate(committed: CommittedState, output: ModelOutput) -> GateDecision:
                 f"asserted value corresponds to a state with temporal_status={committed.temporal_status.value}, not CURRENT",
             )
         # Value comparison: does the assertion match the committed value?
-        if output.asserted_value != committed.value:
+        if not values_match(output.asserted_value, committed.value):
             return GateDecision(
                 GateOutcome.STATE_CONTRADICTION,
                 f"asserted_value={output.asserted_value!r} contradicts committed_state.value={committed.value!r}",
