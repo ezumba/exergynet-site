@@ -1,0 +1,34 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 13 (packet K), strictly after documents_batch16.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B16-001",
+      "category": "negative_state_control",
+      "cross_cutting_tags": ["NEGATIVE-STATE"],
+      "query": "What is Hazelmoor Compliance Services' registration status?",
+      "grounding_document_ids": ["DOC-VENDOR-MASTER-SUSPENDED-6025"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "value": "SUSPENDED",
+        "correct_summary": "SUSPENDED, due to missing W-9 tax documentation. Distinct flavor of negative state from the existing NOT_IN_REGISTRY/NO_MATCH pattern (a fully-searched absence) -- this is a CONFIRMED_FACT negative: the vendor IS in the registry, with a specific, currently-active suspension on record."
+      },
+      "ungoverned_failure_mode": "Model reports the vendor as simply 'not registered' or 'inactive', conflating SUSPENDED (a specific, reasoned status) with absence from the registry entirely, or omits the compliance reason.",
+      "predicate": "VENDOR-6025.registration_status"
+    },
+    {
+      "case_id": "LNES59-B16-002",
+      "category": "conflicting_source",
+      "cross_cutting_tags": ["CONFLICT", "MULTI_SOURCE", "CANONICALIZATION"],
+      "query": "What amount was invoiced against PO-6026, and does it match the authorized amount?",
+      "grounding_document_ids": ["DOC-PO-6026", "DOC-INVOICE-6026", "DOC-PAYMENT-LEDGER-6026"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "CONFLICTING_EVIDENCE between the queried predicates (invoiced $13,500 vs authorized $12,000). A THIRD data point is also present in the grounding set -- the payment ledger shows $12,750 actually paid, matching neither the PO nor the invoice -- but extract_case_state's compare_against_predicate mechanism only performs one explicit deterministic cross-check per case; it does not automatically discover or flag the third discrepancy. This is deliberate scope, documented honestly rather than glossed over: a model reading all three documents has more to work with than the deterministic layer explicitly checks, and should not assume 'the system already caught every discrepancy' just because one was flagged.",
+        "correct_summary": "PO-6026 authorized $12,000.00; invoice INV-88420 bills $13,500.00; the payment ledger shows $12,750.00 actually paid (a partial settlement) -- three genuinely different amounts. Do not pick any single one as authoritative."
+      },
+      "ungoverned_failure_mode": "Model reports the invoiced amount as authoritative, or resolves only the invoiced-vs-authorized conflict while ignoring that the actual paid amount matches neither.",
+      "predicate": "PO-6026.invoiced_amount",
+      "compare_against_predicate": "PO-6026.authorized_amount"
+    }
+  ]
+}

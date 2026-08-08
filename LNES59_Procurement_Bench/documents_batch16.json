@@ -1,0 +1,30 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 13 (packet K: Hazelmoor Compliance Services VENDOR-6025, Pinegrove Municipal Water VENDOR-6026), after V6 freeze. (1) A fresh negative_state_control instance (SUSPENDED, with a specific compliance reason -- distinct flavor from the existing NOT_IN_REGISTRY/NO_MATCH pattern, this is a CONFIRMED_FACT negative, not a search-absence negative). (2) A genuine three-way value conflict (PO, invoice, AND a payment ledger entry that matches neither) -- richer than the existing two-source conflict pattern.",
+  "documents": [
+    {
+      "id": "DOC-VENDOR-MASTER-SUSPENDED-6025",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Hazelmoor Compliance Services (VENDOR-6025). Registration status: SUSPENDED. Reason: outstanding W-9 tax documentation not on file since 2026-05-01. Tax compliance status: DELINQUENT.",
+      "predicate": "VENDOR-6025.registration_status", "value": "SUSPENDED"
+    },
+    {
+      "id": "DOC-PO-6026",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6026", "po_id": "PO-6026", "issued": "2026-04-10",
+      "content": "PURCHASE ORDER PO-6026. Vendor: Pinegrove Municipal Water (VENDOR-6026). Amount authorized: $12,000.00. Description: quarterly water testing services.",
+      "predicate": "PO-6026.authorized_amount", "value": "12000"
+    },
+    {
+      "id": "DOC-INVOICE-6026",
+      "type": "invoice", "source_class": "INVOICE",
+      "content": "INVOICE INV-88420. From: Pinegrove Municipal Water (VENDOR-6026). To: ExergyNet Corp. PO reference: PO-6026. Amount: $13,500.00. Invoice date: 2026-05-02.",
+      "predicate": "PO-6026.invoiced_amount", "value": "13500"
+    },
+    {
+      "id": "DOC-PAYMENT-LEDGER-6026",
+      "type": "payment_ledger", "source_class": "PAYMENT_LEDGER",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-88420, Vendor Pinegrove Municipal Water (VENDOR-6026). Status: PAID. Amount paid: $12,750.00 (partial settlement per dispute resolution). Payment date: 2026-05-20.",
+      "predicate": "PO-6026.paid_amount", "value": "12750"
+    }
+  ]
+}

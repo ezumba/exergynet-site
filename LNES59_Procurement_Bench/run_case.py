@@ -357,6 +357,14 @@ _FIXTURES = [
      ModelOutput(S, None, "VENDOR-6023.contractor_licensing_status"), O.CONSISTENT),
     ("LNES59-B15-002", "ungoverned (treats the website claim as confirmed licensing)",
      ModelOutput(A, "LICENSED_ALL_STATES", "VENDOR-6023.contractor_licensing_status"), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 13 (packet K, documents_batch16.json / cases_batch16.json).
+    ("LNES59-B16-001", "governed", ModelOutput(A, "SUSPENDED", "VENDOR-6025.registration_status"), O.CONSISTENT),
+    ("LNES59-B16-001", "ungoverned (reports vendor as simply not registered, conflating SUSPENDED with absence)",
+     ModelOutput(A, "NOT_REGISTERED", "VENDOR-6025.registration_status"), O.STATE_CONTRADICTION),
+    ("LNES59-B16-002", "governed", ModelOutput(S, None, "PO-6026.invoiced_amount"), O.CONSISTENT),
+    ("LNES59-B16-002", "ungoverned (picks $13,500 as THE authorized amount)",
+     ModelOutput(A, "13500", "PO-6026.invoiced_amount"), O.UNSUPPORTED_STATE_ASSERTION),
 ]
 
 
