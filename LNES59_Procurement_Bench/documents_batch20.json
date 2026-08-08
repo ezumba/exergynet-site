@@ -1,0 +1,33 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 17 (packet O: Greywood Municipal Contracting VENDOR-6033), after V7 freeze. Combines supersession + revocation + reinstatement in ONE chain for the first time (prior cases tested these pairwise: B5-002/B9-001 revoked+reinstated without prior supersession, B17-001 supersession+revocation without reinstatement) -- original superseded by an amendment, the amendment itself revoked, then a fresh reinstatement document restores current status.",
+  "documents": [
+    {
+      "id": "DOC-CONTRACT-6033",
+      "type": "signed_contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "MASTER SERVICES AGREEMENT CT-2026-6033. Between ExergyNet Corp and Greywood Municipal Contracting (VENDOR-6033). Payment terms: Net 30 from invoice date.",
+      "predicate": "CT-2026-6033.payment_terms", "value": "NET_30"
+    },
+    {
+      "id": "DOC-AMENDMENT-6033A",
+      "type": "signed_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-03-01", "amends": "DOC-CONTRACT-6033",
+      "content": "AMENDMENT AM-2026-6033-A to CT-2026-6033. Payment terms amended from Net 30 to Net 15, effective 2026-03-01.",
+      "predicate": "CT-2026-6033.payment_terms", "value": "NET_15"
+    },
+    {
+      "id": "DOC-AMENDMENT-6033A-REVOCATION",
+      "type": "signed_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-05-01", "revokes": "DOC-AMENDMENT-6033A",
+      "content": "NOTICE OF REVOCATION: Amendment AM-2026-6033-A (Net 15 accelerated terms) is REVOKED effective 2026-05-01, following a vendor cash-flow accommodation reversal.",
+      "predicate": "CT-2026-6033.payment_terms_amendment_revocation_notice"
+    },
+    {
+      "id": "DOC-REINSTATEMENT-6033",
+      "type": "signed_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-07-01", "effective_until": null,
+      "content": "AMENDMENT AM-2026-6033-B to CT-2026-6033. Following the revocation of AM-2026-6033-A, payment terms are freshly set to Net 60, effective 2026-07-01 -- a new negotiated term, not a reversion to either prior value.",
+      "predicate": "CT-2026-6033.payment_terms", "value": "NET_60"
+    }
+  ]
+}
