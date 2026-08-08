@@ -1,0 +1,52 @@
+{
+  "_purpose": "LNES-59.2B experiment freeze. This is the FINAL experimental boundary per comparator spec section 18 -- once committed, no arm config, prompt, retry policy, metric implementation, or model identity may change before or during holdout execution. Only THEN may execution begin.",
+  "frozen_2026-08-08": true,
+  "architecture": {
+    "version": "V7", "git_commit": "651ce500dbc2dfbadafe8e126175325cee86543e",
+    "gate_sha256": "6155f0b83ca3920ca330fe92d4e8f414f496979c2f5938f09cb5b640dc1c5054",
+    "extraction_sha256": "e57358ecd2f7a8d23cdad4421001dcb78f3b3d3db2f3ac7b0146ba96c973bceb"
+  },
+  "holdout": {
+    "runner_holdout_sha256": "836d36bcc52eac213fb6c19011a51a4359b76476261cf6f6d9117ed764045f3c",
+    "evaluator_holdout_sha256": "89ea257d6c1fccf0c25ba6025d7e9cf841ac842609d14066a7d40fb1a43826f9",
+    "holdout_manifest_sha256": "56a6a8994e9d495568535cd1b3eed82c590ec908649e6db1d52ffdd02535a153",
+    "total_cases": 50, "total_documents": 78,
+    "authorship_disclosure": "SEALED POST-FREEZE SYNTHETIC HOLDOUT -- authored after V7 was frozen and never executed against the architecture during authoring, but by an agent aware of the frozen LNES-59 state semantics, with ground truth hand-traced against those semantics. This is NOT independently authored external validation. It does not invalidate the benchmark; it limits the strength of the generalization claim. This disclosure must be carried into LNES59_FINAL_VALIDATION_REPORT.md verbatim in substance."
+  },
+  "comparator_spec": {
+    "file": "LNES59_COMPARATOR_SPEC.md", "sha256": "709d84475ad632f40da27445bea58ee94e5ddc8cde09e18e430efadb3d0ecd28"
+  },
+  "arm_configs": {
+    "file": "LNES59_ARM_CONFIGS.json", "sha256": "429328219486ce39596f0fead4b43a96de9cd753a6093495793e16a31234d5f6"
+  },
+  "prompt_manifest": {
+    "file": "LNES59_PROMPT_MANIFEST.json", "sha256": "4b1025259f9d5cfa2b683084512c21927d518e35ad9a1bf772b8b20e488893b8"
+  },
+  "retry_policy": {
+    "file": "LNES59_RETRY_POLICY.json", "sha256": "d2a0eb8f26b5a3546df6c34c7c2a085773872163f17e01eff4ccf8f873d68d66"
+  },
+  "metrics": {
+    "spec_file": "LNES59_METRICS_SPEC.md", "spec_sha256": "b5d631974edb08b62fd76991ed7a8f11666ccbe4e56b6e01cb040ff4c66b7f0e",
+    "implementation_file": "comparator_metrics.py", "implementation_sha256": "cfb6fa655978943c879d345b433524d7a6b804006a885f2c8849daf7df6a11eb",
+    "test_file": "test_comparator_metrics.py", "test_sha256": "3206a520cd98946a80a55036e5563ef4e2da2dd0176dfe4b357f848e00e4ea39",
+    "test_result_at_freeze": "40/40 passed",
+    "_naming_note": "named comparator_metrics.py, distinct from the pre-existing metrics.py (an earlier-phase, still-valid module for the deterministic regression-suite fixtures, predating B0-X2 and explicitly NOT_APPLICABLE for anything requiring a real model call) -- that module was found already in the repo mid-session and left untouched rather than overwritten."
+  },
+  "infrastructure_code": {
+    "rag_chunking.py": "2607575f6d7a2687bf130f9fbaf47c74a507d86589113254f94e37bdd6d8b40c",
+    "rag_dense.py": "33c40485e170030beb3961921f9caf991bf3755a6ee759a3981f5920a5640ea8",
+    "rag_hybrid.py": "b0e78da6ac1a49447f03f8c71e809fb4f9736add3c6b69d619d7f48a8d8da958",
+    "rag_rerank.py": "5a2198fac3f7e458647e168852b6bfc5a4dfee106dcb2a4e3fe92cf177ce92c6",
+    "b4_structured_memory.py": "eda18c2b6bcd585bdfb4ec35be3f40505bf6d1f9c35dc5da3d428308d0596182",
+    "candidate_claim.py": "250fac8483ef7949a3e4f99e0e74490d1b163d6ef7b14faec05a665251b4a8f5",
+    "arm_prompts.py": "1b3da7e1e93226a83a00850540d3c77aaf72cf2aaa713ddd5229e7086f2a9bb7",
+    "arm_runner.py": "2eeaa8fefd0778ab8a886899dc6cf0ea5539b42c4f2af69c4609369c490da95c"
+  },
+  "model_revisions": {
+    "embedding": {"model_id": "Qwen/Qwen3-Embedding-0.6B", "revision_sha": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3"},
+    "reranker": {"model_id": "Qwen/Qwen3-Reranker-0.6B", "revision_sha": "e61197ed45024b0ed8a2d74b80b4d909f1255473"},
+    "generation": {"mechanism": "Agent-tool Claude subagent, no new paid API/credential", "identity": "recorded per-invocation at execution time since the Agent tool resolves the session's active Claude model rather than a caller-pinned string"}
+  },
+  "calibration_disclosure": "Chunk size (500/75), top_k=8, RRF candidate depth=30/final=8, rerank pool=40 were selected against the directive's own recommended midpoints and verified functional on DEVELOPMENT documents only (LNES59-B22-001, a real dev case, produced valid non-empty prompts and plausible retrieval results for all 8 arms during this calibration pass). No holdout output was inspected at any point during calibration.",
+  "execution_status": "NOT YET EXECUTED as of this manifest's commit. 400 case-arm evaluations (50 holdout cases x 8 arms) remain to be run per LNES59_RETRY_POLICY.json, scored per comparator_metrics.py, and reported per LNES59_FINAL_VALIDATION_REPORT.md's structure. This is a substantial, long-running action (hundreds of individual generation calls) and is deliberately being surfaced to the Trustee as a distinct step before being kicked off."
+}

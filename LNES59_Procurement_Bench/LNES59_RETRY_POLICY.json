@@ -1,0 +1,25 @@
+{
+  "_purpose": "LNES-59.2B frozen retry policy (comparator spec section 16). Applies identically to all 8 arms. A semantically wrong answer is NEVER retryable -- retries exist only for infrastructure/model-execution failure.",
+  "max_retries": 2,
+  "max_attempts_total": 3,
+  "retryable_conditions": [
+    "transport_error",
+    "timeout",
+    "empty_completion",
+    "malformed_json",
+    "candidate_claim_parse_error",
+    "truncated_response"
+  ],
+  "non_retryable_conditions": [
+    "semantically_wrong_answer",
+    "valid_json_with_unexpected_but_well_formed_claim_type_choice"
+  ],
+  "timeout_seconds_per_call": 90,
+  "empty_completion_behavior": "retry with the identical prompt, up to max_retries",
+  "malformed_json_behavior": "retry with the identical prompt (no reformatting/coaching added), up to max_retries",
+  "truncation_behavior": "retry once with an increased max_tokens ceiling; if still truncated after retries exhausted, record as error_state=truncated_after_retries and exclude from accuracy metrics (report separately as an infrastructure failure, not a wrong answer)",
+  "same_prompt_requirement": true,
+  "retries_count_toward_latency_metrics": false,
+  "_retries_count_toward_latency_metrics_note": "Per-case latency metrics report the FINAL successful attempt's own latency, not the cumulative retry latency -- retry overhead is tracked separately as retry_count and retry_latency_seconds so it doesn't distort the arm's core latency comparison, but is still fully preserved in the raw output record.",
+  "after_retries_exhausted": "record error_state (empty_completion_after_retries | malformed_json_after_retries | truncated_after_retries | timeout_after_retries), no further attempts, case-arm evaluation marked as an infrastructure failure not a correctness failure"
+}

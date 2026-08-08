@@ -1,0 +1,96 @@
+{
+  "_purpose": "LNES-59.2B frozen, machine-readable configuration for all 8 comparator arms. Hashed into LNES59_EXPERIMENT_MANIFEST.json. Nothing here may change once the experiment manifest is committed.",
+  "generation_model": {
+    "mechanism": "Agent-tool Claude subagent (same mechanism already validated for X2 earlier in this project) -- avoids provisioning any new paid API/credential, per explicit user confirmation this session.",
+    "model_identity": "session-resolved Claude model (see LNES59_EXPERIMENT_MANIFEST.json for the exact model string recorded at freeze time)",
+    "temperature": "deterministic/near-deterministic where the underlying interface supports it; Agent-tool subagents do not expose a temperature parameter directly, so determinism is approximated via a fixed, literal system/task prompt per case-arm with no free-form instruction variation between retries (same-prompt requirement, LNES59_RETRY_POLICY.json)",
+    "shared_across_all_arms": true,
+    "_note": "Every arm differs ONLY in evidence/context construction (see per-arm sections below); none receives a different or stronger generation model."
+  },
+  "chunking": {
+    "tokenizer": "Qwen/Qwen3-Embedding-0.6B tokenizer",
+    "target_chunk_tokens": 500,
+    "chunk_overlap_tokens": 75,
+    "calibrated_on": "DEVELOPMENT corpus only (164 documents, all resolved to single-chunk documents at this size -- LNES-59 procurement documents are short; the windowing logic exists for the rare longer document, verified functional but not exercised by the actual corpus)",
+    "frozen": true
+  },
+  "embedding_model": {
+    "model_id": "Qwen/Qwen3-Embedding-0.6B",
+    "revision_sha": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+    "embedding_dim": 1024,
+    "normalize_embeddings": true,
+    "similarity": "cosine (via inner product on L2-normalized vectors)"
+  },
+  "reranker_model": {
+    "model_id": "Qwen/Qwen3-Reranker-0.6B",
+    "revision_sha": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+    "interface": "sentence_transformers.CrossEncoder"
+  },
+  "arms": {
+    "B0": {
+      "name": "FULL_CONTEXT",
+      "evidence_source": "entire runner-visible holdout document corpus (78 documents) -- ignores grounding_document_ids entirely",
+      "ranking": "none",
+      "truncation_rule": "keep documents in corpus iteration order, drop from the end if a max_docs cap is ever hit; never selects survivors based on ground truth",
+      "max_docs": null,
+      "_note": "max_docs is null because the full 78-document holdout corpus comfortably fits in context at this scale -- no truncation is expected to occur."
+    },
+    "B1": {
+      "name": "DENSE_RAG",
+      "evidence_source": "top-k dense retrieval over the full corpus chunk index",
+      "index": "FAISS IndexFlatIP over Qwen3-Embedding-0.6B embeddings, built once over all chunks from the full corpus",
+      "top_k": 8
+    },
+    "B2": {
+      "name": "HYBRID_RAG",
+      "evidence_source": "dense + BM25 candidates fused via Reciprocal Rank Fusion",
+      "dense_candidate_depth": 30,
+      "bm25_candidate_depth": 30,
+      "fusion": "Reciprocal Rank Fusion, RRF_k=60 (standard constant)",
+      "final_top_k": 8,
+      "_note": "same chunk set as B1 -- no larger/cleaner documents just because it is hybrid"
+    },
+    "B3": {
+      "name": "HYBRID_PLUS_RERANKER",
+      "evidence_source": "B2's hybrid candidate generator, widened, then reranked",
+      "hybrid_candidate_pool_depth": 40,
+      "reranker": "Qwen/Qwen3-Reranker-0.6B",
+      "final_top_k": 8,
+      "_note": "the full 40-candidate pool is reranked, not just an already-narrowed top-5"
+    },
+    "B4": {
+      "name": "B4_STRUCTURED_FACT_MEMORY",
+      "evidence_source": "structured fact tuples (subject/predicate/value/source/time) extracted from every document in the full corpus, persistent fact store, retrieved by free-text match against the query at call time",
+      "gate_applied": false,
+      "_note": "deliberately does NOT receive the V7 deterministic gate -- its central test is whether structure alone (without governance) solves the state problem. Not 'Mem0' -- no Mem0 package is installed or used."
+    },
+    "X0": {
+      "name": "XLMP_BOUNDED_EVIDENCE",
+      "evidence_source": "case's own grounding_document_ids (xLMP's structural, non-semantic evidence bound) -- raw document text, no state envelope, no governance",
+      "gate_applied": false,
+      "state_envelope_applied": false
+    },
+    "X1": {
+      "name": "XLMP_STATE_ENVELOPE_UNGOVERNED",
+      "evidence_source": "frozen V7 extract_case_state() output (the CommittedState envelope) for the case's grounding_document_ids/predicate",
+      "gate_applied": false,
+      "state_envelope_applied": true,
+      "_note": "control arm -- identical evidence/prompt/model/settings to X2, generated candidate accepted WITHOUT the deterministic gate"
+    },
+    "X2": {
+      "name": "XLMP_STATE_ENVELOPE_GOVERNED",
+      "evidence_source": "IDENTICAL to X1 through generation",
+      "gate_applied": true,
+      "gate_module": "state_consistency_gate_v2.py (V7, frozen, unchanged)",
+      "state_envelope_applied": true,
+      "_note": "the ONLY difference from X1 is the post-generation gate step. X1->X2 delta is the primary experiment (section 21)."
+    }
+  },
+  "candidate_claim_format": {
+    "spec_file": "candidate_claim.py",
+    "shared_across_all_arms": true,
+    "fields": ["subject", "predicate", "canonical_value", "displayed_value", "claim_type", "scope", "effective_time", "confidence_or_uncertainty", "requested_authority_level", "requested_amount", "raw_prose"],
+    "claim_types": ["FACT", "HYPOTHESIS", "RECOMMENDATION", "ACTION_REQUEST", "SUMMARY_OF_UNCERTAINTY"],
+    "x1_x2_mapping": "candidate_claim.to_model_output() -- deterministic, pure code, does not modify state_consistency_gate_v2.py's frozen ModelOutput/evaluate() interface"
+  }
+}
