@@ -39,7 +39,7 @@ _VALID_OUTPUT_TYPES = {t.value for t in ModelOutputType}
 
 def load_all_cases():
     cases = []
-    for fname in ("cases.json", "cases_batch2.json", "cases_batch3.json"):
+    for fname in ("cases.json", "cases_batch2.json", "cases_batch3.json", "cases_batch4.json"):
         with open(os.path.join(SCRIPT_DIR, fname), encoding="utf-8") as f:
             cases.extend(json.load(f)["cases"])
     return {c["case_id"]: c for c in cases}

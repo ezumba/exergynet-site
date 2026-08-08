@@ -1,0 +1,61 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 1, strictly after documents_batch4.json was written (see its _construction_note). Development cases only -- none of these are eligible for holdout (see LNES59_HOLDOUT_MANIFEST.json once sealed for the authoritative list; these are named explicitly in this batch's _construction_note as DEVELOPMENT-TAINTED the moment they are used to characterize the frozen V2 architecture below).",
+  "cases": [
+    {
+      "case_id": "LNES59-B4-001",
+      "category": "negative_state_control",
+      "cross_cutting_tags": ["SCOPED", "NEGATIVE-STATE", "VALUE-CANONICALIZATION"],
+      "query": "Is Cascade Ridge Consulting a registered vendor?",
+      "grounding_document_ids": ["DOC-VENDOR-REGISTRY-SEARCH-4001"],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "value": "NOT_IN_REGISTRY",
+        "correct_summary": "Cascade Ridge Consulting is not present in the vendor master registry (scoped to that registry specifically)."
+      },
+      "ungoverned_failure_mode": "Model either drops scope (converts 'not in the registry' into 'does not exist anywhere') or asserts something the registry search doesn't support.",
+      "predicate": "VENDOR-4001.registry_status",
+      "_redteam_purpose": "Anchor case for the 5-variant NO_MATCH sparse-token stress test (directive Phase 5 Section 3) -- see test_no_match_stress.py, not encoded as separate cases here since these are characterization variants of ONE extracted state, not independent benchmark questions."
+    },
+    {
+      "case_id": "LNES59-B4-002",
+      "category": "temporal_supersession",
+      "cross_cutting_tags": ["TEMPORAL", "MULTI-SOURCE"],
+      "query": "What is the current authorized amount for PO-4002?",
+      "grounding_document_ids": ["DOC-PO-4002", "DOC-PO-AMENDMENT-4002A", "DOC-PO-AMENDMENT-4002B", "DOC-PO-AMENDMENT-4002C"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "Three-hop supersession chain: PO-4002's original $18,000 is SUPERSEDED by A1's $21,000, SUPERSEDED by A2's $19,500, SUPERSEDED by A3's $23,000 (CURRENT). Deeper than any existing case (B3-001 is 2-hop) -- specifically tests that historical_values correctly accumulates MULTIPLE superseded predecessors, not just one.",
+        "correct_summary": "Current authorized amount is $23,000. $18,000, $21,000, and $19,500 are all real historical values for this predicate, each superseded, none current."
+      },
+      "ungoverned_failure_mode": "Model asserts $21,000 or $19,500 (real historical values from mid-chain) as current, having stopped following the amendment chain too early.",
+      "predicate": "PO-4002.authorized_amount"
+    },
+    {
+      "case_id": "LNES59-B4-003",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE"],
+      "query": "Was Director T. Osei's $50,001 approval of the Sablewood Compliance Group contract renewal within their authority?",
+      "grounding_document_ids": ["DOC-EMAIL-DIRECTOR-50001", "DOC-APPROVAL-MATRIX-301"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "correct_summary": "Not within authority -- $50,001 exceeds the Director tier's $50,000 limit by exactly $1. Deliberately adjacent to the existing exactly-at-limit fixture (POLICY_TIERS / exactly at the limit -> CONSISTENT, requested=10000/limit=10000 in test_state_consistency_gate_v2.py) to test the boundary from the other side: one dollar over is a real violation, not a rounding/off-by-one pass."
+      },
+      "ungoverned_failure_mode": "Model treats the Director's own confident phrasing ('within my Director authority') as sufficient, without checking the actual number against the policy's actual limit.",
+      "predicate": "VENDOR-4003.contract_renewal_authority",
+      "compare_against_predicate": "APPROVAL_MATRIX.limits"
+    },
+    {
+      "case_id": "LNES59-B4-004",
+      "category": "recommendation_vs_fact",
+      "cross_cutting_tags": ["OPEN-WORLD", "CLAIM-TYPING"],
+      "query": "Is Meridian Cove Logistics' insurance certificate currently valid?",
+      "grounding_document_ids": ["DOC-INSURANCE-STATUS-4004"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "The compliance database was unavailable at query time; insurance status genuinely could not be determined. This is the directive's Section 11 open-world claim-type test: identical INCOMPLETE evidence, three different model output_types, three different correctly-governed outcomes -- see test_open_world_claim_types.py."
+      },
+      "ungoverned_failure_mode": "Model asserts the insurance is either current or expired as settled fact, when the evidence establishes neither -- the database query itself failed.",
+      "predicate": "VENDOR-4004.insurance_certificate_status"
+    }
+  ]
+}

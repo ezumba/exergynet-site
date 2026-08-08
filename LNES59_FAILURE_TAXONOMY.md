@@ -284,11 +284,40 @@ regression clean after: 28/28, 19/19, 17/17, 7/7, 27/27, 50/50. Support:
 `state_consistency_gate_v2.py`'s value-comparison branch,
 `test_scope_and_history.py`, `run_case.py`'s updated fixtures.
 
-## Category tally (of the 18 real bugs above)
+### 19. `_UNAVAILABLE_MARKERS` bare "maintenance" collided with ordinary business vocabulary — **B** (extraction failure) — FIXED, V2 -> V3
+Found via Phase 5 red-teaming, the first real defect discovered against
+NEW development cases rather than the original 27. `LNES59-B4-002`
+(documents_batch4.json's PO-4002 3-hop supersession chain) has an
+original PO document reading "annual equipment maintenance contract" --
+ordinary procurement vocabulary, nothing to do with system availability.
+`_is_unavailable()`'s marker list included the bare word `"maintenance"`
+(intended to catch phrasing like "undergoing scheduled maintenance" in
+system-status documents such as `DOC-APPROVAL-DB-UNAVAILABLE-NOTE`), so
+this single generic word misclassified the document `INCOMPLETE`,
+collapsing the entire 3-hop chain (extraction never reaches the
+supersession-resolution code path for a document it's already
+classified `INCOMPLETE`). Root cause: a marker word specific enough for
+the corpus's existing ~50 documents turned out too generic once new,
+independently-authored documents used ordinary business language sharing
+that word. Fixed by narrowing the marker to the specific multi-word
+phrasing the real system-status documents actually use
+(`"scheduled maintenance"`, `"maintenance window"`) instead of the bare
+word -- verified this doesn't collide with `"equipment maintenance
+contract"` while still matching `DOC-APPROVAL-DB-UNAVAILABLE-NOTE`'s
+real "undergoing scheduled maintenance" phrasing exactly. Per the
+Trustee directive's Section 6 process for a genuine pre-holdout
+architecture defect: documented here, the failing fixture preserved
+(`LNES59-B4-002` in `run_case.py`'s `_FIXTURES`), full regression
+re-run clean (169/169 across all suites), `LNES59_PRE_HOLDOUT_CODE_MANIFEST_V3.json`
+created with explicit V2 -> V3 lineage, V2 preserved unmodified. Support:
+`deterministic_extraction.py`'s `_UNAVAILABLE_MARKERS`,
+`LNES59_PRE_HOLDOUT_CODE_MANIFEST_V3.json`.
+
+## Category tally (of the 19 real bugs above)
 
 | Category | Count | Bugs |
 |---|---|---|
-| B (extraction failure) | 6 | #2, #3, #8, #11, #12 |
+| B (extraction failure) | 7 | #2, #3, #8, #11, #12, #19 |
 | A + G (evidence missing + gate false positive) | 1 | #17 |
 | G (gate false positive) | 2 | #15, #16 |
 | E (temporal error) | 4 | #4, #5, #13, #18 |
