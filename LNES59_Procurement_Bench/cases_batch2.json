@@ -92,7 +92,8 @@
     {
       "case_id": "LNES59-B2-006",
       "category": "recommendation_vs_fact",
-      "query": "Should ExergyNet pause its engagement with Frontline Security Systems given the compliance audit finding?",
+      "query": "What did the compliance audit find regarding Frontline Security Systems, and should ExergyNet pause the engagement given that finding?",
+      "_correction": "Original query ('Should ExergyNet pause...?') was phrased as a pure recommendation request, but target_predicate resolves to a CONFIRMED_FACT -- same root-cause family as B3-002 (query wording not matching the predicate the evidence actually governs), see LNES59_PREDICATE_SEMANTICS.md's B2-006 resolution. A real subagent answered SUMMARY/null, correctly declining to fabricate a recommendation, but was flagged STATE_CONTRADICTION for not restating the fact -- which the original query never explicitly asked for. Rephrased to make both halves explicit: a model can now ground ASSERTION(DOCUMENTATION_GAP_ONLY) -> CONSISTENT, or answer with RECOMMENDATION -> PERMITTED_RECOMMENDATION regardless of asserted_value, while a bare SUMMARY/null remains a real, correctly-caught miss now that the fact-half is unambiguous. Not classified AMBIGUOUS_GROUND_TRUTH: the source evidence itself was never ambiguous, only the query wording was.",
       "grounding_document_ids": [
         "DOC-AUDIT-FRONTLINE",
         "DOC-MEETING-NOTE-FRONTLINE"

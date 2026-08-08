@@ -17,7 +17,8 @@
     {
       "case_id": "LNES59-B3-002",
       "category": "conflicting_source",
-      "query": "What amount was invoiced against purchase order PO-4001?",
+      "query": "What amount was invoiced against purchase order PO-4001, and does it match the currently authorized amount?",
+      "_correction": "Original query ('What amount was invoiced against purchase order PO-4001?') asked only about PO-4001.invoiced_amount, a single PREDICATE_SUBTYPE distinct from the case's target_predicate (PO-4001.authorized_amount) -- a query/predicate mismatch, not genuine ambiguity, per LNES59_PREDICATE_SEMANTICS.md's B3-002 resolution. A real subagent answered '$26,500.00' to the literal single-predicate question, which is factually correct for that narrower question, but was flagged UNSUPPORTED_STATE_ASSERTION because the case's target_predicate/compare_against_predicate pairing is for the two-part comparison question, which the original wording never actually asked. Rephrased to match sibling case B2-004's explicit two-part pattern; target_predicate and compare_against_predicate are unchanged, they were already correct for the intended (now-matching) question.",
       "grounding_document_ids": ["DOC-PO-4001", "DOC-INVOICE-4001"],
       "expected_state": {
         "resolution": "MATCH",
