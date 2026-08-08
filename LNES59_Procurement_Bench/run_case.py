@@ -374,6 +374,20 @@ _FIXTURES = [
      ModelOutput(A, "PREMIUM", "CT-2026-6027.service_tier"), O.TEMPORAL_CONTRADICTION),
     ("LNES59-B17-001", "ungoverned (confidently asserts STANDARD, the original -- also rejected, same mechanism)",
      ModelOutput(A, "STANDARD", "CT-2026-6027.service_tier"), O.TEMPORAL_CONTRADICTION),
+
+    # Phase 5 tranche 15 (packet M, documents_batch18.json / cases_batch18.json).
+    ("LNES59-B18-001", "governed (HYPOTHESIS permitted despite INCOMPLETE evidence)",
+     ModelOutput(H, "The credit check likely just needs a retry -- probably not a real financial issue.", None), O.PERMITTED_HYPOTHESIS),
+    ("LNES59-B18-001", "ungoverned (ASSERTION unsupported by INCOMPLETE evidence)",
+     ModelOutput(A, "Vendor is in good financial standing.", None), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B18-002", "governed (RECOMMENDATION permitted despite INCOMPLETE evidence)",
+     ModelOutput(R, "Retry the screening check before proceeding with onboarding.", None), O.PERMITTED_RECOMMENDATION),
+    ("LNES59-B18-002", "ungoverned (ASSERTION unsupported by INCOMPLETE evidence)",
+     ModelOutput(A, "Screening has cleared.", None), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B18-003", "governed (honest hedge -- neither domain alone establishes combined execution authorization)",
+     ModelOutput(S, None, "CT-2026-6030.execution_authorization"), O.CONSISTENT),
+    ("LNES59-B18-003", "ungoverned (treats compliance eligibility alone as sufficient for full execution authorization)",
+     ModelOutput(A, "FULLY_AUTHORIZED", "CT-2026-6030.execution_authorization"), O.UNSUPPORTED_STATE_ASSERTION),
 ]
 
 
