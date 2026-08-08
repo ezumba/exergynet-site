@@ -14,7 +14,8 @@
     {"file": "documents_batch10.json", "tranche": 10, "sha256": "0736553a085a1a9204acbabe23bf9ab0d34331c4ecd977080f81d7814c90b7e7", "size_bytes": 2354},
     {"file": "documents_batch11.json", "tranche": 11, "sha256": "6e3e2dd7ebcc5d9b37b8e3e0ee1db611a4201fefd272f05c169edc16d8f332aa", "size_bytes": 3166},
     {"file": "documents_batch12.json", "tranche": 12, "sha256": "cb04e05690eb7e4e9d14f7bc68fde4d5f3a95c95db2e314c6b3f419dc81c1066", "size_bytes": 2783},
-    {"file": "documents_batch13.json", "tranche": 13, "sha256": "d1222d8ec18de7a8910af01635f0b0894d7bdf1528c01b2ddf702b0f2ed48b3a", "size_bytes": 1930}
+    {"file": "documents_batch13.json", "tranche": 13, "sha256": "d1222d8ec18de7a8910af01635f0b0894d7bdf1528c01b2ddf702b0f2ed48b3a", "size_bytes": 1930},
+    {"file": "documents_batch14.json", "tranche": 14, "sha256": "6e30396e6d07f24a8f3df8d49ed865f6d8ee7b787edf542eb613e6c6f148d04a", "size_bytes": 3551}
   ],
   "case_sets": [
     {"file": "cases.json", "tranche": 1, "role": "development", "sha256": "7c6862fa9a52a7c4e80ecf670af6d989b61eb9f00bee169ddedc762063df01dd", "size_bytes": 11310},
@@ -29,7 +30,8 @@
     {"file": "cases_batch10.json", "tranche": 10, "role": "development", "sha256": "5bbbfafde0da9742f6a2ae4b4b92d53700a3242344bc28df5735782ee30b8e3c", "size_bytes": 3920, "_note": "Phase 5 tranche 7, packet E -- LNES59-B10-001..003: rumor-vs-authoritative-fact attack, hearsay+authority combo, informal-opinion-vs-review"},
     {"file": "cases_batch11.json", "tranche": 11, "role": "development", "sha256": "8484c50f715bd4c61e6d9a6693ac98cc62b7860fa5a1d010196e6538fd3674c3", "size_bytes": 3500, "_note": "Phase 5 tranche 8, packet F -- LNES59-B11-001..003: dramatic authority violation (new JUNIOR_BUYER tier), VP unlimited-but-wrong-business-unit, realistic semantic collision (shortlisted vs awarded)"},
     {"file": "cases_batch12.json", "tranche": 12, "role": "development", "sha256": "a1a854fd5eb8baec8fa8121bee679337b0670246bf4b036ca44d397049e6bb6b", "size_bytes": 3995, "_note": "Phase 5 tranche 9, packet G -- LNES59-B12-001..004: expired->replacement certificate, 2 ordinary factual controls (distribution balance), hypothesis-that-must-not-become-fact"},
-    {"file": "cases_batch13.json", "tranche": 13, "role": "development", "sha256": "4983adbeceac71cf6e08b8d225ad193c078c8d08da61bb5628cab8deca2b9d5d", "size_bytes": 2422, "_note": "Phase 5 tranche 10, packet H -- LNES59-B13-001..002: wrong-transaction authority (last untested authority dimension), fresh real-corpus unavailability instance"}
+    {"file": "cases_batch13.json", "tranche": 13, "role": "development", "sha256": "4983adbeceac71cf6e08b8d225ad193c078c8d08da61bb5628cab8deca2b9d5d", "size_bytes": 2422, "_note": "Phase 5 tranche 10, packet H -- LNES59-B13-001..002: wrong-transaction authority (last untested authority dimension), fresh real-corpus unavailability instance"},
+    {"file": "cases_batch14.json", "tranche": 14, "role": "development", "sha256": "6c5cd80a5c19f86504525365f13134afe51d152fa4a78a9180addce017fc6013", "size_bytes": 3021, "_note": "Phase 5 tranche 11, packet I -- LNES59-B14-001..002: conflicting/superseded policy tier tables, future-effective policy increase not yet in force"}
   ],
   "development": {
     "_note": "Every case_set listed above is role=development as of this manifest version. No holdout case_sets exist yet -- LNES59_HOLDOUT_MANIFEST.json will introduce them once the corpus is complete and architecture-stable. A case_set's role is never changed in place; a case promoted to holdout would need to move to a NEW file with role=holdout, leaving the development file's history intact."

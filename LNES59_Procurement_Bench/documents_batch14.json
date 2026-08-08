@@ -1,0 +1,49 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 11 (packet I: two policy-lifecycle scenarios, no single vendor -- these test the POLICY documents' own temporal behavior, not an approval's), after V6 freeze. (1) Conflicting policy versions with different effective dates -- an EXPIRED old tier table and a CURRENT new one for the same predicate, testing that policy_tiers resolution correctly picks the current version, not the stale one. (2) A future-effective policy INCREASE that hasn't taken effect yet -- the CURRENT (lower) limit still governs today, parallel to B5-001's future-effective payment-terms test but applied to authority tiers specifically.",
+  "documents": [
+    {
+      "id": "DOC-APPROVAL-MATRIX-V3-OLD",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2025-06-01", "effective_until": "2026-03-31",
+      "content": "PROCUREMENT APPROVAL MATRIX V3 (effective 2025-06-01, superseded 2026-03-31): Manager up to $5,000; Director up to $25,000; VP unlimited within board-approved budget.",
+      "predicate": "APPROVAL_MATRIX_V3.limits",
+      "tiers": {"MANAGER": 5000, "DIRECTOR": 25000, "VP": null}
+    },
+    {
+      "id": "DOC-APPROVAL-MATRIX-V3-NEW",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-04-01", "effective_until": null,
+      "content": "PROCUREMENT APPROVAL MATRIX V3 REVISION (effective 2026-04-01, replacing the 2025-06-01 version): Manager up to $10,000; Director up to $50,000; VP unlimited within board-approved budget.",
+      "predicate": "APPROVAL_MATRIX_V3.limits",
+      "tiers": {"MANAGER": 10000, "DIRECTOR": 50000, "VP": null}
+    },
+    {
+      "id": "DOC-EMAIL-DIRECTOR-30K-V3",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Q3 vendor consolidation contract. Approving $30,000 for the Q3 vendor consolidation contract -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "predicate": "CT-2026-Q3CONSOL.director_approval", "value": "30000"
+    },
+    {
+      "id": "DOC-APPROVAL-MATRIX-V4-FUTUREINCREASE",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-10-01", "effective_until": null,
+      "content": "PROCUREMENT APPROVAL MATRIX V4 (effective 2026-10-01, planned increase, board-approved but not yet in force): Manager up to $15,000; Director up to $100,000; VP unlimited within board-approved budget.",
+      "predicate": "APPROVAL_MATRIX_V4.limits",
+      "tiers": {"MANAGER": 15000, "DIRECTOR": 100000, "VP": null}
+    },
+    {
+      "id": "DOC-APPROVAL-MATRIX-V4-CURRENT",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "PROCUREMENT APPROVAL MATRIX V4 (effective 2026-01-01, current until the planned 2026-10-01 increase takes effect): Manager up to $10,000; Director up to $50,000; VP unlimited within board-approved budget.",
+      "predicate": "APPROVAL_MATRIX_V4.limits",
+      "tiers": {"MANAGER": 10000, "DIRECTOR": 50000, "VP": null}
+    },
+    {
+      "id": "DOC-EMAIL-DIRECTOR-75K-V4",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Facilities upgrade contract. Approving $75,000 for the facilities upgrade contract directly -- I know the new higher limits take effect this quarter, going ahead now. -- T. Osei, Director.",
+      "predicate": "CT-2026-FACUPGRADE.director_approval", "value": "75000"
+    }
+  ]
+}
