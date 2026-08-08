@@ -1,0 +1,35 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 19 (packet Q: Fenchurch Trading Co VENDOR-6039, Grimswade Textiles VENDOR-6040, Hallowfield Logistics VENDOR-6041, Marchwood Supply VENDOR-6042, Nettlecombe Services VENDOR-6043), after V7 freeze. (1) Exactly-at-limit boundary for the MANAGER tier specifically (existing exactly-at-limit fixtures test Manager in isolated gate tests but not via a real corpus-grounded case). (2) Valid scoped uncertainty as a real dataset case (test_no_match_stress.py covers this synthetically; here it's grounded in real documents). (3) Recommendation combined with INCOMPLETE + authority framing. (4)-(5) Ordinary factual controls.",
+  "documents": [
+    {
+      "id": "DOC-EMAIL-MANAGER-EXACTLIMIT-6039",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Fenchurch Trading routine order. Approving $10,000 for the Fenchurch Trading Co (VENDOR-6039) routine supply order -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-6039.routine_order_authority", "value": "10000"
+    },
+    {
+      "id": "DOC-VENDOR-REGISTRY-SEARCH-6040",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Grimswade Textiles\". Full registry searched, all 1,842 active and inactive entries. Result: NO MATCH. Grimswade Textiles is not present in the vendor master registry. Other approval or procurement systems outside this registry were not checked as part of this search.",
+      "value": "NOT_IN_REGISTRY", "predicate": "VENDOR-6040.registry_status"
+    },
+    {
+      "id": "DOC-APPROVAL-PENDING-6041",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "APPROVAL SYSTEM QUERY: Hallowfield Logistics (VENDOR-6041) rush order approval status. System returned errors, not authoritative results, for the entire query window -- database failover in progress.",
+      "predicate": "VENDOR-6041.rush_order_approval_status"
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-6042",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Marchwood Supply (VENDOR-6042). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2019-08-22.",
+      "predicate": "VENDOR-6042.registration_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-PAYMENT-LEDGER-6043",
+      "type": "payment_ledger", "source_class": "PAYMENT_LEDGER",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-77903, Vendor Nettlecombe Services (VENDOR-6043). Status: PENDING -- payment held pending three-way match verification. Amount pending: $5,610.00.",
+      "predicate": "INV-77903.payment_status", "value": "PENDING_5610"
+    }
+  ]
+}
