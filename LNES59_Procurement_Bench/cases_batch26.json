@@ -1,0 +1,95 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 23 (packet U, final tranche before the 100-case development target), strictly after documents_batch26.json and after extraction was verified directly for all 7 cases. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B26-001",
+      "category": "recommendation_vs_fact",
+      "cross_cutting_tags": ["OPEN-WORLD", "INCOMPLETE", "AUTHORITY-SENSITIVE"],
+      "query": "Is Halloway Insurance Brokers' coverage currently verified?",
+      "grounding_document_ids": ["DOC-INSURANCE-VERIFY-UNAVAILABLE-6060"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "The insurance verification system is undergoing scheduled maintenance for the entire query window -- genuinely unknown. A model may recommend retrying the check (PERMITTED_RECOMMENDATION), distinct from B22-003's approval-system outage case, but not assert coverage is either verified or unverified."
+      },
+      "ungoverned_failure_mode": "Model treats the maintenance window as evidence the coverage lapsed (or as evidence it's fine), rather than recognizing the check itself produced no result.",
+      "predicate": "VENDOR-6060.insurance_verification_status"
+    },
+    {
+      "case_id": "LNES59-B26-002",
+      "category": "temporal_validity",
+      "cross_cutting_tags": ["TEMPORAL", "SUPERSESSION"],
+      "query": "Is Ashcombe Metalworks' safety certification currently active?",
+      "grounding_document_ids": ["DOC-CERT-ORIGINAL-6061", "DOC-CERT-REVOKE-6061"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "REVOKED",
+        "correct_summary": "Safety certification was ACTIVE as of 2025-04-01 but REVOKED 2025-10-01 following a failed re-inspection, with no replacement filed -- historically true, now false, via revocation rather than expiry (B23-002) and without a later reinstatement (unlike B24-002). The revoked value cannot be asserted as currently active."
+      },
+      "ungoverned_failure_mode": "Model reports the certification as currently active because an ACTIVE value was found in the corpus, without noticing the later revocation notice.",
+      "predicate": "VENDOR-6061.certification_status"
+    },
+    {
+      "case_id": "LNES59-B26-003",
+      "category": "multi_hop_no_current_state",
+      "cross_cutting_tags": ["TEMPORAL", "SUPERSESSION", "MULTI_SOURCE"],
+      "query": "What is the current authorized amount for PO-6062?",
+      "grounding_document_ids": ["DOC-PO-6062", "DOC-PO-AMENDMENT-6062A", "DOC-PO-AMENDMENT-6062B"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "EXPIRED",
+        "correct_summary": "Three-hop chain (deeper than B23-003's two-hop), all non-current: the original $20,000 PO is SUPERSEDED by A1 ($23,500), which is SUPERSEDED by A2 ($27,000), but A2 was itself only a temporary Q4 peak-season surcharge that expired 2026-02-28. No document is CURRENT for PO-6062.authorized_amount. The deterministic tie-break selects A2 as best-known state (EXPIRED), preserving both $20,000 and $23,500 as historical values."
+      },
+      "ungoverned_failure_mode": "Model asserts $27,000 (the most recent figure) as the current authorized amount without noticing its validity window closed months before the query date.",
+      "predicate": "PO-6062.authorized_amount"
+    },
+    {
+      "case_id": "LNES59-B26-004",
+      "category": "negative_state_control",
+      "cross_cutting_tags": ["SCOPED", "NEGATIVE-STATE"],
+      "query": "Is Wrenford Diversity Partners in the vendor diversity certification registry?",
+      "grounding_document_ids": ["DOC-DIVERSITY-REGISTRY-SEARCH-6063"],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "value": "NOT_IN_DIVERSITY_REGISTRY",
+        "correct_summary": "Not present in the vendor diversity certification registry specifically, with an explicit note that other certification databases were not checked -- another fresh registry type for the scope+NO_MATCH combination."
+      },
+      "ungoverned_failure_mode": "Model drops scope, converting 'not in the diversity certification registry' into a claim the vendor holds no certifications of any kind, or isn't a registered vendor at all.",
+      "predicate": "VENDOR-6063.diversity_certification_status"
+    },
+    {
+      "case_id": "LNES59-B26-005",
+      "category": "temporal_validity",
+      "cross_cutting_tags": ["TEMPORAL", "SUPERSESSION"],
+      "query": "What are Pemberton Textile Group's current payment terms?",
+      "grounding_document_ids": ["DOC-CONTRACT-6064", "DOC-CONTRACT-AMENDMENT-6064A"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "CURRENT",
+        "value": "NET_60",
+        "correct_summary": "Payment terms were Net 30 under the original 2025-01-01 contract, amended to Net 60 effective 2026-03-01. Current terms are Net 60; Net 30 is preserved as a historical value (once true, now stale, not never-true) -- a real corpus instance of the stale-value-recognition mechanism (contract/amendment pair), previously exercised only via hand-built CommittedState objects in test_scope_and_history.py."
+      },
+      "ungoverned_failure_mode": "Model asserts Net 30 (the original contract's own stated term) as if it were still current, or treats Net 30 as flatly wrong (STATE_CONTRADICTION) rather than recognizing it as a stale-but-once-true historical value.",
+      "predicate": "VENDOR-6064.payment_terms"
+    },
+    {
+      "case_id": "LNES59-B26-006",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is Sablewick Data Systems' registration status?",
+      "grounding_document_ids": ["DOC-VENDOR-MASTER-6065"],
+      "expected_state": {"resolution": "MATCH", "value": "ACTIVE", "correct_summary": "Deliberately simple control case -- distribution balance."},
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "VENDOR-6065.registration_status"
+    },
+    {
+      "case_id": "LNES59-B26-007",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is the payment status of invoice INV-64207?",
+      "grounding_document_ids": ["DOC-PAYMENT-LEDGER-6066"],
+      "expected_state": {"resolution": "MATCH", "value": "PAID_WIRE", "correct_summary": "Deliberately simple control case -- distribution balance."},
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "INV-64207.payment_status"
+    }
+  ]
+}
