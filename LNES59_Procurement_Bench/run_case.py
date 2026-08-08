@@ -68,8 +68,9 @@ def gate_behaved_correctly(result: CaseRunResult) -> bool:
 
 
 def load_all_cases():
+    from dataset_registry import case_set_files
     cases = []
-    for fname in ("cases.json", "cases_batch2.json", "cases_batch3.json", "cases_batch4.json"):
+    for fname in case_set_files():
         with open(os.path.join(SCRIPT_DIR, fname), encoding="utf-8") as f:
             cases.extend(json.load(f)["cases"])
     return {c["case_id"]: c for c in cases}
