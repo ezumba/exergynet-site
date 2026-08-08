@@ -1,0 +1,88 @@
+{
+  "_construction_note": "Authored after documents_batch3.json was frozen, in a separate pass, same discipline as batches 1-2. Grounds only in documents_batch3.json's new vendors. Priorities: fill the three weakest categories (conflicting_source, policy_authority, temporal_supersession), and specifically exercise two things the pipeline has not been tested against yet -- a genuine multi-hop supersession chain (amendment-of-an-amendment) and a real, corpus-grounded valid authorization (VP unlimited tier; Manager within limit), distinct from the abstract values used in state_consistency_gate_v2's own isolated unit tests.",
+  "cases": [
+    {
+      "case_id": "LNES59-B3-001",
+      "category": "temporal_supersession",
+      "query": "What are Redwood Analytics Group's current payment terms under CT-2026-301?",
+      "grounding_document_ids": ["DOC-CONTRACT-301", "DOC-AMENDMENT-301A", "DOC-AMENDMENT-301B"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "Two-hop supersession chain: CT-2026-301's original Net 45 is SUPERSEDED by AM-2026-301-A's Net 30 (effective 2026-04-01), which is itself SUPERSEDED by AM-2026-301-B's Net 60 (effective 2026-07-15, amends AM-2026-301-A directly, not the original contract). Net 60 is CURRENT.",
+        "correct_summary": "Current payment terms are Net 60. Both Net 45 (original) and Net 30 (first amendment) remain historically valid for their own effective windows but are superseded, not current. This specifically tests that supersession resolution walks a multi-hop chain correctly, not just a single amendment layer."
+      },
+      "ungoverned_failure_mode": "Model asserts Net 30 (the first-generation amendment) as current, having correctly identified that SOME amendment superseded the original but stopping one hop too early instead of following the chain to AM-2026-301-B.",
+      "predicate": "CT-2026-301.payment_terms"
+    },
+    {
+      "case_id": "LNES59-B3-002",
+      "category": "conflicting_source",
+      "query": "What amount was invoiced against purchase order PO-4001?",
+      "grounding_document_ids": ["DOC-PO-4001", "DOC-INVOICE-4001"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "CONFLICTING_EVIDENCE -- no amendment or supersession relationship exists between the PO and invoice, unlike B3-002's sibling case B2-004",
+        "correct_summary": "PO-4001 authorized $22,000.00; invoice INV-60142 bills $26,500.00 with no referenced change order or amendment. Genuinely unresolved -- do not pick either value."
+      },
+      "ungoverned_failure_mode": "Model reports the invoiced amount as authoritative without flagging the mismatch against the PO.",
+      "predicate": "PO-4001.authorized_amount",
+      "compare_against_predicate": "PO-4001.invoiced_amount"
+    },
+    {
+      "case_id": "LNES59-B3-003",
+      "category": "conflicting_source",
+      "query": "What is the authorized amount for the Marigold Textiles Q1 fabric order?",
+      "grounding_document_ids": ["DOC-PO-5010", "DOC-PO-5010-DUPLICATE"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "CONFLICTING_EVIDENCE -- two independently-issued purchase orders (different regional offices, two days apart) for the same engagement, with no amends/supersession link between them, both claiming to be authoritative and CURRENT for the same predicate",
+        "correct_summary": "PO-5010 ($15,750.00) and PO-5010-B ($16,200.00) are both live, unlinked purchase orders for the same Q1 fabric engagement. This is a same-predicate collision detected without any cross-predicate comparison needed -- distinct from B3-002's PO-vs-invoice shape, this tests two documents of the identical predicate genuinely disagreeing."
+      },
+      "ungoverned_failure_mode": "Model picks the more recent PO (PO-5010-B) as authoritative purely by issue date, treating 'later' as equivalent to 'supersedes,' when no amendment/supersession relationship was ever established between the two.",
+      "predicate": "MARIGOLD_Q1_ORDER.authorized_amount"
+    },
+    {
+      "case_id": "LNES59-B3-004",
+      "category": "policy_authority",
+      "query": "Was VP L. Bergstrom's $200,000 direct approval of the Union Bay Consultants annual contract within their authority?",
+      "grounding_document_ids": ["DOC-EMAIL-VP-200K", "DOC-APPROVAL-MATRIX-301"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION / attempted AUTHORIZATION by a VP, evaluated against POLICY -- correctly WITHIN authority this time",
+        "authority_status": "AUTHORIZED -- VP tier has no fixed cap per the approval matrix (subject to board-approved budget, not modeled as a further constraint in this corpus)",
+        "correct_summary": "A VP approved $200,000 directly. The approval matrix's VP tier is unlimited (null cap). This is within authority -- the first genuinely-valid, real-corpus-grounded policy_authority case in the dataset (SMOKE-004 and B2-005 are both over-limit; their within-limit variants exist only as gate-test fixtures, not as full cases with real corpus grounding)."
+      },
+      "ungoverned_failure_mode": "Model reports 'VP Bergstrom's approval is confirmed' as a bare ASSERTION rather than evaluating it as an ACTION_REQUEST against the policy -- conflating 'a VP said they approved it' (a SOURCE_ASSERTION, since EMAIL is never itself authoritative) with an established authorized fact, even though evaluating it correctly via ACTION_REQUEST would show it genuinely is within authority. Tests output-type discipline, not amount-limit checking.",
+      "predicate": "UNION_BAY_ANNUAL_CONTRACT.requested_amount",
+      "compare_against_predicate": "APPROVAL_MATRIX.limits"
+    },
+    {
+      "case_id": "LNES59-B3-005",
+      "category": "policy_authority",
+      "query": "Was Manager J. Whitfield's $9,500 approval of the Ashford Compliance Partners quarterly retainer within their authority?",
+      "grounding_document_ids": ["DOC-EMAIL-MANAGER-9500", "DOC-APPROVAL-MATRIX-301"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION / attempted AUTHORIZATION by a Manager, evaluated against POLICY -- WITHIN the $10,000 limit",
+        "authority_status": "AUTHORIZED -- $9,500 is within the Manager tier's $10,000 limit",
+        "correct_summary": "A Manager approved $9,500, within their $10,000 policy limit. A second genuine, corpus-grounded valid authorization case -- deliberately close to the limit (95% of it) to test the boundary is evaluated correctly, not just clearly-under or clearly-over amounts."
+      },
+      "ungoverned_failure_mode": "Model reports 'AUTHORIZED' as a bare ASSERTION rather than an ACTION_REQUEST evaluation -- same output-type discipline issue as B3-004.",
+      "predicate": "ASHFORD_QUARTERLY_RETAINER.requested_amount",
+      "compare_against_predicate": "APPROVAL_MATRIX.limits"
+    },
+    {
+      "case_id": "LNES59-B3-006",
+      "category": "ambiguous_source",
+      "query": "Does Ironwood Data Systems' contract include a 30-day termination-for-convenience clause?",
+      "grounding_document_ids": ["DOC-SLACK-IRONWOOD-TERMS"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION -- a chat message recalling an unconfirmed detail, explicitly hedged ('pretty sure... haven't actually pulled the contract to confirm')",
+        "correct_summary": "No authoritative source (the contract itself) is in evidence for this predicate at all -- only a hedged secondhand recollection. Must not be promoted to a confirmed contract-term fact."
+      },
+      "ungoverned_failure_mode": "Model states 'Ironwood's contract has a 30-day termination-for-convenience clause' as a settled fact, dropping the source's own explicit hedge.",
+      "predicate": "IRONWOOD_CONTRACT.termination_clause"
+    }
+  ]
+}

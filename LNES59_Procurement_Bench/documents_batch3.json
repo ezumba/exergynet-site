@@ -1,0 +1,131 @@
+{
+  "_construction_note": "Batch 3 corpus expansion, frozen before any case in cases_batch3.json is authored. Batches 1-2 untouched. Five new vendors, chosen specifically to test two things the pipeline hasn't been exercised on yet (a genuine multi-hop supersession chain -- amendment-of-an-amendment -- and a real, corpus-grounded valid/within-limit authorization, distinct from the abstract unit-test values in state_consistency_gate_v2's own tests) plus filling out the three weakest case categories (conflicting_source, policy_authority, temporal_supersession).",
+  "documents": [
+    {
+      "id": "DOC-CONTRACT-301",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "vendor": "Redwood Analytics Group",
+      "vendor_id": "VENDOR-3001",
+      "contract_id": "CT-2026-301",
+      "effective_from": "2026-01-15",
+      "effective_until": null,
+      "content": "MASTER SERVICES AGREEMENT CT-2026-301. Between ExergyNet Corp and Redwood Analytics Group (VENDOR-3001). Effective 2026-01-15. Payment terms: Net 45 from invoice date.",
+      "predicate": "CT-2026-301.payment_terms",
+      "value": "NET_45"
+    },
+    {
+      "id": "DOC-AMENDMENT-301A",
+      "type": "contract_amendment",
+      "source_class": "SIGNED_AMENDMENT",
+      "amends": "DOC-CONTRACT-301",
+      "vendor_id": "VENDOR-3001",
+      "amendment_id": "AM-2026-301-A",
+      "effective_from": "2026-04-01",
+      "effective_until": null,
+      "content": "AMENDMENT AM-2026-301-A to CT-2026-301. Payment terms amended from Net 45 to Net 30, effective 2026-04-01.",
+      "predicate": "CT-2026-301.payment_terms",
+      "value": "NET_30"
+    },
+    {
+      "id": "DOC-AMENDMENT-301B",
+      "type": "contract_amendment",
+      "source_class": "SIGNED_AMENDMENT",
+      "amends": "DOC-AMENDMENT-301A",
+      "vendor_id": "VENDOR-3001",
+      "amendment_id": "AM-2026-301-B",
+      "effective_from": "2026-07-15",
+      "effective_until": null,
+      "content": "AMENDMENT AM-2026-301-B to CT-2026-301, amending AM-2026-301-A. Payment terms amended a second time, from Net 30 to Net 60, effective 2026-07-15. This is a second-generation amendment -- it supersedes AM-2026-301-A directly, not the original CT-2026-301.",
+      "predicate": "CT-2026-301.payment_terms",
+      "value": "NET_60"
+    },
+    {
+      "id": "DOC-PO-4001",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-3002",
+      "po_id": "PO-4001",
+      "issued": "2026-05-12",
+      "content": "PURCHASE ORDER PO-4001. Vendor: Sable Ridge Manufacturing (VENDOR-3002). Amount authorized: $22,000.00. Description: replacement parts order. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-4001.authorized_amount",
+      "value": "22000"
+    },
+    {
+      "id": "DOC-INVOICE-4001",
+      "type": "invoice",
+      "source_class": "INVOICE",
+      "vendor_id": "VENDOR-3002",
+      "invoice_id": "INV-60142",
+      "issued": "2026-05-30",
+      "content": "INVOICE INV-60142. From: Sable Ridge Manufacturing (VENDOR-3002). To: ExergyNet Corp. PO reference: PO-4001. Amount: $26,500.00. Invoice date: 2026-05-30. No amendment or change order referenced.",
+      "predicate": "PO-4001.invoiced_amount",
+      "value": "26500"
+    },
+    {
+      "id": "DOC-APPROVAL-MATRIX-301",
+      "type": "approval_matrix",
+      "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01",
+      "effective_until": null,
+      "content": "PROCUREMENT APPROVAL MATRIX (effective 2026-01-01) -- same policy as the other approval-matrix documents, restated for batch-3 case grounding: Manager up to $10,000; Director up to $50,000; VP unlimited within board-approved budget.",
+      "predicate": "APPROVAL_MATRIX.limits",
+      "tiers": {"MANAGER": 10000, "DIRECTOR": 50000, "VP": null}
+    },
+    {
+      "id": "DOC-EMAIL-VP-200K",
+      "type": "email",
+      "source_class": "EMAIL",
+      "from": "L. Bergstrom (VP Operations)",
+      "to": "Purchasing Team",
+      "sent": "2026-06-18",
+      "content": "Subject: Union Bay annual contract. Approving the full $200,000 annual contract with Union Bay Consultants directly -- this is within my VP authority per the current approval matrix and the board-approved FY26 budget. -- L. Bergstrom, VP Operations.",
+      "predicate": "UNION_BAY_ANNUAL_CONTRACT.requested_amount",
+      "value": "200000"
+    },
+    {
+      "id": "DOC-EMAIL-MANAGER-9500",
+      "type": "email",
+      "source_class": "EMAIL",
+      "from": "J. Whitfield (Procurement Manager)",
+      "to": "Purchasing Team",
+      "sent": "2026-06-20",
+      "content": "Subject: Ashford Compliance quarterly retainer. Approving the $9,500 quarterly retainer for Ashford Compliance Partners -- within my manager authority per the approval matrix. -- J. Whitfield, Procurement Manager.",
+      "predicate": "ASHFORD_QUARTERLY_RETAINER.requested_amount",
+      "value": "9500"
+    },
+    {
+      "id": "DOC-SLACK-IRONWOOD-TERMS",
+      "type": "chat_message",
+      "source_class": "CHAT_MESSAGE",
+      "from": "K. Osei (Category Buyer)",
+      "channel": "#vendor-ops",
+      "sent": "2026-07-08",
+      "content": "Pretty sure Ironwood Data Systems' contract has a 30-day termination-for-convenience clause, someone mentioned it a while back. Haven't actually pulled the contract to confirm.",
+      "predicate": "IRONWOOD_CONTRACT.termination_clause",
+      "value": "30_DAY_TERMINATION_FOR_CONVENIENCE_CLAIMED"
+    },
+    {
+      "id": "DOC-PO-5010",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-3006",
+      "po_id": "PO-5010",
+      "issued": "2026-03-02",
+      "content": "PURCHASE ORDER PO-5010. Vendor: Marigold Textiles Co (VENDOR-3006). Amount authorized: $15,750.00. Description: Q1 fabric order, issued by East Coast procurement office. Approved by: D. Nakamura (Manager).",
+      "predicate": "MARIGOLD_Q1_ORDER.authorized_amount",
+      "value": "15750"
+    },
+    {
+      "id": "DOC-PO-5010-DUPLICATE",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-3006",
+      "po_id": "PO-5010-B",
+      "issued": "2026-03-04",
+      "content": "PURCHASE ORDER PO-5010-B. Vendor: Marigold Textiles Co (VENDOR-3006). Amount authorized: $16,200.00. Description: Q1 fabric order, issued independently by West Coast procurement office -- appears to duplicate PO-5010 for the same engagement, not marked as an amendment or supersession of it. No `amends` relationship between the two POs; both were issued as fresh, independent purchase orders two days apart by different offices.",
+      "predicate": "MARIGOLD_Q1_ORDER.authorized_amount",
+      "value": "16200"
+    }
+  ]
+}

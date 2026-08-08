@@ -69,7 +69,7 @@ def gate_behaved_correctly(result: CaseRunResult) -> bool:
 
 def load_all_cases():
     cases = []
-    for fname in ("cases.json", "cases_batch2.json"):
+    for fname in ("cases.json", "cases_batch2.json", "cases_batch3.json"):
         with open(os.path.join(SCRIPT_DIR, fname), encoding="utf-8") as f:
             cases.extend(json.load(f)["cases"])
     return {c["case_id"]: c for c in cases}
@@ -168,6 +168,26 @@ _FIXTURES = [
      ModelOutput(A, "VENDOR_DOES_NOT_EXIST", None), O.UNSUPPORTED_STATE_ASSERTION),
     ("LNES59-B2-008", "governed", ModelOutput(R, "retry query after the outage window", "Granite Peak Logistics approval status, 2026-08-06 outage window"), O.PERMITTED_RECOMMENDATION),
     ("LNES59-B2-008", "ungoverned", ModelOutput(A, "NOT_APPROVED", "Granite Peak Logistics approval status, 2026-08-06 outage window"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B3-001", "governed (asserts NET_60, proving the 2-hop supersession chain resolved correctly)",
+     ModelOutput(A, "NET_60", "CT-2026-301 payment_terms"), O.CONSISTENT),
+    ("LNES59-B3-001", "ungoverned (asserts NET_30, the first-generation amendment -- one hop too early)",
+     ModelOutput(A, "NET_30", "CT-2026-301 payment_terms"), O.STATE_CONTRADICTION),
+    ("LNES59-B3-002", "governed", ModelOutput(S, None, "PO-4001 authorized_amount"), O.CONSISTENT),
+    ("LNES59-B3-002", "ungoverned", ModelOutput(A, "26500", "PO-4001 authorized_amount"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B3-003", "governed (same-predicate collision, no compare_against_predicate needed)",
+     ModelOutput(S, None, "MARIGOLD_Q1_ORDER.authorized_amount"), O.CONSISTENT),
+    ("LNES59-B3-003", "ungoverned (picks the later-issued PO as if 'later' meant 'supersedes')",
+     ModelOutput(A, "16200", "MARIGOLD_Q1_ORDER.authorized_amount"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B3-004", "governed (real tier check: VP's unlimited tier -- $200,000 is CONSISTENT via genuine computation, not a special case)",
+     ModelOutput(AR, requested_authority_level="VP", requested_amount=200000, claimed_scope="Union Bay Consultants annual contract, $200,000"), O.CONSISTENT),
+    ("LNES59-B3-004", "ungoverned (treats the VP's email as a bare settled fact instead of an ACTION_REQUEST)",
+     ModelOutput(A, "APPROVED", "Union Bay Consultants annual contract, $200,000"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B3-005", "governed (real tier check: $9,500 <= MANAGER's $10,000 limit, close to the boundary)",
+     ModelOutput(AR, requested_authority_level="MANAGER", requested_amount=9500, claimed_scope="Ashford Compliance Partners quarterly retainer, $9,500"), O.CONSISTENT),
+    ("LNES59-B3-005", "ungoverned (treats the Manager's email as a bare settled fact instead of an ACTION_REQUEST)",
+     ModelOutput(A, "AUTHORIZED", "Ashford Compliance Partners quarterly retainer, $9,500"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B3-006", "governed", ModelOutput(S, None, "IRONWOOD_CONTRACT.termination_clause"), O.CONSISTENT),
+    ("LNES59-B3-006", "ungoverned", ModelOutput(A, "30_DAY_TERMINATION_FOR_CONVENIENCE_CLAIMED", "IRONWOOD_CONTRACT.termination_clause"), O.UNSUPPORTED_STATE_ASSERTION),
 ]
 
 
