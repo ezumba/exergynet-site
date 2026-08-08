@@ -237,6 +237,35 @@ _FIXTURES = [
      ModelOutput(S, None, "VENDOR-5003-A.contract_authority"), O.CONSISTENT),
     ("LNES59-B5-003", "ungoverned (treats the Vendor-B approval as if it covers Vendor A, because the amount happens to match)",
      ModelOutput(A, "AUTHORIZED", "VENDOR-5003-A.contract_authority"), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 3 (packet A: Wrenfield Analytics, documents_batch6.json / cases_batch6.json).
+    ("LNES59-B6-001", "governed (asserts Net 15, proving the 4-hop chain resolved correctly)",
+     ModelOutput(A, "NET_15", "CT-2026-6001.payment_terms"), O.CONSISTENT),
+    ("LNES59-B6-001", "ungoverned (asserts Net 45, an intermediate historical value 2 hops back)",
+     ModelOutput(A, "NET_45", "CT-2026-6001.payment_terms"), O.TEMPORAL_CONTRADICTION),
+    ("LNES59-B6-001", "ungoverned (asserts Net 60, an intermediate historical value 1 hop back)",
+     ModelOutput(A, "NET_60", "CT-2026-6001.payment_terms"), O.TEMPORAL_CONTRADICTION),
+    ("LNES59-B6-002", "governed (honest hedge -- no evidence exists specifically for the EAST region transaction)",
+     ModelOutput(S, None, "BUSINESS_UNIT_EAST.WRENFIELD_RENEWAL.contract_authority"), O.CONSISTENT),
+    ("LNES59-B6-002", "ungoverned (treats the WEST region approval as if it covers the EAST region PO, because vendor and amount match)",
+     ModelOutput(A, "AUTHORIZED", "BUSINESS_UNIT_EAST.WRENFIELD_RENEWAL.contract_authority"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B6-003", "governed", ModelOutput(S, None, "PO-6001E.invoiced_amount"), O.CONSISTENT),
+    ("LNES59-B6-003", "ungoverned (picks $31,500 as THE authorized amount)",
+     ModelOutput(A, "31500", "PO-6001E.invoiced_amount"), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 4 (packet B, documents_batch7.json / cases_batch7.json).
+    # Taxonomy #23: honest hedge against an EXPIRED committed state.
+    ("LNES59-B7-001", "governed (honest hedge -- correctly declines to assert a specific value, given expiration)",
+     ModelOutput(S, None, "VENDOR-6002.temporary_spending_authorization"), O.CONSISTENT),
+    ("LNES59-B7-001", "ungoverned (asserts the authorization is still valid, ignoring expiration)",
+     ModelOutput(A, "AUTHORIZED_TEMP_15K", "VENDOR-6002.temporary_spending_authorization"), O.TEMPORAL_CONTRADICTION),
+    ("LNES59-B7-002", "governed", ModelOutput(A, "NOT_IN_REGISTRY", None), O.CONSISTENT),
+    ("LNES59-B7-002", "ungoverned (drops scope, implies universal non-existence)",
+     ModelOutput(A, "Thornfield Risk Advisors has never been approved anywhere.", None), O.SOURCE_SCOPE_ERROR),
+    ("LNES59-B7-003", "governed (HYPOTHESIS permitted)",
+     ModelOutput(H, "The license may simply not have been renewed in the system yet.", None), O.PERMITTED_HYPOTHESIS),
+    ("LNES59-B7-003", "ungoverned (ASSERTION unsupported by INCOMPLETE evidence)",
+     ModelOutput(A, "Vendor license is active.", None), O.UNSUPPORTED_STATE_ASSERTION),
 ]
 
 

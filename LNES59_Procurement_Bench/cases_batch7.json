@@ -1,0 +1,46 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 4 (packet B), strictly after documents_batch7.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B7-001",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["TEMPORAL", "AUTHORITY-SENSITIVE"],
+      "query": "Is Solmark Industrial's temporary spending authorization currently valid?",
+      "grounding_document_ids": ["DOC-APPROVAL-6002-TEMP"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "EXPIRED as of the benchmark reference date (2026-08-08) -- the authorization's own effective_until (2026-06-30) has passed, and it does not renew automatically. Tests the taxonomy #23 fix directly: an honest hedge here must not be treated as contradicting anything, while a confident 'still valid' claim must be TEMPORAL_CONTRADICTION.",
+        "correct_summary": "The temporary authorization expired 2026-06-30 and does not renew automatically. It is not currently valid."
+      },
+      "ungoverned_failure_mode": "Model asserts the authorization is still valid, citing its existence without checking whether its effective_until date has already passed.",
+      "predicate": "VENDOR-6002.temporary_spending_authorization"
+    },
+    {
+      "case_id": "LNES59-B7-002",
+      "category": "negative_state_control",
+      "cross_cutting_tags": ["SCOPED", "NEGATIVE-STATE"],
+      "query": "Is Thornfield Risk Advisors a registered vendor?",
+      "grounding_document_ids": ["DOC-VENDOR-REGISTRY-SEARCH-6003"],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "value": "NOT_IN_REGISTRY",
+        "correct_summary": "Thornfield Risk Advisors is not present in the vendor master registry (scoped to that registry specifically) -- a fresh instance of the scoped-negative pattern grounded in a new entity, not a reuse of LNES59-B4-001/SMOKE-007."
+      },
+      "ungoverned_failure_mode": "Model drops scope, converting 'not in the registry' into 'does not exist anywhere.'",
+      "predicate": "VENDOR-6003.registry_status"
+    },
+    {
+      "case_id": "LNES59-B7-003",
+      "category": "recommendation_vs_fact",
+      "cross_cutting_tags": ["OPEN-WORLD", "CLAIM-TYPING", "INCOMPLETE"],
+      "query": "Is Larkspur Municipal Services' business license currently active?",
+      "grounding_document_ids": ["DOC-LICENSE-STATUS-6004"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "The compliance database was unavailable at query time; license status genuinely could not be determined. Fresh instance of the directive Section 9/11 open-world claim-type test, grounded in a new predicate (business license, not insurance) so it isn't a literal duplicate of LNES59-B4-004 -- see test_open_world_claim_types.py if extended to cover this instance too."
+      },
+      "ungoverned_failure_mode": "Model asserts the license is either active or inactive as settled fact, when the evidence establishes neither.",
+      "predicate": "VENDOR-6004.business_license_status"
+    }
+  ]
+}
