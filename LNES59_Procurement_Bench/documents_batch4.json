@@ -1,0 +1,72 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 1, AFTER V2 architecture freeze (commit 1ab0336) -- documents created before any case queries were written, same corpus-first discipline as batches 1-3. New synthetic vendors only (VENDOR-4001..4004), no reuse of batch 1-3 entities except the already-frozen DOC-APPROVAL-MATRIX-301 policy document (deliberately reused, not duplicated, to test authority boundaries against the SAME frozen policy rather than inventing a parallel one). Priorities for this tranche: (1) the disclosed sparse-NO_MATCH-token stress test (directive Phase 5 Section 3), (2) a 3-hop supersession chain deeper than any existing case, (3) an exact one-dollar-over-limit authority boundary, (4) an open-world claim-type case where identical INCOMPLETE evidence must support different valid output types differently.",
+  "documents": [
+    {
+      "id": "DOC-VENDOR-REGISTRY-SEARCH-4001",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Cascade Ridge Consulting\". Full registry searched, all 1,842 active and inactive entries (same registry snapshot as prior batch registry searches). Result: NO MATCH. Cascade Ridge Consulting is not present in the vendor master registry.",
+      "value": "NOT_IN_REGISTRY",
+      "predicate": "VENDOR-4001.registry_status"
+    },
+    {
+      "id": "DOC-PO-4002",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-4002",
+      "po_id": "PO-4002",
+      "issued": "2026-02-01",
+      "content": "PURCHASE ORDER PO-4002. Vendor: Ironforge Industrial Services (VENDOR-4002). Amount authorized: $18,000.00. Description: annual equipment maintenance contract. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-4002.authorized_amount",
+      "value": "18000"
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-4002A",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-4002",
+      "issued": "2026-03-15",
+      "amends": "DOC-PO-4002",
+      "content": "PURCHASE ORDER AMENDMENT PO-4002-A1, amending PO-4002. Vendor: Ironforge Industrial Services (VENDOR-4002). Revised amount authorized: $21,000.00 (added quarterly inspection line item). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-4002.authorized_amount",
+      "value": "21000"
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-4002B",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-4002",
+      "issued": "2026-05-01",
+      "amends": "DOC-PO-AMENDMENT-4002A",
+      "content": "PURCHASE ORDER AMENDMENT PO-4002-A2, amending PO-4002-A1. Vendor: Ironforge Industrial Services (VENDOR-4002). Revised amount authorized: $19,500.00 (reduced scope, one inspection line item removed per Facilities request). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-4002.authorized_amount",
+      "value": "19500"
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-4002C",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-4002",
+      "issued": "2026-06-20",
+      "amends": "DOC-PO-AMENDMENT-4002B",
+      "content": "PURCHASE ORDER AMENDMENT PO-4002-A3, amending PO-4002-A2. Vendor: Ironforge Industrial Services (VENDOR-4002). Revised amount authorized: $23,000.00 (added emergency callout coverage for Q3). Approved by: T. Osei (Director).",
+      "predicate": "PO-4002.authorized_amount",
+      "value": "23000"
+    },
+    {
+      "id": "DOC-EMAIL-DIRECTOR-50001",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Sablewood Compliance Group renewal. Approving $50,001 for the Sablewood Compliance Group (VENDOR-4003) annual contract renewal directly -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "value": "50001",
+      "predicate": "VENDOR-4003.contract_renewal_authority"
+    },
+    {
+      "id": "DOC-INSURANCE-STATUS-4004",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "COMPLIANCE SYSTEM QUERY: Meridian Cove Logistics (VENDOR-4004) insurance certificate status. Compliance database unavailable at query time -- status could not be determined.",
+      "predicate": "VENDOR-4004.insurance_certificate_status"
+    }
+  ]
+}

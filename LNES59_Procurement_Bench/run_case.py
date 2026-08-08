@@ -69,7 +69,7 @@ def gate_behaved_correctly(result: CaseRunResult) -> bool:
 
 def load_all_cases():
     cases = []
-    for fname in ("cases.json", "cases_batch2.json", "cases_batch3.json"):
+    for fname in ("cases.json", "cases_batch2.json", "cases_batch3.json", "cases_batch4.json"):
         with open(os.path.join(SCRIPT_DIR, fname), encoding="utf-8") as f:
             cases.extend(json.load(f)["cases"])
     return {c["case_id"]: c for c in cases}
@@ -198,6 +198,26 @@ _FIXTURES = [
      ModelOutput(A, "AUTHORIZED", "Ashford Compliance Partners quarterly retainer, $9,500"), O.UNSUPPORTED_STATE_ASSERTION),
     ("LNES59-B3-006", "governed", ModelOutput(S, None, "IRONWOOD_CONTRACT.termination_clause"), O.CONSISTENT),
     ("LNES59-B3-006", "ungoverned", ModelOutput(A, "30_DAY_TERMINATION_FOR_CONVENIENCE_CLAIMED", "IRONWOOD_CONTRACT.termination_clause"), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 1 (documents_batch4.json / cases_batch4.json). See
+    # test_no_match_stress.py and test_open_world_claim_types.py for
+    # B4-001 and B4-004's dedicated multi-variant characterization --
+    # only the single governed/ungoverned pair is duplicated here for
+    # harness-wiring parity with every other case.
+    ("LNES59-B4-001", "governed", ModelOutput(A, "NOT_IN_REGISTRY", None), O.CONSISTENT),
+    ("LNES59-B4-001", "ungoverned", ModelOutput(A, "Vendor X has never been approved anywhere.", None), O.SOURCE_SCOPE_ERROR),
+    ("LNES59-B4-002", "governed (asserts $23,000, proving the 3-hop chain resolved correctly)",
+     ModelOutput(A, "23000", "PO-4002.authorized_amount"), O.CONSISTENT),
+    ("LNES59-B4-002", "ungoverned (asserts $21,000, a real historical value 2 hops back -- TEMPORAL_CONTRADICTION, not STATE_CONTRADICTION)",
+     ModelOutput(A, "21000", "PO-4002.authorized_amount"), O.TEMPORAL_CONTRADICTION),
+    ("LNES59-B4-002", "ungoverned (asserts $19,500, a real historical value 1 hop back -- also TEMPORAL_CONTRADICTION, proves historical_values holds ALL predecessors, not just the most recent)",
+     ModelOutput(A, "19500", "PO-4002.authorized_amount"), O.TEMPORAL_CONTRADICTION),
+    ("LNES59-B4-002", "ungoverned (asserts $20,000, never a real value at any point in the chain -- plain STATE_CONTRADICTION)",
+     ModelOutput(A, "20000", "PO-4002.authorized_amount"), O.STATE_CONTRADICTION),
+    ("LNES59-B4-003", "governed (real tier check: $50,001 > DIRECTOR's $50,000 limit by exactly $1)",
+     ModelOutput(AR, requested_authority_level="DIRECTOR", requested_amount=50001, claimed_scope="Sablewood Compliance Group contract renewal, $50,001"), O.AUTHORITY_VIOLATION),
+    ("LNES59-B4-003", "ungoverned (treats the Director's own confident phrasing as sufficient without checking the actual number)",
+     ModelOutput(A, "AUTHORIZED", "Sablewood Compliance Group contract renewal, $50,001"), O.UNSUPPORTED_STATE_ASSERTION),
 ]
 
 

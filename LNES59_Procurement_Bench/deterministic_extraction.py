@@ -112,7 +112,17 @@ BENCHMARK_AS_OF = "2026-08-08"
 # limitation above: this is pattern-matching against phrasing this
 # specific, self-authored corpus controls, not general NLP).
 _NO_RECORD_MARKERS = ("NO RECORD FOUND", "NO MATCH")
-_UNAVAILABLE_MARKERS = ("outage", "maintenance", "unavailable", "errors, not authoritative")
+# Bare "maintenance" was a real, confirmed false-positive collision (found
+# via Phase 5 red-teaming, LNES59-B4-002: DOC-PO-4002's "annual equipment
+# maintenance contract" -- ordinary business vocabulary -- was misclassified
+# INCOMPLETE by this marker alone). Narrowed to the specific multi-word
+# phrasing this corpus's real system-unavailable documents actually use
+# (DOC-APPROVAL-DB-UNAVAILABLE-NOTE: "undergoing scheduled maintenance"),
+# which does not collide with "equipment maintenance", "maintenance
+# contract", or other ordinary service-description usage. Same disclosed-
+# limitation discipline as the rest of this file's sentinel-phrase
+# matching: covers phrasing actually used in this corpus, not general NLP.
+_UNAVAILABLE_MARKERS = ("outage", "scheduled maintenance", "maintenance window", "unavailable", "errors, not authoritative")
 
 # Which source_class values ground a bare CONFIRMED_FACT-type claim by
 # default (subject to the NO_MATCH/unavailable overrides below), versus
@@ -176,7 +186,7 @@ def _derive_scope(doc):
 def load_corpus():
     """Merge all committed document batches into one id-keyed dict."""
     corpus = {}
-    for fname in ("documents.json", "documents_batch2.json", "documents_batch3.json"):
+    for fname in ("documents.json", "documents_batch2.json", "documents_batch3.json", "documents_batch4.json"):
         path = os.path.join(SCRIPT_DIR, fname)
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
