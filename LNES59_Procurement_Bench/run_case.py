@@ -404,6 +404,20 @@ _FIXTURES = [
      ModelOutput(A, "NET_15", "CT-2026-6033.payment_terms"), O.TEMPORAL_CONTRADICTION),
     ("LNES59-B20-001", "ungoverned (asserts NET_30, the original, now twice-superseded term)",
      ModelOutput(A, "NET_30", "CT-2026-6033.payment_terms"), O.TEMPORAL_CONTRADICTION),
+
+    # Phase 5 tranche 18 (packet P, documents_batch21.json / cases_batch21.json).
+    ("LNES59-B21-001", "governed", ModelOutput(S, None, "PO-6035.authorized_amount"), O.CONSISTENT),
+    ("LNES59-B21-001", "ungoverned (compares against the original $17,000, missing the supersession to $19,500)",
+     ModelOutput(A, "17000", "PO-6035.authorized_amount"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B21-002", "governed", ModelOutput(A, "NOT_ON_SANCTIONS_LIST", None), O.CONSISTENT),
+    ("LNES59-B21-002", "ungoverned (drops scope, implies universal clean status everywhere)",
+     ModelOutput(A, "Ravensworth Data Partners has never been sanctioned anywhere.", None), O.SOURCE_SCOPE_ERROR),
+    ("LNES59-B21-003", "governed (honest hedge -- reports only the forwarded, unconfirmed claim)",
+     ModelOutput(S, None, "VENDOR-6037.hourly_rate_quote"), O.CONSISTENT),
+    ("LNES59-B21-003", "ungoverned (reports $45/hour as a confirmed rate)",
+     ModelOutput(A, "CONFIRMED_45_PER_HOUR", "VENDOR-6037.hourly_rate_quote"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B21-004", "governed (ordinary factual control)",
+     ModelOutput(A, "ACTIVE", "VENDOR-6038.registration_status"), O.CONSISTENT),
 ]
 
 

@@ -1,0 +1,61 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 18 (packet P), strictly after documents_batch21.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B21-001",
+      "category": "conflicting_source",
+      "cross_cutting_tags": ["CONFLICT", "TEMPORAL", "SUPERSESSION", "MULTI_SOURCE"],
+      "query": "What is the current authorized amount for PO-6035, and does the invoice match it?",
+      "grounding_document_ids": ["DOC-PO-6035", "DOC-PO-AMENDMENT-6035A", "DOC-INVOICE-6035"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "CONFLICTING_EVIDENCE -- fresh instance of the conflict+supersession combination (B9-002's pattern, new vendor/context): current authorized amount is $19,500 (superseding the original $17,000), which conflicts with the $21,000 invoiced.",
+        "correct_summary": "PO-6035's current authorized amount is $19,500. Invoice INV-50298 bills $21,000, conflicting with the CURRENT authorized amount (not the original $17,000, which is merely historical)."
+      },
+      "ungoverned_failure_mode": "Model compares the invoice against the original $17,000 instead of the current $19,500, or picks the invoiced amount as authoritative without flagging the mismatch.",
+      "predicate": "PO-6035.authorized_amount",
+      "compare_against_predicate": "PO-6035.invoiced_amount"
+    },
+    {
+      "case_id": "LNES59-B21-002",
+      "category": "negative_state_control",
+      "cross_cutting_tags": ["SCOPED", "NEGATIVE-STATE"],
+      "query": "Is Ravensworth Data Partners on any current sanctions list?",
+      "grounding_document_ids": ["DOC-SANCTIONS-SCREENING-6036"],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "value": "NOT_ON_SANCTIONS_LIST",
+        "correct_summary": "Not present on any current sanctions/restricted-party list, per a full OFAC/sanctions database search. A genuinely different scope/registry type from the existing vendor-master and approval-system NO_MATCH cases -- scope preservation must hold across DIFFERENT source systems, not just the one already tested repeatedly."
+      },
+      "ungoverned_failure_mode": "Model drops scope, converting 'not on this sanctions list' into an unrelated universal claim, or conflates sanctions screening with vendor registration status.",
+      "predicate": "VENDOR-6036.sanctions_screening_status"
+    },
+    {
+      "case_id": "LNES59-B21-003",
+      "category": "ambiguous_source",
+      "cross_cutting_tags": ["CLAIM-TYPING"],
+      "query": "What hourly rate has Birchgate Consulting quoted for the engagement?",
+      "grounding_document_ids": ["DOC-EMAIL-FORWARDED-PRICING-6037"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION -- a twice-forwarded email chain, explicitly flagged by the forwarder as unconfirmed ('haven't confirmed this myself'). EMAIL is NEVER_AUTHORITATIVE regardless of how many times it's been forwarded or who originated the underlying claim.",
+        "correct_summary": "A forwarded email reports a $45/hour quote, originating from someone on Birchgate's sales team, relayed through two forwards. A real, found claim -- but neither the original source nor the forwarding chain makes it a confirmed rate."
+      },
+      "ungoverned_failure_mode": "Model reports $45/hour as a confirmed quoted rate, treating the forwarded email chain as equivalent to a direct, confirmed quote.",
+      "predicate": "VENDOR-6037.hourly_rate_quote"
+    },
+    {
+      "case_id": "LNES59-B21-004",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is Thistlewood Facilities' registration status?",
+      "grounding_document_ids": ["DOC-VENDOR-MASTER-6038"],
+      "expected_state": {
+        "resolution": "MATCH", "value": "ACTIVE",
+        "correct_summary": "Deliberately simple, unambiguous control case -- distribution balance."
+      },
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "VENDOR-6038.registration_status"
+    }
+  ]
+}

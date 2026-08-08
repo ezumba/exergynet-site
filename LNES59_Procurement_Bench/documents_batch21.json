@@ -1,0 +1,43 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 18 (packet P: Oldcastle Systems Group VENDOR-6035, Ravensworth Data Partners VENDOR-6036, Birchgate Consulting VENDOR-6037, Thistlewood Facilities VENDOR-6038), after V7 freeze. (1) Fresh temporal+conflict instance (PO amended once, invoice conflicts with the CURRENT not original amount). (2) A genuinely different scope/registry type -- sanctions screening, not vendor master -- for scope variety. (3) A forwarded-email chain (an extra layer of indirection) for ambiguous_source variety. (4) An ordinary factual control.",
+  "documents": [
+    {
+      "id": "DOC-PO-6035",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6035", "po_id": "PO-6035", "issued": "2026-02-20",
+      "content": "PURCHASE ORDER PO-6035. Vendor: Oldcastle Systems Group (VENDOR-6035). Amount authorized: $17,000.00. Description: server infrastructure upgrade.",
+      "predicate": "PO-6035.authorized_amount", "value": "17000"
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-6035A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6035", "issued": "2026-04-10", "amends": "DOC-PO-6035",
+      "content": "PURCHASE ORDER AMENDMENT PO-6035-A1, amending PO-6035. Vendor: Oldcastle Systems Group (VENDOR-6035). Revised amount authorized: $19,500.00 (additional storage capacity added). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-6035.authorized_amount", "value": "19500"
+    },
+    {
+      "id": "DOC-INVOICE-6035",
+      "type": "invoice", "source_class": "INVOICE",
+      "content": "INVOICE INV-50298. From: Oldcastle Systems Group (VENDOR-6035). To: ExergyNet Corp. PO reference: PO-6035. Amount: $21,000.00. Invoice date: 2026-04-25. No further amendment or change order referenced beyond PO-6035-A1.",
+      "predicate": "PO-6035.invoiced_amount", "value": "21000"
+    },
+    {
+      "id": "DOC-SANCTIONS-SCREENING-6036",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "SANCTIONS SCREENING DATABASE SEARCH: query=\"Ravensworth Data Partners\". Full OFAC/sanctions list search completed. Result: NO MATCH. Ravensworth Data Partners is not present on any current sanctions or restricted-party list.",
+      "predicate": "VENDOR-6036.sanctions_screening_status", "value": "NOT_ON_SANCTIONS_LIST"
+    },
+    {
+      "id": "DOC-EMAIL-FORWARDED-PRICING-6037",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: FW: FW: Birchgate pricing. Forwarding this along -- looks like Birchgate Consulting (VENDOR-6037) quoted $45/hour for the engagement, per the thread below (originally from someone on their sales team, forwarded twice before reaching me). Haven't confirmed this myself.",
+      "predicate": "VENDOR-6037.hourly_rate_quote", "value": "FORWARDED_CLAIM_45_PER_HOUR"
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-6038",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Thistlewood Facilities (VENDOR-6038). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2020-03-10.",
+      "predicate": "VENDOR-6038.registration_status", "value": "ACTIVE"
+    }
+  ]
+}
