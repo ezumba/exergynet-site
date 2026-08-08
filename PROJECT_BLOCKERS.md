@@ -271,12 +271,45 @@ Public-claim impact:      None claimed in the white paper. Review only if
                           this work is ever cited publicly.
 ```
 
+## BLK-009 — Production-host read-only diagnostic — network access, resolved
+
+```
+Subsystem:               A read-only, zero-write diagnostic (a production
+                          content-commitment compatibility sweep) needed to
+                          run once against one production host.
+Blocker class:            NETWORK_OPERATIONAL
+Status:                   RESOLVED. The diagnostic's required inbound access
+                          was blocked by a stale IP-allowlist entry — the
+                          operator's current egress address had changed
+                          since the allowlist was last updated, so
+                          connections were silently dropped rather than
+                          refused (this looks identical to a host-down
+                          outage from the client side; it was not one).
+                          The diagnostic completed successfully after the
+                          allowlist was updated to include the operator's
+                          then-current address, and produced a clean
+                          compatibility result across a sampled subset of
+                          eligible production objects.
+Exact unblock condition:  (met) Operator added a temporary, narrowly-scoped
+                          inbound allowlist entry for their then-current
+                          address. That entry is itself time-boxed and
+                          should be cleaned up by the operator once no
+                          longer needed, same as the prior temporary entry
+                          it sits alongside.
+Owner:                    Operator
+Last verified:            2026-08-07
+Public-claim impact:      None — this blocked a one-time verification step,
+                          not a deployed capability; nothing changed about
+                          what's live.
+```
+
 ---
 
 ## Revision log for this register
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-08-07 | Added BLK-009 (resolved) — a one-time read-only production diagnostic was initially blocked by a stale IP-allowlist entry, then unblocked after the operator added a temporary allowlist entry for their current address. | Discovered-and-resolved blocker during LNES-58.11 production root-verification compatibility work; recorded per this register's standing update rule even though resolution happened within the same session. |
 | 2026-08-06 | Published a fully sanitized version of this register (all entries), replacing the operational version that contains infrastructure specifics. The unsanitized version remains available privately, outside this repository. | This repository is public; the register's working-detail version must never be pushed. A clean, safe-to-review version was needed so governance status can eventually be shared without exposing infrastructure topology. |
 | 2026-08-05 | Register created (6 entries), replacing an earlier undifferentiated "resource-blocked" list that mis-classified several credential/network/dependency blockers as resource blockers. | Operator correction: remediation paths differ by blocker class; a single "resource-blocked" label obscured that. |
 
