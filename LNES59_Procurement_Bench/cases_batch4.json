@@ -19,7 +19,7 @@
     {
       "case_id": "LNES59-B4-002",
       "category": "temporal_supersession",
-      "cross_cutting_tags": ["TEMPORAL", "MULTI-SOURCE"],
+      "cross_cutting_tags": ["TEMPORAL", "MULTI_SOURCE"],
       "query": "What is the current authorized amount for PO-4002?",
       "grounding_document_ids": ["DOC-PO-4002", "DOC-PO-AMENDMENT-4002A", "DOC-PO-AMENDMENT-4002B", "DOC-PO-AMENDMENT-4002C"],
       "expected_state": {
