@@ -1,0 +1,24 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 10 (packet H: Millbrook Data Services VENDOR-6018, Cindermoor Analytics VENDOR-6019), after V6 freeze. Wrong-TRANSACTION authority (same vendor, same role, same amount, different purpose/transaction -- the one authority dimension not yet dedicated-tested, distinct from wrong-vendor/wrong-business-unit/wrong-amount already covered), plus a fresh real-corpus instance of the unavailability detector using different phrasing than any existing document.",
+  "documents": [
+    {
+      "id": "DOC-EMAIL-DIRECTOR-LICENSE-RENEWAL-6018",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Millbrook Data Services license renewal. Approving the $15,000 annual license renewal for Millbrook Data Services (VENDOR-6018) -- within my Director authority. -- T. Osei, Director.",
+      "predicate": "VENDOR-6018.license_renewal_authority", "value": "15000"
+    },
+    {
+      "id": "DOC-PO-NEWMODULE-6018",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6018", "po_id": "PO-6018M", "issued": "2026-06-20",
+      "content": "PURCHASE ORDER PO-6018M. Vendor: Millbrook Data Services (VENDOR-6018). Amount authorized: $15,000.00. Description: NEW analytics module purchase -- a separate, additional transaction from the existing license renewal, same vendor and coincidentally the same dollar amount, but a distinct scope of work.",
+      "predicate": "PO-6018M.authorized_amount", "value": "15000"
+    },
+    {
+      "id": "DOC-REGISTRY-SYSTEM-STATUS-6019",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Cindermoor Analytics\". Registry search could not be completed -- indexing service unavailable during the nightly rebuild window. Result inconclusive as of query time.",
+      "predicate": "VENDOR-6019.registry_status"
+    }
+  ]
+}

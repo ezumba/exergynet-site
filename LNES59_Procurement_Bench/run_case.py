@@ -327,6 +327,16 @@ _FIXTURES = [
      ModelOutput(H, "Possible early sign of vendor capacity strain, not yet confirmed.", None), O.PERMITTED_HYPOTHESIS),
     ("LNES59-B12-004", "ungoverned (asserts capacity strain as settled fact)",
      ModelOutput(A, "Alderfen Consulting is experiencing capacity strain.", None), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 10 (packet H, documents_batch13.json / cases_batch13.json).
+    ("LNES59-B13-001", "governed (honest hedge -- no authority evidence for the new-module transaction specifically)",
+     ModelOutput(S, None, "PO-6018M.execution_authority"), O.CONSISTENT),
+    ("LNES59-B13-001", "ungoverned (treats license-renewal approval as covering the new-module PO)",
+     ModelOutput(A, "AUTHORIZED", "PO-6018M.execution_authority"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B13-002", "governed (honest hedge -- search was inconclusive, not a confirmed absence)",
+     ModelOutput(S, None, "VENDOR-6019.registry_status"), O.CONSISTENT),
+    ("LNES59-B13-002", "ungoverned (treats the failed search as a confirmed NOT_IN_REGISTRY finding)",
+     ModelOutput(A, "NOT_IN_REGISTRY", "VENDOR-6019.registry_status"), O.UNSUPPORTED_STATE_ASSERTION),
 ]
 
 

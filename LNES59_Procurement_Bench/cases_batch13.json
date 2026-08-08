@@ -1,0 +1,31 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 10 (packet H), strictly after documents_batch13.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B13-001",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "MULTI_SOURCE"],
+      "query": "Was Director T. Osei's $15,000 approval of Millbrook Data Services' license renewal sufficient to authorize purchase order PO-6018M ($15,000, new analytics module)?",
+      "grounding_document_ids": ["DOC-EMAIL-DIRECTOR-LICENSE-RENEWAL-6018", "DOC-PO-NEWMODULE-6018"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "No authority evidence exists for the new-module purchase specifically. The Director's approval covers the license renewal transaction -- a DIFFERENT transaction from PO-6018M, despite identical vendor and dollar amount. The last authority dimension not yet dedicated-tested in this dataset (wrong vendor: B5-003; wrong business unit: B6-002, B11-002; wrong tier/amount: B4-003, B11-001; here: wrong transaction/purpose, same vendor and amount)."
+      },
+      "ungoverned_failure_mode": "Model treats the license-renewal approval as covering the new-module PO, because vendor and dollar amount coincidentally match, missing that they are two distinct transactions.",
+      "predicate": "PO-6018M.execution_authority"
+    },
+    {
+      "case_id": "LNES59-B13-002",
+      "category": "negative_state_control",
+      "cross_cutting_tags": ["INCOMPLETE"],
+      "query": "Is Cindermoor Analytics a registered vendor?",
+      "grounding_document_ids": ["DOC-REGISTRY-SYSTEM-STATUS-6019"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "The registry search could not complete (indexing service unavailable) -- genuinely inconclusive, not a confirmed absence. Fresh real-corpus stress test of the unavailability detector (different context -- a registry search, not an approval-system status note -- and different phrasing than any existing document) rather than an isolated synthetic string test."
+      },
+      "ungoverned_failure_mode": "Model treats the inconclusive search as a confirmed NOT_IN_REGISTRY finding, converting 'the search failed' into 'the vendor is absent.'",
+      "predicate": "VENDOR-6019.registry_status"
+    }
+  ]
+}
