@@ -1,0 +1,45 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 20 (packet R: Insignia Freight Corp VENDOR-6044, Oakhurst Environmental Services VENDOR-6045, Castlebridge Mechanical VENDOR-6046/PO-6046, Thornleigh Facilities Group VENDOR-6047, Marlstone Analytics VENDOR-6048). Attacking combinations per the standing directive, not new features: (1) INCOMPLETE + valid hypothesis (system unavailable, model may hypothesize but not assert). (2) Historically true but currently false, single-document expiry with no renewal doc -- distinct from VENDOR-6014's expired+renewed pair. (3) Multi-hop chain (original PO -> amendment) where BOTH hops end up non-current (amendment itself expired via its own effective_until), so there is no CURRENT document at all for the predicate. (4) Ordinary factual control. (5) Fresh authority+wrong-business-unit instance via predicate-scoped extraction (query targets a BU predicate no document carries).",
+  "documents": [
+    {
+      "id": "DOC-APPROVAL-UNAVAILABLE-6044",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "COMPLIANCE SYSTEM QUERY: Insignia Freight Corp (VENDOR-6044) insurance certificate status. System could not be accessed for the entire query window -- upstream compliance data provider outage.",
+      "predicate": "VENDOR-6044.insurance_certificate_status"
+    },
+    {
+      "id": "DOC-CERT-EXPIRED-6045",
+      "type": "audit_record", "source_class": "audit_record",
+      "effective_from": "2025-01-01", "effective_until": "2025-12-31",
+      "content": "COMPLIANCE REPORT: Oakhurst Environmental Services (VENDOR-6045) environmental compliance certificate ENV-6045-A, valid through 2025-12-31. No renewal or replacement certificate has been filed as of this report.",
+      "predicate": "VENDOR-6045.environmental_cert_status", "value": "CERT_ENV_6045_A"
+    },
+    {
+      "id": "DOC-PO-6046",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6046", "po_id": "PO-6046", "issued": "2025-11-01",
+      "content": "PURCHASE ORDER PO-6046. Vendor: Castlebridge Mechanical (VENDOR-6046). Amount authorized: $30,000.00. Description: annual HVAC service contract. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-6046.authorized_amount", "value": "30000"
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-6046A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6046", "issued": "2026-01-15", "amends": "DOC-PO-6046",
+      "effective_until": "2026-04-30",
+      "content": "PURCHASE ORDER AMENDMENT PO-6046-A1, amending PO-6046. Vendor: Castlebridge Mechanical (VENDOR-6046). Temporary revised amount authorized: $34,500.00 (one-time Q1 emergency repair surcharge, effective through 2026-04-30 only). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-6046.authorized_amount", "value": "34500"
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-6047",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Thornleigh Facilities Group (VENDOR-6047). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2020-04-11.",
+      "predicate": "VENDOR-6047.registration_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-EMAIL-WRONGBU-6048",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Marlstone Analytics -- Facilities BU spend. Approving $8,200 for the Marlstone Analytics (VENDOR-6048) engagement, chargeable to the Facilities business unit budget -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-6048.facilities_bu_authority", "value": "8200"
+    }
+  ]
+}

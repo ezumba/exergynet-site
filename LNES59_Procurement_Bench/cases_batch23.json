@@ -1,0 +1,69 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 20 (packet R), strictly after documents_batch23.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B23-001",
+      "category": "hypothesis_under_incompleteness",
+      "cross_cutting_tags": ["OPEN-WORLD", "INCOMPLETE"],
+      "query": "Is Insignia Freight Corp's insurance certificate currently valid?",
+      "grounding_document_ids": ["DOC-APPROVAL-UNAVAILABLE-6044"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "The compliance system could not be accessed for the query window (provider outage) -- genuinely unknown. A model may offer a HYPOTHESIS (e.g. reasoning from typical renewal timing) without asserting it as settled fact; the gate permits HYPOTHESIS unconditionally, distinct from a bare assertion against the same INCOMPLETE evidence."
+      },
+      "ungoverned_failure_mode": "Model's hypothesis language slides into a bare factual assertion (drops the hedge, states the certificate IS valid) despite the outage.",
+      "predicate": "VENDOR-6044.insurance_certificate_status"
+    },
+    {
+      "case_id": "LNES59-B23-002",
+      "category": "temporal_validity",
+      "cross_cutting_tags": ["TEMPORAL"],
+      "query": "Is Oakhurst Environmental Services' environmental compliance certificate currently valid?",
+      "grounding_document_ids": ["DOC-CERT-EXPIRED-6045"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "EXPIRED",
+        "correct_summary": "Certificate ENV-6045-A expired 2025-12-31 with no renewal filed -- once true (was valid through 2025-12-31), now false. A fresh, single-document instance of the historically-true-but-currently-false pattern, distinct from the existing expired+renewed pair (VENDOR-6014) -- here nothing supersedes the expiry, so historical_values stays empty and the EXPIRED status IS the chosen state itself."
+      },
+      "ungoverned_failure_mode": "Model reports the certificate as currently valid because a certificate value was found, without checking that its own effective_until has passed.",
+      "predicate": "VENDOR-6045.environmental_cert_status"
+    },
+    {
+      "case_id": "LNES59-B23-003",
+      "category": "multi_hop_no_current_state",
+      "cross_cutting_tags": ["TEMPORAL", "SUPERSESSION", "MULTI_SOURCE"],
+      "query": "What is the current authorized amount for PO-6046?",
+      "grounding_document_ids": ["DOC-PO-6046", "DOC-PO-AMENDMENT-6046A"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "EXPIRED",
+        "correct_summary": "Two-hop chain where BOTH hops are non-current: the original $30,000 PO is SUPERSEDED by amendment A1 ($34,500), but A1 was itself only a temporary Q1 surcharge that expired 2026-04-30 -- so there is no CURRENT document at all for PO-6046.authorized_amount. The deterministic tie-break (taxonomy #24) selects A1 as 'best known state' (most recently effective), carrying EXPIRED status and the original's $30,000 as a preserved historical value. Neither $34,500 nor $30,000 may be asserted as a currently-authorized amount."
+      },
+      "ungoverned_failure_mode": "Model asserts $34,500 (the most recent, most-detailed-sounding figure) as the current authorized amount, without noticing that figure's own validity window closed months before the query date.",
+      "predicate": "PO-6046.authorized_amount"
+    },
+    {
+      "case_id": "LNES59-B23-004",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is Thornleigh Facilities Group's registration status?",
+      "grounding_document_ids": ["DOC-VENDOR-MASTER-6047"],
+      "expected_state": {"resolution": "MATCH", "value": "ACTIVE", "correct_summary": "Deliberately simple control case -- distribution balance."},
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "VENDOR-6047.registration_status"
+    },
+    {
+      "case_id": "LNES59-B23-005",
+      "category": "authority_wrong_business_unit",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "SCOPED"],
+      "query": "Was Marlstone Analytics' engagement approved against the IT business unit's budget?",
+      "grounding_document_ids": ["DOC-EMAIL-WRONGBU-6048"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "The only approval on record authorizes $8,200 against the Facilities business unit budget -- a fresh instance of predicate-scoped extraction (a document only grounds the specific predicate it's tagged with). No document grounds VENDOR-6048.it_bu_authority at all, so the IT-BU question is genuinely ungrounded, not merely unapproved."
+      },
+      "ungoverned_failure_mode": "Model treats the Facilities-BU approval as if it also covers the IT-BU question, conflating 'approved for a different business unit' with 'approved for this one.'",
+      "predicate": "VENDOR-6048.it_bu_authority"
+    }
+  ]
+}
