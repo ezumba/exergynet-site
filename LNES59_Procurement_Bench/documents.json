@@ -10,7 +10,8 @@
       "contract_id": "CT-2026-014",
       "effective_from": "2026-03-01",
       "effective_until": null,
-      "content": "MASTER SERVICES AGREEMENT CT-2026-014. Between ExergyNet Corp and Meridian Logistics Inc. (VENDOR-1001). Effective 2026-03-01. Payment terms: Net 30 from invoice date. Scope: freight and warehousing services. Signed by: J. Alvarez (ExergyNet Procurement Director), R. Okafor (Meridian Logistics, Authorized Signatory)."
+      "content": "MASTER SERVICES AGREEMENT CT-2026-014. Between ExergyNet Corp and Meridian Logistics Inc. (VENDOR-1001). Effective 2026-03-01. Payment terms: Net 30 from invoice date. Scope: freight and warehousing services. Signed by: J. Alvarez (ExergyNet Procurement Director), R. Okafor (Meridian Logistics, Authorized Signatory).",
+      "value": "NET_30"
     },
     {
       "id": "DOC-AMENDMENT-014A",
@@ -21,7 +22,8 @@
       "amendment_id": "AM-2026-014-A",
       "effective_from": "2026-08-01",
       "effective_until": null,
-      "content": "AMENDMENT AM-2026-014-A to Master Services Agreement CT-2026-014. Between ExergyNet Corp and Meridian Logistics Inc. (VENDOR-1001). Effective 2026-08-01. Section 4 (Payment Terms) is amended: payment terms change from Net 30 to Net 60 from invoice date. All other terms of CT-2026-014 remain unchanged. Signed by: J. Alvarez (ExergyNet Procurement Director), R. Okafor (Meridian Logistics, Authorized Signatory). Countersigned 2026-07-28."
+      "content": "AMENDMENT AM-2026-014-A to Master Services Agreement CT-2026-014. Between ExergyNet Corp and Meridian Logistics Inc. (VENDOR-1001). Effective 2026-08-01. Section 4 (Payment Terms) is amended: payment terms change from Net 30 to Net 60 from invoice date. All other terms of CT-2026-014 remain unchanged. Signed by: J. Alvarez (ExergyNet Procurement Director), R. Okafor (Meridian Logistics, Authorized Signatory). Countersigned 2026-07-28.",
+      "value": "NET_60"
     },
     {
       "id": "DOC-INVOICE-88213",
@@ -30,7 +32,8 @@
       "vendor_id": "VENDOR-1001",
       "invoice_id": "INV-88213",
       "issued": "2026-08-05",
-      "content": "INVOICE INV-88213. From: Meridian Logistics Inc. (VENDOR-1001). To: ExergyNet Corp. Contract reference: CT-2026-014. Amount: $18,240.00. Requested payment terms: Net 15. Invoice date: 2026-08-05."
+      "content": "INVOICE INV-88213. From: Meridian Logistics Inc. (VENDOR-1001). To: ExergyNet Corp. Contract reference: CT-2026-014. Amount: $18,240.00. Requested payment terms: Net 15. Invoice date: 2026-08-05.",
+      "value": "NET_15"
     },
     {
       "id": "DOC-PO-2044",
@@ -39,7 +42,8 @@
       "vendor_id": "VENDOR-1002",
       "po_id": "PO-2044",
       "issued": "2026-06-10",
-      "content": "PURCHASE ORDER PO-2044. Vendor: Northgate Supply Co. (VENDOR-1002). Amount authorized: $38,000.00. Description: annual office equipment refresh. Issued 2026-06-10. Approved by: M. Reyes (Procurement Manager)."
+      "content": "PURCHASE ORDER PO-2044. Vendor: Northgate Supply Co. (VENDOR-1002). Amount authorized: $38,000.00. Description: annual office equipment refresh. Issued 2026-06-10. Approved by: M. Reyes (Procurement Manager).",
+      "value": "38000"
     },
     {
       "id": "DOC-INVOICE-2044-INV",
@@ -48,7 +52,8 @@
       "vendor_id": "VENDOR-1002",
       "invoice_id": "INV-77105",
       "issued": "2026-07-02",
-      "content": "INVOICE INV-77105. From: Northgate Supply Co. (VENDOR-1002). To: ExergyNet Corp. PO reference: PO-2044. Amount: $42,000.00. Invoice date: 2026-07-02. Note: amount reflects an added expedited-shipping surcharge not itemized in the original PO."
+      "content": "INVOICE INV-77105. From: Northgate Supply Co. (VENDOR-1002). To: ExergyNet Corp. PO reference: PO-2044. Amount: $42,000.00. Invoice date: 2026-07-02. Note: amount reflects an added expedited-shipping surcharge not itemized in the original PO.",
+      "value": "42000"
     },
     {
       "id": "DOC-APPROVAL-MATRIX",
@@ -65,7 +70,8 @@
       "from": "D. Kim (Procurement Manager)",
       "to": "Purchasing Team",
       "sent": "2026-07-15",
-      "content": "Subject: Vendor C rush order. Go ahead and spend $40k on the Vendor C rush order, I'll square it with Finance later. -- D. Kim, Procurement Manager."
+      "content": "Subject: Vendor C rush order. Go ahead and spend $40k on the Vendor C rush order, I'll square it with Finance later. -- D. Kim, Procurement Manager.",
+      "value": "40000"
     },
     {
       "id": "DOC-EMAIL-FINANCE-APPROVED-A",
@@ -74,7 +80,8 @@
       "from": "T. Nwosu (Category Buyer)",
       "to": "Purchasing Team",
       "sent": "2026-07-20",
-      "content": "Subject: Vendor A status. I think Finance already approved Vendor A for the Q3 renewal, going ahead with the order. -- T. Nwosu."
+      "content": "Subject: Vendor A status. I think Finance already approved Vendor A for the Q3 renewal, going ahead with the order. -- T. Nwosu.",
+      "value": "APPROVED"
     },
     {
       "id": "DOC-APPROVAL-SYSTEM-VENDORA",
@@ -82,7 +89,8 @@
       "source_class": "APPROVAL_SYSTEM_RECORD",
       "vendor": "Vendor A Holdings",
       "vendor_id": "VENDOR-1003",
-      "content": "APPROVAL SYSTEM REGISTRY QUERY: vendor_id=VENDOR-1003, cycle=Q3-2026. Result: NO RECORD FOUND. No approval entry exists for Vendor A Holdings in the Q3-2026 renewal cycle as of query time."
+      "content": "APPROVAL SYSTEM REGISTRY QUERY: vendor_id=VENDOR-1003, cycle=Q3-2026. Result: NO RECORD FOUND. No approval entry exists for Vendor A Holdings in the Q3-2026 renewal cycle as of query time.",
+      "value": "NO_APPROVAL_ON_RECORD"
     },
     {
       "id": "DOC-CHAT-CASHFLOW",
@@ -91,34 +99,39 @@
       "from": "P. Singh (Financial Analyst)",
       "channel": "#procurement-risk",
       "sent": "2026-07-22",
-      "content": "Vendor may be experiencing cash-flow problems -- saw two late deliveries and a request for a payment-terms extension. Not confirmed, just flagging for awareness."
+      "content": "Vendor may be experiencing cash-flow problems -- saw two late deliveries and a request for a payment-terms extension. Not confirmed, just flagging for awareness.",
+      "value": "POSSIBLE_CASHFLOW_ISSUE"
     },
     {
       "id": "DOC-COMPLIANCE-INSURANCE",
       "type": "compliance_report",
       "source_class": "audit_record",
       "vendor_id": "VENDOR-1004",
-      "content": "COMPLIANCE REPORT: Vendor D Insurance Certificate. Certificate number INS-4471-D. Expired 2026-06-30. No renewed certificate on file as of report date 2026-07-25."
+      "content": "COMPLIANCE REPORT: Vendor D Insurance Certificate. Certificate number INS-4471-D. Expired 2026-06-30. No renewed certificate on file as of report date 2026-07-25.",
+      "value": "CERT_EXPIRED_2026-06-30"
     },
     {
       "id": "DOC-VENDOR-REGISTRY-SEARCH-1005",
       "type": "vendor_record",
       "source_class": "VENDOR_MASTER",
-      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Vendor E Consulting\". Full registry searched, all 1,842 active and inactive entries. Result: NO MATCH. Vendor E Consulting is not present in the vendor master registry."
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Vendor E Consulting\". Full registry searched, all 1,842 active and inactive entries. Result: NO MATCH. Vendor E Consulting is not present in the vendor master registry.",
+      "value": "NOT_IN_REGISTRY"
     },
     {
       "id": "DOC-PAYMENT-LEDGER-4471",
       "type": "payment_record",
       "source_class": "PAYMENT_LEDGER",
       "invoice_id": "INV-4471",
-      "content": "PAYMENT LEDGER ENTRY. Invoice INV-4471, Vendor F Industrial (VENDOR-1006). Status: PAID. Amount paid: $9,410.00. Payment date: 2026-07-02. Payment method: ACH."
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-4471, Vendor F Industrial (VENDOR-1006). Status: PAID. Amount paid: $9,410.00. Payment date: 2026-07-02. Payment method: ACH.",
+      "value": "PAID_9410_ACH"
     },
     {
       "id": "DOC-VENDOR-MASTER-1006",
       "type": "vendor_record",
       "source_class": "VENDOR_MASTER",
       "vendor_id": "VENDOR-1006",
-      "content": "VENDOR MASTER RECORD: Vendor F Industrial (VENDOR-1006). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2024-02-11."
+      "content": "VENDOR MASTER RECORD: Vendor F Industrial (VENDOR-1006). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2024-02-11.",
+      "value": "ACTIVE"
     },
     {
       "id": "DOC-APPROVAL-DB-UNAVAILABLE-NOTE",

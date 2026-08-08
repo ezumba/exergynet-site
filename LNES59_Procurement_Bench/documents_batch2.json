@@ -10,7 +10,8 @@
       "contract_id": "CT-2026-201",
       "effective_from": "2026-02-01",
       "effective_until": null,
-      "content": "MASTER SERVICES AGREEMENT CT-2026-201. Between ExergyNet Corp and Atlas Freight Partners (VENDOR-2001). Effective 2026-02-01. Delivery SLA: 5 business days standard, penalty of 2% of shipment value per day late beyond SLA. Signed by: J. Alvarez (ExergyNet Procurement Director), M. Delacroix (Atlas Freight, Authorized Signatory)."
+      "content": "MASTER SERVICES AGREEMENT CT-2026-201. Between ExergyNet Corp and Atlas Freight Partners (VENDOR-2001). Effective 2026-02-01. Delivery SLA: 5 business days standard, penalty of 2% of shipment value per day late beyond SLA. Signed by: J. Alvarez (ExergyNet Procurement Director), M. Delacroix (Atlas Freight, Authorized Signatory).",
+      "value": "5_DAY_2PCT"
     },
     {
       "id": "DOC-AMENDMENT-2201A",
@@ -21,7 +22,8 @@
       "amendment_id": "AM-2026-201-A",
       "effective_from": "2026-07-01",
       "effective_until": null,
-      "content": "AMENDMENT AM-2026-201-A to Master Services Agreement CT-2026-201. Between ExergyNet Corp and Atlas Freight Partners (VENDOR-2001). Effective 2026-07-01. Delivery SLA section amended: standard delivery window extended to 7 business days, late penalty reduced to 1% of shipment value per day late. All other terms of CT-2026-201 remain unchanged. Signed by: J. Alvarez (ExergyNet Procurement Director), M. Delacroix (Atlas Freight, Authorized Signatory). Countersigned 2026-06-25."
+      "content": "AMENDMENT AM-2026-201-A to Master Services Agreement CT-2026-201. Between ExergyNet Corp and Atlas Freight Partners (VENDOR-2001). Effective 2026-07-01. Delivery SLA section amended: standard delivery window extended to 7 business days, late penalty reduced to 1% of shipment value per day late. All other terms of CT-2026-201 remain unchanged. Signed by: J. Alvarez (ExergyNet Procurement Director), M. Delacroix (Atlas Freight, Authorized Signatory). Countersigned 2026-06-25.",
+      "value": "7_DAY_1PCT"
     },
     {
       "id": "DOC-CHAT-ATLAS-SLA",
@@ -30,7 +32,8 @@
       "from": "R. Bellamy (Logistics Coordinator)",
       "channel": "#vendor-ops",
       "sent": "2026-07-10",
-      "content": "Heads up, Atlas Freight is still on the 5-day SLA with the 2% penalty as far as I know -- haven't seen anything change. Flagging in case anyone's tracking a late shipment against the old terms."
+      "content": "Heads up, Atlas Freight is still on the 5-day SLA with the 2% penalty as far as I know -- haven't seen anything change. Flagging in case anyone's tracking a late shipment against the old terms.",
+      "value": "5_DAY_2PCT"
     },
     {
       "id": "DOC-CONTRACT-2202",
@@ -50,7 +53,8 @@
       "from": "A. Ferreira (Strategy Team)",
       "channel": "#budget-planning",
       "sent": "2026-07-18",
-      "content": "Pretty sure budget already pre-approved the Q3 Bright Path engagement above the usual cap, someone mentioned it in standup. Going to move forward with the expanded scope."
+      "content": "Pretty sure budget already pre-approved the Q3 Bright Path engagement above the usual cap, someone mentioned it in standup. Going to move forward with the expanded scope.",
+      "value": "PRE_APPROVED"
     },
     {
       "id": "DOC-PO-3305",
@@ -59,7 +63,8 @@
       "vendor_id": "VENDOR-2003",
       "po_id": "PO-3305",
       "issued": "2026-05-20",
-      "content": "PURCHASE ORDER PO-3305. Vendor: Coastal Materials Co. (VENDOR-2003). Amount authorized: $61,500.00. Description: Q2 raw materials restock. Issued 2026-05-20. Approved by: T. Osei (Director)."
+      "content": "PURCHASE ORDER PO-3305. Vendor: Coastal Materials Co. (VENDOR-2003). Amount authorized: $61,500.00. Description: Q2 raw materials restock. Issued 2026-05-20. Approved by: T. Osei (Director).",
+      "value": "61500"
     },
     {
       "id": "DOC-PO-AMENDMENT-3305",
@@ -69,7 +74,8 @@
       "vendor_id": "VENDOR-2003",
       "po_id": "PO-3305-A1",
       "issued": "2026-06-02",
-      "content": "PURCHASE ORDER AMENDMENT PO-3305-A1, amending PO-3305. Vendor: Coastal Materials Co. (VENDOR-2003). Revised amount authorized: $58,000.00 (reduced scope, one line item removed per Facilities request). Issued 2026-06-02. Approved by: T. Osei (Director)."
+      "content": "PURCHASE ORDER AMENDMENT PO-3305-A1, amending PO-3305. Vendor: Coastal Materials Co. (VENDOR-2003). Revised amount authorized: $58,000.00 (reduced scope, one line item removed per Facilities request). Issued 2026-06-02. Approved by: T. Osei (Director).",
+      "value": "58000"
     },
     {
       "id": "DOC-INVOICE-3305",
@@ -78,7 +84,8 @@
       "vendor_id": "VENDOR-2003",
       "invoice_id": "INV-30991",
       "issued": "2026-06-25",
-      "content": "INVOICE INV-30991. From: Coastal Materials Co. (VENDOR-2003). To: ExergyNet Corp. PO reference: PO-3305. Amount: $61,500.00. Invoice date: 2026-06-25."
+      "content": "INVOICE INV-30991. From: Coastal Materials Co. (VENDOR-2003). To: ExergyNet Corp. PO reference: PO-3305. Amount: $61,500.00. Invoice date: 2026-06-25.",
+      "value": "61500"
     },
     {
       "id": "DOC-APPROVAL-MATRIX-2026B",
@@ -95,21 +102,24 @@
       "source_class": "EMAIL",
       "to": "Purchasing Team",
       "sent": "2026-07-30",
-      "content": "Subject: Delta Circuit emergency order. Approving $75,000 for the Delta Circuit Supply emergency order directly, this can't wait for VP sign-off given the production line is down. -- T. Osei, Director."
+      "content": "Subject: Delta Circuit emergency order. Approving $75,000 for the Delta Circuit Supply emergency order directly, this can't wait for VP sign-off given the production line is down. -- T. Osei, Director.",
+      "value": "75000"
     },
     {
       "id": "DOC-VENDOR-MASTER-2004",
       "type": "vendor_record",
       "source_class": "VENDOR_MASTER",
       "vendor_id": "VENDOR-2004",
-      "content": "VENDOR MASTER RECORD: Delta Circuit Supply (VENDOR-2004). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2023-09-04."
+      "content": "VENDOR MASTER RECORD: Delta Circuit Supply (VENDOR-2004). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2023-09-04.",
+      "value": "ACTIVE"
     },
     {
       "id": "DOC-VENDOR-MASTER-2005",
       "type": "vendor_record",
       "source_class": "VENDOR_MASTER",
       "vendor_id": "VENDOR-2005",
-      "content": "VENDOR MASTER RECORD: Evergreen Facilities Group (VENDOR-2005). Registration status: SUSPENDED. Tax compliance status: DELINQUENT -- outstanding filing since 2026-04-01. Registered since 2021-11-18."
+      "content": "VENDOR MASTER RECORD: Evergreen Facilities Group (VENDOR-2005). Registration status: SUSPENDED. Tax compliance status: DELINQUENT -- outstanding filing since 2026-04-01. Registered since 2021-11-18.",
+      "value": "SUSPENDED"
     },
     {
       "id": "DOC-PAYMENT-LEDGER-2005",
@@ -117,14 +127,16 @@
       "source_class": "PAYMENT_LEDGER",
       "invoice_id": "INV-55210",
       "vendor_id": "VENDOR-2005",
-      "content": "PAYMENT LEDGER ENTRY. Invoice INV-55210, Vendor Evergreen Facilities Group (VENDOR-2005). Status: PENDING -- payment held pending vendor compliance-status review. Amount pending: $14,220.00."
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-55210, Vendor Evergreen Facilities Group (VENDOR-2005). Status: PENDING -- payment held pending vendor compliance-status review. Amount pending: $14,220.00.",
+      "value": "PENDING_14220"
     },
     {
       "id": "DOC-AUDIT-FRONTLINE",
       "type": "audit_record",
       "source_class": "audit_record",
       "vendor_id": "VENDOR-2006",
-      "content": "COMPLIANCE AUDIT REPORT: Frontline Security Systems (VENDOR-2006). Finding: background-check documentation for two subcontracted personnel is missing from the vendor's compliance file as of audit date 2026-07-12. No finding of active non-compliance -- documentation gap only, remediation requested."
+      "content": "COMPLIANCE AUDIT REPORT: Frontline Security Systems (VENDOR-2006). Finding: background-check documentation for two subcontracted personnel is missing from the vendor's compliance file as of audit date 2026-07-12. No finding of active non-compliance -- documentation gap only, remediation requested.",
+      "value": "DOCUMENTATION_GAP_ONLY"
     },
     {
       "id": "DOC-MEETING-NOTE-FRONTLINE",
@@ -138,7 +150,8 @@
       "id": "DOC-VENDOR-REGISTRY-SEARCH-2007",
       "type": "vendor_record",
       "source_class": "VENDOR_MASTER",
-      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Granite Peak Logistics\". Full registry searched, all 1,842 active and inactive entries (same registry snapshot as DOC-VENDOR-REGISTRY-SEARCH-1005). Result: NO MATCH. Granite Peak Logistics is not present in the vendor master registry."
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Granite Peak Logistics\". Full registry searched, all 1,842 active and inactive entries (same registry snapshot as DOC-VENDOR-REGISTRY-SEARCH-1005). Result: NO MATCH. Granite Peak Logistics is not present in the vendor master registry.",
+      "value": "NOT_IN_REGISTRY"
     },
     {
       "id": "DOC-APPROVAL-SYSTEM-DOWN-2026-08-06",
@@ -153,7 +166,8 @@
       "from": "N. Park (Category Buyer)",
       "to": "Purchasing Team",
       "sent": "2026-08-06",
-      "content": "Subject: Granite Peak status. Checked the approval system around 3pm for Granite Peak Logistics and got an error, going to assume that means no approval exists and proceed without it."
+      "content": "Subject: Granite Peak status. Checked the approval system around 3pm for Granite Peak Logistics and got an error, going to assume that means no approval exists and proceed without it.",
+      "value": "ASSUMED_NOT_APPROVED"
     },
     {
       "id": "DOC-CONTRACT-2208",
