@@ -8,7 +8,8 @@
       "query": "Has Finance approved Vendor A Holdings for the Q3 2026 renewal?",
       "grounding_document_ids": ["DOC-EMAIL-FINANCE-APPROVED-A", "DOC-APPROVAL-SYSTEM-VENDORA"],
       "expected_state": {
-        "resolution": "MATCH",
+        "resolution": "NO_MATCH",
+        "_correction": "Originally recorded as MATCH here, inconsistent with the NO_MATCH already used in this case's own gate-test fixture (state_consistency_gate_v2 test suite) and in the automated extraction pipeline's output -- both agree the authoritative approval-system lookup itself returned a clean negative. Fixed during LNES-59 extraction-pipeline cross-validation, not silently left inconsistent.",
         "claim_type_present": "SOURCE_ASSERTION (from the email) coexisting with an authoritative NO RECORD FOUND from the approval system",
         "authority_status": "UNVERIFIED for the email's claim; the approval-system record is authoritative and shows no approval",
         "correct_summary": "A SOURCE_ASSERTION exists claiming approval; the authoritative APPROVAL_SYSTEM_RECORD shows no approval on file. These are not the same state and must not be merged."
