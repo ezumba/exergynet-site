@@ -1,0 +1,69 @@
+{
+  "_purpose": "Pre-holdout architecture freeze manifest, V5 -- supersedes V4 for holdout-gating purposes. V1-V4 all preserved unmodified, not deleted, for chronology.",
+  "_frozen_2026-08-08": true,
+  "supersedes": {"manifest": "LNES59_PRE_HOLDOUT_CODE_MANIFEST_V4.json", "freeze_commit": "2f30bb0", "code_commit": "3f5722aa22357df1ce33d4a7bcb16f9d0d492533"},
+  "lineage": [
+    {"version": "V1", "commit": "f176510", "reason": "initial pre-holdout freeze after closing the last two disclosed extraction limitations (scope, historical values)"},
+    {"version": "V2", "commit": "1ab0336", "reason": "resolved B3-002/B2-006 predicate semantics + third scope case + CandidateClaim architecture documentation -- no code changes"},
+    {"version": "V3", "commit": "6cae952", "reason": "taxonomy #19 -- _UNAVAILABLE_MARKERS 'maintenance' collision, found via a new development case"},
+    {"version": "V4", "commit": "3f5722a", "reason": "taxonomy #20 -- unavailability red-team matrix found 2 real misses, opposite direction from #19"},
+    {"version": "V5", "commit": "609b3c0", "reason": "taxonomy #21 (FIXED) -- future-effective values lost diagnostic specificity, the symmetric gap to #18 in the future direction. Taxonomy #22 (BENCHMARK_ADAPTER_LIMIT_REACHED, disclosed, not fixed) found in the same tranche via the first real REVOKED exercise -- recorded, not patched, per the directive's own stop-rule."}
+  ],
+  "git_commit": "609b3c09ccb36bc05764cf8ef1071c40caa5cea7",
+  "git_repo": "exergynet",
+  "why_a_v5_freeze_was_needed": [
+    "Taxonomy #21: historical_values' collection and the gate's temporal pre-check both widened to include FUTURE_EFFECTIVE, fixing a real diagnostic-specificity loss (STATE_CONTRADICTION instead of TEMPORAL_CONTRADICTION) verified against a real corpus-grounded case (B5-001)."
+  ],
+  "not_a_freeze_trigger_but_recorded": [
+    "Taxonomy #22: values_match() compound-word fallback false-matches a value against a proper superset of its own word-set (e.g. AUTHORIZED_STANDING vs AUTHORIZED_STANDING_R2). Explicitly NOT patched -- BENCHMARK_ADAPTER_LIMIT_REACHED declared per directive Section 4. This does not change frozen gate/extraction CODE (values_match's existing logic is unchanged), it changes what's DOCUMENTED as its known limitation -- recorded here for completeness, not as a code-driving reason for V5. The actual code trigger for V5 is taxonomy #21 alone."
+  ],
+  "frozen_scope": [
+    "state_consistency_gate_v2.py", "deterministic_extraction.py", "LNES59_STATE_SCHEMA.md",
+    "LNES59_AUTHORITY_MODEL.md", "LNES59_PREDICATE_SEMANTICS.md", "LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md"
+  ],
+  "explicitly_not_frozen": {
+    "cases*.json / documents*.json": "dataset content -- documents_batch5.json/cases_batch5.json are Phase 5 tranche 2 (3 new DEVELOPMENT cases: B5-001..003), more tranches follow",
+    "dataset_registry.py, LNES59_DATASET_MANIFEST.json, case_view.py": "infrastructure, updated every tranche by design",
+    "run_case.py, arm_x2.py, run_x2_arm.py, metrics.py, validate_extraction_against_cases.py": "harness/runner code",
+    "test_*.py": "test files grow with the dataset and with each red-team pass"
+  },
+  "components": {
+    "state_schema": {"version": "1.0", "file": "LNES59_STATE_SCHEMA.md", "sha256": "ef754b070fefdc6f9a2e6a97c293fa5f1d631ea74cb2bf20267d6f322db47a9f", "size_bytes": 7497, "changed_since_v4": false},
+    "authority_model": {"version": "1.0", "file": "LNES59_AUTHORITY_MODEL.md", "sha256": "e98b7a99cfbcb0d6cb3eb2eb4be17d228ba31719560d5cd6b24eb3d13308f143", "size_bytes": 4888, "changed_since_v4": false},
+    "gate": {
+      "version": "2.2",
+      "_version_note": "2.1 = V1-V4 (values_match, INCOMPLETE carve-out, scope redesign, historical values). 2.2 = this freeze -- temporal pre-check widened to include FUTURE_EFFECTIVE (taxonomy #21). values_match() itself unchanged (taxonomy #22 disclosed, not patched).",
+      "file": "state_consistency_gate_v2.py", "sha256": "ede09697100f216d22b62c5f139ebcb7d7eb0afae70bc13d3b389010a6228855", "size_bytes": 24560, "changed_since_v4": true
+    },
+    "extraction": {
+      "version": "1.5",
+      "_version_note": "1.4 = V4 (taxonomy #20). 1.5 = this freeze -- historical_values collection widened to FUTURE_EFFECTIVE, and _resolve_temporal_status gained REVOKED detection via the new `revokes` document field (first real exercise, previously only hand-built in isolated gate tests).",
+      "file": "deterministic_extraction.py", "sha256": "4f2b445f51f3581bd392cb8b9370d5e5c172dfb2c4d672da63a2c61f31b2f54a", "size_bytes": 25680, "changed_since_v4": true
+    },
+    "predicate_schema": {"version": "1.0", "file": "LNES59_PREDICATE_SEMANTICS.md", "sha256": "92d894908d0f8e1a0331752f4b9d6ee0df7ff15dcf17f8e1ded6fe5fe81bfc84", "size_bytes": 8640, "changed_since_v4": false},
+    "candidate_claim_architecture": {
+      "version": "0.2-design-only",
+      "_version_note": "0.1 = V2-V4. 0.2 = this freeze -- taxonomy #22 added as second concrete piece of motivating evidence (BENCHMARK_ADAPTER_LIMIT_REACHED section). Still design-only, not implemented.",
+      "file": "LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md", "sha256": "e76fb2bad56abef4f30663be8499ec68034494d8c94a4ffb086162dca02c20f8", "size_bytes": 8248, "changed_since_v4": true
+    }
+  },
+  "regression_suite_state_at_freeze": {
+    "test_state_consistency_gate_v2.py": "28/28", "test_gate_v2_batch2.py": "19/19", "test_values_match.py": "17/17",
+    "test_scope_and_history.py": "8/8", "test_no_match_stress.py": "5/5", "test_open_world_claim_types.py": "3/3",
+    "test_leakage.py": "71/71 (was 65 -- +6 for batch5's 3 new cases)", "test_unavailability_detection.py": "13/13",
+    "validate_extraction_against_cases.py": "34/34 (was 31 -- +3)", "run_case.py": "64/64 (was 58 -- +6, includes 1 disclosed-limitation fixture per taxonomy #22)",
+    "_total": "262/262, all green at the frozen commit -- DETERMINISTIC REGRESSION SUITE, not benchmark/blind accuracy"
+  },
+  "dataset_state_at_freeze": {
+    "total_documents": 60, "total_cases": 34, "target_total_cases": 150, "holdout_cases_sealed": 0,
+    "new_this_tranche": {"documents": 6, "cases": 3, "case_ids": ["LNES59-B5-001", "LNES59-B5-002", "LNES59-B5-003"]}
+  },
+  "known_remaining_limitations_at_freeze": [
+    "Taxonomy #17: sparse (2-word) NO_MATCH tokens whose negation marker doesn't survive the word-length filter remain vulnerable to a vague-hedge false match.",
+    "Taxonomy #22 (new): values_match() compound-word fallback false-matches a value against a proper superset of its own word-set (e.g. version/generation suffixes). Both #17 and #22 share the same root cause -- BENCHMARK_ADAPTER_LIMIT_REACHED, not fixed further, motivating evidence for the CandidateClaim boundary.",
+    "CandidateClaim architecture remains design-only (v0.2, still not implemented).",
+    "PREDICATE_ALIAS category remains unused in the corpus.",
+    "REVOKED detection (`revokes` field) has now been exercised once (B5-002) but not yet stress-tested for edge cases (e.g. a revocation that is itself later revoked, multiple competing revocations).",
+    "No B0-B4 baseline or full X0-X1 sweep has been run -- X2 remains the only arm with real empirical data."
+  ]
+}
