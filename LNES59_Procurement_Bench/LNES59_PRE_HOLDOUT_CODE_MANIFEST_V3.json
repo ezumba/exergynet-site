@@ -1,0 +1,107 @@
+{
+  "_purpose": "Pre-holdout architecture freeze manifest, V3 -- supersedes V2 (LNES59_PRE_HOLDOUT_CODE_MANIFEST_V2.json) for holdout-gating purposes. V1 and V2 both preserved unmodified, not deleted, for chronology. This freeze exists specifically because Phase 5 development red-teaming found a real architecture defect -- permitted under the Trustee directive's Section 6 process precisely because holdout has not been evaluated yet.",
+  "_frozen_2026-08-08": true,
+  "supersedes": {
+    "manifest": "LNES59_PRE_HOLDOUT_CODE_MANIFEST_V2.json",
+    "freeze_commit": "1ab0336",
+    "code_commit": "e86a39277c1410e7ac028118525f93a792819967"
+  },
+  "lineage": [
+    {"version": "V1", "commit": "f176510", "reason": "initial pre-holdout freeze after closing the last two disclosed extraction limitations (scope, historical values)"},
+    {"version": "V2", "commit": "1ab0336", "reason": "resolved B3-002/B2-006 predicate semantics + third scope case + CandidateClaim architecture documentation -- no code changes, dataset/docs only"},
+    {"version": "V3", "commit": "6cae952", "reason": "Phase 5 development red-teaming found a genuine extraction-layer defect (taxonomy #19) in a NEW case, not any of the original 27 -- the first defect this project has found in NEW development data rather than architecture-design work"}
+  ],
+  "git_commit": "6cae9528b25fbe44949497af77f81516cbe275a8",
+  "git_repo": "exergynet",
+  "why_a_v3_freeze_was_needed": [
+    "Taxonomy #19: _UNAVAILABLE_MARKERS' bare word 'maintenance' collided with ordinary business vocabulary ('equipment maintenance contract') in LNES59-B4-002's original PO document, misclassifying it INCOMPLETE and collapsing an entire 3-hop supersession chain. A genuine, general extraction defect -- not specific to one case, would affect any future document using 'maintenance' in its ordinary business sense. Narrowed the marker to the specific multi-word phrasing the real system-status documents use ('scheduled maintenance', 'maintenance window'), verified against both the real system-status document (still matches) and the colliding PO document (no longer matches)."
+  ],
+  "frozen_scope": [
+    "state_consistency_gate_v2.py",
+    "deterministic_extraction.py",
+    "LNES59_STATE_SCHEMA.md",
+    "LNES59_AUTHORITY_MODEL.md",
+    "LNES59_PREDICATE_SEMANTICS.md",
+    "LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md"
+  ],
+  "explicitly_not_frozen": {
+    "cases.json / cases_batch2-4.json / documents.json / documents_batch2-4.json": "dataset content, not architecture -- documents_batch4.json/cases_batch4.json are Phase 5 tranche 1 (4 new DEVELOPMENT cases), MORE tranches follow under these same frozen rules",
+    "run_case.py, arm_x2.py, run_x2_arm.py, metrics.py, validate_extraction_against_cases.py": "harness/runner code -- loader functions were updated this pass to include batch4 files, not a frozen-architecture change",
+    "test_*.py": "test files grow with the dataset -- test_no_match_stress.py and test_open_world_claim_types.py are new this pass, characterizing new development cases, not changing frozen behavior"
+  },
+  "components": {
+    "state_schema": {
+      "version": "1.0",
+      "file": "LNES59_STATE_SCHEMA.md",
+      "sha256": "ef754b070fefdc6f9a2e6a97c293fa5f1d631ea74cb2bf20267d6f322db47a9f",
+      "size_bytes": 7497,
+      "changed_since_v2": false
+    },
+    "authority_model": {
+      "version": "1.0",
+      "file": "LNES59_AUTHORITY_MODEL.md",
+      "sha256": "e98b7a99cfbcb0d6cb3eb2eb4be17d228ba31719560d5cd6b24eb3d13308f143",
+      "size_bytes": 4888,
+      "changed_since_v2": false
+    },
+    "gate": {
+      "version": "2.1",
+      "_version_note": "UNCHANGED from V2/V1 -- same file, same hash. Taxonomy #19 was an extraction-layer defect, not a gate defect.",
+      "file": "state_consistency_gate_v2.py",
+      "sha256": "74c0b904a2fcb15aec882b2401e29c8c3c417a2c9d0c27c9285fe8938419822e",
+      "size_bytes": 23818,
+      "changed_since_v2": false
+    },
+    "extraction": {
+      "version": "1.3",
+      "_version_note": "1.2 = V2 freeze. 1.3 = this freeze -- taxonomy #19 fix (_UNAVAILABLE_MARKERS narrowed from bare 'maintenance' to 'scheduled maintenance'/'maintenance window'). First extraction change since V1.",
+      "file": "deterministic_extraction.py",
+      "sha256": "c660b9dcafbc24ecd1d61e824acc0abbafa5700982d7b5ef29c251961a233c3c",
+      "size_bytes": 23113,
+      "changed_since_v2": true
+    },
+    "predicate_schema": {
+      "version": "1.0",
+      "file": "LNES59_PREDICATE_SEMANTICS.md",
+      "sha256": "92d894908d0f8e1a0331752f4b9d6ee0df7ff15dcf17f8e1ded6fe5fe81bfc84",
+      "size_bytes": 8640,
+      "changed_since_v2": false
+    },
+    "candidate_claim_architecture": {
+      "version": "0.1-design-only",
+      "file": "LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md",
+      "sha256": "82d19e6a8cec04f8919b06ddb50902c92d846c58640045b366a5fe210fd553c2",
+      "size_bytes": 6294,
+      "changed_since_v2": false
+    }
+  },
+  "regression_suite_state_at_freeze": {
+    "test_state_consistency_gate_v2.py": "28/28",
+    "test_gate_v2_batch2.py": "19/19",
+    "test_values_match.py": "17/17",
+    "test_scope_and_history.py": "8/8",
+    "test_no_match_stress.py": "5/5 (new this pass)",
+    "test_open_world_claim_types.py": "3/3 (new this pass)",
+    "validate_extraction_against_cases.py": "31/31 (was 27 -- +4 for batch4)",
+    "run_case.py": "58/58 (was 50 -- +8 for batch4)",
+    "_total": "169/169, all green at the frozen commit"
+  },
+  "dataset_state_at_freeze": {
+    "total_documents": 53,
+    "total_cases": 31,
+    "target_total_cases": 150,
+    "new_this_tranche": {
+      "documents": 7,
+      "cases": 4,
+      "case_ids": ["LNES59-B4-001", "LNES59-B4-002", "LNES59-B4-003", "LNES59-B4-004"]
+    },
+    "_note": "All 31 cases (27 original + 4 new) are DEVELOPMENT-TAINTED -- every one has now either informed architecture decisions or characterized the frozen architecture against real red-team fixtures. None are holdout-eligible. Phase 5 continues with further tranches."
+  },
+  "known_remaining_limitations_at_freeze": [
+    "Sparse (2-word) NO_MATCH value tokens whose negation marker does NOT survive the word-length filter (e.g. NO_APPROVAL_ON_RECORD, where 'NO' is dropped for being 2 letters) remain vulnerable to a vague hedge false-matching -- confirmed narrower than first thought via test_no_match_stress.py: tokens like NOT_IN_REGISTRY (where 'NOT' survives) are NOT vulnerable to the same class of hedge. Not fixed -- Phase 5 case authoring should prefer NOT_X over NO_X phrasing for new NO_MATCH predicates where practical.",
+    "CandidateClaim architecture remains design-only, unchanged since V2.",
+    "PREDICATE_ALIAS category remains unused in the corpus, unchanged since V2.",
+    "No B0-B4 baseline or full X0-X1 sweep has been run -- X2 remains the only arm with real empirical data, unchanged since V1/V2.",
+    "The directive's Phase 11 4th open-world variant (ACTION_REQUEST against an unrelated authority predicate) was deliberately not folded into test_open_world_claim_types.py -- would need its own compare_against_predicate wiring, not yet built."
+  ]
+}
