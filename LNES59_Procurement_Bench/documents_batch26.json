@@ -1,0 +1,79 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 23 (packet U, final tranche before 100): Halloway Insurance Brokers VENDOR-6060, Ashcombe Metalworks VENDOR-6061, Copperfield Logistics VENDOR-6062/PO-6062, Wrenford Diversity Partners VENDOR-6063, Pemberton Textile Group VENDOR-6064, Sablewick Data Systems VENDOR-6065, Thackeray Print Solutions VENDOR-6066. Final push to 100 development cases -- attacking combinations, not new features: (1) INCOMPLETE + valid recommendation, fresh instance (insurance verification system maintenance, distinct from B22-003's approval-system outage). (2) historically-true-now-false via REVOKED with no reinstatement (sibling to B24-002, complements B23-002's EXPIRED instance). (3) three-hop chain with no currently active state (deeper than B23-003's two-hop). (4) scope+NO_MATCH fresh registry type (vendor diversity certification registry). (5) plain supersession via a SIGNED_CONTRACT/SIGNED_AMENDMENT pair (payment terms), a real corpus instance of the stale-value-recognition mechanism previously only exercised in synthetic gate tests. (6)-(7) ordinary factual controls.",
+  "documents": [
+    {
+      "id": "DOC-INSURANCE-VERIFY-UNAVAILABLE-6060",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "INSURANCE VERIFICATION SYSTEM QUERY: Halloway Insurance Brokers (VENDOR-6060) coverage verification. System is undergoing scheduled maintenance for the entire query window -- no results available.",
+      "predicate": "VENDOR-6060.insurance_verification_status"
+    },
+    {
+      "id": "DOC-CERT-ORIGINAL-6061",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-04-01",
+      "content": "COMPLIANCE REPORT: Ashcombe Metalworks (VENDOR-6061) safety certification status: ACTIVE.",
+      "predicate": "VENDOR-6061.certification_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-CERT-REVOKE-6061",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-10-01", "revokes": "DOC-CERT-ORIGINAL-6061",
+      "content": "COMPLIANCE NOTICE: Ashcombe Metalworks (VENDOR-6061) safety certification REVOKED following a failed re-inspection. No replacement certification has been filed as of this notice.",
+      "predicate": "VENDOR-6061.certification_revocation_notice"
+    },
+    {
+      "id": "DOC-PO-6062",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6062", "po_id": "PO-6062", "issued": "2025-05-01",
+      "content": "PURCHASE ORDER PO-6062. Vendor: Copperfield Logistics (VENDOR-6062). Amount authorized: $20,000.00. Description: annual freight brokerage contract. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-6062.authorized_amount", "value": "20000"
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-6062A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6062", "issued": "2025-08-01", "amends": "DOC-PO-6062",
+      "content": "PURCHASE ORDER AMENDMENT PO-6062-A1, amending PO-6062. Vendor: Copperfield Logistics (VENDOR-6062). Revised amount authorized: $23,500.00 (added expedited-lane surcharge). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-6062.authorized_amount", "value": "23500"
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-6062B",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6062", "issued": "2025-11-01", "amends": "DOC-PO-AMENDMENT-6062A",
+      "effective_until": "2026-02-28",
+      "content": "PURCHASE ORDER AMENDMENT PO-6062-A2, amending PO-6062-A1. Vendor: Copperfield Logistics (VENDOR-6062). Temporary revised amount authorized: $27,000.00 (Q4 peak-season surcharge, effective through 2026-02-28 only). Approved by: T. Osei (Director).",
+      "predicate": "PO-6062.authorized_amount", "value": "27000"
+    },
+    {
+      "id": "DOC-DIVERSITY-REGISTRY-SEARCH-6063",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "VENDOR DIVERSITY CERTIFICATION REGISTRY SEARCH: query=\"Wrenford Diversity Partners\". Full registry searched. Result: NO MATCH. Wrenford Diversity Partners is not present in the vendor diversity certification registry. Other certification databases were not checked as part of this search.",
+      "predicate": "VENDOR-6063.diversity_certification_status", "value": "NOT_IN_DIVERSITY_REGISTRY"
+    },
+    {
+      "id": "DOC-CONTRACT-6064",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2025-01-01",
+      "content": "MASTER SERVICES AGREEMENT CT-6064. Between ExergyNet Corp and Pemberton Textile Group (VENDOR-6064). Payment terms: Net 30.",
+      "predicate": "VENDOR-6064.payment_terms", "value": "NET_30"
+    },
+    {
+      "id": "DOC-CONTRACT-AMENDMENT-6064A",
+      "type": "contract_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-03-01", "amends": "DOC-CONTRACT-6064",
+      "content": "AMENDMENT 1 to MASTER SERVICES AGREEMENT CT-6064, between ExergyNet Corp and Pemberton Textile Group (VENDOR-6064). Payment terms revised to Net 60, effective 2026-03-01.",
+      "predicate": "VENDOR-6064.payment_terms", "value": "NET_60"
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-6065",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Sablewick Data Systems (VENDOR-6065). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2023-01-09.",
+      "predicate": "VENDOR-6065.registration_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-PAYMENT-LEDGER-6066",
+      "type": "payment_ledger", "source_class": "PAYMENT_LEDGER",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-64207, Vendor Thackeray Print Solutions (VENDOR-6066). Status: PAID -- settled 2026-06-30 via wire transfer.",
+      "predicate": "INV-64207.payment_status", "value": "PAID_WIRE"
+    }
+  ]
+}
