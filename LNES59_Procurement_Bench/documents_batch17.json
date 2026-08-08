@@ -1,0 +1,26 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 14 (packet L: Ironclad Facilities Management VENDOR-6027), after V6 freeze. Genuinely tricky combined case: an original term SUPERSEDED by an amendment, but the amendment itself is LATER REVOKED with no reinstatement -- so nothing is CURRENT for this predicate at all. Tests what current_ones-empty fallback behavior actually produces when multiple non-current candidates exist (original SUPERSEDED, amendment REVOKED), not just the single-non-current-document case already covered by B9-001.",
+  "documents": [
+    {
+      "id": "DOC-CONTRACT-6027",
+      "type": "signed_contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "MASTER SERVICES AGREEMENT CT-2026-6027. Between ExergyNet Corp and Ironclad Facilities Management (VENDOR-6027). Service tier: STANDARD.",
+      "predicate": "CT-2026-6027.service_tier", "value": "STANDARD"
+    },
+    {
+      "id": "DOC-AMENDMENT-6027A",
+      "type": "signed_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-04-01", "amends": "DOC-CONTRACT-6027",
+      "content": "AMENDMENT AM-2026-6027-A to CT-2026-6027. Service tier upgraded from STANDARD to PREMIUM, effective 2026-04-01.",
+      "predicate": "CT-2026-6027.service_tier", "value": "PREMIUM"
+    },
+    {
+      "id": "DOC-AMENDMENT-6027A-REVOCATION",
+      "type": "signed_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-06-01", "revokes": "DOC-AMENDMENT-6027A",
+      "content": "NOTICE OF REVOCATION: Amendment AM-2026-6027-A (PREMIUM service tier upgrade) is REVOKED effective 2026-06-01, following a billing dispute. No successor amendment has been issued as of the benchmark reference date -- service tier status is presently unresolved pending renegotiation.",
+      "predicate": "CT-2026-6027.service_tier_amendment_revocation_notice"
+    }
+  ]
+}

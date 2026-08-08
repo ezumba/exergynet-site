@@ -475,11 +475,49 @@ established, applied here to a branch that had silently never honored
 it). Support: `state_consistency_gate_v2.py`'s temporal pre-check,
 `LNES59_PRE_HOLDOUT_CODE_MANIFEST_V6.json`.
 
-## Category tally (of the 23 real bugs above)
+### 24. `chosen` selection was order-dependent when NO document is CURRENT among multiple non-current candidates — **B** (extraction failure) — FIXED, V6 -> V7
+Found while constructing `LNES59-B17-001` (a superseding amendment
+itself later revoked, with no reinstatement -- so both the original and
+the amendment are non-current, and neither is `CURRENT`).
+`_resolve_predicate_group`'s fallback was `chosen = current_ones[0] if
+current_ones else matches[0]` -- when `current_ones` is empty and
+multiple candidates exist, `matches[0]` is simply whichever document
+happens to appear first in `grounding_document_ids`' list order, not a
+principled selection. Verified empirically: the SAME corpus, with
+`grounding_document_ids` reordered three different ways, could produce
+`chosen` = the original OR the amendment depending purely on list order
+-- a real non-determinism in a system whose entire premise is
+deterministic, reproducible state resolution (meets the Trustee
+directive's Section 3.A threshold: violates the declared invariant that
+`CommittedState` is a well-defined function of the grounding set, not of
+incidental list order).
+
+**Important, and disclosed precisely**: this was NOT a governance-
+correctness bug -- the gate's observable behavior was correct regardless
+of which non-current candidate got picked, because any non-`CURRENT`
+`temporal_status` triggers the same pre-check (honest hedge ->
+`CONSISTENT`, confident assertion of either candidate's value ->
+`TEMPORAL_CONTRADICTION`) independent of which one is `chosen`. Fixed
+anyway, because "the observable behavior happens to be robust to this
+particular non-determinism" is not the same guarantee as "the
+architecture is actually deterministic," and a future case or a future
+gate rule could easily depend on which specific document became
+`chosen` in a way this one didn't. Fixed with a deterministic tie-break:
+`classify_document` now also returns each match's `_effective_date`;
+when no candidate is `CURRENT`, `_resolve_predicate_group` picks the
+one with the LATEST effective date instead of the list-order-dependent
+first entry. Verified order-independent: the same 3-document grounding
+set, tried in three different orderings, now produces the identical
+`chosen` value and `historical_values` every time. Full regression
+clean: 387/387 across all 10 suites. Support:
+`deterministic_extraction.py`'s `classify_document()` and
+`_resolve_predicate_group()`, `LNES59_PRE_HOLDOUT_CODE_MANIFEST_V7.json`.
+
+## Category tally (of the 24 real bugs above)
 
 | Category | Count | Bugs |
 |---|---|---|
-| B (extraction failure) | 7 | #2, #3, #8, #11, #12, #19, #20 |
+| B (extraction failure) | 8 | #2, #3, #8, #11, #12, #19, #20, #24 |
 | A + G (evidence missing + gate false positive) | 1 | #17 |
 | G (gate false positive) | 4 | #15, #16, #22, #23 |
 | E (temporal error) | 5 | #4, #5, #13, #18, #21 |

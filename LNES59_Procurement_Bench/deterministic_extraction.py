@@ -314,6 +314,7 @@ def classify_document(doc_id, corpus, as_of=BENCHMARK_AS_OF):
         "value": doc.get("value"),
         "policy_tiers": doc.get("tiers"),  # only PROCUREMENT_POLICY docs carry this; None otherwise
         "scope": _derive_scope(doc),
+        "_effective_date": _effective_date(doc),  # for deterministic tie-breaking, see _resolve_predicate_group
     }
 
 
@@ -381,7 +382,21 @@ def _resolve_predicate_group(classifications_for_predicate):
             "authority_status": AuthorityStatus.NOT_APPLICABLE, "temporal_status": TemporalStatus.NOT_APPLICABLE,
             "value": None,
         }
-    chosen = current_ones[0] if current_ones else matches[0]
+    # Taxonomy #24: when NO document is CURRENT (e.g. a superseding
+    # amendment was itself later revoked, leaving nothing currently in
+    # force -- LNES59-B17-001), the fallback used to be matches[0],
+    # meaning WHICH non-current document became `chosen` depended on
+    # grounding_document_ids' list order -- a real non-determinism in a
+    # system whose entire premise is deterministic, reproducible state
+    # resolution. The gate's OBSERVABLE behavior happened to stay correct
+    # regardless (any non-CURRENT temporal_status triggers the same
+    # pre-check), but the internal representation itself was order-
+    # dependent, which is a real defect independent of whether it changed
+    # any test's pass/fail outcome. Fixed with a deterministic tie-break:
+    # among non-current candidates, prefer the most recently effective
+    # one -- the most defensible "best known state" when nothing is
+    # actually current.
+    chosen = current_ones[0] if current_ones else max(matches, key=lambda c: c.get("_effective_date") or "")
     # Historical lineage (name is slightly imprecise, kept for continuity
     # with taxonomy #18 -- see the docstring on CommittedState.historical_values
     # for the precise definition): other MATCH docs for this SAME predicate
