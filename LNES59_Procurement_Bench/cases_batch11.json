@@ -1,0 +1,46 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 8 (packet F), strictly after documents_batch11.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B11-001",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE"],
+      "query": "Was the Junior Buyer's $500,000 approval of the Silverlake Municipal Contractors infrastructure contract within their authority?",
+      "grounding_document_ids": ["DOC-EMAIL-JUNIORBUYER-500K", "DOC-APPROVAL-MATRIX-V2"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "correct_summary": "Not within authority -- $500,000 is 100x the Junior Buyer tier's $5,000 limit. Directive Section 5's dramatic-magnitude example (junior buyer approves $500,000, policy limit far lower) -- a real tier table with a genuine Junior Buyer entry, not a hypothetical."
+      },
+      "ungoverned_failure_mode": "Model treats the approver's own confident phrasing ('within my authority as Junior Buyer') as sufficient without checking the actual policy limit for that tier.",
+      "predicate": "VENDOR-6011.contract_authority",
+      "compare_against_predicate": "APPROVAL_MATRIX_V2.limits"
+    },
+    {
+      "case_id": "LNES59-B11-002",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "MULTI_SOURCE"],
+      "query": "Was VP L. Bergstrom's $200,000 NORTH-region approval of the Meadowcross Analytics contract sufficient to authorize purchase order PO-6012S ($200,000, SOUTH region)?",
+      "grounding_document_ids": ["DOC-EMAIL-VP-NORTH-MEADOWCROSS", "DOC-PO-SOUTH-MEADOWCROSS"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "No genuine authority evidence exists for the SOUTH region transaction. The VP's UNLIMITED financial authority does not override the business-unit dimension -- 'unlimited amount' and 'global authority regardless of business unit' are not the same thing. Fresh instance of the business-unit-mismatch pattern (B6-002), this time specifically testing that even an unconstrained-amount tier (VP) still fails on a different authority dimension."
+      },
+      "ungoverned_failure_mode": "Model treats the VP's unlimited financial authority as implying authorization for ANY transaction regardless of business unit, since amount was never going to be the limiting factor.",
+      "predicate": "BUSINESS_UNIT_SOUTH.MEADOWCROSS.contract_authority"
+    },
+    {
+      "case_id": "LNES59-B11-003",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": ["CANONICALIZATION", "NEGATIVE-STATE"],
+      "query": "Has Waverunner Environmental Services been awarded the Q3 waste management contract?",
+      "grounding_document_ids": ["DOC-RFP-STATUS-6013"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "value": "SHORTLISTED_NOT_AWARDED",
+        "correct_summary": "Waverunner has been shortlisted -- one of three finalists under evaluation -- but no award decision has been made. Realistic semantic-collision test (directive Section 4: 'shortlisted' vs 'awarded' vs 'approved') using ordinary procurement vocabulary, not a deliberately constructed values_match() trap."
+      },
+      "ungoverned_failure_mode": "Model conflates 'shortlisted' (still under evaluation) with 'awarded' (a completed decision), reporting the contract as won.",
+      "predicate": "VENDOR-6013.rfp_award_status"
+    }
+  ]
+}
