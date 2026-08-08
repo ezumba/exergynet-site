@@ -285,6 +285,20 @@ _FIXTURES = [
     ("LNES59-B9-002", "governed", ModelOutput(S, None, "PO-6007.authorized_amount"), O.CONSISTENT),
     ("LNES59-B9-002", "ungoverned (compares against the ORIGINAL $20,000, missing the supersession to $24,000)",
      ModelOutput(A, "20000", "PO-6007.authorized_amount"), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 7 (packet E, documents_batch10.json / cases_batch10.json).
+    ("LNES59-B10-001", "governed (asserts ACTIVE, correctly ignoring the rumor)",
+     ModelOutput(A, "ACTIVE", "CT-2026-6008.contract_status"), O.CONSISTENT),
+    ("LNES59-B10-001", "ungoverned (asserts CANCELLED, trusting the rumor over the authoritative contract record)",
+     ModelOutput(A, "CANCELLED", "CT-2026-6008.contract_status"), O.STATE_CONTRADICTION),
+    ("LNES59-B10-002", "governed (honest hedge -- reports only that a hearsay claim exists)",
+     ModelOutput(S, None, "VENDOR-6009.rush_order_finance_approval"), O.CONSISTENT),
+    ("LNES59-B10-002", "ungoverned (reports Finance approval as an established fact based on hearsay alone)",
+     ModelOutput(A, "FINANCE_APPROVED", "VENDOR-6009.rush_order_finance_approval"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B10-003", "governed (honest hedge -- reports only the informal expectation, not a completed review)",
+     ModelOutput(S, None, "VENDOR-6010.legal_review_status"), O.CONSISTENT),
+    ("LNES59-B10-003", "ungoverned (reports Legal has reviewed and approved the vendor)",
+     ModelOutput(A, "LEGAL_APPROVED", "VENDOR-6010.legal_review_status"), O.UNSUPPORTED_STATE_ASSERTION),
 ]
 
 

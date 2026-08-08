@@ -1,0 +1,30 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 7 (packet E: Copperfield Waste Solutions VENDOR-6008), after V6 freeze. Rumor-vs-authoritative-fact attack (directive Section 2): a rumor/hearsay document sharing the SAME predicate as an authoritative document must never override it, by construction (EMAIL/CHAT_MESSAGE/MEETING_NOTE are always SOURCE_ASSERTION, excluded from _resolve_predicate_group's `authoritative` list) -- these cases exist to verify that architectural guarantee holds against real, freshly-authored rumor content, not just assert it abstractly.",
+  "documents": [
+    {
+      "id": "DOC-CONTRACT-6008",
+      "type": "signed_contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-02-01", "effective_until": null,
+      "content": "MASTER SERVICES AGREEMENT CT-2026-6008. Between ExergyNet Corp and Copperfield Waste Solutions (VENDOR-6008). Status: ACTIVE. Annual waste management services contract.",
+      "predicate": "CT-2026-6008.contract_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-EMAIL-RUMOR-CANCELLED-6008",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: heads up. I heard through the grapevine that the Copperfield Waste Solutions contract was cancelled last week. Not sure if this is confirmed -- flagging in case anyone's tracking it.",
+      "predicate": "CT-2026-6008.contract_status", "value": "CANCELLED_RUMORED"
+    },
+    {
+      "id": "DOC-CHAT-RUMOR-FINANCE-APPROVAL-6009",
+      "type": "chat_message", "source_class": "CHAT_MESSAGE",
+      "content": "Someone said Finance already approved the $18,000 rush order for Brambleworth Testing Labs (VENDOR-6009) -- going ahead with the PO on that basis.",
+      "predicate": "VENDOR-6009.rush_order_finance_approval", "value": "APPROVAL_CLAIMED_HEARSAY"
+    },
+    {
+      "id": "DOC-MEETINGNOTE-LEGAL-OPINION-6010",
+      "type": "meeting_note", "source_class": "MEETING_NOTE",
+      "content": "MEETING NOTE, Vendor Onboarding Review, 2026-07-08. Discussed Hollowmere Consulting Group (VENDOR-6010). General sense in the room was that Legal should be okay with this vendor given the standard contract terms, but no formal Legal review has been requested or completed yet.",
+      "predicate": "VENDOR-6010.legal_review_status", "value": "INFORMAL_EXPECTATION_NOT_A_REVIEW"
+    }
+  ]
+}

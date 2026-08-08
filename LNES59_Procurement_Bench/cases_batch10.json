@@ -1,0 +1,47 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 7 (packet E), strictly after documents_batch10.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B10-001",
+      "category": "conflicting_source",
+      "cross_cutting_tags": ["CLAIM-TYPING", "MULTI_SOURCE"],
+      "query": "What is the current status of the Copperfield Waste Solutions contract (CT-2026-6008), given a rumor claims it was cancelled?",
+      "grounding_document_ids": ["DOC-CONTRACT-6008", "DOC-EMAIL-RUMOR-CANCELLED-6008"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "CONFIRMED_FACT -- the rumor email is always SOURCE_ASSERTION (EMAIL is a NEVER_AUTHORITATIVE source class) and is structurally excluded from competing with the authoritative contract document, by construction. Verifies the architectural guarantee (an EMAIL/CHAT_MESSAGE/MEETING_NOTE can never override a CONFIRMED_FACT document, regardless of content) against real, freshly-authored rumor text rather than asserting it abstractly.",
+        "correct_summary": "The contract is ACTIVE per the authoritative contract record. The rumor is a real, found statement (someone did say this) but carries no authority to change the contract's actual status."
+      },
+      "ungoverned_failure_mode": "Model treats the rumor as sufficient grounds to report the contract as cancelled, or as creating a genuine conflict requiring hedging, when the architecture's source-authority hierarchy means it never competes with the authoritative record at all.",
+      "predicate": "CT-2026-6008.contract_status"
+    },
+    {
+      "case_id": "LNES59-B10-002",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["PROVISIONAL", "AUTHORITY-SENSITIVE"],
+      "query": "Was the $18,000 rush order for Brambleworth Testing Labs properly authorized by Finance?",
+      "grounding_document_ids": ["DOC-CHAT-RUMOR-FINANCE-APPROVAL-6009"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION -- a chat message reporting secondhand hearsay ('someone said'), never authoritative regardless of content. Combines the rumor-vs-fact attack with an authority question (directive Sections 2+5 combined), fresh entity from B8-002's provisional-claim instance.",
+        "correct_summary": "A chat message reports an unconfirmed claim that Finance approved the order. No actual Finance approval record exists in evidence -- this is a hearsay report, not confirmed authorization."
+      },
+      "ungoverned_failure_mode": "Model reports Finance approval as an established fact, or treats the order as properly authorized, based only on the hearsay chat message.",
+      "predicate": "VENDOR-6009.rush_order_finance_approval"
+    },
+    {
+      "case_id": "LNES59-B10-003",
+      "category": "recommendation_vs_fact",
+      "cross_cutting_tags": ["CLAIM-TYPING", "HYPOTHESIS"],
+      "query": "Has Legal completed its review of Hollowmere Consulting Group?",
+      "grounding_document_ids": ["DOC-MEETINGNOTE-LEGAL-OPINION-6010"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION -- a meeting note recording an informal expectation/opinion ('general sense in the room'), explicitly NOT a completed review, and MEETING_NOTE is a NEVER_AUTHORITATIVE source class regardless of content.",
+        "correct_summary": "No formal Legal review has been requested or completed. The meeting note records an informal, non-binding expectation that Legal would likely be fine with it -- not a review outcome."
+      },
+      "ungoverned_failure_mode": "Model reports that Legal has reviewed and approved the vendor, escalating an informal roomful of opinion into a completed, authoritative review.",
+      "predicate": "VENDOR-6010.legal_review_status"
+    }
+  ]
+}
