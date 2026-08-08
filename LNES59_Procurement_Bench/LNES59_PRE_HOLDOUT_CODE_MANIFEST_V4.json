@@ -1,0 +1,81 @@
+{
+  "_purpose": "Pre-holdout architecture freeze manifest, V4 -- supersedes V3 for holdout-gating purposes. V1, V2, V3 all preserved unmodified, not deleted, for chronology.",
+  "_frozen_2026-08-08": true,
+  "supersedes": {
+    "manifest": "LNES59_PRE_HOLDOUT_CODE_MANIFEST_V3.json",
+    "freeze_commit": "f906131",
+    "code_commit": "6cae9528b25fbe44949497af77f81516cbe275a8"
+  },
+  "lineage": [
+    {"version": "V1", "commit": "f176510", "reason": "initial pre-holdout freeze after closing the last two disclosed extraction limitations (scope, historical values)"},
+    {"version": "V2", "commit": "1ab0336", "reason": "resolved B3-002/B2-006 predicate semantics + third scope case + CandidateClaim architecture documentation -- no code changes, dataset/docs only"},
+    {"version": "V3", "commit": "6cae952", "reason": "taxonomy #19 -- _UNAVAILABLE_MARKERS bare 'maintenance' collided with ordinary procurement vocabulary, found via a NEW development case (B4-002)"},
+    {"version": "V4", "commit": "3f5722a", "reason": "taxonomy #20 -- the same subsystem's SHOULD/MUST-NOT red-team matrix (built specifically because #19 flagged it unreliable) found 2 real misses ('offline', 'could not be accessed') in the opposite direction from #19 -- a false-negative, not a false-positive"}
+  ],
+  "git_commit": "3f5722aa22357df1ce33d4a7bcb16f9d0d492533",
+  "git_repo": "exergynet",
+  "why_a_v4_freeze_was_needed": [
+    "Taxonomy #20: _UNAVAILABLE_MARKERS missed 'database offline' and 'records could not be accessed' entirely -- both plausible real system-status phrasings not yet used by any document in the corpus, found by directly red-teaming the subsystem taxonomy #19 had already flagged as under-tested. A worse failure class than #19 (silently treats unavailable evidence as available, producing a confident wrong answer, rather than #19's overly-cautious false INCOMPLETE). Fixed by adding both markers, verified against all 5 MUST-NOT cases and the full corpus for collisions before adding."
+  ],
+  "infrastructure_changes_since_v3_not_requiring_a_freeze_bump": [
+    "dataset_registry.py + LNES59_DATASET_MANIFEST.json (commit 00eb5ca): manifest-driven, hash-verified file loading replacing hardcoded per-loader tuples. Pure infrastructure, no extraction/gate/schema semantics touched.",
+    "case_view.py + test_leakage.py (commit 58cd353): RUNNER_CASE/EVALUATOR_CASE information boundary + automated leakage test, built now rather than deferred to holdout sealing. No architecture semantics touched -- confirms an existing property (arm_x2.build_prompt already didn't leak gold fields) rather than changing behavior."
+  ],
+  "frozen_scope": [
+    "state_consistency_gate_v2.py",
+    "deterministic_extraction.py",
+    "LNES59_STATE_SCHEMA.md",
+    "LNES59_AUTHORITY_MODEL.md",
+    "LNES59_PREDICATE_SEMANTICS.md",
+    "LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md"
+  ],
+  "explicitly_not_frozen": {
+    "cases*.json / documents*.json": "dataset content -- Phase 5 continues adding tranches under these same frozen rules",
+    "dataset_registry.py, LNES59_DATASET_MANIFEST.json": "infrastructure, not architecture -- updated every time a new batch is added, by design",
+    "case_view.py": "information-boundary infrastructure, not state/gate/extraction semantics",
+    "run_case.py, arm_x2.py, run_x2_arm.py, metrics.py, validate_extraction_against_cases.py": "harness/runner code",
+    "test_*.py": "test files grow with the dataset and with each red-team pass"
+  },
+  "components": {
+    "state_schema": {"version": "1.0", "file": "LNES59_STATE_SCHEMA.md", "sha256": "ef754b070fefdc6f9a2e6a97c293fa5f1d631ea74cb2bf20267d6f322db47a9f", "size_bytes": 7497, "changed_since_v3": false},
+    "authority_model": {"version": "1.0", "file": "LNES59_AUTHORITY_MODEL.md", "sha256": "e98b7a99cfbcb0d6cb3eb2eb4be17d228ba31719560d5cd6b24eb3d13308f143", "size_bytes": 4888, "changed_since_v3": false},
+    "gate": {"version": "2.1", "_version_note": "UNCHANGED since V1 -- taxonomy #19 and #20 were both extraction-layer, not gate-layer.", "file": "state_consistency_gate_v2.py", "sha256": "74c0b904a2fcb15aec882b2401e29c8c3c417a2c9d0c27c9285fe8938419822e", "size_bytes": 23818, "changed_since_v3": false},
+    "extraction": {
+      "version": "1.4",
+      "_version_note": "1.3 = V3 freeze (taxonomy #19). 1.4 = this freeze -- taxonomy #20 (_UNAVAILABLE_MARKERS extended with 'offline'/'could not be accessed').",
+      "file": "deterministic_extraction.py",
+      "sha256": "1ae910e0b7d0bd150796ab4628bb08d595ad7f15c866ea6b27371478b857639a",
+      "size_bytes": 23861,
+      "changed_since_v3": true
+    },
+    "predicate_schema": {"version": "1.0", "file": "LNES59_PREDICATE_SEMANTICS.md", "sha256": "92d894908d0f8e1a0331752f4b9d6ee0df7ff15dcf17f8e1ded6fe5fe81bfc84", "size_bytes": 8640, "changed_since_v3": false},
+    "candidate_claim_architecture": {"version": "0.1-design-only", "file": "LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md", "sha256": "82d19e6a8cec04f8919b06ddb50902c92d846c58640045b366a5fe210fd553c2", "size_bytes": 6294, "changed_since_v3": false}
+  },
+  "regression_suite_state_at_freeze": {
+    "test_state_consistency_gate_v2.py": "28/28",
+    "test_gate_v2_batch2.py": "19/19",
+    "test_values_match.py": "17/17",
+    "test_scope_and_history.py": "8/8",
+    "test_no_match_stress.py": "5/5",
+    "test_open_world_claim_types.py": "3/3",
+    "test_leakage.py": "65/65 (new since V3)",
+    "test_unavailability_detection.py": "13/13 (new this freeze)",
+    "validate_extraction_against_cases.py": "31/31",
+    "run_case.py": "58/58",
+    "_total": "247/247, all green at the frozen commit -- labeled DETERMINISTIC REGRESSION SUITE, explicitly NOT benchmark/blind accuracy (see LNES59_FINAL_REPORT.md's required framing)"
+  },
+  "dataset_state_at_freeze": {
+    "total_documents": 53,
+    "total_cases": 31,
+    "target_total_cases": 150,
+    "holdout_cases_sealed": 0,
+    "_note": "Unchanged since V3 -- this freeze's changes were architecture (taxonomy #20) and infrastructure (registry, case_view), not new dataset tranches. Phase 5 dataset scaling continues under V4."
+  },
+  "known_remaining_limitations_at_freeze": [
+    "Sparse (2-word) NO_MATCH value tokens whose negation marker does not survive the word-length filter remain vulnerable to a vague-hedge false match (taxonomy #17) -- disclosed, deliberately not fixed by growing values_match(); mitigation is dataset-side (prefer NOT_X over NO_X phrasing).",
+    "CandidateClaim architecture remains design-only.",
+    "PREDICATE_ALIAS category remains unused in the corpus.",
+    "No B0-B4 baseline or full X0-X1 sweep has been run -- X2 remains the only arm with real empirical data.",
+    "The unavailability/no-record marker lists, even after taxonomy #19-20's fixes, remain a disclosed, bounded adapter -- not general NLP. Future tranches should keep red-teaming both directions (SHOULD-detect misses and MUST-NOT-trigger false positives) as new document vocabulary is introduced, the same discipline that found both #19 and #20."
+  ]
+}
