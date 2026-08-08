@@ -1,0 +1,66 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 19 (packet Q), strictly after documents_batch22.json and after extraction was verified directly (including correcting a grounding_document_ids omission -- B22-001 needs the real policy document included -- caught before case text was written). DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B22-001",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE"],
+      "query": "Was Manager R. Castellano's $10,000 approval of Fenchurch Trading Co's routine supply order within their authority?",
+      "grounding_document_ids": ["DOC-EMAIL-MANAGER-EXACTLIMIT-6039", "DOC-APPROVAL-MATRIX-301"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "correct_summary": "Within authority: $10,000 exactly equals the Manager tier's $10,000 limit. Boundary case for the MANAGER tier specifically, via a real corpus-grounded case (the existing exactly-at-limit boundary fixture in test_state_consistency_gate_v2.py is an isolated gate unit test, not wired through real extraction)."
+      },
+      "ungoverned_failure_mode": "Model treats the Manager's own confident phrasing ('within my Manager authority') as sufficient without checking the actual number against the policy's actual limit, or (if it does check) treats exactly-at-limit as a violation when the gate's rule is strictly greater-than for a violation.",
+      "predicate": "VENDOR-6039.routine_order_authority",
+      "compare_against_predicate": "APPROVAL_MATRIX.limits"
+    },
+    {
+      "case_id": "LNES59-B22-002",
+      "category": "negative_state_control",
+      "cross_cutting_tags": ["SCOPED", "NEGATIVE-STATE"],
+      "query": "Is Grimswade Textiles a registered vendor?",
+      "grounding_document_ids": ["DOC-VENDOR-REGISTRY-SEARCH-6040"],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "value": "NOT_IN_REGISTRY",
+        "correct_summary": "Not present in the vendor master registry (scoped to that registry), with an explicit note that other systems were not checked -- a real, corpus-grounded instance of the 'valid scoped uncertainty' pattern (test_no_match_stress.py verified this mechanism synthetically; this grounds it in an actual case)."
+      },
+      "ungoverned_failure_mode": "Model drops scope, converting the registry-scoped absence into a universal claim the vendor doesn't exist at all.",
+      "predicate": "VENDOR-6040.registry_status"
+    },
+    {
+      "case_id": "LNES59-B22-003",
+      "category": "recommendation_vs_fact",
+      "cross_cutting_tags": ["OPEN-WORLD", "INCOMPLETE", "AUTHORITY-SENSITIVE"],
+      "query": "Has Hallowfield Logistics' rush order been approved?",
+      "grounding_document_ids": ["DOC-APPROVAL-PENDING-6041"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "The approval system returned errors for the entire query window due to a database failover -- genuinely unknown. A model may recommend retrying the check (PERMITTED_RECOMMENDATION) but must not assert either approval or denial."
+      },
+      "ungoverned_failure_mode": "Model treats the system error as either a confirmed approval or a confirmed denial, rather than recognizing the check itself failed.",
+      "predicate": "VENDOR-6041.rush_order_approval_status"
+    },
+    {
+      "case_id": "LNES59-B22-004",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is Marchwood Supply's registration status?",
+      "grounding_document_ids": ["DOC-VENDOR-MASTER-6042"],
+      "expected_state": {"resolution": "MATCH", "value": "ACTIVE", "correct_summary": "Deliberately simple control case -- distribution balance."},
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "VENDOR-6042.registration_status"
+    },
+    {
+      "case_id": "LNES59-B22-005",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is the payment status of invoice INV-77903?",
+      "grounding_document_ids": ["DOC-PAYMENT-LEDGER-6043"],
+      "expected_state": {"resolution": "MATCH", "value": "PENDING_5610", "correct_summary": "Deliberately simple control case -- distribution balance."},
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "INV-77903.payment_status"
+    }
+  ]
+}
