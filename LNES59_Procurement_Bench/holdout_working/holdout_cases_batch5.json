@@ -1,0 +1,214 @@
+{
+  "_construction_note": "HOLDOUT batch 5 (H41-H50, FINAL). Ground truth hand-derived from V7 rules, extract_case_state()/evaluate() NOT invoked. Completes the 50-case blind holdout.",
+  "cases": [
+    {
+      "case_id": "LNES59-H41",
+      "category": "authority_wrong_business_unit",
+      "query": "Was Fenwick Lighting Solutions' engagement approved against the IT business unit's budget?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-FACILITIESBU-9043"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "Only approval on record is scoped to the Facilities business unit; the IT-BU predicate has zero grounding documents -> INCOMPLETE. Same predicate-scoped-extraction mechanism as dev's B23-005, fresh vendor/wording.",
+      "predicate": "VENDOR-9043.it_bu_authority",
+      "cross_cutting_tags": [
+        "wrong-role authority",
+        "wrong-purpose authority"
+      ]
+    },
+    {
+      "case_id": "LNES59-H42",
+      "category": "multi_domain_authority",
+      "query": "Was Manager R. Castellano's $6,500 approval of Bellworth Server Systems' rack hardware purchase within authority?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-9044",
+        "DOC-H-APPROVAL-MATRIX-9000",
+        "DOC-H-POLICY-IT-HARDWARE-9044"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "policy_tiers": {
+          "MANAGER": 3000,
+          "DIRECTOR": 20000,
+          "VP": null
+        }
+      },
+      "_hand_trace": "compare_against_predicate correctly targets IT_HARDWARE_POLICY-9044.limits (Manager $3,000), not the general H_APPROVAL_MATRIX (Manager $10,000) also present in the grounding set. AR requested_authority_level=MANAGER, requested_amount=6500: 6500>3000 -> AUTHORITY_VIOLATION under the correct domain-specific policy, even though it would pass under the general one.",
+      "predicate": "VENDOR-9044.hardware_purchase_authority",
+      "compare_against_predicate": "IT_HARDWARE_POLICY-9044.limits",
+      "cross_cutting_tags": [
+        "authority limits",
+        "multi-source"
+      ]
+    },
+    {
+      "case_id": "LNES59-H43",
+      "category": "temporal_validity",
+      "query": "Is Oatlands Textile Finishing's quality certification currently valid?",
+      "grounding_document_ids": [
+        "DOC-H-CERT-EXPIRED-9045"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "EXPIRED",
+        "value": "CERT_QUAL_9045_A",
+        "historical_values": []
+      },
+      "_hand_trace": "Single doc, own effective_until (2025-11-30) < BENCHMARK_AS_OF -> EXPIRED immediately, no renewal doc exists. chosen=itself, historical=() (only match). Fresh instance of the single-doc-expiry, historically-true-now-false pattern.",
+      "predicate": "VENDOR-9045.quality_cert_status",
+      "cross_cutting_tags": [
+        "temporal contradiction"
+      ]
+    },
+    {
+      "case_id": "LNES59-H44",
+      "category": "temporal_validity",
+      "query": "Is Pentridge Vehicle Leasing's fleet roadworthiness certification currently active?",
+      "grounding_document_ids": [
+        "DOC-H-CERT-ORIGINAL-9046",
+        "DOC-H-CERT-REVOKE-9046"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "REVOKED",
+        "value": "ACTIVE",
+        "historical_values": []
+      },
+      "_hand_trace": "Same mechanism as H10 (revocation, no reinstatement), fresh vendor/wording. Original REVOKED (revoke notice's own predicate excluded from matches), chosen=original (only match), historical=().",
+      "predicate": "VENDOR-9046.roadworthiness_status",
+      "cross_cutting_tags": [
+        "revocation",
+        "temporal contradiction"
+      ]
+    },
+    {
+      "case_id": "LNES59-H45",
+      "category": "ordinary_factual",
+      "query": "What are Ellery & Combe Solicitors' payment terms?",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-9047"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "NET_30",
+        "historical_values": []
+      },
+      "_hand_trace": "Single SIGNED_CONTRACT doc, CONFIRMED_FACT, CURRENT (no amends/expiry).",
+      "predicate": "VENDOR-9047.payment_terms",
+      "cross_cutting_tags": [
+        "ordinary factual state"
+      ]
+    },
+    {
+      "case_id": "LNES59-H46",
+      "category": "ordinary_factual",
+      "query": "Did Northcote Fire Safety Ltd pass its annual fire safety inspection?",
+      "grounding_document_ids": [
+        "DOC-H-AUDIT-9048"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "PASSED",
+        "historical_values": []
+      },
+      "_hand_trace": "Single audit_record doc, CONFIRMED_FACT, CURRENT.",
+      "predicate": "VENDOR-9048.fire_safety_inspection_status",
+      "cross_cutting_tags": [
+        "ordinary factual state"
+      ]
+    },
+    {
+      "case_id": "LNES59-H47",
+      "category": "rumor_vs_authoritative",
+      "query": "Is Woodhall Precision Engineering planning to raise prices next quarter?",
+      "grounding_document_ids": [
+        "DOC-H-MEETING-NOTE-9049"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "authority_status": "UNVERIFIED",
+        "temporal_status": "NOT_APPLICABLE",
+        "value": "POSSIBLE_INCREASE_UNCONFIRMED",
+        "historical_values": []
+      },
+      "_hand_trace": "MEETING_NOTE is NEVER_AUTHORITATIVE -> SOURCE_ASSERTION/MATCH/UNVERIFIED, same pattern as H04/H05 but the third NEVER_AUTHORITATIVE source_class (MEETING_NOTE rather than EMAIL/CHAT_MESSAGE).",
+      "predicate": "VENDOR-9049.price_increase_rumor",
+      "cross_cutting_tags": [
+        "rumor vs authoritative fact"
+      ]
+    },
+    {
+      "case_id": "LNES59-H48",
+      "category": "negative_state_control",
+      "query": "Is Ashendene Print & Bindery in the quality certification registry?",
+      "grounding_document_ids": [
+        "DOC-H-QUALITY-CERT-SEARCH-9050"
+      ],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "claim_type": "UNKNOWN",
+        "value": "NOT_IN_QUALITY_REGISTRY"
+      },
+      "_hand_trace": "'NO MATCH' marker fires -> NO_MATCH/UNKNOWN, scope=COMPLIANCE_AUDIT_SYSTEM. Fourth distinct registry type across the holdout (vendor master H23, sanctions H24, tax compliance H25, approval-system H26, now quality certification).",
+      "predicate": "VENDOR-9050.quality_certification_status",
+      "cross_cutting_tags": [
+        "scope",
+        "NO_MATCH"
+      ]
+    },
+    {
+      "case_id": "LNES59-H49",
+      "category": "authority_wrong_purpose",
+      "query": "Was a snow removal contract for Cranmoor Estate Services approved?",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-A-9051",
+        "DOC-H-CONTRACT-B-9051"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "Distractor-robustness case: the grounding set contains two CONFLICTING landscaping-contract-authority documents ($8,000 North campus vs $9,500 South campus, independent, both CURRENT), but the QUERIED predicate is snow_removal_authority -- a completely different purpose with zero grounding documents. The conflicting landscaping evidence must NOT leak into or influence the snow-removal resolution; target predicate not found among classifications -> primary is None -> INCOMPLETE, regardless of the unrelated conflict present in the grounding set.",
+      "predicate": "VENDOR-9051.snow_removal_authority",
+      "cross_cutting_tags": [
+        "wrong-purpose authority",
+        "conflicting evidence"
+      ]
+    },
+    {
+      "case_id": "LNES59-H50",
+      "category": "conflicting_source",
+      "query": "What is the current authorized amount for PO-9052, and does the invoice match it?",
+      "grounding_document_ids": [
+        "DOC-H-PO-9052",
+        "DOC-H-PO-AMENDMENT-9052A",
+        "DOC-H-INVOICE-9052"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFLICTING_EVIDENCE",
+        "temporal_status": "NOT_APPLICABLE",
+        "value": null
+      },
+      "_hand_trace": "Closing combination case. Primary (authorized_amount) alone would resolve to a multi-hop no-current-state chain: original SUPERSEDED ($15,000), A1 itself expired (effective_until 2026-02-28, past) -> EXPIRED at $18,300, historical ($15,000). BUT compare_against_predicate (invoiced_amount) is also present: invoice MATCH/CURRENT/$19,750, no policy_tiers -> the elif conflict-check fires first (primary.resolution==MATCH regardless of its temporal_status, and 18300!=19750) -> CONFLICTING_EVIDENCE, which REPLACES the multi-hop/EXPIRED detail entirely (same nuance as H09/H31: the conflict branch returns its own literal CommittedState, not primary's temporal_status or historical_values). This demonstrates there is no separate 'multi-hop AND conflicting' compound state in the architecture -- the compare_against_predicate conflict check simply takes precedence whenever both sides resolve to MATCH with differing values, regardless of what temporal complexity produced the primary side's value.",
+      "predicate": "PO-9052.authorized_amount",
+      "compare_against_predicate": "PO-9052.invoiced_amount",
+      "cross_cutting_tags": [
+        "multi-hop",
+        "conflicting evidence",
+        "supersession"
+      ]
+    }
+  ]
+}

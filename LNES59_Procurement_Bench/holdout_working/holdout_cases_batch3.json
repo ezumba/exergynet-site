@@ -1,0 +1,186 @@
+{
+  "_construction_note": "HOLDOUT batch 3 (H21-H30). Ground truth hand-derived from V7 rules, extract_case_state()/evaluate() NOT invoked.",
+  "cases": [
+    {
+      "case_id": "LNES59-H21",
+      "category": "authority_wrong_purpose",
+      "query": "Was a capital renovation project for Kirkwall Facilities Group approved by a Manager?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-PURPOSE-9023"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "Only approval on record covers routine grounds maintenance ($5,500), a different purpose from capital renovation -- target predicate VENDOR-9023.capital_renovation_authority has zero grounding documents -> INCOMPLETE.",
+      "predicate": "VENDOR-9023.capital_renovation_authority",
+      "cross_cutting_tags": [
+        "wrong-purpose authority"
+      ]
+    },
+    {
+      "case_id": "LNES59-H22",
+      "category": "authority_wrong_purpose",
+      "query": "Was new hardware procurement for Amberhall Data Systems approved by a Manager?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-PURPOSE-9024"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "Only approval on record covers a software subscription renewal ($3,000), a different purpose from new hardware procurement -- no document grounds VENDOR-9024.hardware_procurement_authority -> INCOMPLETE.",
+      "predicate": "VENDOR-9024.hardware_procurement_authority",
+      "cross_cutting_tags": [
+        "wrong-purpose authority"
+      ]
+    },
+    {
+      "case_id": "LNES59-H23",
+      "category": "negative_state_control",
+      "query": "Is Thistlewood Analytics in the vendor master registry?",
+      "grounding_document_ids": [
+        "DOC-H-VENDOR-REGISTRY-SEARCH-9025"
+      ],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "claim_type": "UNKNOWN",
+        "value": "NOT_IN_REGISTRY"
+      },
+      "_hand_trace": "Content contains 'NO MATCH' -> _is_no_record fires (checked after the unavailable check, which does not fire here) -> NO_MATCH/UNKNOWN, value=doc's scoped-negative sentinel, scope=VENDOR_MASTER_REGISTRY.",
+      "predicate": "VENDOR-9025.registry_status",
+      "cross_cutting_tags": [
+        "scope",
+        "NO_MATCH"
+      ]
+    },
+    {
+      "case_id": "LNES59-H24",
+      "category": "negative_state_control",
+      "query": "Is Ferrowick Trading Ltd on any current sanctions list?",
+      "grounding_document_ids": [
+        "DOC-H-SANCTIONS-SCREENING-9026"
+      ],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "claim_type": "UNKNOWN",
+        "value": "NOT_ON_SANCTIONS_LIST"
+      },
+      "_hand_trace": "'NO MATCH' marker fires -> NO_MATCH/UNKNOWN, scope=COMPLIANCE_AUDIT_SYSTEM (audit_record source_class). Distinct registry from H23.",
+      "predicate": "VENDOR-9026.sanctions_screening_status",
+      "cross_cutting_tags": [
+        "scope",
+        "NO_MATCH"
+      ]
+    },
+    {
+      "case_id": "LNES59-H25",
+      "category": "negative_state_control",
+      "query": "Is Oldbury Metal Recyclers in the tax compliance database?",
+      "grounding_document_ids": [
+        "DOC-H-TAX-COMPLIANCE-SEARCH-9027"
+      ],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "claim_type": "UNKNOWN",
+        "value": "NOT_IN_TAX_COMPLIANCE_DB"
+      },
+      "_hand_trace": "'NO MATCH' marker fires -> NO_MATCH/UNKNOWN, scope=COMPLIANCE_AUDIT_SYSTEM. Third distinct registry type across H23-H25.",
+      "predicate": "VENDOR-9027.tax_compliance_status",
+      "cross_cutting_tags": [
+        "scope",
+        "NO_MATCH"
+      ]
+    },
+    {
+      "case_id": "LNES59-H26",
+      "category": "negative_state_control",
+      "query": "Is there an approval on record for Grantley Civil Engineering's rush order?",
+      "grounding_document_ids": [
+        "DOC-H-APPROVAL-SEARCH-9028"
+      ],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "claim_type": "UNKNOWN",
+        "value": "NO_APPROVAL_RECORD_FOUND"
+      },
+      "_hand_trace": "Content contains 'NO RECORD FOUND' -- the OTHER literal in _NO_RECORD_MARKERS=(\"NO RECORD FOUND\", \"NO MATCH\"), not yet exercised by name in H23-H25 (which all used 'NO MATCH') -> NO_MATCH/UNKNOWN, scope=PROCUREMENT_APPROVAL_SYSTEM (APPROVAL_SYSTEM_RECORD source_class).",
+      "predicate": "VENDOR-9028.rush_order_approval_status",
+      "cross_cutting_tags": [
+        "scope",
+        "NO_MATCH"
+      ]
+    },
+    {
+      "case_id": "LNES59-H27",
+      "category": "hypothesis_under_incompleteness",
+      "query": "Has Wrenshaw Analytics passed its background check?",
+      "grounding_document_ids": [
+        "DOC-H-SYSTEM-UNAVAILABLE-9029"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "'scheduled maintenance' matches _UNAVAILABLE_MARKERS -> INCOMPLETE/UNKNOWN (checked before the no-record check).",
+      "predicate": "VENDOR-9029.background_check_status",
+      "cross_cutting_tags": [
+        "INCOMPLETE"
+      ]
+    },
+    {
+      "case_id": "LNES59-H28",
+      "category": "recommendation_vs_fact",
+      "query": "Is Iverness Cold Storage's insurance certificate currently valid?",
+      "grounding_document_ids": [
+        "DOC-H-SYSTEM-UNAVAILABLE-9030"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "'could not be accessed' matches _UNAVAILABLE_MARKERS -> INCOMPLETE/UNKNOWN. Distinct unavailability phrasing from H27.",
+      "predicate": "VENDOR-9030.insurance_certificate_status",
+      "cross_cutting_tags": [
+        "INCOMPLETE"
+      ]
+    },
+    {
+      "case_id": "LNES59-H29",
+      "category": "recommendation_vs_fact",
+      "query": "What is Bellhaven Construction Supply's environmental impact certification status?",
+      "grounding_document_ids": [
+        "DOC-H-VENDOR-MASTER-9031"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "A pure predicate gap distinct from H19/H20: the vendor DOES have a document in the corpus (registration status ACTIVE), but zero documents ground the specific queried predicate (environmental_impact_certification_status) -> INCOMPLETE. Tests that partial knowledge about a vendor doesn't get conflated with knowledge of the specific queried fact.",
+      "predicate": "VENDOR-9031.environmental_impact_certification_status",
+      "cross_cutting_tags": [
+        "INCOMPLETE"
+      ]
+    },
+    {
+      "case_id": "LNES59-H30",
+      "category": "conflicting_source",
+      "query": "What are Copperfield Risk Advisors' current payment terms?",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-A-9032",
+        "DOC-H-CONTRACT-B-9032"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFLICTING_EVIDENCE",
+        "temporal_status": "NOT_APPLICABLE",
+        "value": null
+      },
+      "_hand_trace": "Two INDEPENDENT contracts (neither amends the other), both CURRENT, same predicate, different values (NET_30 vs NET_45) -> len(current_ones)==2>1 -> CONFLICTING_EVIDENCE via the >1-CURRENT branch. Mechanically distinct from H09/H31's compare_against_predicate-mismatch conflict path -- this is a genuine same-predicate collision with no supersession relationship to resolve it.",
+      "predicate": "VENDOR-9032.payment_terms",
+      "cross_cutting_tags": [
+        "conflicting evidence"
+      ]
+    }
+  ]
+}

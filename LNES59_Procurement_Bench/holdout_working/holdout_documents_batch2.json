@@ -1,0 +1,105 @@
+{
+  "_construction_note": "HOLDOUT batch 2 (H11-H20), authored 2026-08-08. Introduces DOC-H-APPROVAL-MATRIX-9000, the shared holdout-only policy reference (fresh predicate H_APPROVAL_MATRIX.limits, distinct from dev's APPROVAL_MATRIX.limits -- no cross-corpus reference). NOT verified via extract_case_state()/evaluate().",
+  "documents": [
+    {
+      "id": "DOC-H-APPROVAL-MATRIX-9000",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "HOLDOUT PROCUREMENT APPROVAL MATRIX (effective 2026-01-01): Manager up to $10,000; Director up to $50,000; VP unlimited within board-approved budget.",
+      "predicate": "H_APPROVAL_MATRIX.limits",
+      "tiers": {"MANAGER": 10000, "DIRECTOR": 50000, "VP": null}
+    },
+    {
+      "id": "DOC-H-CERT-ORIGINAL-9011",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-05-01",
+      "content": "COMPLIANCE REPORT: Millbrook Environmental Testing (VENDOR-9011) laboratory certification status: ACTIVE.",
+      "predicate": "VENDOR-9011.certification_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CERT-REVOKE-9011",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-08-01", "revokes": "DOC-H-CERT-ORIGINAL-9011",
+      "content": "COMPLIANCE NOTICE: Millbrook Environmental Testing (VENDOR-9011) laboratory certification REVOKED following a proficiency-testing failure.",
+      "predicate": "VENDOR-9011.certification_revocation_notice"
+    },
+    {
+      "id": "DOC-H-CERT-REINSTATED-9011",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2026-01-15",
+      "content": "COMPLIANCE REPORT: Millbrook Environmental Testing (VENDOR-9011) laboratory certification status: ACTIVE -- retest passed, certification reinstated.",
+      "predicate": "VENDOR-9011.certification_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-RATE-FUTURE-9012",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-11-01",
+      "content": "RATE SCHEDULE AGREEMENT, Thackwell Freight Systems (VENDOR-9012). New rate tier NEW_TIER_RATE_2200 takes effect 2026-11-01. No prior rate schedule exists for this vendor in this system.",
+      "predicate": "VENDOR-9012.rate_schedule", "value": "NEW_TIER_RATE_2200"
+    },
+    {
+      "id": "DOC-H-POLICY-CURRENT-9013",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "SPECIALTY SCIENTIFIC-INSTRUMENT PURCHASE POLICY (effective 2026-01-01, current): Manager up to $10,000; Director up to $50,000; VP unlimited.",
+      "predicate": "SPECIALTY_POLICY-9013.limits",
+      "tiers": {"MANAGER": 10000, "DIRECTOR": 50000, "VP": null}
+    },
+    {
+      "id": "DOC-H-POLICY-FUTURE-9013",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-12-01", "amends": "DOC-H-POLICY-CURRENT-9013",
+      "content": "SPECIALTY SCIENTIFIC-INSTRUMENT PURCHASE POLICY, REVISED -- takes effect 2026-12-01, tightening limits ahead of the annual compliance review: Manager up to $5,000; Director up to $30,000; VP unlimited.",
+      "predicate": "SPECIALTY_POLICY-9013.limits",
+      "tiers": {"MANAGER": 5000, "DIRECTOR": 30000, "VP": null}
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-9013",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Handley Scientific Instruments order. Approving $8,000 for the Handley Scientific Instruments (VENDOR-9013) purchase -- within my Manager authority per the current specialty policy. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9013.instrument_purchase_authority", "value": "8000"
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-EXACT-9014",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Oakendale Print Solutions order. Approving $10,000 for the Oakendale Print Solutions (VENDOR-9014) print services order -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9014.print_services_authority", "value": "10000"
+    },
+    {
+      "id": "DOC-H-EMAIL-DIRECTOR-OVER-9015",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Ridgemont Fabrication contract. Approving $50,001 for the Ridgemont Fabrication (VENDOR-9015) fabrication contract -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "predicate": "VENDOR-9015.fabrication_contract_authority", "value": "50001"
+    },
+    {
+      "id": "DOC-H-EMAIL-VP-9016",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Castleford Global Logistics contract. Approving $850,000 for the Castleford Global Logistics (VENDOR-9016) multi-year logistics contract -- within board-approved budget, VP authority. -- M. Alvarez, VP.",
+      "predicate": "VENDOR-9016.logistics_contract_authority", "value": "850000"
+    },
+    {
+      "id": "DOC-H-EMAIL-SUPERVISOR-9017",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Brackenfield Waste Management order. Approving $7,500 for the Brackenfield Waste Management (VENDOR-9017) disposal services order -- approved by D. Ferris, Supervisor.",
+      "predicate": "VENDOR-9017.waste_disposal_authority", "value": "7500"
+    },
+    {
+      "id": "DOC-H-EMAIL-COORDINATOR-9018",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Millgate Print & Signage order. Approving $4,200 for the Millgate Print & Signage (VENDOR-9018) signage order -- approved by K. Wexler, Procurement Coordinator.",
+      "predicate": "VENDOR-9018.signage_order_authority", "value": "4200"
+    },
+    {
+      "id": "DOC-H-EMAIL-DIRECTOR-9019",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Silverwood Contracting renewal. Approving $22,000 for the Silverwood Contracting (VENDOR-9019) annual contract renewal -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "predicate": "VENDOR-9019.contract_renewal_authority", "value": "22000"
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-9021",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Hartwell Machining tooling order. Approving $9,000 for the Hartwell Machining (VENDOR-9021) tooling purchase -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9021.tooling_purchase_authority", "value": "9000"
+    }
+  ]
+}

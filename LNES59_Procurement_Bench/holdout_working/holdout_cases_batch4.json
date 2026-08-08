@@ -1,0 +1,238 @@
+{
+  "_construction_note": "HOLDOUT batch 4 (H31-H40). Ground truth hand-derived from V7 rules, extract_case_state()/evaluate() NOT invoked.",
+  "cases": [
+    {
+      "case_id": "LNES59-H31",
+      "category": "conflicting_source",
+      "query": "What is the current authorized amount for PO-9033, and does the invoice match it?",
+      "grounding_document_ids": [
+        "DOC-H-PO-9033",
+        "DOC-H-PO-AMENDMENT-9033A",
+        "DOC-H-INVOICE-9033"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFLICTING_EVIDENCE",
+        "temporal_status": "NOT_APPLICABLE",
+        "value": null
+      },
+      "_hand_trace": "Primary (authorized_amount): original SUPERSEDED ($9,500), amendment CURRENT ($11,750). compare_against_predicate (invoiced_amount): single INVOICE doc, MATCH, $13,200, no policy_tiers -> elif conflict-check fires (11750 != 13200) -> CONFLICTING_EVIDENCE, same mechanism as H09, fresh vendor/amounts.",
+      "predicate": "PO-9033.authorized_amount",
+      "compare_against_predicate": "PO-9033.invoiced_amount",
+      "cross_cutting_tags": [
+        "conflicting evidence",
+        "supersession",
+        "multi-source"
+      ]
+    },
+    {
+      "case_id": "LNES59-H32",
+      "category": "hypothesis_under_incompleteness",
+      "query": "Has Hallcross Metal Finishing's rush order been approved?",
+      "grounding_document_ids": [
+        "DOC-H-APPROVAL-UNAVAILABLE-9034"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "'errors, not authoritative' matches _UNAVAILABLE_MARKERS -> INCOMPLETE/UNKNOWN. Earmarked at Stage B for exercising a HYPOTHESIS response (always PERMITTED_HYPOTHESIS regardless of resolution) alongside a bare-assertion failure-mode control.",
+      "predicate": "VENDOR-9034.rush_approval_status",
+      "cross_cutting_tags": [
+        "INCOMPLETE",
+        "hypothesis"
+      ]
+    },
+    {
+      "case_id": "LNES59-H33",
+      "category": "negative_state_control",
+      "query": "Is Bramshott Consulting Group in the vendor master registry?",
+      "grounding_document_ids": [
+        "DOC-H-VENDOR-REGISTRY-SEARCH-9035"
+      ],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "claim_type": "UNKNOWN",
+        "value": "NOT_IN_REGISTRY"
+      },
+      "_hand_trace": "'NO MATCH' marker fires -> NO_MATCH/UNKNOWN, scope=VENDOR_MASTER_REGISTRY. Earmarked at Stage B for a HYPOTHESIS response about the vendor's absence (e.g. 'possibly not yet onboarded') without asserting a false scope-broadened claim.",
+      "predicate": "VENDOR-9035.registry_status",
+      "cross_cutting_tags": [
+        "scope",
+        "NO_MATCH",
+        "hypothesis"
+      ]
+    },
+    {
+      "case_id": "LNES59-H34",
+      "category": "recommendation_vs_fact",
+      "query": "Is Wickfield Transport's insurance coverage currently verified?",
+      "grounding_document_ids": [
+        "DOC-H-INSURANCE-VERIFY-UNAVAILABLE-9036"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "'scheduled maintenance' matches _UNAVAILABLE_MARKERS -> INCOMPLETE/UNKNOWN. Earmarked for a RECOMMENDATION response (retry after the maintenance window), always PERMITTED_RECOMMENDATION.",
+      "predicate": "VENDOR-9036.insurance_verification_status",
+      "cross_cutting_tags": [
+        "INCOMPLETE",
+        "recommendation"
+      ]
+    },
+    {
+      "case_id": "LNES59-H35",
+      "category": "conflicting_source",
+      "query": "What are Elmsworth Print Group's current payment terms?",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-A-9037",
+        "DOC-H-CONTRACT-B-9037"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFLICTING_EVIDENCE",
+        "temporal_status": "NOT_APPLICABLE",
+        "value": null
+      },
+      "_hand_trace": "Two independent CURRENT contracts (West/East divisions, neither amends the other), same predicate, different values (NET_30 vs NET_15) -> len(current_ones)==2 -> CONFLICTING_EVIDENCE via the >1-CURRENT branch (same mechanism as H30, fresh instance). Earmarked for a RECOMMENDATION response (reconcile the two divisional records) instead of picking one arbitrarily.",
+      "predicate": "VENDOR-9037.payment_terms",
+      "cross_cutting_tags": [
+        "conflicting evidence",
+        "recommendation"
+      ]
+    },
+    {
+      "case_id": "LNES59-H36",
+      "category": "ordinary_factual",
+      "query": "Was Manager R. Castellano's $6,300 approval of Draycott Foods Ltd's routine order within authority?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-9038",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "policy_tiers": {
+          "MANAGER": 10000,
+          "DIRECTOR": 50000,
+          "VP": null
+        }
+      },
+      "_hand_trace": "Ordinary, non-adversarial authority check drawing on two sources (approval email + policy matrix). AR requested_authority_level=MANAGER, requested_amount=6300: 6300<=10000 -> CONSISTENT.",
+      "predicate": "VENDOR-9038.routine_order_authority",
+      "compare_against_predicate": "H_APPROVAL_MATRIX.limits",
+      "cross_cutting_tags": [
+        "ordinary factual state",
+        "multi-source"
+      ]
+    },
+    {
+      "case_id": "LNES59-H37",
+      "category": "temporal_supersession",
+      "query": "What is the current authorized amount for PO-9039?",
+      "grounding_document_ids": [
+        "DOC-H-PO-9039",
+        "DOC-H-PO-AMENDMENT-9039A",
+        "DOC-H-PO-AMENDMENT-9039B"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "16800",
+        "historical_values": [
+          "12000",
+          "14500"
+        ]
+      },
+      "_hand_trace": "Clean 3-hop chain that DOES resolve to CURRENT (contrast with H38/H39): original SUPERSEDED by A1, A1 SUPERSEDED by A2, A2 has no amends/expiry against it -> CURRENT. chosen=A2 ($16,800), historical=('12000','14500') in grounding-list order.",
+      "predicate": "PO-9039.authorized_amount",
+      "cross_cutting_tags": [
+        "supersession",
+        "multi-source"
+      ]
+    },
+    {
+      "case_id": "LNES59-H38",
+      "category": "multi_hop_no_current_state",
+      "query": "What is the current authorized amount for PO-9040?",
+      "grounding_document_ids": [
+        "DOC-H-PO-9040",
+        "DOC-H-PO-AMENDMENT-9040A"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "EXPIRED",
+        "value": "29200",
+        "historical_values": [
+          "25000"
+        ]
+      },
+      "_hand_trace": "Two-hop, both non-current: original SUPERSEDED by A1; A1 itself was only a temporary winter-storm surcharge that expired 2026-01-31 (before BENCHMARK_AS_OF) -> A1 EXPIRED via its own effective_until. No document CURRENT. chosen=A1 (latest effective date among non-current), historical=('25000',). Asserting '29200' now -> TEMPORAL_CONTRADICTION.",
+      "predicate": "PO-9040.authorized_amount",
+      "cross_cutting_tags": [
+        "multi-hop",
+        "temporal contradiction",
+        "supersession"
+      ]
+    },
+    {
+      "case_id": "LNES59-H39",
+      "category": "multi_hop_no_current_state",
+      "query": "What is the current authorized amount for PO-9041?",
+      "grounding_document_ids": [
+        "DOC-H-PO-9041",
+        "DOC-H-PO-AMENDMENT-9041A",
+        "DOC-H-PO-AMENDMENT-9041B"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "EXPIRED",
+        "value": "48900",
+        "historical_values": [
+          "40000",
+          "44500"
+        ]
+      },
+      "_hand_trace": "Three-hop, all non-current: original SUPERSEDED by A1, A1 SUPERSEDED by A2, A2 was only a temporary spring-planting surcharge that expired 2026-03-31 -> A2 EXPIRED via its own effective_until. chosen=A2 (latest effective date), historical=('40000','44500'). Asserting '48900' now -> TEMPORAL_CONTRADICTION.",
+      "predicate": "PO-9041.authorized_amount",
+      "cross_cutting_tags": [
+        "multi-hop",
+        "temporal contradiction",
+        "supersession"
+      ]
+    },
+    {
+      "case_id": "LNES59-H40",
+      "category": "supersession_revocation_reinstatement",
+      "query": "What is Hollingbourne Catering Supplies' current food-handling certification status?",
+      "grounding_document_ids": [
+        "DOC-H-CERT-ORIGINAL-9042",
+        "DOC-H-CERT-AMENDMENT-9042A",
+        "DOC-H-CERT-REVOKE-9042",
+        "DOC-H-CERT-REINSTATED-9042"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "ACTIVE",
+        "historical_values": [
+          "ACTIVE",
+          "ACTIVE_CONDITIONAL"
+        ]
+      },
+      "_hand_trace": "Deeper than H11: original (ACTIVE) is SUPERSEDED by amendment (downgraded to ACTIVE_CONDITIONAL); the AMENDMENT (not the original) is then REVOKED by the revoke notice (revokes DOC-H-CERT-AMENDMENT-9042A specifically, own predicate excluded from matches); a fresh independent reinstatement doc (ACTIVE, no amends/revokes against it) resolves CURRENT on its own. matches=[original(SUPERSEDED),amendment(REVOKED),reinstated(CURRENT)] (revoke notice excluded, different predicate). chosen=reinstated (ACTIVE). historical=(original.value, amendment.value)=('ACTIVE','ACTIVE_CONDITIONAL') in grounding-list order.",
+      "predicate": "VENDOR-9042.certification_status",
+      "cross_cutting_tags": [
+        "multi-hop",
+        "supersession",
+        "revocation",
+        "reinstatement"
+      ]
+    }
+  ]
+}

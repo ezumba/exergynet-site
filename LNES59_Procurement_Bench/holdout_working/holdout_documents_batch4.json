@@ -1,0 +1,150 @@
+{
+  "_construction_note": "HOLDOUT batch 4 (H31-H40), authored 2026-08-08. Covers a fresh compare_against_predicate conflict, hypothesis/recommendation-earmarked INCOMPLETE/NO_MATCH/conflict instances, a clean 3-hop chain that DOES resolve to CURRENT (contrast with H38/H39's no-current chains), a 2-hop and a 3-hop chain with no currently active state, and a deep 4-document amendment->revoke->reinstate chain. NOT verified via extract_case_state()/evaluate().",
+  "documents": [
+    {
+      "id": "DOC-H-PO-9033",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9033", "po_id": "PO-9033", "issued": "2025-12-01",
+      "content": "PURCHASE ORDER PO-9033. Vendor: Thurlow Packaging Co (VENDOR-9033). Amount authorized: $9,500.00. Description: custom packaging materials order. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9033.authorized_amount", "value": "9500"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9033A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9033", "issued": "2026-02-01", "amends": "DOC-H-PO-9033",
+      "content": "PURCHASE ORDER AMENDMENT PO-9033-A1, amending PO-9033. Vendor: Thurlow Packaging Co (VENDOR-9033). Revised amount authorized: $11,750.00 (added a secondary print run). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9033.authorized_amount", "value": "11750"
+    },
+    {
+      "id": "DOC-H-INVOICE-9033",
+      "type": "invoice", "source_class": "INVOICE",
+      "issued": "2026-05-10",
+      "content": "INVOICE INV-95033. Vendor: Thurlow Packaging Co (VENDOR-9033), for PO-9033. Amount billed: $13,200.00.",
+      "predicate": "PO-9033.invoiced_amount", "value": "13200"
+    },
+    {
+      "id": "DOC-H-APPROVAL-UNAVAILABLE-9034",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "APPROVAL SYSTEM QUERY: Hallcross Metal Finishing (VENDOR-9034) rush order approval status. System returned errors, not authoritative results, for the entire query window -- ongoing platform migration.",
+      "predicate": "VENDOR-9034.rush_approval_status"
+    },
+    {
+      "id": "DOC-H-VENDOR-REGISTRY-SEARCH-9035",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Bramshott Consulting Group\". Full registry searched. Result: NO MATCH. Bramshott Consulting Group is not present in the vendor master registry. Other systems were not checked as part of this search.",
+      "predicate": "VENDOR-9035.registry_status", "value": "NOT_IN_REGISTRY"
+    },
+    {
+      "id": "DOC-H-INSURANCE-VERIFY-UNAVAILABLE-9036",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "INSURANCE VERIFICATION SYSTEM QUERY: Wickfield Transport (VENDOR-9036) coverage verification. System is undergoing scheduled maintenance for the entire query window -- no results available.",
+      "predicate": "VENDOR-9036.insurance_verification_status"
+    },
+    {
+      "id": "DOC-H-CONTRACT-A-9037",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-01-10",
+      "content": "MASTER SERVICES AGREEMENT CT-9037-A. Between ExergyNet Corp and Elmsworth Print Group (VENDOR-9037), West division. Payment terms: Net 30.",
+      "predicate": "VENDOR-9037.payment_terms", "value": "NET_30"
+    },
+    {
+      "id": "DOC-H-CONTRACT-B-9037",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-01-20",
+      "content": "MASTER SERVICES AGREEMENT CT-9037-B. Between ExergyNet Corp and Elmsworth Print Group (VENDOR-9037), East division, negotiated independently. Payment terms: Net 15.",
+      "predicate": "VENDOR-9037.payment_terms", "value": "NET_15"
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-9038",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Draycott Foods Ltd routine order. Approving $6,300 for the Draycott Foods Ltd (VENDOR-9038) routine supply order -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9038.routine_order_authority", "value": "6300"
+    },
+    {
+      "id": "DOC-H-PO-9039",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9039", "po_id": "PO-9039", "issued": "2025-04-01",
+      "content": "PURCHASE ORDER PO-9039. Vendor: Ashgrove Telecom Services (VENDOR-9039). Amount authorized: $12,000.00. Description: annual network maintenance contract. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9039.authorized_amount", "value": "12000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9039A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9039", "issued": "2025-09-01", "amends": "DOC-H-PO-9039",
+      "content": "PURCHASE ORDER AMENDMENT PO-9039-A1, amending PO-9039. Vendor: Ashgrove Telecom Services (VENDOR-9039). Revised amount authorized: $14,500.00 (added a secondary site). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9039.authorized_amount", "value": "14500"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9039B",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9039", "issued": "2026-04-01", "amends": "DOC-H-PO-AMENDMENT-9039A",
+      "content": "PURCHASE ORDER AMENDMENT PO-9039-A2, amending PO-9039-A1. Vendor: Ashgrove Telecom Services (VENDOR-9039). Revised amount authorized: $16,800.00 (added a third site). Approved by: T. Osei (Director).",
+      "predicate": "PO-9039.authorized_amount", "value": "16800"
+    },
+    {
+      "id": "DOC-H-PO-9040",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9040", "po_id": "PO-9040", "issued": "2025-06-01",
+      "content": "PURCHASE ORDER PO-9040. Vendor: Copplestone Rail Services (VENDOR-9040). Amount authorized: $25,000.00. Description: annual rail siding maintenance contract. Approved by: T. Osei (Director).",
+      "predicate": "PO-9040.authorized_amount", "value": "25000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9040A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9040", "issued": "2025-10-01", "amends": "DOC-H-PO-9040",
+      "effective_until": "2026-01-31",
+      "content": "PURCHASE ORDER AMENDMENT PO-9040-A1, amending PO-9040. Vendor: Copplestone Rail Services (VENDOR-9040). Temporary revised amount authorized: $29,200.00 (winter storm response surcharge, effective through 2026-01-31 only). Approved by: T. Osei (Director).",
+      "predicate": "PO-9040.authorized_amount", "value": "29200"
+    },
+    {
+      "id": "DOC-H-PO-9041",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9041", "po_id": "PO-9041", "issued": "2025-01-01",
+      "content": "PURCHASE ORDER PO-9041. Vendor: Marchbanks Agricultural Supply (VENDOR-9041). Amount authorized: $40,000.00. Description: annual seed and fertilizer supply contract. Approved by: T. Osei (Director).",
+      "predicate": "PO-9041.authorized_amount", "value": "40000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9041A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9041", "issued": "2025-06-01", "amends": "DOC-H-PO-9041",
+      "content": "PURCHASE ORDER AMENDMENT PO-9041-A1, amending PO-9041. Vendor: Marchbanks Agricultural Supply (VENDOR-9041). Revised amount authorized: $44,500.00 (added a secondary crop rotation product line). Approved by: T. Osei (Director).",
+      "predicate": "PO-9041.authorized_amount", "value": "44500"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9041B",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9041", "issued": "2025-10-01", "amends": "DOC-H-PO-AMENDMENT-9041A",
+      "effective_until": "2026-03-31",
+      "content": "PURCHASE ORDER AMENDMENT PO-9041-A2, amending PO-9041-A1. Vendor: Marchbanks Agricultural Supply (VENDOR-9041). Temporary revised amount authorized: $48,900.00 (spring planting surcharge, effective through 2026-03-31 only). Approved by: T. Osei (Director).",
+      "predicate": "PO-9041.authorized_amount", "value": "48900"
+    },
+    {
+      "id": "DOC-H-CERT-ORIGINAL-9042",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-03-01",
+      "content": "COMPLIANCE REPORT: Hollingbourne Catering Supplies (VENDOR-9042) food-handling certification status: ACTIVE.",
+      "predicate": "VENDOR-9042.certification_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CERT-AMENDMENT-9042A",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-07-01", "amends": "DOC-H-CERT-ORIGINAL-9042",
+      "content": "COMPLIANCE REPORT UPDATE: Hollingbourne Catering Supplies (VENDOR-9042) food-handling certification status downgraded to ACTIVE_CONDITIONAL pending a follow-up inspection.",
+      "predicate": "VENDOR-9042.certification_status", "value": "ACTIVE_CONDITIONAL"
+    },
+    {
+      "id": "DOC-H-CERT-REVOKE-9042",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-11-01", "revokes": "DOC-H-CERT-AMENDMENT-9042A",
+      "content": "COMPLIANCE NOTICE: Hollingbourne Catering Supplies (VENDOR-9042) conditional food-handling certification REVOKED following a failed follow-up inspection.",
+      "predicate": "VENDOR-9042.certification_revocation_notice"
+    },
+    {
+      "id": "DOC-H-CERT-REINSTATED-9042",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2026-02-01",
+      "content": "COMPLIANCE REPORT: Hollingbourne Catering Supplies (VENDOR-9042) food-handling certification status: ACTIVE -- corrective action plan completed, full certification reinstated.",
+      "predicate": "VENDOR-9042.certification_status", "value": "ACTIVE"
+    }
+  ]
+}

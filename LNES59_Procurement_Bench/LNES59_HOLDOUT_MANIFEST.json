@@ -1,0 +1,56 @@
+{
+  "_purpose": "LNES-59.2 blind holdout seal. Authored per SEI CENTRAL COMMAND LNES-59.2 (@workspace.txt) Stage A. This manifest, once committed, marks the holdout content frozen -- no further modification of holdout documents/cases/ground truth is permitted after this point.",
+  "sealed_2026-08-08": true,
+  "architecture": {
+    "version": "V7",
+    "git_commit_at_seal": "ab48726d2aa357b86ad3835aa98524cd14f070ce",
+    "freeze_manifest": "LNES59_PRE_HOLDOUT_CODE_MANIFEST_V7.json",
+    "freeze_manifest_sha256": "f7b49c7bae44a7c6af811b5c041bc7d79bf8d0d0e522fec418237e2c56ed6136",
+    "gate_file": "state_consistency_gate_v2.py",
+    "gate_sha256": "6155f0b83ca3920ca330fe92d4e8f414f496979c2f5938f09cb5b640dc1c5054",
+    "extraction_file": "deterministic_extraction.py",
+    "extraction_sha256": "e57358ecd2f7a8d23cdad4421001dcb78f3b3d3db2f3ac7b0146ba96c973bceb",
+    "_verification_note": "gate/extraction hashes recomputed fresh immediately before sealing and confirmed byte-identical to their V7-recorded values -- the architecture genuinely did not drift between the V7 freeze commit and this seal."
+  },
+  "development_dataset": {
+    "manifest": "LNES59_DATASET_MANIFEST.json",
+    "manifest_sha256": "7ad0795d6915788386239e51fd88f422d1f55633c34bc8857cedaf06f95e72b6",
+    "total_development_cases": 100,
+    "development_freeze_doc": "LNES59_FINAL_PRE_HOLDOUT_ARCHITECTURE_FREEZE.md"
+  },
+  "holdout_files": {
+    "runner_holdout": {"file": "LNES59_RUNNER_HOLDOUT.json", "sha256": "836d36bcc52eac213fb6c19011a51a4359b76476261cf6f6d9117ed764045f3c", "size_bytes": 48397},
+    "evaluator_holdout": {"file": "LNES59_EVALUATOR_HOLDOUT.json", "sha256": "89ea257d6c1fccf0c25ba6025d7e9cf841ac842609d14066a7d40fb1a43826f9", "size_bytes": 84985}
+  },
+  "selection_procedure": [
+    "50 cases stratified across 19 mechanism buckets from LNES-59.2 Stage A section 2, each bucket hit >=2 times (see mechanism_distribution below).",
+    "Corpus-first: documents authored before case questions, exactly as in the 100-case development set.",
+    "Fresh ID space (VENDOR-9001..9052, PO-9003..9052, INV-95002..95052) -- zero overlap with the development corpus (max dev IDs: VENDOR-6066/PO-6062/INV-91004), verified programmatically before sealing.",
+    "Ground truth hand-derived from the FROZEN V7 rules (classify_document / _resolve_temporal_status / _resolve_predicate_group / evaluate()) by direct code-reading and manual trace -- extract_case_state() and evaluate() were NEVER invoked against any holdout case during authoring, per the standing 'do not run the architecture while authoring' constraint. Each case's _hand_trace field (evaluator-only) records that reasoning.",
+    "Runner/evaluator split via case_view.py's to_runner_case()/to_evaluator_case() (allowlist construction: only case_id/query/grounding_document_ids reach the runner view).",
+    "assert_no_leakage() run against all 50 runner cases: 0 failures. Additionally confirmed by direct inspection of arm_x2.py's build_prompt() that document-level 'predicate'/'value' fields (corpus metadata, not case-level gold) are never included in model-facing prompt text -- only doc.id/source_class/content are used.",
+    "12% of cases (6/50) are deliberately ordinary, non-adversarial factual controls, matching the development set's ~19% control share and the standing 'must contain ordinary controls' instruction."
+  ],
+  "case_ids": [
+    "LNES59-H01","LNES59-H02","LNES59-H03","LNES59-H04","LNES59-H05","LNES59-H06","LNES59-H07","LNES59-H08","LNES59-H09","LNES59-H10",
+    "LNES59-H11","LNES59-H12","LNES59-H13","LNES59-H14","LNES59-H15","LNES59-H16","LNES59-H17","LNES59-H18","LNES59-H19","LNES59-H20",
+    "LNES59-H21","LNES59-H22","LNES59-H23","LNES59-H24","LNES59-H25","LNES59-H26","LNES59-H27","LNES59-H28","LNES59-H29","LNES59-H30",
+    "LNES59-H31","LNES59-H32","LNES59-H33","LNES59-H34","LNES59-H35","LNES59-H36","LNES59-H37","LNES59-H38","LNES59-H39","LNES59-H40",
+    "LNES59-H41","LNES59-H42","LNES59-H43","LNES59-H44","LNES59-H45","LNES59-H46","LNES59-H47","LNES59-H48","LNES59-H49","LNES59-H50"
+  ],
+  "category_distribution": {
+    "ordinary_factual": 6, "negative_state_control": 6, "conflicting_source": 5, "rumor_vs_authoritative": 3,
+    "temporal_supersession": 3, "temporal_validity": 3, "policy_authority": 3, "authority_wrong_purpose": 3,
+    "recommendation_vs_fact": 3, "future_effective": 2, "supersession_revocation_reinstatement": 2,
+    "multi_domain_authority": 2, "wrong_role_authority": 2, "authority_wrong_vendor": 2,
+    "hypothesis_under_incompleteness": 2, "multi_hop_no_current_state": 2, "authority_wrong_business_unit": 1
+  },
+  "mechanism_distribution": {
+    "supersession": 9, "multi-source": 8, "temporal contradiction": 7, "ordinary factual state": 6,
+    "conflicting evidence": 6, "scope": 6, "NO_MATCH": 6, "authority limits": 5, "INCOMPLETE": 5,
+    "revocation": 4, "wrong-purpose authority": 4, "multi-hop": 4, "rumor vs authoritative fact": 3,
+    "future-effective state": 3, "wrong-role authority": 3, "reinstatement": 2, "wrong-vendor authority": 2,
+    "hypothesis": 2, "recommendation": 2
+  },
+  "post_seal_rule": "DO NOT MODIFY HOLDOUT CONTENT after this manifest is committed. Any case used to inspect failures, tune logic, or change schemas/prompts/adapters during Stage B execution is disqualified as blind holdout evidence for that case."
+}

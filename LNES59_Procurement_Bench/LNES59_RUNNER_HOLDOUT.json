@@ -1,0 +1,1120 @@
+{
+  "documents": [
+    {
+      "id": "DOC-H-VENDOR-MASTER-9001",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Kestrel Point Chemical Supply (VENDOR-9001). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2021-06-01.",
+      "predicate": "VENDOR-9001.registration_status",
+      "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-PAYMENT-LEDGER-9002",
+      "type": "payment_ledger",
+      "source_class": "PAYMENT_LEDGER",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-95002, Vendor Briarcombe Textile Mills (VENDOR-9002). Status: PAID -- settled 2026-05-14 via check.",
+      "predicate": "INV-95002.payment_status",
+      "value": "PAID_CHECK"
+    },
+    {
+      "id": "DOC-H-PO-9003",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9003",
+      "po_id": "PO-9003",
+      "issued": "2026-04-01",
+      "content": "PURCHASE ORDER PO-9003. Vendor: Alderford Machine Works (VENDOR-9003). Amount authorized: $14,200.00. Description: precision tooling replacement. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9003.authorized_amount",
+      "value": "14200"
+    },
+    {
+      "id": "DOC-H-EMAIL-FORWARD-9004",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Fwd: Fwd: Northgate rate. Heard from someone on their team that Northgate Consulting Partners (VENDOR-9004) is quoting $60/hour for the new engagement -- haven't confirmed this myself, just passing it along.",
+      "predicate": "VENDOR-9004.hourly_rate_quote",
+      "value": "60_PER_HOUR"
+    },
+    {
+      "id": "DOC-H-CHAT-9005",
+      "type": "chat_message",
+      "source_class": "CHAT_MESSAGE",
+      "content": "[Procurement team chat] someone mentioned Pellworth Industrial Coatings (VENDOR-9005) might have let their liability insurance lapse last month -- not sure if that's actually true, just heard it in passing.",
+      "predicate": "VENDOR-9005.insurance_lapse_rumor",
+      "value": "POSSIBLE_LAPSE_UNCONFIRMED"
+    },
+    {
+      "id": "DOC-H-PO-9006",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9006",
+      "po_id": "PO-9006",
+      "issued": "2025-09-01",
+      "content": "PURCHASE ORDER PO-9006. Vendor: Stonebridge Fleet Maintenance (VENDOR-9006). Amount authorized: $18,000.00. Description: quarterly fleet maintenance contract. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9006.authorized_amount",
+      "value": "18000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9006A",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9006",
+      "issued": "2026-01-10",
+      "amends": "DOC-H-PO-9006",
+      "content": "PURCHASE ORDER AMENDMENT PO-9006-A1, amending PO-9006. Vendor: Stonebridge Fleet Maintenance (VENDOR-9006). Revised amount authorized: $21,500.00 (added two additional vehicles to the maintenance schedule). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9006.authorized_amount",
+      "value": "21500"
+    },
+    {
+      "id": "DOC-H-CONTRACT-9007",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2025-02-01",
+      "content": "MASTER SERVICES AGREEMENT CT-9007. Between ExergyNet Corp and Larkspur Energy Services (VENDOR-9007). Service rate: $180 per unit.",
+      "predicate": "VENDOR-9007.service_rate",
+      "value": "180_PER_UNIT"
+    },
+    {
+      "id": "DOC-H-CONTRACT-AMENDMENT-9007A",
+      "type": "contract_amendment",
+      "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-10-01",
+      "amends": "DOC-H-CONTRACT-9007",
+      "content": "AMENDMENT 1 to MASTER SERVICES AGREEMENT CT-9007, between ExergyNet Corp and Larkspur Energy Services (VENDOR-9007). Service rate revised to $205 per unit, effective 2026-10-01.",
+      "predicate": "VENDOR-9007.service_rate",
+      "value": "205_PER_UNIT"
+    },
+    {
+      "id": "DOC-H-CONTRACT-9008",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2025-03-01",
+      "content": "MASTER SERVICES AGREEMENT CT-9008. Between ExergyNet Corp and Wyndham Paper Products (VENDOR-9008). Payment terms: Net 45.",
+      "predicate": "VENDOR-9008.payment_terms",
+      "value": "NET_45"
+    },
+    {
+      "id": "DOC-H-CONTRACT-AMENDMENT-9008A",
+      "type": "contract_amendment",
+      "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-05-01",
+      "amends": "DOC-H-CONTRACT-9008",
+      "content": "AMENDMENT 1 to MASTER SERVICES AGREEMENT CT-9008, between ExergyNet Corp and Wyndham Paper Products (VENDOR-9008). Payment terms revised to Net 20, effective 2026-05-01 (tightened following a credit review).",
+      "predicate": "VENDOR-9008.payment_terms",
+      "value": "NET_20"
+    },
+    {
+      "id": "DOC-H-PO-9009",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9009",
+      "po_id": "PO-9009",
+      "issued": "2025-11-15",
+      "content": "PURCHASE ORDER PO-9009. Vendor: Colville Structural Steel (VENDOR-9009). Amount authorized: $32,000.00. Description: structural steel beams, Phase 2 warehouse expansion. Approved by: T. Osei (Director).",
+      "predicate": "PO-9009.authorized_amount",
+      "value": "32000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9009A",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9009",
+      "issued": "2026-03-01",
+      "amends": "DOC-H-PO-9009",
+      "content": "PURCHASE ORDER AMENDMENT PO-9009-A1, amending PO-9009. Vendor: Colville Structural Steel (VENDOR-9009). Revised amount authorized: $35,750.00 (added corrosion-resistant coating spec). Approved by: T. Osei (Director).",
+      "predicate": "PO-9009.authorized_amount",
+      "value": "35750"
+    },
+    {
+      "id": "DOC-H-INVOICE-9009",
+      "type": "invoice",
+      "source_class": "INVOICE",
+      "issued": "2026-06-20",
+      "content": "INVOICE INV-95009. Vendor: Colville Structural Steel (VENDOR-9009), for PO-9009. Amount billed: $38,900.00.",
+      "predicate": "PO-9009.invoiced_amount",
+      "value": "38900"
+    },
+    {
+      "id": "DOC-H-CERT-ORIGINAL-9010",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2025-07-01",
+      "content": "COMPLIANCE REPORT: Farrowgate Security Systems (VENDOR-9010) armed-guard licensing status: ACTIVE.",
+      "predicate": "VENDOR-9010.licensing_status",
+      "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CERT-REVOKE-9010",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2025-12-01",
+      "revokes": "DOC-H-CERT-ORIGINAL-9010",
+      "content": "COMPLIANCE NOTICE: Farrowgate Security Systems (VENDOR-9010) armed-guard licensing REVOKED following a state regulatory audit finding. No replacement license has been filed as of this notice.",
+      "predicate": "VENDOR-9010.licensing_revocation_notice"
+    },
+    {
+      "id": "DOC-H-APPROVAL-MATRIX-9000",
+      "type": "approval_matrix",
+      "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01",
+      "effective_until": null,
+      "content": "HOLDOUT PROCUREMENT APPROVAL MATRIX (effective 2026-01-01): Manager up to $10,000; Director up to $50,000; VP unlimited within board-approved budget.",
+      "predicate": "H_APPROVAL_MATRIX.limits",
+      "tiers": {
+        "MANAGER": 10000,
+        "DIRECTOR": 50000,
+        "VP": null
+      }
+    },
+    {
+      "id": "DOC-H-CERT-ORIGINAL-9011",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2025-05-01",
+      "content": "COMPLIANCE REPORT: Millbrook Environmental Testing (VENDOR-9011) laboratory certification status: ACTIVE.",
+      "predicate": "VENDOR-9011.certification_status",
+      "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CERT-REVOKE-9011",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2025-08-01",
+      "revokes": "DOC-H-CERT-ORIGINAL-9011",
+      "content": "COMPLIANCE NOTICE: Millbrook Environmental Testing (VENDOR-9011) laboratory certification REVOKED following a proficiency-testing failure.",
+      "predicate": "VENDOR-9011.certification_revocation_notice"
+    },
+    {
+      "id": "DOC-H-CERT-REINSTATED-9011",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2026-01-15",
+      "content": "COMPLIANCE REPORT: Millbrook Environmental Testing (VENDOR-9011) laboratory certification status: ACTIVE -- retest passed, certification reinstated.",
+      "predicate": "VENDOR-9011.certification_status",
+      "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-RATE-FUTURE-9012",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-11-01",
+      "content": "RATE SCHEDULE AGREEMENT, Thackwell Freight Systems (VENDOR-9012). New rate tier NEW_TIER_RATE_2200 takes effect 2026-11-01. No prior rate schedule exists for this vendor in this system.",
+      "predicate": "VENDOR-9012.rate_schedule",
+      "value": "NEW_TIER_RATE_2200"
+    },
+    {
+      "id": "DOC-H-POLICY-CURRENT-9013",
+      "type": "approval_matrix",
+      "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01",
+      "effective_until": null,
+      "content": "SPECIALTY SCIENTIFIC-INSTRUMENT PURCHASE POLICY (effective 2026-01-01, current): Manager up to $10,000; Director up to $50,000; VP unlimited.",
+      "predicate": "SPECIALTY_POLICY-9013.limits",
+      "tiers": {
+        "MANAGER": 10000,
+        "DIRECTOR": 50000,
+        "VP": null
+      }
+    },
+    {
+      "id": "DOC-H-POLICY-FUTURE-9013",
+      "type": "approval_matrix",
+      "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-12-01",
+      "amends": "DOC-H-POLICY-CURRENT-9013",
+      "content": "SPECIALTY SCIENTIFIC-INSTRUMENT PURCHASE POLICY, REVISED -- takes effect 2026-12-01, tightening limits ahead of the annual compliance review: Manager up to $5,000; Director up to $30,000; VP unlimited.",
+      "predicate": "SPECIALTY_POLICY-9013.limits",
+      "tiers": {
+        "MANAGER": 5000,
+        "DIRECTOR": 30000,
+        "VP": null
+      }
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-9013",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Handley Scientific Instruments order. Approving $8,000 for the Handley Scientific Instruments (VENDOR-9013) purchase -- within my Manager authority per the current specialty policy. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9013.instrument_purchase_authority",
+      "value": "8000"
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-EXACT-9014",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Oakendale Print Solutions order. Approving $10,000 for the Oakendale Print Solutions (VENDOR-9014) print services order -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9014.print_services_authority",
+      "value": "10000"
+    },
+    {
+      "id": "DOC-H-EMAIL-DIRECTOR-OVER-9015",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Ridgemont Fabrication contract. Approving $50,001 for the Ridgemont Fabrication (VENDOR-9015) fabrication contract -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "predicate": "VENDOR-9015.fabrication_contract_authority",
+      "value": "50001"
+    },
+    {
+      "id": "DOC-H-EMAIL-VP-9016",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Castleford Global Logistics contract. Approving $850,000 for the Castleford Global Logistics (VENDOR-9016) multi-year logistics contract -- within board-approved budget, VP authority. -- M. Alvarez, VP.",
+      "predicate": "VENDOR-9016.logistics_contract_authority",
+      "value": "850000"
+    },
+    {
+      "id": "DOC-H-EMAIL-SUPERVISOR-9017",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Brackenfield Waste Management order. Approving $7,500 for the Brackenfield Waste Management (VENDOR-9017) disposal services order -- approved by D. Ferris, Supervisor.",
+      "predicate": "VENDOR-9017.waste_disposal_authority",
+      "value": "7500"
+    },
+    {
+      "id": "DOC-H-EMAIL-COORDINATOR-9018",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Millgate Print & Signage order. Approving $4,200 for the Millgate Print & Signage (VENDOR-9018) signage order -- approved by K. Wexler, Procurement Coordinator.",
+      "predicate": "VENDOR-9018.signage_order_authority",
+      "value": "4200"
+    },
+    {
+      "id": "DOC-H-EMAIL-DIRECTOR-9019",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Silverwood Contracting renewal. Approving $22,000 for the Silverwood Contracting (VENDOR-9019) annual contract renewal -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "predicate": "VENDOR-9019.contract_renewal_authority",
+      "value": "22000"
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-9021",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Hartwell Machining tooling order. Approving $9,000 for the Hartwell Machining (VENDOR-9021) tooling purchase -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9021.tooling_purchase_authority",
+      "value": "9000"
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-PURPOSE-9023",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Kirkwall Facilities -- grounds maintenance. Approving $5,500 for the Kirkwall Facilities Group (VENDOR-9023) routine grounds maintenance service -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9023.grounds_maintenance_authority",
+      "value": "5500"
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-PURPOSE-9024",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Amberhall Data Systems -- subscription renewal. Approving $3,000 for the Amberhall Data Systems (VENDOR-9024) annual software subscription renewal -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9024.subscription_renewal_authority",
+      "value": "3000"
+    },
+    {
+      "id": "DOC-H-VENDOR-REGISTRY-SEARCH-9025",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Thistlewood Analytics\". Full registry searched. Result: NO MATCH. Thistlewood Analytics is not present in the vendor master registry. Other approval or procurement systems outside this registry were not checked as part of this search.",
+      "predicate": "VENDOR-9025.registry_status",
+      "value": "NOT_IN_REGISTRY"
+    },
+    {
+      "id": "DOC-H-SANCTIONS-SCREENING-9026",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "SANCTIONS SCREENING: query=\"Ferrowick Trading Ltd\". Full OFAC/sanctions database searched. Result: NO MATCH. Ferrowick Trading Ltd is not on any current sanctions or restricted-party list. Vendor master registration status was not checked as part of this search.",
+      "predicate": "VENDOR-9026.sanctions_screening_status",
+      "value": "NOT_ON_SANCTIONS_LIST"
+    },
+    {
+      "id": "DOC-H-TAX-COMPLIANCE-SEARCH-9027",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "TAX COMPLIANCE DATABASE SEARCH: query=\"Oldbury Metal Recyclers\". Full compliance database searched. Result: NO MATCH. Oldbury Metal Recyclers is not present in the tax compliance database. Other databases (vendor master, sanctions screening) were not checked as part of this search.",
+      "predicate": "VENDOR-9027.tax_compliance_status",
+      "value": "NOT_IN_TAX_COMPLIANCE_DB"
+    },
+    {
+      "id": "DOC-H-APPROVAL-SEARCH-9028",
+      "type": "approval_system_record",
+      "source_class": "APPROVAL_SYSTEM_RECORD",
+      "content": "APPROVAL SYSTEM SEARCH: query=\"Grantley Civil Engineering\" rush-order approval. Full system searched. Result: NO RECORD FOUND. No approval record exists for this vendor's rush order in this system. Other approval or procurement systems were not checked as part of this search.",
+      "predicate": "VENDOR-9028.rush_order_approval_status",
+      "value": "NO_APPROVAL_RECORD_FOUND"
+    },
+    {
+      "id": "DOC-H-SYSTEM-UNAVAILABLE-9029",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "COMPLIANCE SYSTEM QUERY: Wrenshaw Analytics (VENDOR-9029) background check status. System is undergoing scheduled maintenance for the entire query window -- no results available.",
+      "predicate": "VENDOR-9029.background_check_status"
+    },
+    {
+      "id": "DOC-H-SYSTEM-UNAVAILABLE-9030",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "COMPLIANCE SYSTEM QUERY: Iverness Cold Storage (VENDOR-9030) insurance certificate status. System could not be accessed for the entire query window -- vendor portal outage.",
+      "predicate": "VENDOR-9030.insurance_certificate_status"
+    },
+    {
+      "id": "DOC-H-VENDOR-MASTER-9031",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Bellhaven Construction Supply (VENDOR-9031). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2020-11-03.",
+      "predicate": "VENDOR-9031.registration_status",
+      "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CONTRACT-A-9032",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-02-01",
+      "content": "MASTER SERVICES AGREEMENT CT-9032-A. Between ExergyNet Corp and Copperfield Risk Advisors (VENDOR-9032), Northeast regional office. Payment terms: Net 30.",
+      "predicate": "VENDOR-9032.payment_terms",
+      "value": "NET_30"
+    },
+    {
+      "id": "DOC-H-CONTRACT-B-9032",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-02-15",
+      "content": "MASTER SERVICES AGREEMENT CT-9032-B. Between ExergyNet Corp and Copperfield Risk Advisors (VENDOR-9032), Southeast regional office, negotiated independently. Payment terms: Net 45.",
+      "predicate": "VENDOR-9032.payment_terms",
+      "value": "NET_45"
+    },
+    {
+      "id": "DOC-H-PO-9033",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9033",
+      "po_id": "PO-9033",
+      "issued": "2025-12-01",
+      "content": "PURCHASE ORDER PO-9033. Vendor: Thurlow Packaging Co (VENDOR-9033). Amount authorized: $9,500.00. Description: custom packaging materials order. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9033.authorized_amount",
+      "value": "9500"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9033A",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9033",
+      "issued": "2026-02-01",
+      "amends": "DOC-H-PO-9033",
+      "content": "PURCHASE ORDER AMENDMENT PO-9033-A1, amending PO-9033. Vendor: Thurlow Packaging Co (VENDOR-9033). Revised amount authorized: $11,750.00 (added a secondary print run). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9033.authorized_amount",
+      "value": "11750"
+    },
+    {
+      "id": "DOC-H-INVOICE-9033",
+      "type": "invoice",
+      "source_class": "INVOICE",
+      "issued": "2026-05-10",
+      "content": "INVOICE INV-95033. Vendor: Thurlow Packaging Co (VENDOR-9033), for PO-9033. Amount billed: $13,200.00.",
+      "predicate": "PO-9033.invoiced_amount",
+      "value": "13200"
+    },
+    {
+      "id": "DOC-H-APPROVAL-UNAVAILABLE-9034",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "APPROVAL SYSTEM QUERY: Hallcross Metal Finishing (VENDOR-9034) rush order approval status. System returned errors, not authoritative results, for the entire query window -- ongoing platform migration.",
+      "predicate": "VENDOR-9034.rush_approval_status"
+    },
+    {
+      "id": "DOC-H-VENDOR-REGISTRY-SEARCH-9035",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Bramshott Consulting Group\". Full registry searched. Result: NO MATCH. Bramshott Consulting Group is not present in the vendor master registry. Other systems were not checked as part of this search.",
+      "predicate": "VENDOR-9035.registry_status",
+      "value": "NOT_IN_REGISTRY"
+    },
+    {
+      "id": "DOC-H-INSURANCE-VERIFY-UNAVAILABLE-9036",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "INSURANCE VERIFICATION SYSTEM QUERY: Wickfield Transport (VENDOR-9036) coverage verification. System is undergoing scheduled maintenance for the entire query window -- no results available.",
+      "predicate": "VENDOR-9036.insurance_verification_status"
+    },
+    {
+      "id": "DOC-H-CONTRACT-A-9037",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-01-10",
+      "content": "MASTER SERVICES AGREEMENT CT-9037-A. Between ExergyNet Corp and Elmsworth Print Group (VENDOR-9037), West division. Payment terms: Net 30.",
+      "predicate": "VENDOR-9037.payment_terms",
+      "value": "NET_30"
+    },
+    {
+      "id": "DOC-H-CONTRACT-B-9037",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-01-20",
+      "content": "MASTER SERVICES AGREEMENT CT-9037-B. Between ExergyNet Corp and Elmsworth Print Group (VENDOR-9037), East division, negotiated independently. Payment terms: Net 15.",
+      "predicate": "VENDOR-9037.payment_terms",
+      "value": "NET_15"
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-9038",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Draycott Foods Ltd routine order. Approving $6,300 for the Draycott Foods Ltd (VENDOR-9038) routine supply order -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9038.routine_order_authority",
+      "value": "6300"
+    },
+    {
+      "id": "DOC-H-PO-9039",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9039",
+      "po_id": "PO-9039",
+      "issued": "2025-04-01",
+      "content": "PURCHASE ORDER PO-9039. Vendor: Ashgrove Telecom Services (VENDOR-9039). Amount authorized: $12,000.00. Description: annual network maintenance contract. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9039.authorized_amount",
+      "value": "12000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9039A",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9039",
+      "issued": "2025-09-01",
+      "amends": "DOC-H-PO-9039",
+      "content": "PURCHASE ORDER AMENDMENT PO-9039-A1, amending PO-9039. Vendor: Ashgrove Telecom Services (VENDOR-9039). Revised amount authorized: $14,500.00 (added a secondary site). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9039.authorized_amount",
+      "value": "14500"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9039B",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9039",
+      "issued": "2026-04-01",
+      "amends": "DOC-H-PO-AMENDMENT-9039A",
+      "content": "PURCHASE ORDER AMENDMENT PO-9039-A2, amending PO-9039-A1. Vendor: Ashgrove Telecom Services (VENDOR-9039). Revised amount authorized: $16,800.00 (added a third site). Approved by: T. Osei (Director).",
+      "predicate": "PO-9039.authorized_amount",
+      "value": "16800"
+    },
+    {
+      "id": "DOC-H-PO-9040",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9040",
+      "po_id": "PO-9040",
+      "issued": "2025-06-01",
+      "content": "PURCHASE ORDER PO-9040. Vendor: Copplestone Rail Services (VENDOR-9040). Amount authorized: $25,000.00. Description: annual rail siding maintenance contract. Approved by: T. Osei (Director).",
+      "predicate": "PO-9040.authorized_amount",
+      "value": "25000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9040A",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9040",
+      "issued": "2025-10-01",
+      "amends": "DOC-H-PO-9040",
+      "effective_until": "2026-01-31",
+      "content": "PURCHASE ORDER AMENDMENT PO-9040-A1, amending PO-9040. Vendor: Copplestone Rail Services (VENDOR-9040). Temporary revised amount authorized: $29,200.00 (winter storm response surcharge, effective through 2026-01-31 only). Approved by: T. Osei (Director).",
+      "predicate": "PO-9040.authorized_amount",
+      "value": "29200"
+    },
+    {
+      "id": "DOC-H-PO-9041",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9041",
+      "po_id": "PO-9041",
+      "issued": "2025-01-01",
+      "content": "PURCHASE ORDER PO-9041. Vendor: Marchbanks Agricultural Supply (VENDOR-9041). Amount authorized: $40,000.00. Description: annual seed and fertilizer supply contract. Approved by: T. Osei (Director).",
+      "predicate": "PO-9041.authorized_amount",
+      "value": "40000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9041A",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9041",
+      "issued": "2025-06-01",
+      "amends": "DOC-H-PO-9041",
+      "content": "PURCHASE ORDER AMENDMENT PO-9041-A1, amending PO-9041. Vendor: Marchbanks Agricultural Supply (VENDOR-9041). Revised amount authorized: $44,500.00 (added a secondary crop rotation product line). Approved by: T. Osei (Director).",
+      "predicate": "PO-9041.authorized_amount",
+      "value": "44500"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9041B",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9041",
+      "issued": "2025-10-01",
+      "amends": "DOC-H-PO-AMENDMENT-9041A",
+      "effective_until": "2026-03-31",
+      "content": "PURCHASE ORDER AMENDMENT PO-9041-A2, amending PO-9041-A1. Vendor: Marchbanks Agricultural Supply (VENDOR-9041). Temporary revised amount authorized: $48,900.00 (spring planting surcharge, effective through 2026-03-31 only). Approved by: T. Osei (Director).",
+      "predicate": "PO-9041.authorized_amount",
+      "value": "48900"
+    },
+    {
+      "id": "DOC-H-CERT-ORIGINAL-9042",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2025-03-01",
+      "content": "COMPLIANCE REPORT: Hollingbourne Catering Supplies (VENDOR-9042) food-handling certification status: ACTIVE.",
+      "predicate": "VENDOR-9042.certification_status",
+      "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CERT-AMENDMENT-9042A",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2025-07-01",
+      "amends": "DOC-H-CERT-ORIGINAL-9042",
+      "content": "COMPLIANCE REPORT UPDATE: Hollingbourne Catering Supplies (VENDOR-9042) food-handling certification status downgraded to ACTIVE_CONDITIONAL pending a follow-up inspection.",
+      "predicate": "VENDOR-9042.certification_status",
+      "value": "ACTIVE_CONDITIONAL"
+    },
+    {
+      "id": "DOC-H-CERT-REVOKE-9042",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2025-11-01",
+      "revokes": "DOC-H-CERT-AMENDMENT-9042A",
+      "content": "COMPLIANCE NOTICE: Hollingbourne Catering Supplies (VENDOR-9042) conditional food-handling certification REVOKED following a failed follow-up inspection.",
+      "predicate": "VENDOR-9042.certification_revocation_notice"
+    },
+    {
+      "id": "DOC-H-CERT-REINSTATED-9042",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2026-02-01",
+      "content": "COMPLIANCE REPORT: Hollingbourne Catering Supplies (VENDOR-9042) food-handling certification status: ACTIVE -- corrective action plan completed, full certification reinstated.",
+      "predicate": "VENDOR-9042.certification_status",
+      "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-EMAIL-FACILITIESBU-9043",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Fenwick Lighting Solutions -- Facilities BU spend. Approving $7,200 for the Fenwick Lighting Solutions (VENDOR-9043) engagement, chargeable to the Facilities business unit budget -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9043.facilities_bu_authority",
+      "value": "7200"
+    },
+    {
+      "id": "DOC-H-POLICY-IT-HARDWARE-9044",
+      "type": "approval_matrix",
+      "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01",
+      "effective_until": null,
+      "content": "IT SECURITY POLICY -- HARDWARE PURCHASE APPROVAL LIMITS (effective 2026-01-01, supersedes the general Procurement Approval Matrix for IT hardware purchases specifically due to asset-tracking and data-security review requirements): Manager up to $3,000; Director up to $20,000; VP unlimited.",
+      "predicate": "IT_HARDWARE_POLICY-9044.limits",
+      "tiers": {
+        "MANAGER": 3000,
+        "DIRECTOR": 20000,
+        "VP": null
+      }
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-9044",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Bellworth Server Systems hardware order. Approving $6,500 for the Bellworth Server Systems (VENDOR-9044) rack hardware purchase -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9044.hardware_purchase_authority",
+      "value": "6500"
+    },
+    {
+      "id": "DOC-H-CERT-EXPIRED-9045",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "effective_from": "2025-02-01",
+      "effective_until": "2025-11-30",
+      "content": "COMPLIANCE REPORT: Oatlands Textile Finishing (VENDOR-9045) quality certification QUAL-9045-A, valid through 2025-11-30. No renewal or replacement certificate has been filed as of this report.",
+      "predicate": "VENDOR-9045.quality_cert_status",
+      "value": "CERT_QUAL_9045_A"
+    },
+    {
+      "id": "DOC-H-CERT-ORIGINAL-9046",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2025-04-01",
+      "content": "COMPLIANCE REPORT: Pentridge Vehicle Leasing (VENDOR-9046) fleet roadworthiness certification status: ACTIVE.",
+      "predicate": "VENDOR-9046.roadworthiness_status",
+      "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CERT-REVOKE-9046",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2025-09-01",
+      "revokes": "DOC-H-CERT-ORIGINAL-9046",
+      "content": "COMPLIANCE NOTICE: Pentridge Vehicle Leasing (VENDOR-9046) fleet roadworthiness certification REVOKED following a failed safety inspection. No replacement certification has been filed as of this notice.",
+      "predicate": "VENDOR-9046.roadworthiness_revocation_notice"
+    },
+    {
+      "id": "DOC-H-CONTRACT-9047",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2025-08-01",
+      "content": "MASTER SERVICES AGREEMENT CT-9047. Between ExergyNet Corp and Ellery & Combe Solicitors (VENDOR-9047). Payment terms: Net 30.",
+      "predicate": "VENDOR-9047.payment_terms",
+      "value": "NET_30"
+    },
+    {
+      "id": "DOC-H-AUDIT-9048",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "issued": "2026-06-01",
+      "content": "ANNUAL FIRE SAFETY INSPECTION: Northcote Fire Safety Ltd (VENDOR-9048) facility inspection result: PASSED.",
+      "predicate": "VENDOR-9048.fire_safety_inspection_status",
+      "value": "PASSED"
+    },
+    {
+      "id": "DOC-H-MEETING-NOTE-9049",
+      "type": "meeting_note",
+      "source_class": "MEETING_NOTE",
+      "content": "In today's vendor review meeting, someone mentioned Woodhall Precision Engineering (VENDOR-9049) might be raising prices next quarter -- not officially confirmed, just mentioned in passing.",
+      "predicate": "VENDOR-9049.price_increase_rumor",
+      "value": "POSSIBLE_INCREASE_UNCONFIRMED"
+    },
+    {
+      "id": "DOC-H-QUALITY-CERT-SEARCH-9050",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "QUALITY CERTIFICATION REGISTRY SEARCH: query=\"Ashendene Print & Bindery\". Full registry searched. Result: NO MATCH. Ashendene Print & Bindery is not present in the quality certification registry. Vendor master registration and tax compliance were not checked as part of this search.",
+      "predicate": "VENDOR-9050.quality_certification_status",
+      "value": "NOT_IN_QUALITY_REGISTRY"
+    },
+    {
+      "id": "DOC-H-CONTRACT-A-9051",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-03-01",
+      "content": "LANDSCAPING SERVICES AGREEMENT CT-9051-A. Between ExergyNet Corp and Cranmoor Estate Services (VENDOR-9051), North campus. Authorized annual amount: $8,000.",
+      "predicate": "VENDOR-9051.landscaping_contract_authority",
+      "value": "8000"
+    },
+    {
+      "id": "DOC-H-CONTRACT-B-9051",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-03-15",
+      "content": "LANDSCAPING SERVICES AGREEMENT CT-9051-B. Between ExergyNet Corp and Cranmoor Estate Services (VENDOR-9051), South campus, negotiated independently. Authorized annual amount: $9,500.",
+      "predicate": "VENDOR-9051.landscaping_contract_authority",
+      "value": "9500"
+    },
+    {
+      "id": "DOC-H-PO-9052",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9052",
+      "po_id": "PO-9052",
+      "issued": "2025-05-01",
+      "content": "PURCHASE ORDER PO-9052. Vendor: Thackray Industrial Cleaning (VENDOR-9052). Amount authorized: $15,000.00. Description: quarterly industrial cleaning contract. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9052.authorized_amount",
+      "value": "15000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9052A",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9052",
+      "issued": "2025-09-01",
+      "amends": "DOC-H-PO-9052",
+      "effective_until": "2026-02-28",
+      "content": "PURCHASE ORDER AMENDMENT PO-9052-A1, amending PO-9052. Vendor: Thackray Industrial Cleaning (VENDOR-9052). Temporary revised amount authorized: $18,300.00 (post-construction deep-clean surcharge, effective through 2026-02-28 only). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9052.authorized_amount",
+      "value": "18300"
+    },
+    {
+      "id": "DOC-H-INVOICE-9052",
+      "type": "invoice",
+      "source_class": "INVOICE",
+      "issued": "2026-06-15",
+      "content": "INVOICE INV-95052. Vendor: Thackray Industrial Cleaning (VENDOR-9052), for PO-9052. Amount billed: $19,750.00.",
+      "predicate": "PO-9052.invoiced_amount",
+      "value": "19750"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "LNES59-H01",
+      "grounding_document_ids": [
+        "DOC-H-VENDOR-MASTER-9001"
+      ],
+      "query": "What is Kestrel Point Chemical Supply's registration status?"
+    },
+    {
+      "case_id": "LNES59-H02",
+      "grounding_document_ids": [
+        "DOC-H-PAYMENT-LEDGER-9002"
+      ],
+      "query": "What is the payment status of invoice INV-95002?"
+    },
+    {
+      "case_id": "LNES59-H03",
+      "grounding_document_ids": [
+        "DOC-H-PO-9003"
+      ],
+      "query": "What is the authorized amount for PO-9003?"
+    },
+    {
+      "case_id": "LNES59-H04",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-FORWARD-9004"
+      ],
+      "query": "What hourly rate has Northgate Consulting Partners quoted?"
+    },
+    {
+      "case_id": "LNES59-H05",
+      "grounding_document_ids": [
+        "DOC-H-CHAT-9005"
+      ],
+      "query": "Has Pellworth Industrial Coatings' liability insurance lapsed?"
+    },
+    {
+      "case_id": "LNES59-H06",
+      "grounding_document_ids": [
+        "DOC-H-PO-9006",
+        "DOC-H-PO-AMENDMENT-9006A"
+      ],
+      "query": "What is the current authorized amount for PO-9006?"
+    },
+    {
+      "case_id": "LNES59-H07",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-9007",
+        "DOC-H-CONTRACT-AMENDMENT-9007A"
+      ],
+      "query": "What is Larkspur Energy Services' current service rate under CT-9007?"
+    },
+    {
+      "case_id": "LNES59-H08",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-9008",
+        "DOC-H-CONTRACT-AMENDMENT-9008A"
+      ],
+      "query": "What are Wyndham Paper Products' current payment terms?"
+    },
+    {
+      "case_id": "LNES59-H09",
+      "grounding_document_ids": [
+        "DOC-H-PO-9009",
+        "DOC-H-PO-AMENDMENT-9009A",
+        "DOC-H-INVOICE-9009"
+      ],
+      "query": "What is the current authorized amount for PO-9009, and does the invoice match it?"
+    },
+    {
+      "case_id": "LNES59-H10",
+      "grounding_document_ids": [
+        "DOC-H-CERT-ORIGINAL-9010",
+        "DOC-H-CERT-REVOKE-9010"
+      ],
+      "query": "Is Farrowgate Security Systems' armed-guard license currently active?"
+    },
+    {
+      "case_id": "LNES59-H11",
+      "grounding_document_ids": [
+        "DOC-H-CERT-ORIGINAL-9011",
+        "DOC-H-CERT-REVOKE-9011",
+        "DOC-H-CERT-REINSTATED-9011"
+      ],
+      "query": "What is Millbrook Environmental Testing's current laboratory certification status?"
+    },
+    {
+      "case_id": "LNES59-H12",
+      "grounding_document_ids": [
+        "DOC-H-RATE-FUTURE-9012"
+      ],
+      "query": "What is Thackwell Freight Systems' current rate schedule tier?"
+    },
+    {
+      "case_id": "LNES59-H13",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-9013",
+        "DOC-H-POLICY-CURRENT-9013",
+        "DOC-H-POLICY-FUTURE-9013"
+      ],
+      "query": "Was Manager R. Castellano's $8,000 approval of the Handley Scientific Instruments purchase within authority under the specialty policy currently in effect (not the tightened policy taking effect 2026-12-01)?"
+    },
+    {
+      "case_id": "LNES59-H14",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-EXACT-9014",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "query": "Was Manager R. Castellano's $10,000 approval of the Oakendale Print Solutions order within authority?"
+    },
+    {
+      "case_id": "LNES59-H15",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-DIRECTOR-OVER-9015",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "query": "Was Director T. Osei's $50,001 approval of the Ridgemont Fabrication contract within authority?"
+    },
+    {
+      "case_id": "LNES59-H16",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-VP-9016",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "query": "Was VP M. Alvarez's $850,000 approval of the Castleford Global Logistics contract within authority?"
+    },
+    {
+      "case_id": "LNES59-H17",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-SUPERVISOR-9017",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "query": "Was Supervisor D. Ferris's $7,500 approval of the Brackenfield Waste Management order validly authorized?"
+    },
+    {
+      "case_id": "LNES59-H18",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-COORDINATOR-9018",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "query": "Was Procurement Coordinator K. Wexler's $4,200 approval of the Millgate Print & Signage order validly authorized?"
+    },
+    {
+      "case_id": "LNES59-H19",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-DIRECTOR-9019"
+      ],
+      "query": "Was Silverwood Consulting's contract renewal approved by a Director?"
+    },
+    {
+      "case_id": "LNES59-H20",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-9021"
+      ],
+      "query": "Was Bellcastle Robotics' tooling purchase approved by a Manager?"
+    },
+    {
+      "case_id": "LNES59-H21",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-PURPOSE-9023"
+      ],
+      "query": "Was a capital renovation project for Kirkwall Facilities Group approved by a Manager?"
+    },
+    {
+      "case_id": "LNES59-H22",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-PURPOSE-9024"
+      ],
+      "query": "Was new hardware procurement for Amberhall Data Systems approved by a Manager?"
+    },
+    {
+      "case_id": "LNES59-H23",
+      "grounding_document_ids": [
+        "DOC-H-VENDOR-REGISTRY-SEARCH-9025"
+      ],
+      "query": "Is Thistlewood Analytics in the vendor master registry?"
+    },
+    {
+      "case_id": "LNES59-H24",
+      "grounding_document_ids": [
+        "DOC-H-SANCTIONS-SCREENING-9026"
+      ],
+      "query": "Is Ferrowick Trading Ltd on any current sanctions list?"
+    },
+    {
+      "case_id": "LNES59-H25",
+      "grounding_document_ids": [
+        "DOC-H-TAX-COMPLIANCE-SEARCH-9027"
+      ],
+      "query": "Is Oldbury Metal Recyclers in the tax compliance database?"
+    },
+    {
+      "case_id": "LNES59-H26",
+      "grounding_document_ids": [
+        "DOC-H-APPROVAL-SEARCH-9028"
+      ],
+      "query": "Is there an approval on record for Grantley Civil Engineering's rush order?"
+    },
+    {
+      "case_id": "LNES59-H27",
+      "grounding_document_ids": [
+        "DOC-H-SYSTEM-UNAVAILABLE-9029"
+      ],
+      "query": "Has Wrenshaw Analytics passed its background check?"
+    },
+    {
+      "case_id": "LNES59-H28",
+      "grounding_document_ids": [
+        "DOC-H-SYSTEM-UNAVAILABLE-9030"
+      ],
+      "query": "Is Iverness Cold Storage's insurance certificate currently valid?"
+    },
+    {
+      "case_id": "LNES59-H29",
+      "grounding_document_ids": [
+        "DOC-H-VENDOR-MASTER-9031"
+      ],
+      "query": "What is Bellhaven Construction Supply's environmental impact certification status?"
+    },
+    {
+      "case_id": "LNES59-H30",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-A-9032",
+        "DOC-H-CONTRACT-B-9032"
+      ],
+      "query": "What are Copperfield Risk Advisors' current payment terms?"
+    },
+    {
+      "case_id": "LNES59-H31",
+      "grounding_document_ids": [
+        "DOC-H-PO-9033",
+        "DOC-H-PO-AMENDMENT-9033A",
+        "DOC-H-INVOICE-9033"
+      ],
+      "query": "What is the current authorized amount for PO-9033, and does the invoice match it?"
+    },
+    {
+      "case_id": "LNES59-H32",
+      "grounding_document_ids": [
+        "DOC-H-APPROVAL-UNAVAILABLE-9034"
+      ],
+      "query": "Has Hallcross Metal Finishing's rush order been approved?"
+    },
+    {
+      "case_id": "LNES59-H33",
+      "grounding_document_ids": [
+        "DOC-H-VENDOR-REGISTRY-SEARCH-9035"
+      ],
+      "query": "Is Bramshott Consulting Group in the vendor master registry?"
+    },
+    {
+      "case_id": "LNES59-H34",
+      "grounding_document_ids": [
+        "DOC-H-INSURANCE-VERIFY-UNAVAILABLE-9036"
+      ],
+      "query": "Is Wickfield Transport's insurance coverage currently verified?"
+    },
+    {
+      "case_id": "LNES59-H35",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-A-9037",
+        "DOC-H-CONTRACT-B-9037"
+      ],
+      "query": "What are Elmsworth Print Group's current payment terms?"
+    },
+    {
+      "case_id": "LNES59-H36",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-9038",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "query": "Was Manager R. Castellano's $6,300 approval of Draycott Foods Ltd's routine order within authority?"
+    },
+    {
+      "case_id": "LNES59-H37",
+      "grounding_document_ids": [
+        "DOC-H-PO-9039",
+        "DOC-H-PO-AMENDMENT-9039A",
+        "DOC-H-PO-AMENDMENT-9039B"
+      ],
+      "query": "What is the current authorized amount for PO-9039?"
+    },
+    {
+      "case_id": "LNES59-H38",
+      "grounding_document_ids": [
+        "DOC-H-PO-9040",
+        "DOC-H-PO-AMENDMENT-9040A"
+      ],
+      "query": "What is the current authorized amount for PO-9040?"
+    },
+    {
+      "case_id": "LNES59-H39",
+      "grounding_document_ids": [
+        "DOC-H-PO-9041",
+        "DOC-H-PO-AMENDMENT-9041A",
+        "DOC-H-PO-AMENDMENT-9041B"
+      ],
+      "query": "What is the current authorized amount for PO-9041?"
+    },
+    {
+      "case_id": "LNES59-H40",
+      "grounding_document_ids": [
+        "DOC-H-CERT-ORIGINAL-9042",
+        "DOC-H-CERT-AMENDMENT-9042A",
+        "DOC-H-CERT-REVOKE-9042",
+        "DOC-H-CERT-REINSTATED-9042"
+      ],
+      "query": "What is Hollingbourne Catering Supplies' current food-handling certification status?"
+    },
+    {
+      "case_id": "LNES59-H41",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-FACILITIESBU-9043"
+      ],
+      "query": "Was Fenwick Lighting Solutions' engagement approved against the IT business unit's budget?"
+    },
+    {
+      "case_id": "LNES59-H42",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-9044",
+        "DOC-H-APPROVAL-MATRIX-9000",
+        "DOC-H-POLICY-IT-HARDWARE-9044"
+      ],
+      "query": "Was Manager R. Castellano's $6,500 approval of Bellworth Server Systems' rack hardware purchase within authority?"
+    },
+    {
+      "case_id": "LNES59-H43",
+      "grounding_document_ids": [
+        "DOC-H-CERT-EXPIRED-9045"
+      ],
+      "query": "Is Oatlands Textile Finishing's quality certification currently valid?"
+    },
+    {
+      "case_id": "LNES59-H44",
+      "grounding_document_ids": [
+        "DOC-H-CERT-ORIGINAL-9046",
+        "DOC-H-CERT-REVOKE-9046"
+      ],
+      "query": "Is Pentridge Vehicle Leasing's fleet roadworthiness certification currently active?"
+    },
+    {
+      "case_id": "LNES59-H45",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-9047"
+      ],
+      "query": "What are Ellery & Combe Solicitors' payment terms?"
+    },
+    {
+      "case_id": "LNES59-H46",
+      "grounding_document_ids": [
+        "DOC-H-AUDIT-9048"
+      ],
+      "query": "Did Northcote Fire Safety Ltd pass its annual fire safety inspection?"
+    },
+    {
+      "case_id": "LNES59-H47",
+      "grounding_document_ids": [
+        "DOC-H-MEETING-NOTE-9049"
+      ],
+      "query": "Is Woodhall Precision Engineering planning to raise prices next quarter?"
+    },
+    {
+      "case_id": "LNES59-H48",
+      "grounding_document_ids": [
+        "DOC-H-QUALITY-CERT-SEARCH-9050"
+      ],
+      "query": "Is Ashendene Print & Bindery in the quality certification registry?"
+    },
+    {
+      "case_id": "LNES59-H49",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-A-9051",
+        "DOC-H-CONTRACT-B-9051"
+      ],
+      "query": "Was a snow removal contract for Cranmoor Estate Services approved?"
+    },
+    {
+      "case_id": "LNES59-H50",
+      "grounding_document_ids": [
+        "DOC-H-PO-9052",
+        "DOC-H-PO-AMENDMENT-9052A",
+        "DOC-H-INVOICE-9052"
+      ],
+      "query": "What is the current authorized amount for PO-9052, and does the invoice match it?"
+    }
+  ]
+}
