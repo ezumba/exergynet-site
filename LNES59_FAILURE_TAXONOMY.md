@@ -175,8 +175,8 @@ already used for weak claim types; regression fixture added to
 pass. Support: `state_consistency_gate_v2.py`,
 `LNES59_Procurement_Bench/X2_REAL_RUN_2026-08-08.md`.
 
-### 16. Gate compares natural-language `asserted_value` against an internal coded token — **G** (gate false positive) — documented, NOT fixed
-`evaluate()` uses exact equality (`output.asserted_value != committed.value`)
+### 16. Gate compares natural-language `asserted_value` against an internal coded token — **G** (gate false positive) — FIXED
+`evaluate()` used exact equality (`output.asserted_value != committed.value`)
 in both the `NO_MATCH` branch and the final value-comparison branch.
 Every prior `ModelOutput` fixture was hand-authored by the same person
 who wrote `extract_case_state`'s canonical value strings (e.g.
@@ -189,16 +189,27 @@ present in the vendor master registry"). Found in 6/27 real cases
 (`LNES59-B2-003`, `B2-007`, `B3-001`, `SMOKE-002`, `SMOKE-007`,
 `SMOKE-010`) — the single largest driver of "failures" in the first real
 run, all of them the model being substantively correct.
-**Deliberately not patched with fuzzy/semantic matching**: this gate's
-stated design tenet is pure, deterministic comparison over typed fields,
-never free-text judgment (see file docstring); loosening the equality
-check risks masking genuine contradictions and would itself need the
-same adversarial scrutiny as any other gate-logic change. Candidate
-fixes for future work, not decided here: (a) give extraction a
-human-readable value alongside the canonical token and compare against
-both; (b) constrain the model's prompt to a controlled vocabulary per
-predicate so `asserted_value` is drawn from the same token space as
-`committed.value`. Support:
+
+**Fixed** with `values_match()`: a small, explicit, auditable set of
+pattern extractors for the value shapes this benchmark's corpus actually
+uses (NET terms, day+percent SLA pairs, PAID/PENDING+amount, bare dollar
+amounts, and an all-constituent-words compound/status-token fallback) —
+deliberately NOT semantic/fuzzy text similarity, still deterministic, no
+LLM call. Every branch requires the same structured quantity to appear
+on both sides, so a wrong number, wrong percent, or wrong status word
+still fails to match — verified against 8 negative controls (wrong NET
+term, wrong day count, wrong percent, wrong amount, opposite status
+claim, etc.) alongside the 6 real cases it was built to fix, in the new
+`test_values_match.py` (17/17). Re-running the full 27-case dataset
+through the fixed gate moved exactly those 6 cases from
+`STATE_CONTRADICTION`/`UNSUPPORTED_STATE_ASSERTION` to `CONSISTENT` and
+nothing else — `CONSISTENT` count 12 -> 18, all other regression suites
+unchanged (28/28, 19/19, 27/27, 50/50). Known, disclosed limitation:
+covers the value shapes present in this dataset today, not a general
+solution to comparing arbitrary free text against arbitrary tokens — a
+new value shape added later needs a new branch, the same discipline as
+adding a new predicate. Support: `state_consistency_gate_v2.py`'s
+`values_match()`, `test_values_match.py`,
 `LNES59_Procurement_Bench/X2_REAL_RUN_2026-08-08.md`.
 
 ## Category tally (of the 16 real bugs above)
