@@ -317,7 +317,9 @@ export function xlmp_request_proof(root: string): ProofJobState {
   return pendingState;
 }
 
-// ── Shatter payload into Merkle root ──────────────────────────────────────────
+// ── Shatter payload into an ordered-aggregate content root ─────────────────
+// (See computeXlmpRoot above -- not a Merkle tree; this comment previously
+// said "Merkle root," which didn't match the actual construction.)
 export const xlmp_shatter_payload = async (payload: Buffer): Promise<HollowObject> => {
   const { root: xlmp_root, shard_count } = computeXlmpRoot(payload);
 
