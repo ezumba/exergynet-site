@@ -789,7 +789,13 @@ def cmd_rebuild(narrative=""):
 
     target = EC2_HOSTS["portal"]
     log = "/home/ubuntu/krv_build.log"
-    remote_script_path = "/home/ubuntu/exergynet-portal/src/_rebuild.sh"
+    # src/lib (not the bare src/ root) -- the bare root 403s ("path
+    # traversal") on the Proof-of-Void parent-directory witness this file's
+    # first deploy needs, because the server's allowlist check requires a
+    # trailing slash and path.resolve() strips it before comparing (same
+    # quirk already documented below for the ledger-record witness_dir).
+    # Confirmed by testing: src/lib witnesses fine, bare src/ doesn't.
+    remote_script_path = "/home/ubuntu/exergynet-portal/src/lib/_rebuild.sh"
 
     # Same fail-closed logic as before (build first; only restart PM2 if the
     # build exits 0), just as a real script's control flow instead of a
