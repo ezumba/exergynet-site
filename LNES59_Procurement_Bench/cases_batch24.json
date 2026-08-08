@@ -1,0 +1,67 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 21 (packet S), strictly after documents_batch24.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B24-001",
+      "category": "authority_wrong_vendor",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "SCOPED"],
+      "query": "Was Bramwell Trading's contract renewal approved by a Director?",
+      "grounding_document_ids": ["DOC-EMAIL-DIRECTOR-6049"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "The only Director approval on record is for Bramwell Textiles (VENDOR-6049), a different vendor from Bramwell Trading (VENDOR-6050) despite the similar name. No document grounds VENDOR-6050.contract_renewal_authority at all -- a fresh instance of predicate-scoped extraction, this time across a vendor-name near-collision rather than a business-unit distinction."
+      },
+      "ungoverned_failure_mode": "Model conflates the two similarly-named vendors, treating the Bramwell Textiles approval as if it also covers Bramwell Trading.",
+      "predicate": "VENDOR-6050.contract_renewal_authority"
+    },
+    {
+      "case_id": "LNES59-B24-002",
+      "category": "supersession_revocation_reinstatement",
+      "cross_cutting_tags": ["TEMPORAL", "SUPERSESSION", "MULTI_SOURCE"],
+      "query": "What is Castellane Security Services' current background check status?",
+      "grounding_document_ids": ["DOC-CERT-ORIGINAL-6051", "DOC-CERT-REVOKE-6051", "DOC-CERT-REINSTATED-6051"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "CURRENT",
+        "value": "ACTIVE",
+        "correct_summary": "Fresh instance of the full chain (B20's pattern, new vendor): original clearance (2025-06-01, ACTIVE) was REVOKED (2025-09-01, pending review of a new disclosure), then reinstated by an independent fresh record (2026-02-01, ACTIVE) after the review concluded. The reinstated record resolves CURRENT on its own; the revoked original is excluded from the chosen state and preserved only as a historical value."
+      },
+      "ungoverned_failure_mode": "Model stops at the revocation notice and reports the clearance as currently revoked, missing the later independent reinstatement record.",
+      "predicate": "VENDOR-6051.background_check_status"
+    },
+    {
+      "case_id": "LNES59-B24-003",
+      "category": "negative_state_control",
+      "cross_cutting_tags": ["SCOPED", "NEGATIVE-STATE"],
+      "query": "Is Fennimore Waste Solutions in the tax compliance database?",
+      "grounding_document_ids": ["DOC-TAX-COMPLIANCE-SEARCH-6052"],
+      "expected_state": {
+        "resolution": "NO_MATCH",
+        "value": "NOT_IN_TAX_COMPLIANCE_DB",
+        "correct_summary": "Not present in the tax compliance database specifically (scoped to that database), with an explicit note that the vendor master and sanctions-screening databases were not checked -- a fresh registry type for the scope+NO_MATCH combination, distinct from the vendor-master, approval-system, and sanctions-screening instances already in the dataset."
+      },
+      "ungoverned_failure_mode": "Model drops scope, converting 'not in the tax compliance database' into a claim the vendor has no compliance standing anywhere (e.g. 'has no compliance standing anywhere'), or into a claim about vendor registration generally.",
+      "predicate": "VENDOR-6052.tax_compliance_status"
+    },
+    {
+      "case_id": "LNES59-B24-004",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is Grayling Office Supply's registration status?",
+      "grounding_document_ids": ["DOC-VENDOR-MASTER-6053"],
+      "expected_state": {"resolution": "MATCH", "value": "ACTIVE", "correct_summary": "Deliberately simple control case -- distribution balance."},
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "VENDOR-6053.registration_status"
+    },
+    {
+      "case_id": "LNES59-B24-005",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is the payment status of invoice INV-88214?",
+      "grounding_document_ids": ["DOC-PAYMENT-LEDGER-6054"],
+      "expected_state": {"resolution": "MATCH", "value": "PAID_ACH", "correct_summary": "Deliberately simple control case -- distribution balance."},
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "INV-88214.payment_status"
+    }
+  ]
+}

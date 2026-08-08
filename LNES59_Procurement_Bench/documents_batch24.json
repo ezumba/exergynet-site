@@ -1,0 +1,50 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 21 (packet S: Bramwell Textiles VENDOR-6049, Bramwell Trading VENDOR-6050 [named similarly but a genuinely different vendor, no document of its own -- tests predicate-scoped extraction across a vendor-name near-collision, not just business-unit], Castellane Security Services VENDOR-6051, Fennimore Waste Solutions VENDOR-6052, Grayling Office Supply VENDOR-6053). Attacking combinations, not new features: (1) authority grounded for one vendor misread as covering a similarly-named different vendor. (2) supersession+revocation+reinstatement, fresh instance (B20's pattern, new vendor/predicate). (3) scope+NO_MATCH fresh registry type (tax compliance search). (4)-(5) ordinary factual controls.",
+  "documents": [
+    {
+      "id": "DOC-EMAIL-DIRECTOR-6049",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Bramwell Textiles renewal. Approving $45,000 for the Bramwell Textiles (VENDOR-6049) annual contract renewal -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "predicate": "VENDOR-6049.contract_renewal_authority", "value": "45000"
+    },
+    {
+      "id": "DOC-CERT-ORIGINAL-6051",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-06-01",
+      "content": "COMPLIANCE REPORT: Castellane Security Services (VENDOR-6051) background check status: ACTIVE (cleared).",
+      "predicate": "VENDOR-6051.background_check_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-CERT-REVOKE-6051",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-09-01", "revokes": "DOC-CERT-ORIGINAL-6051",
+      "content": "COMPLIANCE NOTICE: Castellane Security Services (VENDOR-6051) background check clearance REVOKED pending review of a new disclosure. Prior clearance (issued 2025-06-01) is no longer in effect.",
+      "predicate": "VENDOR-6051.background_check_revocation_notice"
+    },
+    {
+      "id": "DOC-CERT-REINSTATED-6051",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2026-02-01",
+      "content": "COMPLIANCE REPORT: Castellane Security Services (VENDOR-6051) background check status: ACTIVE (cleared) -- review concluded, no adverse findings, clearance reinstated.",
+      "predicate": "VENDOR-6051.background_check_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-TAX-COMPLIANCE-SEARCH-6052",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "TAX COMPLIANCE DATABASE SEARCH: query=\"Fennimore Waste Solutions\". Full compliance database searched. Result: NO MATCH. Fennimore Waste Solutions is not present in the tax compliance database. Other databases (vendor master, sanctions screening) were not checked as part of this search.",
+      "predicate": "VENDOR-6052.tax_compliance_status", "value": "NOT_IN_TAX_COMPLIANCE_DB"
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-6053",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Grayling Office Supply (VENDOR-6053). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2021-02-14.",
+      "predicate": "VENDOR-6053.registration_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-PAYMENT-LEDGER-6054",
+      "type": "payment_ledger", "source_class": "PAYMENT_LEDGER",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-88214, Vendor Hollowgate Print Services (VENDOR-6054). Status: PAID -- settled 2026-07-22 via ACH.",
+      "predicate": "INV-88214.payment_status", "value": "PAID_ACH"
+    }
+  ]
+}
