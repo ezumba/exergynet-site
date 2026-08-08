@@ -54,11 +54,14 @@ alternative to either would misrepresent what it does. Its only claim is:
 less non-substantive JSON boilerplate occupies the fixed evidence-window
 character budget than before.
 
-Deployment note: file write verified on Portal (hash-matched), but the
-Next.js rebuild needed to activate it is deferred — SSH to Portal timed out
-this session (HTTPS/the live site itself is unaffected and still serving
-the previous build). Per operator instruction, no further SSH reconnect
-attempts today; rebuild to happen at a later maintenance window.
+Deployment note: file write was verified on Portal in an earlier session
+(hash-matched), but the Next.js rebuild needed to activate it was deferred
+at the time. **That rebuild has since happened** — the 2026-08-08
+`npm run build && pm2 restart` that activated LNES-58.10 (§5) recompiled
+this same `xlmp_ds_core.ts` file in full, so this function is active as a
+mechanical consequence of that same build, not a separately-verified
+deployment step of its own. No functional smoke test specific to this
+feature (as opposed to LNES-58.10) has been run.
 
 ## 3. Open Engineering Question: The Evidence-Selection Layer
 
@@ -153,7 +156,7 @@ model changes; it enforces the boundary structurally, after generation.
 Full detail: `LNES58_7_FINAL_REPORT.md` (negative-state spec),
 `LNES58_9_FINAL_REPORT.md` (X6A/X6B), `X5_Residual_Autopsy_Report.md`.
 
-## 5. LNES-58.10 — Retrieval-Time Root Verification (local, not yet deployed)
+## 5. LNES-58.10 — Retrieval-Time Root Verification (DEPLOYED 2026-08-08)
 
 Unlike Section 4, this closes a real gap in **existing production code**:
 `xlmp_get_content` (the real, persistent, `XLMP_DATA_DIR`-backed content
@@ -183,9 +186,22 @@ yet). Also patches the one other direct caller of `xlmp_get_content`
 type. 13/13 new integrity tests pass (backward-compatibility + 10
 adversarial cases); the existing 12-test resolver suite is unaffected.
 
-**Status: local commit, audited, tested, not deployed to production.**
-Deployment is a separate, explicitly-gated decision — not made by this
-document.
+**Status: DEPLOYED to production 2026-08-08.** Both files
+(`xlmp_ds_core.ts`, `api/v1/vault/content/route.ts`) written via OTET
+(`otet-d3504acda2a22fa92a512e83d8b4e951932b9b1717fce727`,
+`otet-7b43e95f114f76abded5b226f8960aab39a7c732699f04ec`, both hash-verified
+against local `post_hash` and recorded to Vanguard Scribe), then
+`npm run build && pm2 restart exergynet-portal` run directly against the
+Portal host. Verified from the actual build/restart output, not from any
+narrative claim about it: `next build` reported "✓ Compiled successfully
+in 53s", the route table includes `/api/v1/vault/content` and
+`/api/xlmp/query` (the two routes this patch touches), and `pm2` confirmed
+`exergynet-portal` (id 5) restarted with a fresh PID at 0s uptime. Four
+build warnings appeared, none related to this patch (a deprecated
+Next.js route `config` export on two unrelated routes, and a missing
+`ethers` module on `/api/billing/rho-sump` — pre-existing, not
+investigated here). Production smoke-test confirmation (Phase E) is a
+separate, still-pending step — see the final report.
 
 ## 6. LNES-58.11 — Production Root-Compatibility Evidence
 
@@ -233,9 +249,11 @@ relations get authoritative status, schema ownership, versioning). A
 separate design document (`PRODUCTION_ENTITY_GRAPH_RFC.md`) scopes that
 decision space without prematurely choosing an answer.
 
-BENCHMARK IMPLEMENTATION is not PRODUCTION IMPLEMENTATION. Only Section 5's
-retrieval-time root verification touches real production code, and even
-that remains undeployed pending separate authorization.
+BENCHMARK IMPLEMENTATION is not PRODUCTION IMPLEMENTATION. Section 5's
+retrieval-time root verification is the only item from this document
+deployed to production (2026-08-08, see §5) — the Deterministic Entity
+Graph / state-machine / receipt / gate architecture in §4 remains
+benchmark-only, undeployed, with no production data model to attach to.
 
 ---
 
