@@ -1,0 +1,113 @@
+{
+  "_construction_note": "HOLDOUT batch 1 (H01-H10), authored 2026-08-08 per LNES-59.2 Stage A. Fresh ID space VENDOR-9001..9010/PO-9003,9006,9009/INV-95001,95002,95009 -- zero overlap with the 100-case development corpus (max dev IDs: VENDOR-6066/PO-6062/INV-91004). NOT verified via extract_case_state()/evaluate() -- ground truth in the paired cases file is hand-derived from the frozen V7 architecture's documented rules only, per the standing 'do not run the architecture while authoring' constraint.",
+  "documents": [
+    {
+      "id": "DOC-H-VENDOR-MASTER-9001",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Kestrel Point Chemical Supply (VENDOR-9001). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2021-06-01.",
+      "predicate": "VENDOR-9001.registration_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-PAYMENT-LEDGER-9002",
+      "type": "payment_ledger", "source_class": "PAYMENT_LEDGER",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-95002, Vendor Briarcombe Textile Mills (VENDOR-9002). Status: PAID -- settled 2026-05-14 via check.",
+      "predicate": "INV-95002.payment_status", "value": "PAID_CHECK"
+    },
+    {
+      "id": "DOC-H-PO-9003",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9003", "po_id": "PO-9003", "issued": "2026-04-01",
+      "content": "PURCHASE ORDER PO-9003. Vendor: Alderford Machine Works (VENDOR-9003). Amount authorized: $14,200.00. Description: precision tooling replacement. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9003.authorized_amount", "value": "14200"
+    },
+    {
+      "id": "DOC-H-EMAIL-FORWARD-9004",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Fwd: Fwd: Northgate rate. Heard from someone on their team that Northgate Consulting Partners (VENDOR-9004) is quoting $60/hour for the new engagement -- haven't confirmed this myself, just passing it along.",
+      "predicate": "VENDOR-9004.hourly_rate_quote", "value": "60_PER_HOUR"
+    },
+    {
+      "id": "DOC-H-CHAT-9005",
+      "type": "chat_message", "source_class": "CHAT_MESSAGE",
+      "content": "[Procurement team chat] someone mentioned Pellworth Industrial Coatings (VENDOR-9005) might have let their liability insurance lapse last month -- not sure if that's actually true, just heard it in passing.",
+      "predicate": "VENDOR-9005.insurance_lapse_rumor", "value": "POSSIBLE_LAPSE_UNCONFIRMED"
+    },
+    {
+      "id": "DOC-H-PO-9006",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9006", "po_id": "PO-9006", "issued": "2025-09-01",
+      "content": "PURCHASE ORDER PO-9006. Vendor: Stonebridge Fleet Maintenance (VENDOR-9006). Amount authorized: $18,000.00. Description: quarterly fleet maintenance contract. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9006.authorized_amount", "value": "18000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9006A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9006", "issued": "2026-01-10", "amends": "DOC-H-PO-9006",
+      "content": "PURCHASE ORDER AMENDMENT PO-9006-A1, amending PO-9006. Vendor: Stonebridge Fleet Maintenance (VENDOR-9006). Revised amount authorized: $21,500.00 (added two additional vehicles to the maintenance schedule). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9006.authorized_amount", "value": "21500"
+    },
+    {
+      "id": "DOC-H-CONTRACT-9007",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2025-02-01",
+      "content": "MASTER SERVICES AGREEMENT CT-9007. Between ExergyNet Corp and Larkspur Energy Services (VENDOR-9007). Service rate: $180 per unit.",
+      "predicate": "VENDOR-9007.service_rate", "value": "180_PER_UNIT"
+    },
+    {
+      "id": "DOC-H-CONTRACT-AMENDMENT-9007A",
+      "type": "contract_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-10-01", "amends": "DOC-H-CONTRACT-9007",
+      "content": "AMENDMENT 1 to MASTER SERVICES AGREEMENT CT-9007, between ExergyNet Corp and Larkspur Energy Services (VENDOR-9007). Service rate revised to $205 per unit, effective 2026-10-01.",
+      "predicate": "VENDOR-9007.service_rate", "value": "205_PER_UNIT"
+    },
+    {
+      "id": "DOC-H-CONTRACT-9008",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2025-03-01",
+      "content": "MASTER SERVICES AGREEMENT CT-9008. Between ExergyNet Corp and Wyndham Paper Products (VENDOR-9008). Payment terms: Net 45.",
+      "predicate": "VENDOR-9008.payment_terms", "value": "NET_45"
+    },
+    {
+      "id": "DOC-H-CONTRACT-AMENDMENT-9008A",
+      "type": "contract_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-05-01", "amends": "DOC-H-CONTRACT-9008",
+      "content": "AMENDMENT 1 to MASTER SERVICES AGREEMENT CT-9008, between ExergyNet Corp and Wyndham Paper Products (VENDOR-9008). Payment terms revised to Net 20, effective 2026-05-01 (tightened following a credit review).",
+      "predicate": "VENDOR-9008.payment_terms", "value": "NET_20"
+    },
+    {
+      "id": "DOC-H-PO-9009",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9009", "po_id": "PO-9009", "issued": "2025-11-15",
+      "content": "PURCHASE ORDER PO-9009. Vendor: Colville Structural Steel (VENDOR-9009). Amount authorized: $32,000.00. Description: structural steel beams, Phase 2 warehouse expansion. Approved by: T. Osei (Director).",
+      "predicate": "PO-9009.authorized_amount", "value": "32000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9009A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9009", "issued": "2026-03-01", "amends": "DOC-H-PO-9009",
+      "content": "PURCHASE ORDER AMENDMENT PO-9009-A1, amending PO-9009. Vendor: Colville Structural Steel (VENDOR-9009). Revised amount authorized: $35,750.00 (added corrosion-resistant coating spec). Approved by: T. Osei (Director).",
+      "predicate": "PO-9009.authorized_amount", "value": "35750"
+    },
+    {
+      "id": "DOC-H-INVOICE-9009",
+      "type": "invoice", "source_class": "INVOICE",
+      "issued": "2026-06-20",
+      "content": "INVOICE INV-95009. Vendor: Colville Structural Steel (VENDOR-9009), for PO-9009. Amount billed: $38,900.00.",
+      "predicate": "PO-9009.invoiced_amount", "value": "38900"
+    },
+    {
+      "id": "DOC-H-CERT-ORIGINAL-9010",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-07-01",
+      "content": "COMPLIANCE REPORT: Farrowgate Security Systems (VENDOR-9010) armed-guard licensing status: ACTIVE.",
+      "predicate": "VENDOR-9010.licensing_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CERT-REVOKE-9010",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-12-01", "revokes": "DOC-H-CERT-ORIGINAL-9010",
+      "content": "COMPLIANCE NOTICE: Farrowgate Security Systems (VENDOR-9010) armed-guard licensing REVOKED following a state regulatory audit finding. No replacement license has been filed as of this notice.",
+      "predicate": "VENDOR-9010.licensing_revocation_notice"
+    }
+  ]
+}

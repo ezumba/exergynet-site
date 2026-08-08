@@ -1,0 +1,226 @@
+{
+  "_construction_note": "HOLDOUT batch 1 (H01-H10). Ground truth hand-derived by tracing the frozen V7 rules (classify_document / _resolve_temporal_status / _resolve_predicate_group / evaluate()) against the source documents in holdout_documents_batch1.json -- extract_case_state() and evaluate() were NOT invoked. Each case's _hand_trace field records that reasoning explicitly so the post-execution autopsy can check hand-derivation accuracy against real extraction as its own finding (a defect in my hand-tracing is a benchmark-construction finding, not an architecture defect).",
+  "cases": [
+    {
+      "case_id": "LNES59-H01",
+      "category": "ordinary_factual",
+      "query": "What is Kestrel Point Chemical Supply's registration status?",
+      "grounding_document_ids": [
+        "DOC-H-VENDOR-MASTER-9001"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "ACTIVE",
+        "historical_values": []
+      },
+      "_hand_trace": "Single VENDOR_MASTER doc, base_type CONFIRMED_FACT, no amends/revokes/effective_until anywhere referencing it -> CURRENT. Only match for the predicate -> chosen, historical_values empty.",
+      "predicate": "VENDOR-9001.registration_status",
+      "cross_cutting_tags": [
+        "ordinary factual state"
+      ]
+    },
+    {
+      "case_id": "LNES59-H02",
+      "category": "ordinary_factual",
+      "query": "What is the payment status of invoice INV-95002?",
+      "grounding_document_ids": [
+        "DOC-H-PAYMENT-LEDGER-9002"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "PAID_CHECK",
+        "historical_values": []
+      },
+      "_hand_trace": "Single PAYMENT_LEDGER doc, CONFIRMED_FACT, CURRENT (no temporal fields at all -> default CURRENT).",
+      "predicate": "INV-95002.payment_status",
+      "cross_cutting_tags": [
+        "ordinary factual state"
+      ]
+    },
+    {
+      "case_id": "LNES59-H03",
+      "category": "ordinary_factual",
+      "query": "What is the authorized amount for PO-9003?",
+      "grounding_document_ids": [
+        "DOC-H-PO-9003"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "14200",
+        "historical_values": []
+      },
+      "_hand_trace": "Single purchase_order doc, CONFIRMED_FACT, CURRENT (no amends/effective_until).",
+      "predicate": "PO-9003.authorized_amount",
+      "cross_cutting_tags": [
+        "ordinary factual state"
+      ]
+    },
+    {
+      "case_id": "LNES59-H04",
+      "category": "rumor_vs_authoritative",
+      "query": "What hourly rate has Northgate Consulting Partners quoted?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-FORWARD-9004"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "authority_status": "UNVERIFIED",
+        "temporal_status": "NOT_APPLICABLE",
+        "value": "60_PER_HOUR",
+        "historical_values": []
+      },
+      "_hand_trace": "EMAIL source_class is NEVER_AUTHORITATIVE -> classify_document short-circuits to SOURCE_ASSERTION/MATCH/UNVERIFIED regardless of the unavailable/no-record checks. No other doc grounds this predicate -> _resolve_predicate_group's 'authoritative' list is empty -> falls into the pure-SOURCE_ASSERTION branch, returning MATCH/SOURCE_ASSERTION/UNVERIFIED with the email's own value. A bare ASSERTION of '60_PER_HOUR' should be UNSUPPORTED_STATE_ASSERTION at execution (SOURCE_ASSERTION not in ASSERTION_GROUNDING_CLAIM_TYPES); a SUMMARY/None hedge should be CONSISTENT.",
+      "predicate": "VENDOR-9004.hourly_rate_quote",
+      "cross_cutting_tags": [
+        "rumor vs authoritative fact"
+      ]
+    },
+    {
+      "case_id": "LNES59-H05",
+      "category": "rumor_vs_authoritative",
+      "query": "Has Pellworth Industrial Coatings' liability insurance lapsed?",
+      "grounding_document_ids": [
+        "DOC-H-CHAT-9005"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "authority_status": "UNVERIFIED",
+        "temporal_status": "NOT_APPLICABLE",
+        "value": "POSSIBLE_LAPSE_UNCONFIRMED",
+        "historical_values": []
+      },
+      "_hand_trace": "CHAT_MESSAGE is NEVER_AUTHORITATIVE -> same pattern as H04. No authoritative doc grounds this predicate at all.",
+      "predicate": "VENDOR-9005.insurance_lapse_rumor",
+      "cross_cutting_tags": [
+        "rumor vs authoritative fact"
+      ]
+    },
+    {
+      "case_id": "LNES59-H06",
+      "category": "temporal_supersession",
+      "query": "What is the current authorized amount for PO-9006?",
+      "grounding_document_ids": [
+        "DOC-H-PO-9006",
+        "DOC-H-PO-AMENDMENT-9006A"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "21500",
+        "historical_values": [
+          "18000"
+        ]
+      },
+      "_hand_trace": "Original (issued 2025-09-01) is amended by A1 (issued 2026-01-10, <= BENCHMARK_AS_OF) -> original SUPERSEDED. A1 has no amends/expiry/revoke against it -> CURRENT. current_ones=[A1], chosen=A1 (value 21500). Non-chosen SUPERSEDED match (original, value 18000) -> historical_values=('18000',). Asserting '18000' now should be TEMPORAL_CONTRADICTION (stale historical match); asserting '21500' -> CONSISTENT.",
+      "predicate": "PO-9006.authorized_amount",
+      "cross_cutting_tags": [
+        "temporal contradiction",
+        "supersession",
+        "multi-source"
+      ]
+    },
+    {
+      "case_id": "LNES59-H07",
+      "category": "future_effective",
+      "query": "What is Larkspur Energy Services' current service rate under CT-9007?",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-9007",
+        "DOC-H-CONTRACT-AMENDMENT-9007A"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "180_PER_UNIT",
+        "historical_values": [
+          "205_PER_UNIT"
+        ]
+      },
+      "_hand_trace": "Amendment's effective_from (2026-10-01) is AFTER BENCHMARK_AS_OF (2026-08-08) -> amendment is FUTURE_EFFECTIVE via its own effective_from>as_of check, evaluated before the supersession check even applies. Original's supersession check requires the amending doc's OWN effective_from <= as_of, which is false here (2026-10-01 > 2026-08-08) -> original stays CURRENT at $180/unit. chosen=original (only CURRENT), non-chosen FUTURE_EFFECTIVE match (amendment, value 205_PER_UNIT) -> historical_values=('205_PER_UNIT',) per taxonomy #21's future-direction historical collection. Asserting '205_PER_UNIT' now should be TEMPORAL_CONTRADICTION (matches a not-yet-current historical/future value); asserting '180_PER_UNIT' -> CONSISTENT.",
+      "predicate": "VENDOR-9007.service_rate",
+      "cross_cutting_tags": [
+        "temporal contradiction",
+        "future-effective state"
+      ]
+    },
+    {
+      "case_id": "LNES59-H08",
+      "category": "temporal_supersession",
+      "query": "What are Wyndham Paper Products' current payment terms?",
+      "grounding_document_ids": [
+        "DOC-H-CONTRACT-9008",
+        "DOC-H-CONTRACT-AMENDMENT-9008A"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "NET_20",
+        "historical_values": [
+          "NET_45"
+        ]
+      },
+      "_hand_trace": "Amendment effective_from 2026-05-01 <= as_of -> original SUPERSEDED, amendment CURRENT. chosen=amendment (NET_20), historical=('NET_45',).",
+      "predicate": "VENDOR-9008.payment_terms",
+      "cross_cutting_tags": [
+        "supersession"
+      ]
+    },
+    {
+      "case_id": "LNES59-H09",
+      "category": "conflicting_source",
+      "query": "What is the current authorized amount for PO-9009, and does the invoice match it?",
+      "grounding_document_ids": [
+        "DOC-H-PO-9009",
+        "DOC-H-PO-AMENDMENT-9009A",
+        "DOC-H-INVOICE-9009"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFLICTING_EVIDENCE",
+        "temporal_status": "NOT_APPLICABLE",
+        "value": null,
+        "historical_values": []
+      },
+      "_hand_trace": "Primary predicate (authorized_amount): original SUPERSEDED ($32,000) by A1 (issued 2026-03-01), A1 CURRENT ($35,750). compare_against_predicate (invoiced_amount): single INVOICE doc, MATCH, CURRENT, $38,900 -- no policy_tiers, so extract_case_state's elif conflict-check fires: primary.resolution==MATCH and other.resolution==MATCH and primary.value('35750') != other.value('38900') -> returns CONFLICTING_EVIDENCE (MATCH/CONFLICTING_EVIDENCE/NOT_APPLICABLE/None), which REPLACES the plain primary state -- the $32,000 historical value is NOT surfaced through this path (a known, correct nuance: the conflict-detection branch returns its own literal CommittedState, not primary's historical_values). A SUMMARY/None hedge -> CONSISTENT (CONFLICTING_EVIDENCE not in ASSERTION_GROUNDING_CLAIM_TYPES, asserted_value None carve-out). A bare ASSERTION of any value -> UNSUPPORTED_STATE_ASSERTION.",
+      "predicate": "PO-9009.authorized_amount",
+      "compare_against_predicate": "PO-9009.invoiced_amount",
+      "cross_cutting_tags": [
+        "supersession",
+        "conflicting evidence",
+        "multi-source"
+      ]
+    },
+    {
+      "case_id": "LNES59-H10",
+      "category": "temporal_validity",
+      "query": "Is Farrowgate Security Systems' armed-guard license currently active?",
+      "grounding_document_ids": [
+        "DOC-H-CERT-ORIGINAL-9010",
+        "DOC-H-CERT-REVOKE-9010"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "REVOKED",
+        "value": "ACTIVE",
+        "historical_values": []
+      },
+      "_hand_trace": "Original's predicate (licensing_status) has only ONE matching doc -- the revoke notice is tagged with a DIFFERENT predicate (licensing_revocation_notice per the established revokes-doc convention) so it never competes in `matches`. Original's own temporal check: some other doc (the revoke notice) declares revokes==original's id, with effective date (issued 2025-12-01) <= as_of -> REVOKED. chosen=original (only match, REVOKED), historical_values=() since chosen is the only match. A SUMMARY/None hedge -> CONSISTENT (temporal carve-out for REVOKED). Asserting 'ACTIVE' -> TEMPORAL_CONTRADICTION (temporal check fires before value comparison).",
+      "predicate": "VENDOR-9010.licensing_status",
+      "cross_cutting_tags": [
+        "revocation",
+        "temporal contradiction"
+      ]
+    }
+  ]
+}

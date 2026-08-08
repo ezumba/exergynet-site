@@ -1,132 +1,21 @@
 {
   "_generated": "2026-08-08",
-  "_purpose": "SHA-256 manifest of the current LNES-59 dataset state (documents + cases + schema/authority-model docs), R&D/benchmark only. Matches the LNES-58 frozen-evidence hashing precedent. This is NOT a holdout manifest -- see summary.holdout_status below and LNES59_BENCHMARK_PLAN.md for why a holdout split hasn't happened yet.",
-  "files": {
-    "documents.json": {
-      "sha256": "b944b882a22dd0c670f57db336f0eec738a03eb5469a33f90c0079c51691e650",
-      "size_bytes": 8404
-    },
-    "documents_batch2.json": {
-      "sha256": "23168d872e3bd218fbc650256d0a00d5bae5d7f51d5dee8639637666a42e79d4",
-      "size_bytes": 12628
-    },
-    "documents_batch3.json": {
-      "sha256": "4b308fb84a821bc57cb1b4fd9d37fc214f365331b5392c013f69fec13fb2f06a",
-      "size_bytes": 6712
-    },
-    "cases.json": {
-      "sha256": "7c6862fa9a52a7c4e80ecf670af6d989b61eb9f00bee169ddedc762063df01dd",
-      "size_bytes": 11310
-    },
-    "cases_batch2.json": {
-      "sha256": "1fb6e2e26b59f7aaacb2f2e07039e8a24e6a751046478b1c8d5d5d5172fb86ab",
-      "size_bytes": 13833
-    },
-    "cases_batch3.json": {
-      "sha256": "223966ae3c9c1c9760710345d6ffc5e284446ac596b2ec145af3d7fc144f800f",
-      "size_bytes": 7946
-    },
-    "LNES59_STATE_SCHEMA.md": {
-      "sha256": "ef754b070fefdc6f9a2e6a97c293fa5f1d631ea74cb2bf20267d6f322db47a9f",
-      "size_bytes": 7497
-    },
-    "LNES59_AUTHORITY_MODEL.md": {
-      "sha256": "e98b7a99cfbcb0d6cb3eb2eb4be17d228ba31719560d5cd6b24eb3d13308f143",
-      "size_bytes": 4888
-    }
-  },
-  "summary": {
-    "total_documents": 46,
-    "total_cases": 27,
-    "target_total_cases": 150,
-    "category_counts": {
-      "ambiguous_source": 4,
-      "temporal_supersession": 3,
-      "conflicting_source": 4,
-      "policy_authority": 4,
-      "recommendation_vs_fact": 3,
-      "negative_state_control": 4,
-      "ordinary_factual": 5
-    },
-    "holdout_status": "NOT_YET_SPLIT -- see LNES59_BENCHMARK_PLAN.md",
-    "all_cases_are_development_set": true,
-    "_note": "Every case listed here has already been used to find/fix at least one real bug in the pipeline (see LNES59_FAILURE_TAXONOMY.md) -- none of this is holdout-eligible."
-  },
+  "_purpose": "LNES-59.2 blind holdout ground truth manifest. Supersedes the prior 27-case-era version of this file (which predated the holdout split entirely and explicitly said so). This is the sealed, authoritative record of what the 50 holdout cases' correct answers are -- lives only alongside LNES59_EVALUATOR_HOLDOUT.json, never alongside anything a tested arm can read.",
+  "supersedes": "Prior version of this file covered the 27-case pre-scaling development set and explicitly stated holdout_status: NOT_YET_SPLIT -- obsolete since the 100-case development freeze (LNES59_FINAL_PRE_HOLDOUT_ARCHITECTURE_FREEZE.md) and this holdout construction.",
+  "evaluator_holdout_file": "LNES59_EVALUATOR_HOLDOUT.json",
+  "evaluator_holdout_sha256": "89ea257d6c1fccf0c25ba6025d7e9cf841ac842609d14066a7d40fb1a43826f9",
+  "holdout_manifest": "LNES59_HOLDOUT_MANIFEST.json",
+  "holdout_manifest_sha256": "56a6a8994e9d495568535cd1b3eed82c590ec908649e6db1d52ffdd02535a153",
+  "architecture_version": "V7",
+  "architecture_commit": "651ce500dbc2dfbadafe8e126175325cee86543e",
+  "total_holdout_cases": 50,
+  "total_holdout_documents": 78,
+  "ground_truth_derivation": "Hand-derived from the frozen V7 rules by direct code-reading and manual trace, NEVER by running extract_case_state()/evaluate() against the holdout cases. Each case's expected_state field is the claim; each case's _hand_trace field (evaluator-only, never runner-visible) is the reasoning. Real extraction WILL run during Stage B execution -- comparing its output against expected_state/_hand_trace at that point is itself part of the residual autopsy (a hand-trace error is a benchmark-construction finding, not an architecture defect).",
   "case_ids": [
-    "LNES59-B2-001",
-    "LNES59-B2-002",
-    "LNES59-B2-003",
-    "LNES59-B2-004",
-    "LNES59-B2-005",
-    "LNES59-B2-006",
-    "LNES59-B2-007",
-    "LNES59-B2-008",
-    "LNES59-B2-009",
-    "LNES59-B2-010",
-    "LNES59-B2-011",
-    "LNES59-B3-001",
-    "LNES59-B3-002",
-    "LNES59-B3-003",
-    "LNES59-B3-004",
-    "LNES59-B3-005",
-    "LNES59-B3-006",
-    "LNES59-SMOKE-001",
-    "LNES59-SMOKE-002",
-    "LNES59-SMOKE-003",
-    "LNES59-SMOKE-004",
-    "LNES59-SMOKE-005",
-    "LNES59-SMOKE-006",
-    "LNES59-SMOKE-007",
-    "LNES59-SMOKE-008",
-    "LNES59-SMOKE-009",
-    "LNES59-SMOKE-010"
-  ],
-  "document_ids": [
-    "DOC-AMENDMENT-014A",
-    "DOC-AMENDMENT-2201A",
-    "DOC-AMENDMENT-301A",
-    "DOC-AMENDMENT-301B",
-    "DOC-APPROVAL-DB-UNAVAILABLE-NOTE",
-    "DOC-APPROVAL-MATRIX",
-    "DOC-APPROVAL-MATRIX-2026B",
-    "DOC-APPROVAL-MATRIX-301",
-    "DOC-APPROVAL-SYSTEM-DOWN-2026-08-06",
-    "DOC-APPROVAL-SYSTEM-VENDORA",
-    "DOC-AUDIT-FRONTLINE",
-    "DOC-CHAT-ATLAS-SLA",
-    "DOC-CHAT-CASHFLOW",
-    "DOC-COMPLIANCE-INSURANCE",
-    "DOC-CONTRACT-014",
-    "DOC-CONTRACT-2201",
-    "DOC-CONTRACT-2202",
-    "DOC-CONTRACT-2208",
-    "DOC-CONTRACT-301",
-    "DOC-EMAIL-DIRECTOR-75K",
-    "DOC-EMAIL-FINANCE-APPROVED-A",
-    "DOC-EMAIL-GRANITE-APPROVAL-CLAIM",
-    "DOC-EMAIL-HARBORVIEW-RENEWAL-INTENT",
-    "DOC-EMAIL-MANAGER-40K",
-    "DOC-EMAIL-MANAGER-9500",
-    "DOC-EMAIL-VP-200K",
-    "DOC-INVOICE-2044-INV",
-    "DOC-INVOICE-3305",
-    "DOC-INVOICE-4001",
-    "DOC-INVOICE-88213",
-    "DOC-MEETING-NOTE-FRONTLINE",
-    "DOC-PAYMENT-LEDGER-2005",
-    "DOC-PAYMENT-LEDGER-4471",
-    "DOC-PO-2044",
-    "DOC-PO-3305",
-    "DOC-PO-4001",
-    "DOC-PO-5010",
-    "DOC-PO-5010-DUPLICATE",
-    "DOC-PO-AMENDMENT-3305",
-    "DOC-SLACK-BRIGHTPATH-BUDGET",
-    "DOC-SLACK-IRONWOOD-TERMS",
-    "DOC-VENDOR-MASTER-1006",
-    "DOC-VENDOR-MASTER-2004",
-    "DOC-VENDOR-MASTER-2005",
-    "DOC-VENDOR-REGISTRY-SEARCH-1005",
-    "DOC-VENDOR-REGISTRY-SEARCH-2007"
+    "LNES59-H01","LNES59-H02","LNES59-H03","LNES59-H04","LNES59-H05","LNES59-H06","LNES59-H07","LNES59-H08","LNES59-H09","LNES59-H10",
+    "LNES59-H11","LNES59-H12","LNES59-H13","LNES59-H14","LNES59-H15","LNES59-H16","LNES59-H17","LNES59-H18","LNES59-H19","LNES59-H20",
+    "LNES59-H21","LNES59-H22","LNES59-H23","LNES59-H24","LNES59-H25","LNES59-H26","LNES59-H27","LNES59-H28","LNES59-H29","LNES59-H30",
+    "LNES59-H31","LNES59-H32","LNES59-H33","LNES59-H34","LNES59-H35","LNES59-H36","LNES59-H37","LNES59-H38","LNES59-H39","LNES59-H40",
+    "LNES59-H41","LNES59-H42","LNES59-H43","LNES59-H44","LNES59-H45","LNES59-H46","LNES59-H47","LNES59-H48","LNES59-H49","LNES59-H50"
   ]
 }

@@ -1,0 +1,73 @@
+{
+  "_construction_note": "HOLDOUT batch 3 (H21-H30), authored 2026-08-08. Covers wrong-purpose authority, scope+NO_MATCH across three registry types plus the NO RECORD FOUND marker (not yet exercised by name in prior batches), INCOMPLETE via both unavailability markers plus a pure predicate-gap instance, and a same-predicate >1-CURRENT CONFLICTING_EVIDENCE collision (mechanically distinct from H09's compare_against_predicate mismatch). NOT verified via extract_case_state()/evaluate().",
+  "documents": [
+    {
+      "id": "DOC-H-EMAIL-MANAGER-PURPOSE-9023",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Kirkwall Facilities -- grounds maintenance. Approving $5,500 for the Kirkwall Facilities Group (VENDOR-9023) routine grounds maintenance service -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9023.grounds_maintenance_authority", "value": "5500"
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-PURPOSE-9024",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Amberhall Data Systems -- subscription renewal. Approving $3,000 for the Amberhall Data Systems (VENDOR-9024) annual software subscription renewal -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9024.subscription_renewal_authority", "value": "3000"
+    },
+    {
+      "id": "DOC-H-VENDOR-REGISTRY-SEARCH-9025",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Thistlewood Analytics\". Full registry searched. Result: NO MATCH. Thistlewood Analytics is not present in the vendor master registry. Other approval or procurement systems outside this registry were not checked as part of this search.",
+      "predicate": "VENDOR-9025.registry_status", "value": "NOT_IN_REGISTRY"
+    },
+    {
+      "id": "DOC-H-SANCTIONS-SCREENING-9026",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "SANCTIONS SCREENING: query=\"Ferrowick Trading Ltd\". Full OFAC/sanctions database searched. Result: NO MATCH. Ferrowick Trading Ltd is not on any current sanctions or restricted-party list. Vendor master registration status was not checked as part of this search.",
+      "predicate": "VENDOR-9026.sanctions_screening_status", "value": "NOT_ON_SANCTIONS_LIST"
+    },
+    {
+      "id": "DOC-H-TAX-COMPLIANCE-SEARCH-9027",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "TAX COMPLIANCE DATABASE SEARCH: query=\"Oldbury Metal Recyclers\". Full compliance database searched. Result: NO MATCH. Oldbury Metal Recyclers is not present in the tax compliance database. Other databases (vendor master, sanctions screening) were not checked as part of this search.",
+      "predicate": "VENDOR-9027.tax_compliance_status", "value": "NOT_IN_TAX_COMPLIANCE_DB"
+    },
+    {
+      "id": "DOC-H-APPROVAL-SEARCH-9028",
+      "type": "approval_system_record", "source_class": "APPROVAL_SYSTEM_RECORD",
+      "content": "APPROVAL SYSTEM SEARCH: query=\"Grantley Civil Engineering\" rush-order approval. Full system searched. Result: NO RECORD FOUND. No approval record exists for this vendor's rush order in this system. Other approval or procurement systems were not checked as part of this search.",
+      "predicate": "VENDOR-9028.rush_order_approval_status", "value": "NO_APPROVAL_RECORD_FOUND"
+    },
+    {
+      "id": "DOC-H-SYSTEM-UNAVAILABLE-9029",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "COMPLIANCE SYSTEM QUERY: Wrenshaw Analytics (VENDOR-9029) background check status. System is undergoing scheduled maintenance for the entire query window -- no results available.",
+      "predicate": "VENDOR-9029.background_check_status"
+    },
+    {
+      "id": "DOC-H-SYSTEM-UNAVAILABLE-9030",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "COMPLIANCE SYSTEM QUERY: Iverness Cold Storage (VENDOR-9030) insurance certificate status. System could not be accessed for the entire query window -- vendor portal outage.",
+      "predicate": "VENDOR-9030.insurance_certificate_status"
+    },
+    {
+      "id": "DOC-H-VENDOR-MASTER-9031",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Bellhaven Construction Supply (VENDOR-9031). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2020-11-03.",
+      "predicate": "VENDOR-9031.registration_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CONTRACT-A-9032",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-02-01",
+      "content": "MASTER SERVICES AGREEMENT CT-9032-A. Between ExergyNet Corp and Copperfield Risk Advisors (VENDOR-9032), Northeast regional office. Payment terms: Net 30.",
+      "predicate": "VENDOR-9032.payment_terms", "value": "NET_30"
+    },
+    {
+      "id": "DOC-H-CONTRACT-B-9032",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-02-15",
+      "content": "MASTER SERVICES AGREEMENT CT-9032-B. Between ExergyNet Corp and Copperfield Risk Advisors (VENDOR-9032), Southeast regional office, negotiated independently. Payment terms: Net 45.",
+      "predicate": "VENDOR-9032.payment_terms", "value": "NET_45"
+    }
+  ]
+}

@@ -36,6 +36,7 @@ EVALUATOR_ONLY_FIELD_NAMES = frozenset({
     "expected_state", "ungoverned_failure_mode", "category",
     "cross_cutting_tags", "predicate", "compare_against_predicate",
     "_correction", "_redteam_purpose", "_construction_note",
+    "_hand_trace",
 })
 
 

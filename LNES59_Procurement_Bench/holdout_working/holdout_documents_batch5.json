@@ -1,0 +1,108 @@
+{
+  "_construction_note": "HOLDOUT batch 5 (H41-H50, FINAL batch, brings holdout to exactly 50). Covers wrong-business-unit authority, multi-domain policy (general vs. IT-hardware-specific), historically-true-now-false via EXPIRED and via REVOKED (fresh instances), two ordinary controls (contract, audit record), a meeting-note rumor, a fourth NO_MATCH registry type, a distractor-robustness case (conflicting evidence for an UNRELATED predicate must not leak into a wrong-purpose INCOMPLETE resolution), and a closing case where a multi-hop no-current-state PO conflicts with its own invoice -- demonstrating the compare_against_predicate conflict branch supersedes the multi-hop/temporal detail entirely, a subtle interaction never previously exercised together. NOT verified via extract_case_state()/evaluate().",
+  "documents": [
+    {
+      "id": "DOC-H-EMAIL-FACILITIESBU-9043",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Fenwick Lighting Solutions -- Facilities BU spend. Approving $7,200 for the Fenwick Lighting Solutions (VENDOR-9043) engagement, chargeable to the Facilities business unit budget -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9043.facilities_bu_authority", "value": "7200"
+    },
+    {
+      "id": "DOC-H-POLICY-IT-HARDWARE-9044",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "IT SECURITY POLICY -- HARDWARE PURCHASE APPROVAL LIMITS (effective 2026-01-01, supersedes the general Procurement Approval Matrix for IT hardware purchases specifically due to asset-tracking and data-security review requirements): Manager up to $3,000; Director up to $20,000; VP unlimited.",
+      "predicate": "IT_HARDWARE_POLICY-9044.limits",
+      "tiers": {"MANAGER": 3000, "DIRECTOR": 20000, "VP": null}
+    },
+    {
+      "id": "DOC-H-EMAIL-MANAGER-9044",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Bellworth Server Systems hardware order. Approving $6,500 for the Bellworth Server Systems (VENDOR-9044) rack hardware purchase -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-9044.hardware_purchase_authority", "value": "6500"
+    },
+    {
+      "id": "DOC-H-CERT-EXPIRED-9045",
+      "type": "audit_record", "source_class": "audit_record",
+      "effective_from": "2025-02-01", "effective_until": "2025-11-30",
+      "content": "COMPLIANCE REPORT: Oatlands Textile Finishing (VENDOR-9045) quality certification QUAL-9045-A, valid through 2025-11-30. No renewal or replacement certificate has been filed as of this report.",
+      "predicate": "VENDOR-9045.quality_cert_status", "value": "CERT_QUAL_9045_A"
+    },
+    {
+      "id": "DOC-H-CERT-ORIGINAL-9046",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-04-01",
+      "content": "COMPLIANCE REPORT: Pentridge Vehicle Leasing (VENDOR-9046) fleet roadworthiness certification status: ACTIVE.",
+      "predicate": "VENDOR-9046.roadworthiness_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-H-CERT-REVOKE-9046",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2025-09-01", "revokes": "DOC-H-CERT-ORIGINAL-9046",
+      "content": "COMPLIANCE NOTICE: Pentridge Vehicle Leasing (VENDOR-9046) fleet roadworthiness certification REVOKED following a failed safety inspection. No replacement certification has been filed as of this notice.",
+      "predicate": "VENDOR-9046.roadworthiness_revocation_notice"
+    },
+    {
+      "id": "DOC-H-CONTRACT-9047",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2025-08-01",
+      "content": "MASTER SERVICES AGREEMENT CT-9047. Between ExergyNet Corp and Ellery & Combe Solicitors (VENDOR-9047). Payment terms: Net 30.",
+      "predicate": "VENDOR-9047.payment_terms", "value": "NET_30"
+    },
+    {
+      "id": "DOC-H-AUDIT-9048",
+      "type": "audit_record", "source_class": "audit_record",
+      "issued": "2026-06-01",
+      "content": "ANNUAL FIRE SAFETY INSPECTION: Northcote Fire Safety Ltd (VENDOR-9048) facility inspection result: PASSED.",
+      "predicate": "VENDOR-9048.fire_safety_inspection_status", "value": "PASSED"
+    },
+    {
+      "id": "DOC-H-MEETING-NOTE-9049",
+      "type": "meeting_note", "source_class": "MEETING_NOTE",
+      "content": "In today's vendor review meeting, someone mentioned Woodhall Precision Engineering (VENDOR-9049) might be raising prices next quarter -- not officially confirmed, just mentioned in passing.",
+      "predicate": "VENDOR-9049.price_increase_rumor", "value": "POSSIBLE_INCREASE_UNCONFIRMED"
+    },
+    {
+      "id": "DOC-H-QUALITY-CERT-SEARCH-9050",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "QUALITY CERTIFICATION REGISTRY SEARCH: query=\"Ashendene Print & Bindery\". Full registry searched. Result: NO MATCH. Ashendene Print & Bindery is not present in the quality certification registry. Vendor master registration and tax compliance were not checked as part of this search.",
+      "predicate": "VENDOR-9050.quality_certification_status", "value": "NOT_IN_QUALITY_REGISTRY"
+    },
+    {
+      "id": "DOC-H-CONTRACT-A-9051",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-03-01",
+      "content": "LANDSCAPING SERVICES AGREEMENT CT-9051-A. Between ExergyNet Corp and Cranmoor Estate Services (VENDOR-9051), North campus. Authorized annual amount: $8,000.",
+      "predicate": "VENDOR-9051.landscaping_contract_authority", "value": "8000"
+    },
+    {
+      "id": "DOC-H-CONTRACT-B-9051",
+      "type": "contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-03-15",
+      "content": "LANDSCAPING SERVICES AGREEMENT CT-9051-B. Between ExergyNet Corp and Cranmoor Estate Services (VENDOR-9051), South campus, negotiated independently. Authorized annual amount: $9,500.",
+      "predicate": "VENDOR-9051.landscaping_contract_authority", "value": "9500"
+    },
+    {
+      "id": "DOC-H-PO-9052",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9052", "po_id": "PO-9052", "issued": "2025-05-01",
+      "content": "PURCHASE ORDER PO-9052. Vendor: Thackray Industrial Cleaning (VENDOR-9052). Amount authorized: $15,000.00. Description: quarterly industrial cleaning contract. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9052.authorized_amount", "value": "15000"
+    },
+    {
+      "id": "DOC-H-PO-AMENDMENT-9052A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-9052", "issued": "2025-09-01", "amends": "DOC-H-PO-9052",
+      "effective_until": "2026-02-28",
+      "content": "PURCHASE ORDER AMENDMENT PO-9052-A1, amending PO-9052. Vendor: Thackray Industrial Cleaning (VENDOR-9052). Temporary revised amount authorized: $18,300.00 (post-construction deep-clean surcharge, effective through 2026-02-28 only). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-9052.authorized_amount", "value": "18300"
+    },
+    {
+      "id": "DOC-H-INVOICE-9052",
+      "type": "invoice", "source_class": "INVOICE",
+      "issued": "2026-06-15",
+      "content": "INVOICE INV-95052. Vendor: Thackray Industrial Cleaning (VENDOR-9052), for PO-9052. Amount billed: $19,750.00.",
+      "predicate": "PO-9052.invoiced_amount", "value": "19750"
+    }
+  ]
+}

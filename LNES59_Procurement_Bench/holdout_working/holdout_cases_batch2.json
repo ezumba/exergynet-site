@@ -1,0 +1,234 @@
+{
+  "_construction_note": "HOLDOUT batch 2 (H11-H20). Ground truth hand-derived from V7 rules, extract_case_state()/evaluate() NOT invoked.",
+  "cases": [
+    {
+      "case_id": "LNES59-H11",
+      "category": "supersession_revocation_reinstatement",
+      "query": "What is Millbrook Environmental Testing's current laboratory certification status?",
+      "grounding_document_ids": [
+        "DOC-H-CERT-ORIGINAL-9011",
+        "DOC-H-CERT-REVOKE-9011",
+        "DOC-H-CERT-REINSTATED-9011"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "CURRENT",
+        "value": "ACTIVE",
+        "historical_values": [
+          "ACTIVE"
+        ]
+      },
+      "_hand_trace": "Original REVOKED (revoke notice's own predicate is certification_revocation_notice, doesn't compete in matches); reinstated doc has no amends/revokes/expiry against it -> CURRENT. current_ones=[reinstated], chosen=reinstated (value ACTIVE). Non-chosen REVOKED match (original, value ACTIVE) -> historical_values=('ACTIVE',) -- same literal value as current, since the vendor's status was ACTIVE both before and after the revocation gap.",
+      "predicate": "VENDOR-9011.certification_status",
+      "cross_cutting_tags": [
+        "revocation",
+        "reinstatement",
+        "multi-source"
+      ]
+    },
+    {
+      "case_id": "LNES59-H12",
+      "category": "future_effective",
+      "query": "What is Thackwell Freight Systems' current rate schedule tier?",
+      "grounding_document_ids": [
+        "DOC-H-RATE-FUTURE-9012"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "CONFIRMED_FACT",
+        "temporal_status": "FUTURE_EFFECTIVE",
+        "value": "NEW_TIER_RATE_2200",
+        "historical_values": []
+      },
+      "_hand_trace": "Edge case: the ONLY document for this predicate is itself future-effective (effective_from 2026-11-01 > BENCHMARK_AS_OF 2026-08-08) -> FUTURE_EFFECTIVE via the immediate eff_from>as_of check. current_ones=[] (empty). chosen = max(matches, key=_effective_date) = this doc (only match) -- per taxonomy #21's note that the committed state itself can BE the only known value for a predicate before anything is currently in force. historical_values=() since chosen is the only match. Hedge -> CONSISTENT; asserting the value now -> TEMPORAL_CONTRADICTION.",
+      "predicate": "VENDOR-9012.rate_schedule",
+      "cross_cutting_tags": [
+        "future-effective state"
+      ]
+    },
+    {
+      "case_id": "LNES59-H13",
+      "category": "multi_domain_authority",
+      "query": "Was Manager R. Castellano's $8,000 approval of the Handley Scientific Instruments purchase within authority under the specialty policy currently in effect (not the tightened policy taking effect 2026-12-01)?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-9013",
+        "DOC-H-POLICY-CURRENT-9013",
+        "DOC-H-POLICY-FUTURE-9013"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "policy_tiers": {
+          "MANAGER": 10000,
+          "DIRECTOR": 50000,
+          "VP": null
+        }
+      },
+      "_hand_trace": "SPECIALTY_POLICY-9013.limits has two matches: current doc (CURRENT, tiers MANAGER=10000) and future doc (FUTURE_EFFECTIVE, effective 2026-12-01 -- its own amends-check against the current doc requires ITS effective_from<=as_of to supersede, which is false, so the current doc stays CURRENT). current_ones=[current doc] -> policy_tiers attached = the CURRENT (looser) tiers, correctly NOT the not-yet-effective tightened ones. AR requested_authority_level=MANAGER, requested_amount=8000: 8000<=10000 -> CONSISTENT. This is the failure mode to watch: an ungoverned system might grab whichever policy doc it retrieves first and apply the tightened $5,000 limit prematurely, incorrectly flagging a violation.",
+      "predicate": "VENDOR-9013.instrument_purchase_authority",
+      "compare_against_predicate": "SPECIALTY_POLICY-9013.limits",
+      "cross_cutting_tags": [
+        "future-effective state",
+        "authority limits",
+        "multi-source"
+      ]
+    },
+    {
+      "case_id": "LNES59-H14",
+      "category": "policy_authority",
+      "query": "Was Manager R. Castellano's $10,000 approval of the Oakendale Print Solutions order within authority?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-EXACT-9014",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "policy_tiers": {
+          "MANAGER": 10000,
+          "DIRECTOR": 50000,
+          "VP": null
+        }
+      },
+      "_hand_trace": "AR requested_authority_level=MANAGER, requested_amount=10000: 10000<=10000 (limit, not '>') -> CONSISTENT, exactly-at-limit boundary.",
+      "predicate": "VENDOR-9014.print_services_authority",
+      "compare_against_predicate": "H_APPROVAL_MATRIX.limits",
+      "cross_cutting_tags": [
+        "authority limits"
+      ]
+    },
+    {
+      "case_id": "LNES59-H15",
+      "category": "policy_authority",
+      "query": "Was Director T. Osei's $50,001 approval of the Ridgemont Fabrication contract within authority?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-DIRECTOR-OVER-9015",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "policy_tiers": {
+          "MANAGER": 10000,
+          "DIRECTOR": 50000,
+          "VP": null
+        }
+      },
+      "_hand_trace": "AR requested_authority_level=DIRECTOR, requested_amount=50001: 50001>50000 -> AUTHORITY_VIOLATION, one dollar over.",
+      "predicate": "VENDOR-9015.fabrication_contract_authority",
+      "compare_against_predicate": "H_APPROVAL_MATRIX.limits",
+      "cross_cutting_tags": [
+        "authority limits"
+      ]
+    },
+    {
+      "case_id": "LNES59-H16",
+      "category": "policy_authority",
+      "query": "Was VP M. Alvarez's $850,000 approval of the Castleford Global Logistics contract within authority?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-VP-9016",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "policy_tiers": {
+          "MANAGER": 10000,
+          "DIRECTOR": 50000,
+          "VP": null
+        }
+      },
+      "_hand_trace": "AR requested_authority_level=VP, requested_amount=850000: limit is None (unlimited) -> CONSISTENT regardless of amount.",
+      "predicate": "VENDOR-9016.logistics_contract_authority",
+      "compare_against_predicate": "H_APPROVAL_MATRIX.limits",
+      "cross_cutting_tags": [
+        "authority limits"
+      ]
+    },
+    {
+      "case_id": "LNES59-H17",
+      "category": "wrong_role_authority",
+      "query": "Was Supervisor D. Ferris's $7,500 approval of the Brackenfield Waste Management order validly authorized?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-SUPERVISOR-9017",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "authority_status": "UNVERIFIED",
+        "policy_tiers": {
+          "MANAGER": 10000,
+          "DIRECTOR": 50000,
+          "VP": null
+        }
+      },
+      "_hand_trace": "'SUPERVISOR' is not a key in H_APPROVAL_MATRIX.limits' tiers dict ({MANAGER,DIRECTOR,VP}) -> the real-tier-check branch's condition (requested_authority_level in committed.policy_tiers) is FALSE -> falls to the coarser fallback: committed.authority_status is UNVERIFIED (SOURCE_ASSERTION/EMAIL) -> AUTHORITY_VIOLATION ('no verified authority backing it'), regardless of the requested amount being well under even the Manager tier. This is the documented UNVERIFIED-fallback path, not new gate behavior.",
+      "predicate": "VENDOR-9017.waste_disposal_authority",
+      "compare_against_predicate": "H_APPROVAL_MATRIX.limits",
+      "cross_cutting_tags": [
+        "wrong-role authority"
+      ]
+    },
+    {
+      "case_id": "LNES59-H18",
+      "category": "wrong_role_authority",
+      "query": "Was Procurement Coordinator K. Wexler's $4,200 approval of the Millgate Print & Signage order validly authorized?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-COORDINATOR-9018",
+        "DOC-H-APPROVAL-MATRIX-9000"
+      ],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type": "SOURCE_ASSERTION",
+        "authority_status": "UNVERIFIED",
+        "policy_tiers": {
+          "MANAGER": 10000,
+          "DIRECTOR": 50000,
+          "VP": null
+        }
+      },
+      "_hand_trace": "Same pattern as H17 with a different unrecognized role ('COORDINATOR') -- fresh instance, not a repeat, per the standing 'attack combinations' discipline.",
+      "predicate": "VENDOR-9018.signage_order_authority",
+      "compare_against_predicate": "H_APPROVAL_MATRIX.limits",
+      "cross_cutting_tags": [
+        "wrong-role authority"
+      ]
+    },
+    {
+      "case_id": "LNES59-H19",
+      "category": "authority_wrong_vendor",
+      "query": "Was Silverwood Consulting's contract renewal approved by a Director?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-DIRECTOR-9019"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "The only Director approval on record is for Silverwood Contracting (VENDOR-9019), a different vendor from the queried Silverwood Consulting (a name near-collision, no VENDOR-9020 document exists in the holdout corpus at all) -> target predicate VENDOR-9020.contract_renewal_authority has zero grounding documents -> primary is None -> INCOMPLETE.",
+      "predicate": "VENDOR-9020.contract_renewal_authority",
+      "cross_cutting_tags": [
+        "wrong-vendor authority"
+      ]
+    },
+    {
+      "case_id": "LNES59-H20",
+      "category": "authority_wrong_vendor",
+      "query": "Was Bellcastle Robotics' tooling purchase approved by a Manager?",
+      "grounding_document_ids": [
+        "DOC-H-EMAIL-MANAGER-9021"
+      ],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "claim_type": "UNKNOWN"
+      },
+      "_hand_trace": "The only Manager approval on record is for Hartwell Machining (VENDOR-9021), an entirely unrelated vendor (no name similarity at all) from the queried Bellcastle Robotics (VENDOR-9022, no document exists) -> INCOMPLETE. Tests that the vendor-scoping boundary holds even without a name-collision cue.",
+      "predicate": "VENDOR-9022.tooling_purchase_authority",
+      "cross_cutting_tags": [
+        "wrong-vendor authority"
+      ]
+    }
+  ]
+}
