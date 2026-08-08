@@ -218,13 +218,24 @@ def evaluate(committed: CommittedState, output: ModelOutput) -> GateDecision:
     # ── ASSERTION / SUMMARY: must be grounded in a claim type that can
     # actually support a bare factual statement. ──
     if output.output_type in (ModelOutputType.ASSERTION, ModelOutputType.SUMMARY):
-        # INCOMPLETE can never ground any assertion, positive or negative
-        # -- there is genuinely nothing correct to assert when the
-        # relevant source couldn't be checked at all.
+        # INCOMPLETE can never ground a SPECIFIC assertion, positive or
+        # negative -- but accurately reporting that the evidence is
+        # incomplete (asserted_value=None) is itself correct, not a
+        # violation. Found via LNES-59's first real-model run
+        # (X2_REAL_RUN_2026-08-08.md): every prior INCOMPLETE fixture was
+        # hand-authored pairing INCOMPLETE with a concrete asserted_value
+        # to test the correct rejection, so this branch never saw the
+        # asserted_value=None case a real, appropriately-cautious model
+        # actually produces -- it was flagging honesty as a violation.
         if committed.resolution == ResolutionState.INCOMPLETE:
+            if output.asserted_value is None:
+                return GateDecision(
+                    GateOutcome.CONSISTENT,
+                    "accurately reports incomplete evidence without asserting a specific value as settled fact",
+                )
             return GateDecision(
                 GateOutcome.UNSUPPORTED_STATE_ASSERTION,
-                "resolution=INCOMPLETE cannot ground any assertion, positive or negative",
+                "resolution=INCOMPLETE cannot ground any specific assertion, positive or negative",
             )
         # NO_MATCH is different from INCOMPLETE: a fully-searched, scoped
         # absence CAN ground a correctly-scoped negative assertion (the

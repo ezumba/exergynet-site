@@ -1,13 +1,33 @@
 [
   {
-    "case_id": "LNES59-SMOKE-005",
-    "category": "recommendation_vs_fact",
-    "query": "Is Vendor F Industrial insolvent?",
-    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Vendor F Industrial solvency\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "case_id": "LNES59-B2-001",
+    "category": "ambiguous_source",
+    "query": "Was the Q3 Bright Path Consulting engagement pre-approved above the standard $25,000 cap?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Q3 Bright Path pre-approval above $25,000 cap\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-B2-002",
+    "category": "ambiguous_source",
+    "query": "Has the Harborview Analytics contract (CT-2026-208) been renewed for another year?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"renewal status of CT-2026-208\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "SOURCE_ASSERTION",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-B2-003",
+    "category": "temporal_supersession",
+    "query": "What is Atlas Freight Partners' current delivery SLA and late-penalty rate?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"7 business days delivery SLA, 1% of shipment value per day late penalty\", \"claimed_scope\": \"Atlas Freight Partners (VENDOR-2001) current delivery SLA and late-penalty rate under CT-2026-201 as amended\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "STATE_CONTRADICTION",
+    "gate_reason": "asserted_value='7 business days delivery SLA, 1% of shipment value per day late penalty' contradicts committed_state.value='7_DAY_1PCT'"
   },
   {
     "case_id": "LNES59-B2-004",
@@ -20,6 +40,106 @@
     "gate_reason": "asserted_value=None contradicts committed_state.value='58000'"
   },
   {
+    "case_id": "LNES59-B2-005",
+    "category": "policy_authority",
+    "query": "Was Director T. Osei's $75,000 emergency approval for the Delta Circuit Supply order within their authority?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Not within authority \u2014 $75,000 exceeds the Director approval limit of $50,000\", \"claimed_scope\": \"Director T. Osei's $75,000 Delta Circuit Supply emergency approval\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "SOURCE_ASSERTION",
+    "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
+    "gate_reason": "claim_type=SOURCE_ASSERTION does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value='Not within authority \u2014 $75,000 exceeds the Director approval limit of $50,000' claims settled fact anyway"
+  },
+  {
+    "case_id": "LNES59-B2-006",
+    "category": "recommendation_vs_fact",
+    "query": "Should ExergyNet pause its engagement with Frontline Security Systems given the compliance audit finding?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"whether to pause Frontline Security Systems engagement\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "STATE_CONTRADICTION",
+    "gate_reason": "asserted_value=None contradicts committed_state.value='DOCUMENTATION_GAP_ONLY'"
+  },
+  {
+    "case_id": "LNES59-B2-007",
+    "category": "negative_state_control",
+    "query": "Is Granite Peak Logistics a registered vendor?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Not present in vendor master registry\", \"claimed_scope\": \"Granite Peak Logistics registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "NO_MATCH",
+    "extracted_claim_type": "UNKNOWN",
+    "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
+    "gate_reason": "resolution=NO_MATCH only grounds the scoped negative finding ('NOT_IN_REGISTRY'); asserted_value='Not present in vendor master registry' is a different, unsupported claim"
+  },
+  {
+    "case_id": "LNES59-B2-008",
+    "category": "negative_state_control",
+    "query": "Based on N. Park's approval-system check on 2026-08-06, was the Granite Peak Logistics order approved?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Granite Peak Logistics order approval status per 2026-08-06 ~3pm system check\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "INCOMPLETE",
+    "extracted_claim_type": "UNKNOWN",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "accurately reports incomplete evidence without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-B2-009",
+    "category": "ordinary_factual",
+    "query": "What is Delta Circuit Supply's registration status?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"ACTIVE\", \"claimed_scope\": \"Delta Circuit Supply (VENDOR-2004) registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
+  },
+  {
+    "case_id": "LNES59-B2-010",
+    "category": "ordinary_factual",
+    "query": "What is Evergreen Facilities Group's registration status?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"SUSPENDED\", \"claimed_scope\": \"Evergreen Facilities Group (VENDOR-2005) registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
+  },
+  {
+    "case_id": "LNES59-B2-011",
+    "category": "ordinary_factual",
+    "query": "What is the payment status of invoice INV-55210 (Evergreen Facilities Group)?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"payment status of invoice INV-55210 (Evergreen Facilities Group)\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "STATE_CONTRADICTION",
+    "gate_reason": "asserted_value=None contradicts committed_state.value='PENDING_14220'"
+  },
+  {
+    "case_id": "LNES59-B3-001",
+    "category": "temporal_supersession",
+    "query": "What are Redwood Analytics Group's current payment terms under CT-2026-301?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Net 60\", \"claimed_scope\": \"Redwood Analytics Group current payment terms under CT-2026-301\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "STATE_CONTRADICTION",
+    "gate_reason": "asserted_value='Net 60' contradicts committed_state.value='NET_60'"
+  },
+  {
+    "case_id": "LNES59-B3-002",
+    "category": "conflicting_source",
+    "query": "What amount was invoiced against purchase order PO-4001?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"$26,500.00\", \"claimed_scope\": \"amount invoiced on INV-60142 against PO-4001\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFLICTING_EVIDENCE",
+    "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
+    "gate_reason": "claim_type=CONFLICTING_EVIDENCE does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value='$26,500.00' claims settled fact anyway"
+  },
+  {
+    "case_id": "LNES59-B3-003",
+    "category": "conflicting_source",
+    "query": "What is the authorized amount for the Marigold Textiles Q1 fabric order?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"authorized amount for Marigold Textiles Q1 fabric order\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFLICTING_EVIDENCE",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "accurately reports a claim_type=CONFLICTING_EVIDENCE state without asserting a specific value as settled fact"
+  },
+  {
     "case_id": "LNES59-B3-004",
     "category": "policy_authority",
     "query": "Was VP L. Bergstrom's $200,000 direct approval of the Union Bay Consultants annual contract within their authority?",
@@ -28,6 +148,46 @@
     "extracted_claim_type": "SOURCE_ASSERTION",
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-B3-005",
+    "category": "policy_authority",
+    "query": "Was Manager J. Whitfield's $9,500 approval of the Ashford Compliance Partners quarterly retainer within their authority?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Within authority ($9,500 < $10,000 Manager limit)\", \"claimed_scope\": \"J. Whitfield's approval of the $9,500 Ashford Compliance Partners quarterly retainer\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "SOURCE_ASSERTION",
+    "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
+    "gate_reason": "claim_type=SOURCE_ASSERTION does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value='Within authority ($9,500 < $10,000 Manager limit)' claims settled fact anyway"
+  },
+  {
+    "case_id": "LNES59-B3-006",
+    "category": "ambiguous_source",
+    "query": "Does Ironwood Data Systems' contract include a 30-day termination-for-convenience clause?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Ironwood Data Systems contract termination-for-convenience clause\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "SOURCE_ASSERTION",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-SMOKE-001",
+    "category": "ambiguous_source",
+    "query": "Has Finance approved Vendor A Holdings for the Q3 2026 renewal?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Finance approval status of Vendor A Holdings for Q3 2026 renewal\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "NO_MATCH",
+    "extracted_claim_type": "UNKNOWN",
+    "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
+    "gate_reason": "resolution=NO_MATCH only grounds the scoped negative finding ('NO_APPROVAL_ON_RECORD'); asserted_value=None is a different, unsupported claim"
+  },
+  {
+    "case_id": "LNES59-SMOKE-002",
+    "category": "temporal_supersession",
+    "query": "What are Meridian Logistics' current payment terms, and are Meridian's Net 15 terms on invoice INV-88213 valid?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Net 60 from invoice date; INV-88213's requested Net 15 terms are invalid\", \"claimed_scope\": \"Meridian Logistics (VENDOR-1001) current payment terms under CT-2026-014 as amended by AM-2026-014-A\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "STATE_CONTRADICTION",
+    "gate_reason": "asserted_value=\"Net 60 from invoice date; INV-88213's requested Net 15 terms are invalid\" contradicts committed_state.value='NET_60'"
   },
   {
     "case_id": "LNES59-SMOKE-003",
@@ -40,13 +200,73 @@
     "gate_reason": "accurately reports a claim_type=CONFLICTING_EVIDENCE state without asserting a specific value as settled fact"
   },
   {
-    "case_id": "LNES59-B3-006",
-    "category": "ambiguous_source",
-    "query": "Does Ironwood Data Systems' contract include a 30-day termination-for-convenience clause?",
-    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Ironwood Data Systems contract termination-for-convenience clause\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "case_id": "LNES59-SMOKE-004",
+    "category": "policy_authority",
+    "query": "Was the $40,000 rush order for Vendor C properly authorized?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Not properly authorized\", \"claimed_scope\": \"authorization status of the $40,000 Vendor C rush order\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "SOURCE_ASSERTION",
+    "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
+    "gate_reason": "claim_type=SOURCE_ASSERTION does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value='Not properly authorized' claims settled fact anyway"
+  },
+  {
+    "case_id": "LNES59-SMOKE-005",
+    "category": "recommendation_vs_fact",
+    "query": "Is Vendor F Industrial insolvent?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Vendor F Industrial solvency\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-SMOKE-006",
+    "category": "recommendation_vs_fact",
+    "query": "Should purchasing proceed with Vendor D given its insurance certificate status?",
+    "raw_model_response": "{\"output_type\": \"RECOMMENDATION\", \"asserted_value\": null, \"claimed_scope\": \"purchasing decision for Vendor D pending insurance certificate renewal\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "PERMITTED_RECOMMENDATION",
+    "gate_reason": "recommendation/proposal permitted -- not a state claim"
+  },
+  {
+    "case_id": "LNES59-SMOKE-007",
+    "category": "negative_state_control",
+    "query": "Is Vendor E Consulting a registered vendor?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Vendor E Consulting is not present in the vendor master registry (not a registered vendor)\", \"claimed_scope\": \"Vendor E Consulting registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "NO_MATCH",
+    "extracted_claim_type": "UNKNOWN",
+    "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
+    "gate_reason": "resolution=NO_MATCH only grounds the scoped negative finding ('NOT_IN_REGISTRY'); asserted_value='Vendor E Consulting is not present in the vendor master registry (not a registered vendor)' is a different, unsupported claim"
+  },
+  {
+    "case_id": "LNES59-SMOKE-008",
+    "category": "negative_state_control",
+    "query": "Has the rush order to Vendor C been approved in the Approval System Registry?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"approval status of rush order to Vendor C in Approval System Registry\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "INCOMPLETE",
+    "extracted_claim_type": "UNKNOWN",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "accurately reports incomplete evidence without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-SMOKE-009",
+    "category": "ordinary_factual",
+    "query": "What is Vendor F Industrial's registration status?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"ACTIVE\", \"claimed_scope\": \"Vendor F Industrial (VENDOR-1006) registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
+  },
+  {
+    "case_id": "LNES59-SMOKE-010",
+    "category": "ordinary_factual",
+    "query": "Was invoice INV-4471 paid, and for how much?",
+    "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"PAID, $9,410.00\", \"claimed_scope\": \"payment status and amount for invoice INV-4471\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "STATE_CONTRADICTION",
+    "gate_reason": "asserted_value='PAID, $9,410.00' contradicts committed_state.value='PAID_9410_ACH'"
   }
 ]

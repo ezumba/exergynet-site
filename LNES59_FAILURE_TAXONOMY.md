@@ -28,18 +28,24 @@ bug plausibly fits more than one category, that's noted explicitly rather
 than picking silently — this taxonomy is being applied honestly to real
 bugs, not curated to look clean.
 
+**Update, 2026-08-08 — this gap has been partially closed.** The
+paragraph below is preserved as it read before LNES-59's first real
+model run; entries #15–16 are the first genuine **G** classifications,
+found via that run. **F** and canonical **H** remain untested — see
+`LNES59_Procurement_Bench/X2_REAL_RUN_2026-08-08.md` for the full run.
+
 **A real, current gap in this taxonomy's own validation, stated up
-front**: every bug classified below came from *extraction*, the *gate's*
-decision rules, or the *test harness* — none from a *model's* actual
-output, because no real model has been run against this benchmark yet
-(the B0–X2 comparator arms are separate, larger-scope work requiring
-explicit authorization for real API cost). Categories **F** (model
-adherence failure), **G** (gate false positive) and **H** (gate false
-negative) in their *canonical* sense — the gate correctly receiving a
-well-formed state and misjudging a *real model's* output — are therefore
-**untested by this document**. They'll only get real exercise once B0–X2
-actually run. Don't read the absence of F/G/H entries below as evidence
-the gate is immune to those failure modes.
+front** (historical, see update above): every bug classified below came
+from *extraction*, the *gate's* decision rules, or the *test harness* —
+none from a *model's* actual output, because no real model has been run
+against this benchmark yet (the B0–X2 comparator arms are separate,
+larger-scope work requiring explicit authorization for real API cost).
+Categories **F** (model adherence failure), **G** (gate false positive)
+and **H** (gate false negative) in their *canonical* sense — the gate
+correctly receiving a well-formed state and misjudging a *real model's*
+output — are therefore **untested by this document**. They'll only get
+real exercise once B0–X2 actually run. Don't read the absence of F/G/H
+entries below as evidence the gate is immune to those failure modes.
 
 ## Retrospective classification (real bugs, not synthetic)
 
@@ -151,23 +157,71 @@ independently-verified computation (within-limit fixtures now correctly
 return `CONSISTENT`, boundary case tested, `VP`'s unlimited tier tested).
 Commit `e4bc6ac`.
 
-## Category tally (of the 14 real bugs above)
+### 15. Gate flags honest hedging under INCOMPLETE as a violation — **G** (gate false positive) — FIXED
+`evaluate()`'s `resolution == INCOMPLETE` branch returned
+`UNSUPPORTED_STATE_ASSERTION` for *any* `ASSERTION`/`SUMMARY` output,
+without checking `asserted_value`. A model that correctly declines to
+assert anything specific (`asserted_value=None`) when the evidence is
+genuinely incomplete was punished identically to a model that invents a
+finding despite incomplete evidence — the exact opposite of what the
+architecture claims to reward. Invisible to every prior test because
+every hand-authored INCOMPLETE fixture paired it with a concrete
+(wrong) `asserted_value` to test the correct rejection; none tested the
+honest-hedge shape a real model actually produces. Found in 2/27 real
+cases (`LNES59-SMOKE-008`, `LNES59-B2-008`) during the first real X2 run.
+Fixed by adding the same `asserted_value is None -> CONSISTENT` carve-out
+already used for weak claim types; regression fixture added to
+`test_state_consistency_gate_v2.py`. 28/28, 19/19, 27/27, 50/50 all still
+pass. Support: `state_consistency_gate_v2.py`,
+`LNES59_Procurement_Bench/X2_REAL_RUN_2026-08-08.md`.
+
+### 16. Gate compares natural-language `asserted_value` against an internal coded token — **G** (gate false positive) — documented, NOT fixed
+`evaluate()` uses exact equality (`output.asserted_value != committed.value`)
+in both the `NO_MATCH` branch and the final value-comparison branch.
+Every prior `ModelOutput` fixture was hand-authored by the same person
+who wrote `extract_case_state`'s canonical value strings (e.g.
+`'NET_60'`, `'7_DAY_1PCT'`, `'PAID_9410_ACH'`, `'NOT_IN_REGISTRY'`), so
+fixtures always typed matching strings by construction — this never
+exercised what a real model actually produces: correct answers in
+prose ("Net 60", "7 business days delivery SLA, 1% of shipment value
+per day late penalty", "PAID, $9,410.00", "Vendor E Consulting is not
+present in the vendor master registry"). Found in 6/27 real cases
+(`LNES59-B2-003`, `B2-007`, `B3-001`, `SMOKE-002`, `SMOKE-007`,
+`SMOKE-010`) — the single largest driver of "failures" in the first real
+run, all of them the model being substantively correct.
+**Deliberately not patched with fuzzy/semantic matching**: this gate's
+stated design tenet is pure, deterministic comparison over typed fields,
+never free-text judgment (see file docstring); loosening the equality
+check risks masking genuine contradictions and would itself need the
+same adversarial scrutiny as any other gate-logic change. Candidate
+fixes for future work, not decided here: (a) give extraction a
+human-readable value alongside the canonical token and compare against
+both; (b) constrain the model's prompt to a controlled vocabulary per
+predicate so `asserted_value` is drawn from the same token space as
+`committed.value`. Support:
+`LNES59_Procurement_Bench/X2_REAL_RUN_2026-08-08.md`.
+
+## Category tally (of the 16 real bugs above)
 
 | Category | Count | Bugs |
 |---|---|---|
 | B (extraction failure) | 6 | #2, #3, #8, #11, #12 |
+| G (gate false positive) | 2 | #15, #16 |
 | E (temporal error) | 3 | #4, #5, #13 |
 | J (ambiguous ground truth) | 3 | #1, #9, #10 |
 | I (schema failure) | 1 | #7 |
 | K (evaluation defect) | 1 | #6 |
 | D (authority error) | 1 | #14 |
-| A, C, F, G, H | 0 | — |
+| A, C, F, H | 0 | — |
 
-**Reading this honestly**: extraction-layer bugs dominate (6 of 14),
-which tracks with where the actual new engineering happened this sprint
-— the gate itself (built and isolated-tested first, against hand-built
-`CommittedState` objects) has needed comparatively few direct fixes once
-extraction started feeding it correctly-shaped data. The three "ambiguous
-ground truth" entries are a real, disclosed cost of building the dataset
-and the architecture in parallel rather than sequentially — cheaper to
-catch now, while there are 27 cases to check by hand, than at 150.
+**Reading this honestly**: extraction-layer bugs still dominate the
+pre-real-model set (6 of 14), but the two **G** entries found in the
+first real X2 run make up the largest single cause of non-`CONSISTENT`
+outcomes in that run specifically (6 of 27 cases were bug #16 alone) —
+concrete evidence for the caveat this document carried for the whole
+sprint: bugs invisible to hand-authored fixtures were always going to
+surface once a real model was in the loop, and they did, on the very
+first real run. The three "ambiguous ground truth" entries are a real,
+disclosed cost of building the dataset and the architecture in parallel
+rather than sequentially — cheaper to catch now, while there are 27
+cases to check by hand, than at 150.
