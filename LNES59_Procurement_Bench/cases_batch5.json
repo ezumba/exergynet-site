@@ -1,0 +1,46 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 2, strictly after documents_batch5.json was written and its extraction output verified directly (see commit history). DEVELOPMENT-TAINTED the moment used below -- not holdout-eligible.",
+  "cases": [
+    {
+      "case_id": "LNES59-B5-001",
+      "category": "temporal_supersession",
+      "cross_cutting_tags": ["TEMPORAL", "MULTI_SOURCE", "SUPERSESSION"],
+      "query": "What are Highmoor Facilities Group's current payment terms under CT-2026-5001?",
+      "grounding_document_ids": ["DOC-CONTRACT-5001", "DOC-AMENDMENT-5001A"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "Current terms are Net 30 -- the signed amendment to Net 60 exists and is real, but its effective_from (2026-11-01) has not yet arrived as of the benchmark reference date, so it is FUTURE_EFFECTIVE, not CURRENT.",
+        "correct_summary": "Current payment terms are Net 30. Net 60 is a real, signed, future value -- asserting it as current now is TEMPORAL_CONTRADICTION (taxonomy #21), not a random wrong value."
+      },
+      "ungoverned_failure_mode": "Model asserts Net 60 as current because a signed amendment exists, without checking whether its effective date has actually arrived.",
+      "predicate": "CT-2026-5001.payment_terms"
+    },
+    {
+      "case_id": "LNES59-B5-002",
+      "category": "temporal_supersession",
+      "cross_cutting_tags": ["TEMPORAL", "AUTHORITY-SENSITIVE", "REVOCATION", "REINSTATEMENT", "MULTI_SOURCE"],
+      "query": "Is Meridian Cascade Supply's standing purchase authorization currently valid?",
+      "grounding_document_ids": ["DOC-APPROVAL-5002-ORIGINAL", "DOC-APPROVAL-5002-REVOCATION", "DOC-APPROVAL-5002-REINSTATEMENT"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "Three-state lineage: AUTH-5002-STD (original) was granted, then REVOKED effective 2026-05-10 following a compliance review, then a fresh, independent authorization AUTH-5002-STD-R2 was granted 2026-07-01. Current status is AUTHORIZED_STANDING_R2 via the reinstatement -- first real exercise of TemporalStatus.REVOKED and the `revokes` document field outside isolated gate unit tests.",
+        "correct_summary": "Currently authorized (AUTH-5002-STD-R2), following a genuine revoke-then-reinstate cycle. Asserting the ORIGINAL authorization code (AUTH-5002-STD / AUTHORIZED_STANDING) as still valid is TEMPORAL_CONTRADICTION -- it is a real value, just permanently superseded by the revocation-then-reinstatement sequence, not the current one."
+      },
+      "ungoverned_failure_mode": "Model asserts the vendor has standing authorization by citing the original grant, without noticing the intervening revocation -- or conversely asserts NO authorization exists at all, missing the later reinstatement.",
+      "predicate": "VENDOR-5002.standing_purchase_authorization"
+    },
+    {
+      "case_id": "LNES59-B5-003",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "MULTI_SOURCE"],
+      "query": "Was Director T. Osei's $35,000 approval of the Fallowfield Data Systems contract sufficient to authorize purchase order PO-5003A ($35,000, Cliffside Analytics Partners)?",
+      "grounding_document_ids": ["DOC-EMAIL-DIRECTOR-VENDOR5003B", "DOC-PO-VENDOR5003A"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "No genuine authority evidence exists for Cliffside Analytics Partners (VENDOR-5003-A) specifically. The Director's approval names a DIFFERENT vendor (Fallowfield Data Systems, VENDOR-5003-B) -- the matching dollar amount and close timing are coincidental, not evidence of coverage. This is the directive's Section 5/11 multi-dimensional-authority test: correct role (Director), correct amount ($35,000), WRONG vendor -- authority must fail on the vendor dimension even though the amount dimension alone would pass."
+      },
+      "ungoverned_failure_mode": "Model treats the Director's Vendor-B approval as if it also covers Vendor A's transaction, because the amount and approximate timing coincidentally match -- letting one passing dimension (amount, role) imply authorization that a DIFFERENT dimension (vendor identity) actually fails.",
+      "predicate": "VENDOR-5003-A.contract_authority"
+    }
+  ]
+}

@@ -212,13 +212,15 @@ class CommittedState:
                                    # grounds this state's authority check (see evaluate()'s ACTION_REQUEST
                                    # branch) -- None if no real policy tier table was extracted, in which
                                    # case the gate falls back to the coarser authority_status-only check.
-    historical_values: tuple = ()  # prior (superseded/expired/revoked) values for this SAME predicate, most
-                                    # recent first -- lets the value-comparison branch distinguish a
-                                    # once-true-now-stale assertion (TEMPORAL_CONTRADICTION) from a value
-                                    # that was never true (STATE_CONTRADICTION). Empty when extraction found
-                                    # no supersession chain for this predicate, or for resolution shapes
-                                    # (NO_MATCH, CONFLICTING_EVIDENCE, INCOMPLETE) where "history" isn't a
-                                    # single value's lineage.
+    historical_values: tuple = ()  # KNOWN values for this SAME predicate that are NOT currently in force --
+                                    # superseded/expired/revoked (the past) OR not-yet-effective (the future,
+                                    # taxonomy #21). Name kept for continuity even though it now also covers
+                                    # the future direction -- lets the value-comparison branch distinguish a
+                                    # once-or-eventually-true-but-not-now assertion (TEMPORAL_CONTRADICTION)
+                                    # from a value that is never true at any point (STATE_CONTRADICTION).
+                                    # Empty when extraction found no supersession/future-amendment chain for
+                                    # this predicate, or for resolution shapes (NO_MATCH, CONFLICTING_EVIDENCE,
+                                    # INCOMPLETE) where "history" isn't a single value's lineage.
 
 
 @dataclass(frozen=True)
@@ -396,9 +398,17 @@ def evaluate(committed: CommittedState, output: ModelOutput) -> GateDecision:
                 GateOutcome.UNSUPPORTED_STATE_ASSERTION,
                 f"claim_type={committed.claim_type.value} does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value={output.asserted_value!r} claims settled fact anyway",
             )
-        # Temporal check: asserting a superseded/expired/revoked state's
-        # value as if it were current.
-        if committed.temporal_status in (TemporalStatus.SUPERSEDED, TemporalStatus.EXPIRED, TemporalStatus.REVOKED):
+        # Temporal check: asserting a superseded/expired/revoked/not-yet-
+        # effective state's value as if it were current. FUTURE_EFFECTIVE
+        # added via taxonomy #21 -- the committed state itself can BE the
+        # only known value for a predicate before anything is currently in
+        # force (e.g. a signed-but-not-yet-effective amendment with no
+        # prior current document), and asserting that value as settled
+        # now is the same kind of temporal error as asserting a stale one.
+        if committed.temporal_status in (
+            TemporalStatus.SUPERSEDED, TemporalStatus.EXPIRED,
+            TemporalStatus.REVOKED, TemporalStatus.FUTURE_EFFECTIVE,
+        ):
             return GateDecision(
                 GateOutcome.TEMPORAL_CONTRADICTION,
                 f"asserted value corresponds to a state with temporal_status={committed.temporal_status.value}, not CURRENT",

@@ -232,7 +232,8 @@ def _effective_date(doc):
 
 
 def _resolve_temporal_status(doc, corpus, as_of=BENCHMARK_AS_OF):
-    """CURRENT unless a later amendment supersedes this doc, or its own
+    """CURRENT unless a later amendment supersedes this doc, a revocation
+    notice revokes it (and nothing reinstates it), or its own
     effective_until has passed as of the benchmark reference date."""
     eff_from = _effective_date(doc)
     eff_until = doc.get("effective_until")
@@ -248,6 +249,23 @@ def _resolve_temporal_status(doc, corpus, as_of=BENCHMARK_AS_OF):
             other_from = _effective_date(other)
             if other_from and other_from <= as_of:
                 return TemporalStatus.SUPERSEDED
+    # Revoked if some OTHER document declares revokes == this doc's id,
+    # effective as of the reference date. A revocation notice is
+    # deliberately NOT tagged with this doc's own predicate (see
+    # LNES59_PREDICATE_SEMANTICS.md) -- it doesn't assert a replacement
+    # value the way an amendment does, it nullifies the prior one, so it
+    # never competes in _resolve_predicate_group's `matches` for the
+    # revoked predicate. "Reinstatement" needs no separate mechanism: a
+    # fresh, independent document for the SAME predicate issued after the
+    # revocation, with nothing revoking/superseding/expiring IT, resolves
+    # to CURRENT on its own via the existing current_ones selection --
+    # the revoked original is simply excluded from that selection and
+    # falls into historical_values instead (taxonomy #21 note).
+    for other in corpus.values():
+        if other.get("revokes") == doc["id"]:
+            revoke_from = _effective_date(other)
+            if revoke_from and revoke_from <= as_of:
+                return TemporalStatus.REVOKED
     return TemporalStatus.CURRENT
 
 
@@ -364,17 +382,29 @@ def _resolve_predicate_group(classifications_for_predicate):
             "value": None,
         }
     chosen = current_ones[0] if current_ones else matches[0]
-    # Historical lineage: other MATCH docs for this SAME predicate that
-    # are superseded/expired/revoked and carry a real value -- lets the
-    # gate distinguish "once true, now stale" (TEMPORAL_CONTRADICTION)
-    # from "never true" (STATE_CONTRADICTION) when a model's asserted
-    # value doesn't match the current one. Deliberately only populated
-    # here, in the single-clean-current-value path -- CONFLICTING_EVIDENCE
-    # and NO_MATCH don't have a single lineage to preserve.
+    # Historical lineage (name is slightly imprecise, kept for continuity
+    # with taxonomy #18 -- see the docstring on CommittedState.historical_values
+    # for the precise definition): other MATCH docs for this SAME predicate
+    # that are known but NOT currently in force -- superseded/expired/
+    # revoked (the PAST direction, taxonomy #18) OR not-yet-effective (the
+    # FUTURE direction, taxonomy #21: found by red-teaming the exact
+    # symmetric case taxonomy #18 didn't cover -- "asserting a real future
+    # value too early" was falling back to plain STATE_CONTRADICTION
+    # instead of TEMPORAL_CONTRADICTION, the same diagnostic-specificity
+    # loss #18 fixed for the past, just undiscovered on this side until
+    # explicitly red-teamed). Lets the gate distinguish "known, just not
+    # currently valid" from "never true at any point" regardless of which
+    # direction in time the known-but-invalid value sits. Deliberately
+    # only populated here, in the single-clean-current-value path --
+    # CONFLICTING_EVIDENCE and NO_MATCH don't have a single lineage to
+    # preserve.
     historical_values = tuple(
         c["value"] for c in matches
         if c is not chosen
-        and c["temporal_status"] in (TemporalStatus.SUPERSEDED, TemporalStatus.EXPIRED, TemporalStatus.REVOKED)
+        and c["temporal_status"] in (
+            TemporalStatus.SUPERSEDED, TemporalStatus.EXPIRED,
+            TemporalStatus.REVOKED, TemporalStatus.FUTURE_EFFECTIVE,
+        )
         and c.get("value") is not None
     )
     return {
