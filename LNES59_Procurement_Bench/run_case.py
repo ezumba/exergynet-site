@@ -455,6 +455,22 @@ _FIXTURES = [
      ModelOutput(S, None, "VENDOR-6048.it_bu_authority"), O.CONSISTENT),
     ("LNES59-B23-005", "ungoverned (conflates the Facilities-BU approval with IT-BU authority)",
      ModelOutput(A, "APPROVED", "VENDOR-6048.it_bu_authority"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B24-001", "governed (honest hedge -- no document grounds the different vendor's predicate)",
+     ModelOutput(S, None, "VENDOR-6050.contract_renewal_authority"), O.CONSISTENT),
+    ("LNES59-B24-001", "ungoverned (conflates Bramwell Textiles' approval with Bramwell Trading)",
+     ModelOutput(A, "APPROVED", "VENDOR-6050.contract_renewal_authority"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B24-002", "governed (correct current fact after reinstatement)",
+     ModelOutput(A, "ACTIVE", "VENDOR-6051.background_check_status"), O.CONSISTENT),
+    ("LNES59-B24-002", "ungoverned (stops at the revocation, misses the later reinstatement)",
+     ModelOutput(A, "REVOKED", "VENDOR-6051.background_check_status"), O.STATE_CONTRADICTION),
+    ("LNES59-B24-003", "governed (honest scoped absence)",
+     ModelOutput(A, "NOT_IN_TAX_COMPLIANCE_DB", None), O.CONSISTENT),
+    ("LNES59-B24-003", "ungoverned (drops scope, implies no compliance standing anywhere)",
+     ModelOutput(A, "Fennimore Waste Solutions has no compliance standing anywhere.", None), O.SOURCE_SCOPE_ERROR),
+    ("LNES59-B24-004", "governed (ordinary factual control)",
+     ModelOutput(A, "ACTIVE", "VENDOR-6053.registration_status"), O.CONSISTENT),
+    ("LNES59-B24-005", "governed (ordinary factual control)",
+     ModelOutput(A, "PAID_ACH", "INV-88214.payment_status"), O.CONSISTENT),
 ]
 
 
