@@ -1,0 +1,37 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 9 (packet G: Thistledown Facilities Group VENDOR-6014, Rowanmere Supply Co VENDOR-6015, Kestrel Bay Logistics VENDOR-6016, Alderfen Consulting VENDOR-6017), after V6 freeze. Expired-certificate-then-replacement pattern (directive Section 3), plus two deliberately ORDINARY factual controls (simple, unambiguous, no adversarial twist -- needed for distribution balance per directive Section 15's 'not 50 pathological traps' principle, applied here to development too), plus a HYPOTHESIS-vs-fact instance.",
+  "documents": [
+    {
+      "id": "DOC-CERT-EXPIRED-6014",
+      "type": "audit_record", "source_class": "audit_record",
+      "effective_from": "2025-08-01", "effective_until": "2026-07-31",
+      "content": "COMPLIANCE REPORT: Thistledown Facilities Group (VENDOR-6014) general liability insurance certificate. Certificate INS-6014-A, valid through 2026-07-31.",
+      "predicate": "VENDOR-6014.insurance_certificate_status", "value": "CERT_INS_6014_A"
+    },
+    {
+      "id": "DOC-CERT-REPLACEMENT-6014",
+      "type": "audit_record", "source_class": "audit_record",
+      "effective_from": "2026-08-01", "effective_until": null,
+      "content": "COMPLIANCE REPORT: Thistledown Facilities Group (VENDOR-6014) general liability insurance certificate RENEWED. New certificate INS-6014-B, effective 2026-08-01, replacing the expired INS-6014-A. Valid through next annual renewal.",
+      "predicate": "VENDOR-6014.insurance_certificate_status", "value": "CERT_INS_6014_B"
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-6015",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Rowanmere Supply Co (VENDOR-6015). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2022-06-01.",
+      "predicate": "VENDOR-6015.registration_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-PAYMENT-LEDGER-6016",
+      "type": "payment_ledger", "source_class": "PAYMENT_LEDGER",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-33087, Vendor Kestrel Bay Logistics (VENDOR-6016). Status: PAID. Amount paid: $6,240.00. Payment date: 2026-06-18. Payment method: ACH.",
+      "predicate": "INV-33087.payment_status", "value": "PAID_6240_ACH"
+    },
+    {
+      "id": "DOC-CHAT-HYPOTHESIS-6017",
+      "type": "chat_message", "source_class": "CHAT_MESSAGE",
+      "content": "Noticed Alderfen Consulting's (VENDOR-6017) last two deliverables came in late and the invoices had minor discrepancies. Could just be a busy quarter for them, or could be an early sign of capacity strain -- not enough to say either way yet, just flagging the pattern.",
+      "predicate": "VENDOR-6017.vendor_risk_signal", "value": "AMBIGUOUS_PATTERN_NOTED"
+    }
+  ]
+}

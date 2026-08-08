@@ -313,6 +313,20 @@ _FIXTURES = [
      ModelOutput(A, "SHORTLISTED_NOT_AWARDED", "VENDOR-6013.rfp_award_status"), O.CONSISTENT),
     ("LNES59-B11-003", "ungoverned (conflates shortlisted with awarded)",
      ModelOutput(A, "AWARDED", "VENDOR-6013.rfp_award_status"), O.STATE_CONTRADICTION),
+
+    # Phase 5 tranche 9 (packet G, documents_batch12.json / cases_batch12.json).
+    ("LNES59-B12-001", "governed (asserts current cert INS-6014-B)",
+     ModelOutput(A, "CERT_INS_6014_B", "VENDOR-6014.insurance_certificate_status"), O.CONSISTENT),
+    ("LNES59-B12-001", "DISCLOSED LIMITATION, BENCHMARK_ADAPTER_LIMIT_REACHED (taxonomy #22, 3rd confirmed instance): cites the expired cert INS-6014-A as still current -- REQUIRED outcome is TEMPORAL_CONTRADICTION, but values_match() incorrectly matches it against the CURRENT value CERT_INS_6014_B, because 'CERT_INS_6014_A' and 'CERT_INS_6014_B' collapse to the identical required word-set {'cert','ins'} once the numeric ID ('6014') and letter suffix ('A'/'B') are both dropped by the length filter -- same root cause as AUTHORIZED_STANDING vs AUTHORIZED_STANDING_R2, confirming this is systemic, not a one-off. NOT patched further.",
+     ModelOutput(A, "CERT_INS_6014_A", "VENDOR-6014.insurance_certificate_status"), O.CONSISTENT),
+    ("LNES59-B12-002", "governed (ordinary factual control)",
+     ModelOutput(A, "ACTIVE", "VENDOR-6015.registration_status"), O.CONSISTENT),
+    ("LNES59-B12-003", "governed (ordinary factual control)",
+     ModelOutput(A, "PAID_6240_ACH", "INV-33087.payment_status"), O.CONSISTENT),
+    ("LNES59-B12-004", "governed (HYPOTHESIS permitted)",
+     ModelOutput(H, "Possible early sign of vendor capacity strain, not yet confirmed.", None), O.PERMITTED_HYPOTHESIS),
+    ("LNES59-B12-004", "ungoverned (asserts capacity strain as settled fact)",
+     ModelOutput(A, "Alderfen Consulting is experiencing capacity strain.", None), O.UNSUPPORTED_STATE_ASSERTION),
 ]
 
 

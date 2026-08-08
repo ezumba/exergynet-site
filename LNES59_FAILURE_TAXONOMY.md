@@ -423,6 +423,19 @@ cases `values_match()` was built to handle (verified: real cases like
 master registry (not a registered vendor)" contain many words beyond
 committed's required set, by design).
 
+**Update, Phase 5 tranche 9 -- a third confirmed instance.**
+`LNES59-B12-001` (an expired insurance certificate INS-6014-A replaced
+by INS-6014-B) hit the identical collision: `"CERT_INS_6014_A"` and
+`"CERT_INS_6014_B"` collapse to the same required word-set
+(`"cert"`, `"ins"`) once the numeric ID (`"6014"`, all-digit, dropped)
+and the single-letter suffix (`"A"`/`"B"`, too short, dropped) are both
+filtered out. Three independent, differently-shaped real cases now hit
+this exact pattern (negation markers, version suffixes, certificate
+IDs) -- confirming it as a systemic property of the compound-word
+fallback, not a one-off edge case, and reinforcing rather than
+revisiting the original disposition: not patched, same reasoning,
+recorded rather than special-cased a third time.
+
 **Disposition**: `run_case.py`'s `LNES59-B5-002` "ungoverned" fixture
 now documents the ACTUAL, disclosed behavior (`CONSISTENT`, a false
 negative) rather than a permanently-red target outcome -- same
