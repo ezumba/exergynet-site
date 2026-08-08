@@ -120,7 +120,7 @@ NEVER_AUTHORITATIVE_SOURCE_CLASSES = frozenset({"EMAIL", "CHAT_MESSAGE", "MEETIN
 def load_corpus():
     """Merge all committed document batches into one id-keyed dict."""
     corpus = {}
-    for fname in ("documents.json", "documents_batch2.json"):
+    for fname in ("documents.json", "documents_batch2.json", "documents_batch3.json"):
         path = os.path.join(SCRIPT_DIR, fname)
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
