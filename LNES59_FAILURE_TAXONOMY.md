@@ -363,14 +363,87 @@ preserved unmodified. Support: `deterministic_extraction.py`'s
 `_UNAVAILABLE_MARKERS`, `test_unavailability_detection.py`,
 `LNES59_PRE_HOLDOUT_CODE_MANIFEST_V4.json`.
 
-## Category tally (of the 20 real bugs above)
+### 21. Future-effective values fell back to plain STATE_CONTRADICTION, the same diagnostic-specificity loss taxonomy #18 fixed for the past — **E** (temporal error) — FIXED, V4 -> V5
+Found by directly testing the symmetric case taxonomy #18 (historical/
+superseded values) never covered: a real, signed, not-yet-effective
+future value (e.g. a signed contract amendment whose `effective_from`
+hasn't arrived yet) asserted as if current. `historical_values`'
+collection condition only included `SUPERSEDED`/`EXPIRED`/`REVOKED`,
+never `FUTURE_EFFECTIVE`, so a future value fell through to generic
+`STATE_CONTRADICTION` -- correctly caught, but with the same lost
+specificity #18 fixed for the past direction. Also affected the gate's
+separate pre-check (`if committed.temporal_status in (...)`, used when
+the CHOSEN committed state itself is non-current): a predicate whose
+ONLY known document is future-effective (nothing currently in force
+yet) would have its own `FUTURE_EFFECTIVE` status silently treated as
+CURRENT-eligible. Fixed by widening both checks to include
+`FUTURE_EFFECTIVE`. Verified against a real corpus-grounded case
+(`LNES59-B5-001`, a contract amendment effective 2026-11-01, benchmark
+reference date 2026-08-08): asserting the future `NET_60` value now
+correctly returns `TEMPORAL_CONTRADICTION` instead of
+`STATE_CONTRADICTION`. Full regression clean (247/247 before this
+tranche's new fixtures). Field name (`historical_values`) intentionally
+NOT renamed despite now covering the future direction too -- see its
+docstring for the precise definition; renaming was judged higher-risk
+than value for the remaining scope of this sprint. Support:
+`deterministic_extraction.py`'s `_resolve_predicate_group()`,
+`state_consistency_gate_v2.py`'s temporal pre-check,
+`LNES59_PRE_HOLDOUT_CODE_MANIFEST_V5.json`.
+
+### 22. `values_match()` compound-word fallback: a value is a proper subset of another value's word-set — **G** (gate false positive, same category as #16 -- both live in `values_match()`) — BENCHMARK_ADAPTER_LIMIT_REACHED, disclosed, NOT fixed
+Found via Phase 5's first real exercise of `TemporalStatus.REVOKED`
+(`LNES59-B5-002`: an authorization `AUTHORIZED_STANDING` revoked, then
+reinstated as `AUTHORIZED_STANDING_R2`). Asserting the OLD, now-revoked
+value (`"AUTHORIZED_STANDING"`) against the CURRENT committed value
+(`"AUTHORIZED_STANDING_R2"`) incorrectly returned `CONSISTENT`: the
+compound-word fallback requires only that committed's words appear in
+the asserted text, and `"R2"` (2 characters) is silently dropped by the
+same `len >= 3` filter that dropped `"NO"` in taxonomy #17 -- so
+`"AUTHORIZED_STANDING_R2"`'s required word-set collapses to exactly the
+same two words (`"authorized"`, `"standing"`) as the OLD value, and the
+two become indistinguishable to the matcher.
+
+**This is the second confirmed instance of the identical root cause**
+(a short-but-semantically-load-bearing token silently dropped from the
+word-length filter, changing what the check actually requires) --
+taxonomy #17 for negation markers, this one for version/generation
+suffixes. Per the Trustee directive's explicit Section 4 instruction
+("if values_match() is becoming a semantic-parser substitute, STOP
+extending that function... record BENCHMARK_ADAPTER_LIMIT_REACHED"):
+**not patched.** A targeted fix for this exact pattern (e.g. never
+dropping alphanumeric suffixes matching `/^[a-z]?\d+$/`) would fix this
+one case while remaining exactly the kind of incremental,
+un-generalizable heuristic accumulation the stop-rule exists to prevent
+-- the deeper issue (distinguishing "extra descriptive prose" from "an
+extra modifier that names a genuinely different value") cannot be
+solved by any word-length threshold, because full symmetric word-set
+equality (the naive alternative) would break the exact prose-matching
+cases `values_match()` was built to handle (verified: real cases like
+`LNES59-SMOKE-007`'s "Vendor E Consulting is not present in the vendor
+master registry (not a registered vendor)" contain many words beyond
+committed's required set, by design).
+
+**Disposition**: `run_case.py`'s `LNES59-B5-002` "ungoverned" fixture
+now documents the ACTUAL, disclosed behavior (`CONSISTENT`, a false
+negative) rather than a permanently-red target outcome -- same
+discipline as taxonomy #17's disclosed-limitation fixture in
+`test_scope_and_history.py`. Real fix requires the `CandidateClaim`
+boundary (`LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md`): a model populating
+`canonical_value` directly, compared by exact/typed equality, rather
+than extraction post-hoc-parsing free text -- recorded there as the
+second concrete piece of motivating evidence (after taxonomy #16).
+Support: `state_consistency_gate_v2.py`'s `values_match()`,
+`run_case.py`'s `LNES59-B5-002` fixture,
+`LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md`.
+
+## Category tally (of the 22 real bugs above)
 
 | Category | Count | Bugs |
 |---|---|---|
-| B (extraction failure) | 8 | #2, #3, #8, #11, #12, #19, #20 |
+| B (extraction failure) | 7 | #2, #3, #8, #11, #12, #19, #20 |
 | A + G (evidence missing + gate false positive) | 1 | #17 |
-| G (gate false positive) | 2 | #15, #16 |
-| E (temporal error) | 4 | #4, #5, #13, #18 |
+| G (gate false positive) | 3 | #15, #16, #22 |
+| E (temporal error) | 5 | #4, #5, #13, #18, #21 |
 | J (ambiguous ground truth) | 3 | #1, #9, #10 |
 | I (schema failure) | 1 | #7 |
 | K (evaluation defect) | 1 | #6 |

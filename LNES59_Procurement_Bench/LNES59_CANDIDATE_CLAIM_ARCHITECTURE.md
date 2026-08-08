@@ -95,7 +95,36 @@ primitive** (a genuinely domain-independent capability):
 | `<n>_DAY_<n>PCT` extractor | Benchmark adapter | Specific to this corpus's SLA token convention |
 | `PAID\|PENDING_<n>[_METHOD]` extractor | Benchmark adapter | Specific to this corpus's payment-ledger token convention |
 | Bare dollar-amount extractor (`_extract_amounts`) | Closest to a primitive, but still an adapter | Extracting a numeric amount from prose is a genuinely general capability; the specific regex (assumes `$`, comma-grouped USD formatting) is still scoped to this corpus's documents |
-| Compound/status-token word-set fallback | Benchmark adapter, and the least reliable one | Relies on this corpus's specific SNAKE_CASE vocabulary; taxonomy #17's disclosed limitation (sparse 2-word tokens can false-match a vague hedge) lives entirely in this branch |
+| Compound/status-token word-set fallback | Benchmark adapter, and the least reliable one | Relies on this corpus's specific SNAKE_CASE vocabulary; taxonomy #17's disclosed limitation (sparse 2-word tokens can false-match a vague hedge) lives entirely in this branch, and so does taxonomy #22 (a value that is a proper word-subset of another value's word-set false-matches -- e.g. `AUTHORIZED_STANDING` vs `AUTHORIZED_STANDING_R2`) |
+
+## BENCHMARK_ADAPTER_LIMIT_REACHED (taxonomy #22, 2026-08-08)
+
+Taxonomy #22 is the second confirmed instance of the identical root
+cause as taxonomy #17 (a short-but-semantically-load-bearing token
+silently dropped by the compound-word fallback's length filter --
+negation markers for #17, version/generation suffixes for #22). Per
+this document's own governing principle above, this is the trigger
+condition: a benchmark adapter accumulating domain-specific patches for
+individually-discovered edge cases, rather than solving the underlying
+problem once. **Not patched further.** A targeted fix for #22
+specifically (e.g. never dropping alphanumeric suffixes matching
+`/^[a-z]?\d+$/`) was considered and rejected: it would fix this one
+case while remaining exactly the kind of un-generalizable, reactive
+heuristic accumulation this section exists to stop. The deeper issue —
+distinguishing "extra descriptive prose the fallback should ignore"
+from "an extra modifier that names a genuinely different value the
+fallback must not ignore" — cannot be solved by any word-length
+threshold, because the alternative (full symmetric word-set equality)
+would break the exact prose-matching cases the fallback exists to
+handle (verified: real cases like `LNES59-SMOKE-007`'s full sentence
+contain many words beyond committed's required set, by design, and
+must still match). This is precisely the gap only a real `CandidateClaim`
+boundary — a model populating `canonical_value` directly, in the same
+token space as `CommittedState.value`, compared by exact/typed equality
+rather than parsed post-hoc out of free text — closes. Recorded here as
+the second concrete piece of motivating evidence (after taxonomy #16)
+for eventually building that interface, not as a decision to build it
+now.
 
 **Verdict: none of `values_match()`'s current branches are architectural
 primitives.** All five are disclosed, bounded adapters for this specific

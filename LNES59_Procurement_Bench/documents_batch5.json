@@ -1,0 +1,70 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 2, after V4 architecture freeze (commit 2f30bb0) -- documents created before any case queries were written, same corpus-first discipline as prior batches. New synthetic vendors only (VENDOR-5001..5003). Priorities for this tranche: (1) future-effective amendment asserted too early (taxonomy #21, exercises the new non_current-values-in-the-future-direction fix directly), (2) revoked-then-reinstated authority (first real exercise of TemporalStatus.REVOKED and the new `revokes` document field -- previously only hand-built in isolated gate tests), (3) wrong-vendor approval (an authority document that is genuine and correctly-scoped for one vendor being incorrectly treated as covering a different one), (4) multi-dimensional authority conjunction -- correct role, correct amount, wrong vendor, per directive Section 5/11.",
+  "documents": [
+    {
+      "id": "DOC-CONTRACT-5001",
+      "type": "signed_contract",
+      "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-01-15",
+      "effective_until": null,
+      "content": "MASTER SERVICES AGREEMENT CT-2026-5001. Between ExergyNet Corp and Highmoor Facilities Group (VENDOR-5001). Payment terms: Net 30 from invoice date.",
+      "predicate": "CT-2026-5001.payment_terms",
+      "value": "NET_30"
+    },
+    {
+      "id": "DOC-AMENDMENT-5001A",
+      "type": "signed_amendment",
+      "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-11-01",
+      "content": "AMENDMENT AM-2026-5001-A to Master Services Agreement CT-2026-5001. Between ExergyNet Corp and Highmoor Facilities Group (VENDOR-5001). Payment terms amended from Net 30 to Net 60, effective 2026-11-01 -- signed and countersigned now, but not yet in force as of the current benchmark reference date. All other terms of CT-2026-5001 remain unchanged.",
+      "predicate": "CT-2026-5001.payment_terms",
+      "value": "NET_60"
+    },
+    {
+      "id": "DOC-APPROVAL-5002-ORIGINAL",
+      "type": "approval_matrix",
+      "source_class": "APPROVAL_SYSTEM_RECORD",
+      "effective_from": "2026-02-01",
+      "content": "APPROVAL SYSTEM RECORD: standing purchasing authorization granted to Meridian Cascade Supply (VENDOR-5002) for routine equipment orders under the annual master agreement, authorization code AUTH-5002-STD.",
+      "predicate": "VENDOR-5002.standing_purchase_authorization",
+      "value": "AUTHORIZED_STANDING"
+    },
+    {
+      "id": "DOC-APPROVAL-5002-REVOCATION",
+      "type": "approval_matrix",
+      "source_class": "APPROVAL_SYSTEM_RECORD",
+      "effective_from": "2026-05-10",
+      "revokes": "DOC-APPROVAL-5002-ORIGINAL",
+      "content": "APPROVAL SYSTEM RECORD: standing purchasing authorization AUTH-5002-STD for Meridian Cascade Supply (VENDOR-5002) REVOKED effective 2026-05-10, following a vendor compliance review. No purchases should rely on AUTH-5002-STD after this date.",
+      "predicate": "VENDOR-5002.standing_authorization_revocation_notice"
+    },
+    {
+      "id": "DOC-APPROVAL-5002-REINSTATEMENT",
+      "type": "approval_matrix",
+      "source_class": "APPROVAL_SYSTEM_RECORD",
+      "effective_from": "2026-07-01",
+      "content": "APPROVAL SYSTEM RECORD: new standing purchasing authorization granted to Meridian Cascade Supply (VENDOR-5002) for routine equipment orders, authorization code AUTH-5002-STD-R2, following successful completion of the compliance review. This is a fresh authorization, independent of the revoked AUTH-5002-STD.",
+      "predicate": "VENDOR-5002.standing_purchase_authorization",
+      "value": "AUTHORIZED_STANDING_R2"
+    },
+    {
+      "id": "DOC-EMAIL-DIRECTOR-VENDOR5003B",
+      "type": "email",
+      "source_class": "EMAIL",
+      "content": "Subject: Vendor B contract approval. Approving the $35,000 annual services contract with Fallowfield Data Systems (VENDOR-5003-B) directly -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "value": "35000",
+      "predicate": "VENDOR-5003-B.contract_authority"
+    },
+    {
+      "id": "DOC-PO-VENDOR5003A",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-5003-A",
+      "po_id": "PO-5003A",
+      "issued": "2026-06-15",
+      "content": "PURCHASE ORDER PO-5003A. Vendor: Cliffside Analytics Partners (VENDOR-5003-A). Amount authorized: $35,000.00. Description: annual services contract -- unrelated entity to Fallowfield Data Systems (VENDOR-5003-B) despite the similar transaction size and timing.",
+      "predicate": "PO-5003A.authorized_amount",
+      "value": "35000"
+    }
+  ]
+}
