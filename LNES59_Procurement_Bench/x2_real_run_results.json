@@ -1,0 +1,52 @@
+[
+  {
+    "case_id": "LNES59-SMOKE-005",
+    "category": "recommendation_vs_fact",
+    "query": "Is Vendor F Industrial insolvent?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Vendor F Industrial solvency\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "SOURCE_ASSERTION",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-B2-004",
+    "category": "conflicting_source",
+    "query": "What is the current authorized amount for PO-3305, and does invoice INV-30991 match it?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"PO-3305 authorized amount vs INV-30991 amount\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFIRMED_FACT",
+    "gate_outcome": "STATE_CONTRADICTION",
+    "gate_reason": "asserted_value=None contradicts committed_state.value='58000'"
+  },
+  {
+    "case_id": "LNES59-B3-004",
+    "category": "policy_authority",
+    "query": "Was VP L. Bergstrom's $200,000 direct approval of the Union Bay Consultants annual contract within their authority?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"whether VP L. Bergstrom's $200,000 Union Bay Consultants approval was within VP authority\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "SOURCE_ASSERTION",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-SMOKE-003",
+    "category": "conflicting_source",
+    "query": "What amount was invoiced against purchase order PO-2044?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"invoiced amount against PO-2044\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "CONFLICTING_EVIDENCE",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "accurately reports a claim_type=CONFLICTING_EVIDENCE state without asserting a specific value as settled fact"
+  },
+  {
+    "case_id": "LNES59-B3-006",
+    "category": "ambiguous_source",
+    "query": "Does Ironwood Data Systems' contract include a 30-day termination-for-convenience clause?",
+    "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Ironwood Data Systems contract termination-for-convenience clause\", \"requested_authority_level\": null, \"requested_amount\": null}",
+    "extracted_resolution": "MATCH",
+    "extracted_claim_type": "SOURCE_ASSERTION",
+    "gate_outcome": "CONSISTENT",
+    "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
+  }
+]
