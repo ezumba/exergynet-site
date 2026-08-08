@@ -115,13 +115,19 @@ about (e.g., B3-006: a hedged rumor must not become a confirmed contract
 term; B2-006: a documentation gap must not become a non-compliance
 finding). This is a real, verified claim, not aspiration.
 
-**Empirically: not yet answerable.** "Governs... without forcing" was
-tested against hand-authored stand-ins for model behavior, not an actual
-model. Whether a *real* language model, when actually run through this
-architecture, produces outputs the gate correctly governs — as opposed to
-outputs engineered specifically to exercise each rule — is the actual
-open question, and it's exactly what the B0–B3/X0–X2 comparator arms
-exist to answer.
+**Empirically: still mostly open, with one real data point.** Every
+number in §2 above was tested against hand-authored stand-ins for model
+behavior, not an actual model. A 5-case real-model run (5/27 dev-set
+cases, `X2_REAL_RUN_2026-08-08.md`) has since produced the first genuine
+answer at small scale: a real Claude model, blind to the expected
+answers, was correctly governed by the gate in all 5 cases, including one
+where the gate caught the model failing to report a confirmed fact.
+That's real signal, not aspiration — but 5 cases against one arm, with no
+comparator baseline, doesn't generalize. Whether a *real* language model,
+run at scale through this architecture, produces outputs the gate
+correctly governs across the full dataset — and how that compares to
+B0–B3 — is still the open question the remaining comparator-arm work
+exists to answer.
 
 > Does the state-consistency architecture add measurable value beyond
 > modern retrieval or structured memory alone?
@@ -162,12 +168,25 @@ re-runnable test — 27/27, 19/19, 27/27, 50/50, all four numbers real, not
 targets. 14 real bugs found and fixed through genuine engineering, not
 polished away.
 
-**WHAT WAS NOT DONE, AND WHY:** No real model has been called. This
-wasn't an oversight — every point where that boundary came up in this
-sprint, it was named explicitly and held, the same way production
+**WHAT WAS NOT DONE, AND WHY:** At the time this report was first written,
+no real model had been called — every point where that boundary came up
+in this sprint was named explicitly and held, the same way production
 deployment was held earlier in this session until you explicitly said
-"go." This report is the equivalent checkpoint for LNES-59: the
-architecture is ready for that phase; the phase itself hasn't started.
+"go." That has since changed in one narrow, honestly-scoped way: a 5-case
+X2 smoke run against real, isolated Claude subagents (via the Agent tool,
+not the Anthropic API — see `X2_REAL_RUN_2026-08-08.md`) produced the
+sprint's first genuinely empirical result: 4/5 CONSISTENT, 1/5 a real
+STATE_CONTRADICTION catch (the gate correctly flagged a case where the
+model over-hedged past a confirmed fact). This is 5 of 27 dev-set cases,
+one arm of seven, no comparator baseline — it does not answer the
+sprint's empirical question, it is the first real data point toward
+answering it.
 
-**WHAT WOULD CHANGE THE CONCLUSION:** Running B0–B3/X0–X2 against a real
-model. That's the next decision point, not a default next step.
+**WHAT WOULD CHANGE THE CONCLUSION:** Running the rest of X2 (22 more
+dev-set cases), the other xLMP arms (X0, X1), and the B0–B3 baselines
+against a real model, at a scale that supports the `metrics.py`
+computations. That's still the next decision point, not a default next
+step — the 5-case run does not by itself authorize scaling up; it
+demonstrates the mechanism works and surfaces a real prompt-design
+consideration (the subagents' apparent bias toward hedging) worth
+accounting for before a larger run.

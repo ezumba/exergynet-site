@@ -26,10 +26,15 @@ queries?
 | Failure taxonomy + retrospective autopsy | `LNES59_FAILURE_TAXONOMY.md` | 14 real bugs classified |
 | Metrics computation | `metrics.py` | Real numbers where calculable, `NOT_APPLICABLE` elsewhere |
 
-**Everything above is R&D infrastructure and pipeline correctness work.
-No real model has been called. No comparator arm has been run.**
+**Everything above is R&D infrastructure and pipeline correctness work.**
 
-| X2 arm implementation | `arm_x2.py`, `run_x2_arm.py` | Prompt construction + response parsing + gate wiring: 27/27 verified against a mock model (no cost). Real invocation script exists and is ready. **Not yet run against a real model.** |
+| X2 arm implementation | `arm_x2.py`, `run_x2_arm.py` | Prompt construction + response parsing + gate wiring: 27/27 verified against a mock model (no cost). Real invocation script (Anthropic API path) exists and is ready, not yet used. |
+| X2 arm, first real run | `X2_REAL_RUN_2026-08-08.md`, `x2_real_run_results.json` | **5 of 27 dev-set cases, run for real** via isolated Claude subagents (Agent tool, not the API path — see the doc for why). 4/5 CONSISTENT, 1/5 correctly caught STATE_CONTRADICTION (a real over-hedging miss). Small-sample, not holdout, not a full comparator arm — see the doc's "What this does not establish" section. |
+
+No B0–B3 baseline or full X0–X2 sweep has been run — the sentence above
+described the state before 2026-08-08's 5-case X2 smoke run; it no longer
+reads "no real model has been called" because one now has, at small
+scale, honestly scoped.
 
 ## Comparator arms — precise definitions for THIS implementation
 
