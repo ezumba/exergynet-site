@@ -388,6 +388,14 @@ _FIXTURES = [
      ModelOutput(S, None, "CT-2026-6030.execution_authorization"), O.CONSISTENT),
     ("LNES59-B18-003", "ungoverned (treats compliance eligibility alone as sufficient for full execution authorization)",
      ModelOutput(A, "FULLY_AUTHORIZED", "CT-2026-6030.execution_authorization"), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 16 (packet N, documents_batch19.json / cases_batch19.json).
+    ("LNES59-B19-001", "governed (honest hedge -- no authority evidence for the software-licensing purchase specifically)",
+     ModelOutput(S, None, "PO-6031SL.execution_authority"), O.CONSISTENT),
+    ("LNES59-B19-001", "ungoverned (treats computer-equipment approval as covering the software-licensing PO)",
+     ModelOutput(A, "AUTHORIZED", "PO-6031SL.execution_authority"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B19-002", "governed (ordinary factual control)",
+     ModelOutput(A, "CURRENT", "VENDOR-6032.tax_compliance_status"), O.CONSISTENT),
 ]
 
 

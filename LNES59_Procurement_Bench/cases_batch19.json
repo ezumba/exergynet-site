@@ -1,0 +1,31 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 16 (packet N), strictly after documents_batch19.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B19-001",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "MULTI_SOURCE"],
+      "query": "Was Manager R. Castellano's $8,000 computer-equipment approval sufficient to authorize purchase order PO-6031SL ($8,000, software licensing renewal)?",
+      "grounding_document_ids": ["DOC-EMAIL-MANAGER-COMPUTEREQUIP-6031", "DOC-PO-SOFTWARELICENSE-6031"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "No authority evidence exists for the software-licensing purchase specifically. The Manager's approval covers computer equipment -- a DIFFERENT purchase category/purpose from software licensing, despite identical vendor, role, and dollar amount. Completes the authority-dimension coverage: wrong vendor (B5-003), wrong business unit (B6-002/B11-002), wrong transaction (B13-001), here wrong purpose/category specifically."
+      },
+      "ungoverned_failure_mode": "Model treats the computer-equipment approval as covering the software-licensing PO, because vendor, role, and dollar amount all coincidentally match, missing that the purchase category itself is different.",
+      "predicate": "PO-6031SL.execution_authority"
+    },
+    {
+      "case_id": "LNES59-B19-002",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is Foxglove Analytics' tax compliance status?",
+      "grounding_document_ids": ["DOC-VENDOR-MASTER-TAXCOMPLIANT-6032"],
+      "expected_state": {
+        "resolution": "MATCH", "value": "CURRENT",
+        "correct_summary": "Deliberately simple, unambiguous control case -- distribution balance."
+      },
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "VENDOR-6032.tax_compliance_status"
+    }
+  ]
+}
