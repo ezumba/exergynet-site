@@ -32,40 +32,59 @@ surfaced while fixing this: purchase-order documents use `issued`, not
 `effective_from`, so the supersession check couldn't fire for PO
 amendments at all -- `_effective_date()` now falls back to `issued`.
 
-Two DISTINCT, NOT-yet-fixed limitations, confirmed precisely (not just
-suspected) by comparing this pipeline's real output against the isolated
-gate tests' hand-built CommittedState objects in run_case.py:
+Three further limitations, confirmed precisely (not just suspected) by
+comparing this pipeline's real output against the isolated gate tests'
+hand-built CommittedState objects in run_case.py -- ALL THREE NOW FIXED,
+most recently #1 and #2 on 2026-08-08 (pre-holdout-freeze; see
+LNES59_FAILURE_TAXONOMY.md and LNES59_BENCHMARK_PLAN.md):
 
-1. **`.value` only ever reflects the CURRENT resolution, never history.**
-   `_resolve_predicate_group` always returns the single current value
-   when one exists; a superseded-but-real value is indistinguishable from
-   an arbitrary wrong one once it reaches the gate. Both still get
-   correctly flagged (as STATE_CONTRADICTION rather than the more
-   specific TEMPORAL_CONTRADICTION), so this doesn't produce a false
-   negative -- it loses diagnostic specificity. Real fix: extraction
-   would need to preserve historical values per predicate, not just the
-   current one.
-2. **`.scope` is never set at all.** The gate's SOURCE_SCOPE_ERROR check
-   requires `committed.scope` to be non-None; since this pipeline never
-   sets it, that check can never fire from real extraction, and a
-   dropped-scope claim is instead caught one branch later as the more
-   generic UNSUPPORTED_STATE_ASSERTION -- again correctly caught, again
-   less specific than it could be.
-3. **`authority_status` is never actually computed from POLICY documents
-   and a requested amount.** It's hardcoded NOT_APPLICABLE in every
-   classify_document branch; the POLICY_LIMITED status used for
-   SMOKE-004/B2-005 exists only in the isolated gate tests' hand-built
-   fixtures. In the real pipeline, an over-limit ACTION_REQUEST is
-   currently caught via UNVERIFIED authority (no document at all speaks
-   to the specific requested-amount predicate once scoped), which happens
-   to still produce AUTHORITY_VIOLATION for the right top-level reason --
-   but the pipeline has never actually read a policy's tier/limit table
-   and compared it against a requested amount. This is the most
-   consequential of the three remaining gaps: the other two lose
-   specificity on already-caught errors, this one means the "was this
-   request within policy" check isn't really implemented yet, just
-   coincidentally producing a correct-looking outcome via a different
-   mechanism.
+1. **[FIXED] `.value` only ever reflected the CURRENT resolution, never
+   history.** `_resolve_predicate_group` always returned the single
+   current value when one existed; a superseded-but-real value was
+   indistinguishable from an arbitrary wrong one once it reached the
+   gate -- both surfaced as STATE_CONTRADICTION rather than the more
+   specific TEMPORAL_CONTRADICTION, still correctly caught, just less
+   diagnostically specific. Fixed by having `_resolve_predicate_group`
+   also collect the OTHER matches for the same predicate that are
+   superseded/expired/revoked into `historical_values`, threaded through
+   `extract_case_state` into `CommittedState.historical_values`; the
+   gate now checks that tuple before falling back to plain
+   STATE_CONTRADICTION. Generalizes because it reuses the SAME
+   predicate-scoped matches list already being resolved -- no new
+   lookup, no new document field, every predicate with a real
+   supersession chain gets this for free.
+2. **[FIXED] `.scope` was never set at all.** The gate's
+   SOURCE_SCOPE_ERROR check requires `committed.scope` to be non-None;
+   since this pipeline never set it, that check could never fire from
+   real extraction, and a dropped-scope claim was instead caught one
+   branch later as the more generic UNSUPPORTED_STATE_ASSERTION.
+   Fixed with `_derive_scope()`: a fixed `source_class` -> namespace
+   table (e.g. `VENDOR_MASTER` -> `VENDOR_MASTER_REGISTRY`), populated
+   from document metadata already present on every document, never
+   conditioned on a case's question -- same discipline as the
+   `predicate`/`value` additions. The gate's OWN scope-comparison logic
+   was redesigned in the same pass (not just fed a populated field
+   unchanged): the original exact-equality check between
+   `committed.scope` and the model's free-text `claimed_scope` would
+   have reproduced taxonomy #16's exact false-positive pattern the
+   moment a real model paraphrased scope in its own words, so it was
+   replaced with an explicit scope-broadening cue-phrase check (see
+   `state_consistency_gate_v2.py`'s `_claims_beyond_scope()`) before
+   `.scope` was ever populated for real, not after.
+3. **[FIXED, commit `e4bc6ac`] `authority_status` was never actually
+   computed from POLICY documents and a requested amount.** It was
+   hardcoded NOT_APPLICABLE in every classify_document branch; the
+   POLICY_LIMITED status used for SMOKE-004/B2-005 existed only in the
+   isolated gate tests' hand-built fixtures, and an over-limit
+   ACTION_REQUEST was passing only via a coincidental UNVERIFIED-authority
+   fallback, not a real requested-amount-vs-limit comparison. Fixed with
+   a real `policy_tiers` mechanism: `classify_document` reads a
+   PROCUREMENT_POLICY document's `tiers` field, `extract_case_state`
+   attaches it to the returned `CommittedState` via
+   `compare_against_predicate`, and the gate's ACTION_REQUEST branch does
+   the actual numeric comparison. Verified against both directions
+   (over-limit and within-limit fixtures), a boundary case, and an
+   unlimited (VP) tier.
 
 Pipeline (per document): normalize -> classify claim_type ->
 resolve supersession chain -> bind provenance -> done. Authority
@@ -115,6 +134,43 @@ _SOURCE_CLASS_BASE_CLAIM_TYPE = {
 }
 
 NEVER_AUTHORITATIVE_SOURCE_CLASSES = frozenset({"EMAIL", "CHAT_MESSAGE", "MEETING_NOTE"})
+
+# Deterministic scope namespace per source_class -- corpus/document
+# metadata, never conditioned on a case's question (same discipline as
+# the `predicate`/`value` fields). Lets the gate distinguish a properly
+# source-scoped negative ("not in the vendor master registry") from an
+# unscoped universal one ("does not exist") once a real model answers in
+# free text -- see state_consistency_gate_v2.py's SOURCE_SCOPE_ERROR
+# check and _claims_beyond_scope().
+_SOURCE_CLASS_SCOPE_NAMESPACE = {
+    "VENDOR_MASTER": "VENDOR_MASTER_REGISTRY",
+    "APPROVAL_SYSTEM_RECORD": "PROCUREMENT_APPROVAL_SYSTEM",
+    "SIGNED_CONTRACT": "CONTRACT_REPOSITORY",
+    "SIGNED_AMENDMENT": "CONTRACT_REPOSITORY",
+    "PAYMENT_LEDGER": "PAYMENT_LEDGER",
+    "PROCUREMENT_POLICY": "PROCUREMENT_POLICY_REPOSITORY",
+    "INVOICE": "INVOICE_SYSTEM",
+    "purchase_order": "PURCHASE_ORDER_SYSTEM",
+    "audit_record": "COMPLIANCE_AUDIT_SYSTEM",
+    "EMAIL": "EMAIL_CORPUS",
+    "CHAT_MESSAGE": "CHAT_CORPUS",
+    "MEETING_NOTE": "MEETING_NOTES_CORPUS",
+}
+
+
+def _derive_scope(doc):
+    """Structured scope object per LNES59_BENCHMARK_PLAN.md's pre-holdout
+    scope-preservation requirement -- at minimum a source_system, other
+    fields only when the corpus actually carries them (not fabricated).
+    Returns None for a source_class this table doesn't recognize, same
+    fail-visible discipline as classify_document's own UNKNOWN handling
+    elsewhere -- an unrecognized source_class should surface as "no scope
+    claim can be checked," not silently default to some namespace that
+    isn't actually backed by the document."""
+    namespace = _SOURCE_CLASS_SCOPE_NAMESPACE.get(doc["source_class"])
+    if namespace is None:
+        return None
+    return {"source_system": namespace, "predicate": doc.get("predicate")}
 
 
 def load_corpus():
@@ -184,6 +240,7 @@ def classify_document(doc_id, corpus, as_of=BENCHMARK_AS_OF):
             "temporal_status": TemporalStatus.NOT_APPLICABLE,
             "resolution": ResolutionState.MATCH,  # the statement itself was found; its content is just non-authoritative
             "value": doc.get("value"),
+            "scope": _derive_scope(doc),
         }
 
     if _is_unavailable(doc):
@@ -193,6 +250,7 @@ def classify_document(doc_id, corpus, as_of=BENCHMARK_AS_OF):
             "temporal_status": TemporalStatus.NOT_APPLICABLE,
             "resolution": ResolutionState.INCOMPLETE,
             "value": None,
+            "scope": _derive_scope(doc),
         }
 
     if _is_no_record(doc):
@@ -202,6 +260,7 @@ def classify_document(doc_id, corpus, as_of=BENCHMARK_AS_OF):
             "temporal_status": TemporalStatus.NOT_APPLICABLE,
             "resolution": ResolutionState.NO_MATCH,
             "value": doc.get("value"),  # the scoped-negative sentinel, e.g. "NOT_IN_REGISTRY"
+            "scope": _derive_scope(doc),
         }
 
     return {
@@ -211,6 +270,7 @@ def classify_document(doc_id, corpus, as_of=BENCHMARK_AS_OF):
         "resolution": ResolutionState.MATCH,
         "value": doc.get("value"),
         "policy_tiers": doc.get("tiers"),  # only PROCUREMENT_POLICY docs carry this; None otherwise
+        "scope": _derive_scope(doc),
     }
 
 
@@ -241,6 +301,7 @@ def _resolve_predicate_group(classifications_for_predicate):
             "resolution": ResolutionState.MATCH, "claim_type": ClaimType.SOURCE_ASSERTION,
             "authority_status": AuthorityStatus.UNVERIFIED, "temporal_status": TemporalStatus.NOT_APPLICABLE,
             "value": classifications_for_predicate[0].get("value"),
+            "scope": classifications_for_predicate[0].get("scope"),
         }
 
     incompletes = [c for c in authoritative if c["resolution"] == ResolutionState.INCOMPLETE]
@@ -248,7 +309,7 @@ def _resolve_predicate_group(classifications_for_predicate):
         return {
             "resolution": ResolutionState.INCOMPLETE, "claim_type": ClaimType.UNKNOWN,
             "authority_status": AuthorityStatus.NOT_APPLICABLE, "temporal_status": TemporalStatus.NOT_APPLICABLE,
-            "value": None,
+            "value": None, "scope": incompletes[0].get("scope"),
         }
 
     no_matches = [c for c in authoritative if c["resolution"] == ResolutionState.NO_MATCH]
@@ -264,7 +325,7 @@ def _resolve_predicate_group(classifications_for_predicate):
         return {
             "resolution": ResolutionState.NO_MATCH, "claim_type": ClaimType.UNKNOWN,
             "authority_status": AuthorityStatus.NOT_APPLICABLE, "temporal_status": TemporalStatus.NOT_APPLICABLE,
-            "value": no_matches[0].get("value"),
+            "value": no_matches[0].get("value"), "scope": no_matches[0].get("scope"),
         }
 
     # All authoritative docs for THIS predicate MATCH. More than one
@@ -278,11 +339,26 @@ def _resolve_predicate_group(classifications_for_predicate):
             "value": None,
         }
     chosen = current_ones[0] if current_ones else matches[0]
+    # Historical lineage: other MATCH docs for this SAME predicate that
+    # are superseded/expired/revoked and carry a real value -- lets the
+    # gate distinguish "once true, now stale" (TEMPORAL_CONTRADICTION)
+    # from "never true" (STATE_CONTRADICTION) when a model's asserted
+    # value doesn't match the current one. Deliberately only populated
+    # here, in the single-clean-current-value path -- CONFLICTING_EVIDENCE
+    # and NO_MATCH don't have a single lineage to preserve.
+    historical_values = tuple(
+        c["value"] for c in matches
+        if c is not chosen
+        and c["temporal_status"] in (TemporalStatus.SUPERSEDED, TemporalStatus.EXPIRED, TemporalStatus.REVOKED)
+        and c.get("value") is not None
+    )
     return {
         "resolution": chosen["resolution"], "claim_type": chosen["claim_type"],
         "authority_status": chosen["authority_status"], "temporal_status": chosen["temporal_status"],
         "value": chosen.get("value"),
         "policy_tiers": chosen.get("policy_tiers"),
+        "scope": chosen.get("scope"),
+        "historical_values": historical_values,
     }
 
 
@@ -309,8 +385,10 @@ def extract_case_state(grounding_document_ids, target_predicate, corpus, as_of=B
     docs in the grounding set collide," which is what caused the bug this
     predicate-scoping fix addresses in the first place.
 
-    Returns a CommittedState with `.value` populated (see module note on
-    the corpus's structured `value` fields). Does not set `.scope`."""
+    Returns a CommittedState with `.value`, `.scope`, and
+    `.historical_values` populated (see module note -- `.scope` and
+    historical-value preservation were the two remaining disclosed gaps,
+    both closed 2026-08-08 pre-holdout-freeze)."""
     classifications = [
         classify_document(doc_id, corpus, as_of) | {"predicate": corpus[doc_id].get("predicate")}
         for doc_id in grounding_document_ids
@@ -356,4 +434,5 @@ def extract_case_state(grounding_document_ids, target_predicate, corpus, as_of=B
         resolution=primary["resolution"], claim_type=primary["claim_type"],
         authority_status=primary["authority_status"], temporal_status=primary["temporal_status"],
         value=primary.get("value"), policy_tiers=policy_tiers,
+        scope=primary.get("scope"), historical_values=primary.get("historical_values") or (),
     )

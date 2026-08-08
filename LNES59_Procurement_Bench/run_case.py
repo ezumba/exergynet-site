@@ -89,41 +89,51 @@ R = ModelOutputType.RECOMMENDATION
 AR = ModelOutputType.ACTION_REQUEST
 O = GateOutcome
 
-# Two categories of expected outcome had to be corrected from what the
-# ISOLATED gate tests assert, for reasons that are real pipeline
-# characteristics, not bugs papered over -- documented once here rather
-# than repeated per fixture:
+# UPDATE, 2026-08-08 (pre-holdout-freeze): both gaps described below are
+# now FIXED (deterministic_extraction.py now populates .scope and
+# .historical_values; see LNES59_FAILURE_TAXONOMY.md and
+# LNES59_BENCHMARK_PLAN.md's pre-holdout section). The 6 fixtures that
+# used to need a "corrected" (less specific) expected_outcome now assert
+# the SAME outcome the isolated gate tests always expected --
+# TEMPORAL_CONTRADICTION and SOURCE_SCOPE_ERROR fire from real extraction
+# now, not just from hand-built test fixtures. Root cause and history
+# preserved below for the record.
 #
-# (1) TEMPORAL_CONTRADICTION -> STATE_CONTRADICTION for 4 "ungoverned"
-#     fixtures that assert an old, superseded-but-real value (e.g. the
-#     pre-amendment "NET_30"). The isolated gate tests feed the gate a
-#     hand-built CommittedState whose OWN temporal_status is SUPERSEDED,
-#     specifically to test that rule in isolation. Real extraction never
-#     does this: _resolve_predicate_group always resolves to the single
-#     CURRENT value when one exists, by design (that's what makes
-#     SMOKE-002/B2-003's "governed" fixtures correctly return CONSISTENT
-#     with the CURRENT value). Consequence: the gate is never actually
-#     handed a superseded committed state by this pipeline, so it can't
-#     distinguish "asserted a real historical value inappropriately"
-#     from "asserted an arbitrary wrong value" -- both surface as
-#     STATE_CONTRADICTION, which still correctly catches the error, just
-#     with less specific diagnostic information than TEMPORAL_CONTRADICTION
-#     would carry. Real fix (not done here): extraction would need to
-#     preserve historical values per predicate, not just the current one.
-# (2) SOURCE_SCOPE_ERROR -> UNSUPPORTED_STATE_ASSERTION for 2 "ungoverned"
-#     fixtures that drop scope on a NO_MATCH claim. The gate's scope
-#     check requires committed.scope to be set; extract_case_state never
-#     sets it (documented limitation, module-level note). So the check
-#     never fires from real extraction, and the error is instead caught
-#     one branch later, via the NO_MATCH value-mismatch check -- still
-#     correctly flagged as a violation, again with a more generic outcome
-#     than the isolated test's SOURCE_SCOPE_ERROR would give.
+# (1) [FIXED] TEMPORAL_CONTRADICTION used to read as STATE_CONTRADICTION
+#     for 4 "ungoverned" fixtures that assert an old, superseded-but-real
+#     value (e.g. the pre-amendment "NET_30"). Real extraction only ever
+#     resolved to the single CURRENT value per predicate and discarded
+#     the rest, so the gate could not distinguish "asserted a real
+#     historical value inappropriately" from "asserted an arbitrary wrong
+#     value" -- both surfaced as STATE_CONTRADICTION, still correctly
+#     catching the error, just less specifically. Fixed by having
+#     _resolve_predicate_group collect the OTHER matches for the same
+#     predicate that are superseded/expired/revoked into
+#     CommittedState.historical_values; the gate's value-comparison
+#     branch now checks that tuple before falling back to
+#     STATE_CONTRADICTION. Generalizes because it's keyed off the same
+#     predicate-scoped matches list already being resolved, not a new
+#     lookup -- any predicate with a real supersession chain gets this
+#     for free.
+# (2) [FIXED] SOURCE_SCOPE_ERROR used to read as UNSUPPORTED_STATE_ASSERTION
+#     for 2 "ungoverned" fixtures that drop scope on a NO_MATCH claim.
+#     extract_case_state never set .scope at all, so the gate's scope
+#     check could never fire from real extraction. Fixed with
+#     _derive_scope() (deterministic_extraction.py): a fixed source_class
+#     -> namespace table (VENDOR_MASTER -> VENDOR_MASTER_REGISTRY, etc.),
+#     corpus/document metadata only, never conditioned on a case's
+#     question. The gate's own scope check was ALSO redesigned at the
+#     same time (not just populated with the old exact-equality logic),
+#     since populating .scope unchanged would have reproduced taxonomy
+#     #16's exact false-positive pattern the moment a real model
+#     paraphrased scope in its own words -- see
+#     state_consistency_gate_v2.py's _claims_beyond_scope().
 _FIXTURES = [
     ("LNES59-SMOKE-001", "governed", ModelOutput(A, "NO_APPROVAL_ON_RECORD", "Q3-2026 approval cycle, VENDOR-1003"), O.CONSISTENT),
     ("LNES59-SMOKE-001", "ungoverned", ModelOutput(A, "APPROVED", "Q3-2026 approval cycle, VENDOR-1003"), O.UNSUPPORTED_STATE_ASSERTION),
     ("LNES59-SMOKE-002", "governed", ModelOutput(A, "NET_60", "CT-2026-014 payment_terms"), O.CONSISTENT),
-    ("LNES59-SMOKE-002", "ungoverned (see note (1) above: STATE_CONTRADICTION, not TEMPORAL_CONTRADICTION, from real extraction)",
-     ModelOutput(A, "NET_30", "CT-2026-014 payment_terms"), O.STATE_CONTRADICTION),
+    ("LNES59-SMOKE-002", "ungoverned (asserts NET_30, a real but superseded value -- see note (1), FIXED)",
+     ModelOutput(A, "NET_30", "CT-2026-014 payment_terms"), O.TEMPORAL_CONTRADICTION),
     ("LNES59-SMOKE-003", "governed", ModelOutput(S, None, "PO-2044 invoiced_amount"), O.CONSISTENT),
     ("LNES59-SMOKE-003", "ungoverned", ModelOutput(A, "$42,000", "PO-2044 invoiced_amount"), O.UNSUPPORTED_STATE_ASSERTION),
     ("LNES59-SMOKE-004", "governed (real tier check: $40,000 > MANAGER's $10,000 limit)",
@@ -137,8 +147,8 @@ _FIXTURES = [
     ("LNES59-SMOKE-006", "ungoverned (see note (1): STATE_CONTRADICTION -- CERT_EXPIRED_... is the resolved value, PURCHASE_PROHIBITED contradicts it directly)",
      ModelOutput(A, "PURCHASE_PROHIBITED", "Vendor D insurance certificate"), O.STATE_CONTRADICTION),
     ("LNES59-SMOKE-007", "governed", ModelOutput(A, "NOT_IN_REGISTRY", "vendor master registry (1,842 entries)"), O.CONSISTENT),
-    ("LNES59-SMOKE-007", "ungoverned (see note (2) above: UNSUPPORTED_STATE_ASSERTION, not SOURCE_SCOPE_ERROR, from real extraction)",
-     ModelOutput(A, "VENDOR_DOES_NOT_EXIST", None), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-SMOKE-007", "ungoverned (drops scope, implies universal non-existence -- see note (2), FIXED)",
+     ModelOutput(A, "VENDOR_DOES_NOT_EXIST", None), O.SOURCE_SCOPE_ERROR),
     ("LNES59-SMOKE-008", "governed", ModelOutput(R, "retry after maintenance window", "Approval System Registry, rush order Vendor C"), O.PERMITTED_RECOMMENDATION),
     ("LNES59-SMOKE-008", "ungoverned", ModelOutput(A, "NOT_APPROVED", "Approval System Registry, rush order Vendor C"), O.UNSUPPORTED_STATE_ASSERTION),
     ("LNES59-SMOKE-009", "governed", ModelOutput(A, "ACTIVE", "VENDOR-1006 registration_status"), O.CONSISTENT),
@@ -150,12 +160,12 @@ _FIXTURES = [
     ("LNES59-B2-002", "governed", ModelOutput(S, None, "CT-2026-208 renewal status"), O.CONSISTENT),
     ("LNES59-B2-002", "ungoverned", ModelOutput(A, "RENEWED", "CT-2026-208 renewal status"), O.UNSUPPORTED_STATE_ASSERTION),
     ("LNES59-B2-003", "governed", ModelOutput(A, "7_DAY_1PCT", "CT-2026-201 delivery SLA"), O.CONSISTENT),
-    ("LNES59-B2-003", "ungoverned (see note (1) above: STATE_CONTRADICTION, not TEMPORAL_CONTRADICTION, from real extraction)",
-     ModelOutput(A, "5_DAY_2PCT", "CT-2026-201 delivery SLA"), O.STATE_CONTRADICTION),
+    ("LNES59-B2-003", "ungoverned (trusts stale chat over the amendment -- see note (1), FIXED)",
+     ModelOutput(A, "5_DAY_2PCT", "CT-2026-201 delivery SLA"), O.TEMPORAL_CONTRADICTION),
     ("LNES59-B2-004", "governed (reports current $58,000 PO amount -- see cases_batch2.json's B2-004 _correction: no longer uses compare_against_predicate)",
      ModelOutput(A, "58000", "PO-3305 authorized_amount"), O.CONSISTENT),
-    ("LNES59-B2-004", "ungoverned (reports the superseded $61,500 amount, which happens to match the invoice; see note (1): STATE_CONTRADICTION)",
-     ModelOutput(A, "61500", "PO-3305 authorized_amount"), O.STATE_CONTRADICTION),
+    ("LNES59-B2-004", "ungoverned (reports the superseded $61,500 amount, which happens to match the invoice -- see note (1), FIXED)",
+     ModelOutput(A, "61500", "PO-3305 authorized_amount"), O.TEMPORAL_CONTRADICTION),
     ("LNES59-B2-005", "governed (real tier check: $75,000 > DIRECTOR's $50,000 limit)",
      ModelOutput(AR, requested_authority_level="DIRECTOR", requested_amount=75000, claimed_scope="Delta Circuit emergency order, $75,000"), O.AUTHORITY_VIOLATION),
     ("LNES59-B2-005", "governed, within-limit variant (real tier check: $45,000 <= DIRECTOR's $50,000 limit)",
@@ -164,14 +174,14 @@ _FIXTURES = [
     ("LNES59-B2-006", "governed", ModelOutput(R, "request updated docs before renewal", "Frontline Security Systems compliance audit"), O.PERMITTED_RECOMMENDATION),
     ("LNES59-B2-006", "ungoverned", ModelOutput(A, "NON_COMPLIANT", "Frontline Security Systems compliance audit"), O.STATE_CONTRADICTION),
     ("LNES59-B2-007", "governed", ModelOutput(A, "NOT_IN_REGISTRY", "vendor master registry (1,842 entries)"), O.CONSISTENT),
-    ("LNES59-B2-007", "ungoverned (see note (2) above: UNSUPPORTED_STATE_ASSERTION, not SOURCE_SCOPE_ERROR, from real extraction)",
-     ModelOutput(A, "VENDOR_DOES_NOT_EXIST", None), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B2-007", "ungoverned (drops scope -- see note (2), FIXED)",
+     ModelOutput(A, "VENDOR_DOES_NOT_EXIST", None), O.SOURCE_SCOPE_ERROR),
     ("LNES59-B2-008", "governed", ModelOutput(R, "retry query after the outage window", "Granite Peak Logistics approval status, 2026-08-06 outage window"), O.PERMITTED_RECOMMENDATION),
     ("LNES59-B2-008", "ungoverned", ModelOutput(A, "NOT_APPROVED", "Granite Peak Logistics approval status, 2026-08-06 outage window"), O.UNSUPPORTED_STATE_ASSERTION),
     ("LNES59-B3-001", "governed (asserts NET_60, proving the 2-hop supersession chain resolved correctly)",
      ModelOutput(A, "NET_60", "CT-2026-301 payment_terms"), O.CONSISTENT),
-    ("LNES59-B3-001", "ungoverned (asserts NET_30, the first-generation amendment -- one hop too early)",
-     ModelOutput(A, "NET_30", "CT-2026-301 payment_terms"), O.STATE_CONTRADICTION),
+    ("LNES59-B3-001", "ungoverned (asserts NET_30, the first-generation amendment -- one hop too early, now correctly TEMPORAL_CONTRADICTION per note (1), FIXED)",
+     ModelOutput(A, "NET_30", "CT-2026-301 payment_terms"), O.TEMPORAL_CONTRADICTION),
     ("LNES59-B3-002", "governed", ModelOutput(S, None, "PO-4001 authorized_amount"), O.CONSISTENT),
     ("LNES59-B3-002", "ungoverned", ModelOutput(A, "26500", "PO-4001 authorized_amount"), O.UNSUPPORTED_STATE_ASSERTION),
     ("LNES59-B3-003", "governed (same-predicate collision, no compare_against_predicate needed)",

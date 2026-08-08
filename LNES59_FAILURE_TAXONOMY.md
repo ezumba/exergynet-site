@@ -212,18 +212,71 @@ adding a new predicate. Support: `state_consistency_gate_v2.py`'s
 `values_match()`, `test_values_match.py`,
 `LNES59_Procurement_Bench/X2_REAL_RUN_2026-08-08.md`.
 
-## Category tally (of the 16 real bugs above)
+### 17. `.scope` never populated by extraction, and the gate's scope check used exact equality — **A + G** (evidence missing, compounded by a gate false positive waiting to happen) — FIXED
+Two compounding gaps, closed together pre-holdout-freeze rather than
+sequentially: extraction never set `CommittedState.scope` at all (so
+`SOURCE_SCOPE_ERROR` could never fire from real data), and the gate's
+scope check — `output.claimed_scope != committed.scope` — was exact
+string equality, the identical pattern that caused #16. Populating
+`.scope` without also fixing the comparison would have shipped #16's
+bug a second time, immediately, the first time a real model paraphrased
+scope in its own words. Fixed both at once: `_derive_scope()` in
+`deterministic_extraction.py` derives a structured `{source_system,
+predicate}` scope from each document's existing `source_class` field (a
+fixed table, e.g. `VENDOR_MASTER` -> `VENDOR_MASTER_REGISTRY` — corpus
+metadata, never conditioned on a case's question); the gate's check was
+redesigned around `_claims_beyond_scope()`, an explicit, disclosed
+keyword-cue check (`"anywhere"`, `"does not exist"`, etc.) that flags
+only genuine scope-broadening language, not phrasing mismatches.
+Verified with the directive's own two unambiguous required cases
+(properly-scoped negative -> `CONSISTENT`; universal claim ->
+`SOURCE_SCOPE_ERROR`) in the new `test_scope_and_history.py`. A third
+case the directive asked for — treating "I cannot establish X outside
+this registry" as permitted uncertainty — was deliberately NOT
+implemented: it would require its own cue-phrase mechanism, and doing
+that under time pressure risked quietly reopening the real,
+already-validated `LNES59-SMOKE-001` false-negative finding (declining
+to report a confident scoped negative IS a real miss, confirmed via the
+first real X2 run). Recorded as an open design question, not silently
+skipped. Support: `deterministic_extraction.py`'s `_derive_scope()`,
+`state_consistency_gate_v2.py`'s `_claims_beyond_scope()`,
+`test_scope_and_history.py`.
+
+### 18. Extraction discarded historical values, collapsing TEMPORAL_CONTRADICTION into STATE_CONTRADICTION — **E** (temporal error) — FIXED
+`_resolve_predicate_group` always returned only the single CURRENT value
+per predicate; a real-but-superseded value asserted by a model was
+indistinguishable from an arbitrary wrong one once it reached the gate —
+both were correctly caught, but as the less specific
+`STATE_CONTRADICTION` rather than `TEMPORAL_CONTRADICTION`. Fixed by
+collecting the OTHER matches for the same predicate that are
+superseded/expired/revoked into `CommittedState.historical_values`
+(reusing the SAME predicate-scoped matches list already being resolved —
+no new document field, no new lookup); the gate's value-comparison
+branch now checks that tuple before falling back to plain
+`STATE_CONTRADICTION`. Re-running `run_case.py`'s harness surfaced
+exactly 6 fixtures whose expected outcome needed updating from the
+(correct-but-less-specific) `STATE_CONTRADICTION`/`UNSUPPORTED_STATE_ASSERTION`
+to the now-correctly-firing `TEMPORAL_CONTRADICTION`/`SOURCE_SCOPE_ERROR`
+— all 6 had already been flagged by name in the fixtures' own comments as
+exactly this known limitation, so nothing here was a surprise. Full
+regression clean after: 28/28, 19/19, 17/17, 7/7, 27/27, 50/50. Support:
+`deterministic_extraction.py`'s `_resolve_predicate_group()`,
+`state_consistency_gate_v2.py`'s value-comparison branch,
+`test_scope_and_history.py`, `run_case.py`'s updated fixtures.
+
+## Category tally (of the 18 real bugs above)
 
 | Category | Count | Bugs |
 |---|---|---|
 | B (extraction failure) | 6 | #2, #3, #8, #11, #12 |
+| A + G (evidence missing + gate false positive) | 1 | #17 |
 | G (gate false positive) | 2 | #15, #16 |
-| E (temporal error) | 3 | #4, #5, #13 |
+| E (temporal error) | 4 | #4, #5, #13, #18 |
 | J (ambiguous ground truth) | 3 | #1, #9, #10 |
 | I (schema failure) | 1 | #7 |
 | K (evaluation defect) | 1 | #6 |
 | D (authority error) | 1 | #14 |
-| A, C, F, H | 0 | — |
+| C, F, H | 0 | — |
 
 **Reading this honestly**: extraction-layer bugs still dominate the
 pre-real-model set (6 of 14), but the two **G** entries found in the
