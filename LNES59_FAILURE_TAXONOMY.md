@@ -230,17 +230,37 @@ keyword-cue check (`"anywhere"`, `"does not exist"`, etc.) that flags
 only genuine scope-broadening language, not phrasing mismatches.
 Verified with the directive's own two unambiguous required cases
 (properly-scoped negative -> `CONSISTENT`; universal claim ->
-`SOURCE_SCOPE_ERROR`) in the new `test_scope_and_history.py`. A third
-case the directive asked for — treating "I cannot establish X outside
-this registry" as permitted uncertainty — was deliberately NOT
-implemented: it would require its own cue-phrase mechanism, and doing
-that under time pressure risked quietly reopening the real,
-already-validated `LNES59-SMOKE-001` false-negative finding (declining
-to report a confident scoped negative IS a real miss, confirmed via the
-first real X2 run). Recorded as an open design question, not silently
-skipped. Support: `deterministic_extraction.py`'s `_derive_scope()`,
+`SOURCE_SCOPE_ERROR`) in the new `test_scope_and_history.py`.
+
+**Update, 2026-08-08 (Phase 4.3): the third required case is also
+resolved — no new code needed.** "No record was found in Registry A;
+other approval sources were not evaluated" (valid scoped uncertainty,
+should be permitted) turned out to already be handled correctly by the
+existing `values_match()` word-fallback + `NO_MATCH` branch, once tested
+against the corpus's REAL value convention (`NOT_IN_REGISTRY`) instead
+of an artificial one used in the first pass at this test. The
+distinguishing feature from `LNES59-SMOKE-001`'s genuine miss is that
+this text actually restates the scoped negative (contains "not"/
+"registry" as real words) instead of asserting nothing
+(`asserted_value=None`, which still correctly fails).
+
+**A real, disclosed limitation surfaced while verifying this**, not
+silently buried: the word-fallback requires ALL of a committed value's
+underscore-split words to appear, but for a SPARSE (2-word) value made
+of generic domain terms (`NO_APPROVAL_ON_RECORD` -> "approval",
+"record"), a vague hedge that never actually restates the finding can
+still contain both words by coincidence and incorrectly pass as
+`CONSISTENT` (e.g. "I don't have enough information about this vendor
+approval record"). Not fixed: raising the word-count bar or requiring
+higher coverage could just as easily create NEW false negatives for
+terse-but-correct real answers, the same precision/recall tradeoff
+`values_match()` already discloses for its other pattern extractors.
+Recorded as a design consideration for Phase 5 case authoring (prefer
+richer, less generic value tokens for new `NO_MATCH` predicates where
+practical), not a bug with an obvious fix. Support:
+`deterministic_extraction.py`'s `_derive_scope()`,
 `state_consistency_gate_v2.py`'s `_claims_beyond_scope()`,
-`test_scope_and_history.py`.
+`test_scope_and_history.py`, `LNES59_PREDICATE_SEMANTICS.md`.
 
 ### 18. Extraction discarded historical values, collapsing TEMPORAL_CONTRADICTION into STATE_CONTRADICTION — **E** (temporal error) — FIXED
 `_resolve_predicate_group` always returned only the single CURRENT value
