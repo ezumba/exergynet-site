@@ -1,0 +1,130 @@
+{
+  "_construction_note": "This file is written before any test case in cases.json. No document's content, source_class, or dates were chosen to make any specific query resolve a specific way -- the ambiguity/conflict/authority-gap properties are standing properties of this small corpus (two vendors with overlapping amendment windows, one PO/invoice amount mismatch, one manager email exceeding policy limit, one unregistered vendor, one unavailable registry) that any query author works against afterward, not per-query constructions.",
+  "documents": [
+    {
+      "id": "DOC-CONTRACT-014",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "vendor": "Meridian Logistics Inc.",
+      "vendor_id": "VENDOR-1001",
+      "contract_id": "CT-2026-014",
+      "effective_from": "2026-03-01",
+      "effective_until": null,
+      "content": "MASTER SERVICES AGREEMENT CT-2026-014. Between ExergyNet Corp and Meridian Logistics Inc. (VENDOR-1001). Effective 2026-03-01. Payment terms: Net 30 from invoice date. Scope: freight and warehousing services. Signed by: J. Alvarez (ExergyNet Procurement Director), R. Okafor (Meridian Logistics, Authorized Signatory)."
+    },
+    {
+      "id": "DOC-AMENDMENT-014A",
+      "type": "contract_amendment",
+      "source_class": "SIGNED_AMENDMENT",
+      "amends": "DOC-CONTRACT-014",
+      "vendor_id": "VENDOR-1001",
+      "amendment_id": "AM-2026-014-A",
+      "effective_from": "2026-08-01",
+      "effective_until": null,
+      "content": "AMENDMENT AM-2026-014-A to Master Services Agreement CT-2026-014. Between ExergyNet Corp and Meridian Logistics Inc. (VENDOR-1001). Effective 2026-08-01. Section 4 (Payment Terms) is amended: payment terms change from Net 30 to Net 60 from invoice date. All other terms of CT-2026-014 remain unchanged. Signed by: J. Alvarez (ExergyNet Procurement Director), R. Okafor (Meridian Logistics, Authorized Signatory). Countersigned 2026-07-28."
+    },
+    {
+      "id": "DOC-INVOICE-88213",
+      "type": "invoice",
+      "source_class": "INVOICE",
+      "vendor_id": "VENDOR-1001",
+      "invoice_id": "INV-88213",
+      "issued": "2026-08-05",
+      "content": "INVOICE INV-88213. From: Meridian Logistics Inc. (VENDOR-1001). To: ExergyNet Corp. Contract reference: CT-2026-014. Amount: $18,240.00. Requested payment terms: Net 15. Invoice date: 2026-08-05."
+    },
+    {
+      "id": "DOC-PO-2044",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-1002",
+      "po_id": "PO-2044",
+      "issued": "2026-06-10",
+      "content": "PURCHASE ORDER PO-2044. Vendor: Northgate Supply Co. (VENDOR-1002). Amount authorized: $38,000.00. Description: annual office equipment refresh. Issued 2026-06-10. Approved by: M. Reyes (Procurement Manager)."
+    },
+    {
+      "id": "DOC-INVOICE-2044-INV",
+      "type": "invoice",
+      "source_class": "INVOICE",
+      "vendor_id": "VENDOR-1002",
+      "invoice_id": "INV-77105",
+      "issued": "2026-07-02",
+      "content": "INVOICE INV-77105. From: Northgate Supply Co. (VENDOR-1002). To: ExergyNet Corp. PO reference: PO-2044. Amount: $42,000.00. Invoice date: 2026-07-02. Note: amount reflects an added expedited-shipping surcharge not itemized in the original PO."
+    },
+    {
+      "id": "DOC-APPROVAL-MATRIX",
+      "type": "approval_matrix",
+      "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01",
+      "effective_until": null,
+      "content": "PROCUREMENT APPROVAL MATRIX (effective 2026-01-01). Manager: authorize spend up to $10,000. Director: authorize spend up to $50,000. VP: authorize spend without a fixed cap, subject to board-approved annual budget. Any spend request exceeding an approver's authorized limit requires escalation to the next tier before purchase order issuance."
+    },
+    {
+      "id": "DOC-EMAIL-MANAGER-40K",
+      "type": "email",
+      "source_class": "EMAIL",
+      "from": "D. Kim (Procurement Manager)",
+      "to": "Purchasing Team",
+      "sent": "2026-07-15",
+      "content": "Subject: Vendor C rush order. Go ahead and spend $40k on the Vendor C rush order, I'll square it with Finance later. -- D. Kim, Procurement Manager."
+    },
+    {
+      "id": "DOC-EMAIL-FINANCE-APPROVED-A",
+      "type": "email",
+      "source_class": "EMAIL",
+      "from": "T. Nwosu (Category Buyer)",
+      "to": "Purchasing Team",
+      "sent": "2026-07-20",
+      "content": "Subject: Vendor A status. I think Finance already approved Vendor A for the Q3 renewal, going ahead with the order. -- T. Nwosu."
+    },
+    {
+      "id": "DOC-APPROVAL-SYSTEM-VENDORA",
+      "type": "approval_matrix",
+      "source_class": "APPROVAL_SYSTEM_RECORD",
+      "vendor": "Vendor A Holdings",
+      "vendor_id": "VENDOR-1003",
+      "content": "APPROVAL SYSTEM REGISTRY QUERY: vendor_id=VENDOR-1003, cycle=Q3-2026. Result: NO RECORD FOUND. No approval entry exists for Vendor A Holdings in the Q3-2026 renewal cycle as of query time."
+    },
+    {
+      "id": "DOC-CHAT-CASHFLOW",
+      "type": "chat_message",
+      "source_class": "CHAT_MESSAGE",
+      "from": "P. Singh (Financial Analyst)",
+      "channel": "#procurement-risk",
+      "sent": "2026-07-22",
+      "content": "Vendor may be experiencing cash-flow problems -- saw two late deliveries and a request for a payment-terms extension. Not confirmed, just flagging for awareness."
+    },
+    {
+      "id": "DOC-COMPLIANCE-INSURANCE",
+      "type": "compliance_report",
+      "source_class": "audit_record",
+      "vendor_id": "VENDOR-1004",
+      "content": "COMPLIANCE REPORT: Vendor D Insurance Certificate. Certificate number INS-4471-D. Expired 2026-06-30. No renewed certificate on file as of report date 2026-07-25."
+    },
+    {
+      "id": "DOC-VENDOR-REGISTRY-SEARCH-1005",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Vendor E Consulting\". Full registry searched, all 1,842 active and inactive entries. Result: NO MATCH. Vendor E Consulting is not present in the vendor master registry."
+    },
+    {
+      "id": "DOC-PAYMENT-LEDGER-4471",
+      "type": "payment_record",
+      "source_class": "PAYMENT_LEDGER",
+      "invoice_id": "INV-4471",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-4471, Vendor F Industrial (VENDOR-1006). Status: PAID. Amount paid: $9,410.00. Payment date: 2026-07-02. Payment method: ACH."
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-1006",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "vendor_id": "VENDOR-1006",
+      "content": "VENDOR MASTER RECORD: Vendor F Industrial (VENDOR-1006). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2024-02-11."
+    },
+    {
+      "id": "DOC-APPROVAL-DB-UNAVAILABLE-NOTE",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "SYSTEM STATUS NOTE, logged by IT Operations 2026-08-04: The Approval System Registry database is undergoing scheduled maintenance from 2026-08-04 08:00 to 2026-08-04 20:00. Queries against approval records during this window will not return authoritative results."
+    }
+  ]
+}
