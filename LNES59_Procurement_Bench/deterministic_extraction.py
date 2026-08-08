@@ -184,9 +184,13 @@ def _derive_scope(doc):
 
 
 def load_corpus():
-    """Merge all committed document batches into one id-keyed dict."""
+    """Merge all committed document batches into one id-keyed dict.
+    File list comes from dataset_registry.py's manifest-driven,
+    hash-verified registry -- not a hardcoded tuple, see that module's
+    docstring for why."""
+    from dataset_registry import document_set_files
     corpus = {}
-    for fname in ("documents.json", "documents_batch2.json", "documents_batch3.json", "documents_batch4.json"):
+    for fname in document_set_files():
         path = os.path.join(SCRIPT_DIR, fname)
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
