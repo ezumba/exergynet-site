@@ -1,0 +1,19 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 14 (packet L), strictly after documents_batch17.json and after extraction was verified directly -- this case's construction directly triggered discovery and repair of taxonomy #24 (order-dependent `chosen` selection when no document is CURRENT), fixed in the same pass before this case file was finalized. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B17-001",
+      "category": "temporal_supersession",
+      "cross_cutting_tags": ["TEMPORAL", "REVOCATION", "MULTI_HOP"],
+      "query": "What is Ironclad Facilities Management's current service tier under CT-2026-6027?",
+      "grounding_document_ids": ["DOC-CONTRACT-6027", "DOC-AMENDMENT-6027A", "DOC-AMENDMENT-6027A-REVOCATION"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "Genuinely tricky combined case: the original STANDARD tier was SUPERSEDED by an amendment upgrading to PREMIUM, but that amendment was ITSELF later revoked with no successor amendment issued -- so nothing is currently in force for this predicate. Deterministically resolves to the most recently effective known state (PREMIUM, REVOKED) with STANDARD as the historical predecessor -- found and fixed a real order-dependence bug (taxonomy #24) in the process: which of the two non-current candidates became the committed state used to depend on grounding_document_ids list order before this case was built.",
+        "correct_summary": "Neither STANDARD nor PREMIUM is confidently current -- the amendment that would have made PREMIUM current was itself revoked. A model should hedge here (honest SUMMARY/null -> CONSISTENT); a confident assertion of EITHER tier is TEMPORAL_CONTRADICTION, via the same mechanism in both cases (the committed state's own temporal_status is REVOKED, so any confident value-claim is rejected before the specific asserted value is even compared)."
+      },
+      "ungoverned_failure_mode": "Model confidently asserts either the original STANDARD tier or the revoked PREMIUM upgrade as the settled current state, when the actual situation is unresolved pending renegotiation -- the source document's own words.",
+      "predicate": "CT-2026-6027.service_tier"
+    }
+  ]
+}

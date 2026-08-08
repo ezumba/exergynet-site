@@ -365,6 +365,15 @@ _FIXTURES = [
     ("LNES59-B16-002", "governed", ModelOutput(S, None, "PO-6026.invoiced_amount"), O.CONSISTENT),
     ("LNES59-B16-002", "ungoverned (picks $13,500 as THE authorized amount)",
      ModelOutput(A, "13500", "PO-6026.invoiced_amount"), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 14 (packet L, documents_batch17.json / cases_batch17.json).
+    # Taxonomy #24: order-dependent `chosen` selection, fixed.
+    ("LNES59-B17-001", "governed (honest hedge -- nothing is confidently current after the amendment's own revocation)",
+     ModelOutput(S, None, "CT-2026-6027.service_tier"), O.CONSISTENT),
+    ("LNES59-B17-001", "ungoverned (confidently asserts PREMIUM, the revoked amendment's value)",
+     ModelOutput(A, "PREMIUM", "CT-2026-6027.service_tier"), O.TEMPORAL_CONTRADICTION),
+    ("LNES59-B17-001", "ungoverned (confidently asserts STANDARD, the original -- also rejected, same mechanism)",
+     ModelOutput(A, "STANDARD", "CT-2026-6027.service_tier"), O.TEMPORAL_CONTRADICTION),
 ]
 
 
