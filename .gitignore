@@ -1,0 +1,37 @@
+# Internal architecture/ops docs — contain real credentials, SSH key paths,
+# and infrastructure details. This repo publishes directly to the public
+# exergynet.org site via GitHub Pages on every push to main — these must
+# never be committed. Added 2026-07-10 after finding they'd been sitting
+# untracked (not gitignored, just never staged) since at least 2026-06-22.
+VANGUARD_ACCESS_MASTER.md
+VANGUARD_INTELLIGENCE_ARCHITECTURE.md
+EXERGYNET_CONVERGENCE_ARCHITECTURE.md
+EXERGYNET_EDGE_WITNESS_ARCHITECTURE.md
+API_DOCS_ARCHITECTURE.md
+C10_EVALUATION_BRIEF.md
+
+# Patent package — confidential legal drafting (specification, claims,
+# priority notes, disclosure drafts). This repo publishes directly to the
+# public exergynet.org site via GitHub Pages on every push to main. Found
+# sitting untracked-but-unstaged (no gitignore protection at all) on
+# 2026-08-07 while adding new supplemental disclosure material to it —
+# same exposure pattern as the internal-docs entries above, just not yet
+# caught for this directory.
+PATENT_AI_MEMORY_CONTROL_PLANE_2026/
+
+# Credentials / secrets
+.env
+.env.*
+*.pem
+*.key
+.otet_token_cache
+*credential*
+*secret*
+
+
+# Build artifacts / local-only
+__pycache__/
+node_modules/
+*.apk
+*.apk.idsig
+deployed-snapshots/
