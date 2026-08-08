@@ -29,6 +29,8 @@ queries?
 **Everything above is R&D infrastructure and pipeline correctness work.
 No real model has been called. No comparator arm has been run.**
 
+| X2 arm implementation | `arm_x2.py`, `run_x2_arm.py` | Prompt construction + response parsing + gate wiring: 27/27 verified against a mock model (no cost). Real invocation script exists and is ready. **Not yet run against a real model.** |
+
 ## Comparator arms — precise definitions for THIS implementation
 
 The directive names B0–B3, X0–X2 generically. Operationalized here so
@@ -44,14 +46,20 @@ building them later doesn't require re-deriving what each one means:
 | **X1** | xLMP state envelopes: X0's bounded evidence, PLUS this benchmark's actual deterministic extraction (`extract_case_state`) runs and produces a `CommittedState`. The model sees the state envelope (resolution, claim_type, authority_status, temporal_status, value) alongside the raw evidence, not just raw text. No gate — the model's raw output is scored directly. |
 | **X2** | xLMP state envelopes + consistency gate: X1, plus every model output is classified into a `ModelOutputType` (upstream classification step, itself either deterministic-where-possible or a second, smaller model call) and passed through `state_consistency_gate_v2.evaluate()`. The gate's outcome — not the model's raw text — is the graded answer. This is the full architecture under test. |
 
-**Open implementation question, not yet resolved:** X2 requires classifying
-a model's freeform output into one of 6 `ModelOutputType` values before
-the gate can run. Whether this classification step itself is a
-deterministic parser (fragile, likely corpus-specific — same caveat as
-`deterministic_extraction.py`'s own documented limitation) or a second
-model call (introduces its own error surface) is an open design decision
-for when arm-building actually starts. Flagging now rather than
-discovering it mid-implementation.
+**Open implementation question — resolved.** X2 requires classifying a
+model's freeform output into one of 6 `ModelOutputType` values before the
+gate can run. Neither a deterministic parser (fragile, corpus-specific)
+nor a second classification model call (its own error surface, doubles
+cost) was used. Instead the model is asked, in a single call, to produce
+its answer directly as structured JSON matching `ModelOutput`'s shape —
+see `arm_x2.py`'s `RESPONSE_SCHEMA_INSTRUCTIONS` and
+`parse_model_response()`. Structural correctness (prompt construction +
+response parsing + gate wiring) is verified 27/27 against a mock model
+call (`mock_model_call`, no API, no cost) — **this verifies the plumbing,
+not real model behavior.** No real model has been called yet;
+`run_x2_arm.py` is the actual invocation script and requires the
+operator's own `ANTHROPIC_API_KEY` and a live, explicit run — same
+authorization boundary as stated below, unchanged by this file existing.
 
 ## Evaluation protocol
 
@@ -82,4 +90,9 @@ comparator arm.** B0–B3 and X0–X2 all require real model API calls —
 real cost, same category as LNES-58's actual benchmark run, which needed
 its own explicit "begin benchmark now" go-ahead separate from the
 benchmark's design being finished. Building this plan is not that
-go-ahead.
+go-ahead. Nor is X2's implementation code (`arm_x2.py`, `run_x2_arm.py`)
+existing and being structurally verified against a mock — that proves the
+plumbing is correct, not that spending has been authorized.
+`run_x2_arm.py` requires the operator's own API key and the operator's
+own act of running it; nothing in this codebase calls a real model
+automatically or on its own initiative.
