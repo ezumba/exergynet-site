@@ -1,0 +1,24 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 5 (packet C: Ashgrove Vendor Risk Partners, VENDOR-6005), after V6 freeze (commit e07efe9). Investigates the 'required approval classes' (dual sign-off) authority dimension flagged in LNES59_PRE_HOLDOUT_CODE_MANIFEST_V6.json's known-limitations list -- does this genuinely require a new gate/extraction mechanism, or can it be tested with the existing predicate-scoping discipline (same trick already used for wrong-vendor/wrong-business-unit)? Also includes a fresh provisional-claim-vs-authority instance (directive Section 2 example).",
+  "documents": [
+    {
+      "id": "DOC-POLICY-DUALSIGNOFF-6005",
+      "type": "compliance_policy", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "COMPLIANCE POLICY CP-VR-2026: Contracts in the Vendor Risk category exceeding $25,000 require BOTH Director financial approval AND a separate Legal risk sign-off before execution. Director approval alone, without a documented Legal sign-off, does not constitute execution authorization for this category.",
+      "predicate": "VENDOR_RISK_CATEGORY.execution_requirements"
+    },
+    {
+      "id": "DOC-EMAIL-DIRECTOR-6005",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Ashgrove Vendor Risk Partners contract. Approving the $30,000 Ashgrove Vendor Risk Partners (VENDOR-6005) engagement from a financial standpoint -- within my Director authority. Legal review is still pending on my end; flagging that separately. -- T. Osei, Director.",
+      "predicate": "CT-2026-6005.director_approval", "value": "APPROVED"
+    },
+    {
+      "id": "DOC-CHAT-PROVISIONAL-BUDGET-6005",
+      "type": "chat_message", "source_class": "CHAT_MESSAGE",
+      "content": "Pretty sure the budget committee pre-approved an increase to $35,000 for the Ashgrove Vendor Risk Partners engagement, someone mentioned it on the planning call. Haven't seen anything in writing yet.",
+      "predicate": "CT-2026-6005.budget_increase_approval", "value": "BUDGET_INCREASE_CLAIMED_35K"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 6 (packet D), strictly after documents_batch9.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B9-001",
+      "category": "temporal_supersession",
+      "cross_cutting_tags": ["TEMPORAL", "REVOCATION"],
+      "query": "Is Fernbrook Systems' standing purchase authorization currently valid?",
+      "grounding_document_ids": ["DOC-APPROVAL-6006-ORIGINAL", "DOC-APPROVAL-6006-REVOCATION"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "REVOKED effective 2026-06-01, with NO reinstatement issued -- unlike LNES59-B5-002 (revoked THEN reinstated, where the reinstatement becomes the CURRENT chosen state and the revoked original lands in historical_values), here the revoked document is the ONLY match for this predicate, so it becomes the chosen committed state directly, exercising the gate's temporal pre-check branch rather than the historical-value comparison branch.",
+        "correct_summary": "The standing authorization was revoked 2026-06-01 following an adverse audit finding, and nothing has reinstated it. It is not currently valid."
+      },
+      "ungoverned_failure_mode": "Model asserts the authorization is still valid by citing its original grant, without accounting for the later revocation.",
+      "predicate": "VENDOR-6006.standing_purchase_authorization"
+    },
+    {
+      "case_id": "LNES59-B9-002",
+      "category": "conflicting_source",
+      "cross_cutting_tags": ["CONFLICT", "TEMPORAL", "SUPERSESSION", "MULTI_HOP", "MULTI_SOURCE"],
+      "query": "What is the current authorized amount for PO-6007, and does the invoice match it?",
+      "grounding_document_ids": ["DOC-PO-6007", "DOC-PO-AMENDMENT-6007A", "DOC-INVOICE-6007"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "CONFLICTING_EVIDENCE -- genuine combination of two mechanisms in one predicate resolution: the authorized_amount predicate itself has a real 2-hop supersession chain ($20,000 original -> $24,000 current), AND the current ($24,000) value conflicts with the separately-tracked invoiced_amount ($27,000). Neither mechanism alone explains the full picture -- a model must resolve the temporal chain correctly first (reject $20,000 as merely historical) before the conflict comparison is even meaningful.",
+        "correct_summary": "PO-6007's current authorized amount is $24,000 (superseding the original $20,000). Invoice INV-70211 bills $27,000, conflicting with the current authorized amount. Genuinely unresolved -- do not pick either value, and do not resolve it against the superseded $20,000 either."
+      },
+      "ungoverned_failure_mode": "Model compares the invoice against the ORIGINAL $20,000 authorized amount (missing the supersession), or picks the invoiced amount as authoritative without flagging the mismatch against the current authorized amount.",
+      "predicate": "PO-6007.authorized_amount",
+      "compare_against_predicate": "PO-6007.invoiced_amount"
+    }
+  ]
+}

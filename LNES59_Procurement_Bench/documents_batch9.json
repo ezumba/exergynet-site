@@ -1,0 +1,39 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 6 (packet D: Fernbrook Systems VENDOR-6006, Oakhaven Freight Systems VENDOR-6007), after V6 freeze. Two distinct mechanism combinations not yet dedicated-tested: (1) REVOKED with NO reinstatement -- exercises the gate's temporal pre-check branch directly (different code path than LNES59-B5-002, which had a reinstatement so exercised the historical_values branch instead), (2) genuine conflict+supersession combination -- a 2-hop authorized-amount chain THAT ALSO conflicts with a separate invoiced-amount predicate, combining both mechanisms in one case rather than testing them separately.",
+  "documents": [
+    {
+      "id": "DOC-APPROVAL-6006-ORIGINAL",
+      "type": "approval_matrix", "source_class": "APPROVAL_SYSTEM_RECORD",
+      "effective_from": "2026-02-01",
+      "content": "APPROVAL SYSTEM RECORD: standing purchasing authorization granted to Fernbrook Systems (VENDOR-6006) for routine equipment orders, authorization code AUTH-6006-STD.",
+      "predicate": "VENDOR-6006.standing_purchase_authorization", "value": "AUTHORIZED_STANDING_FB"
+    },
+    {
+      "id": "DOC-APPROVAL-6006-REVOCATION",
+      "type": "approval_matrix", "source_class": "APPROVAL_SYSTEM_RECORD",
+      "effective_from": "2026-06-01", "revokes": "DOC-APPROVAL-6006-ORIGINAL",
+      "content": "APPROVAL SYSTEM RECORD: standing purchasing authorization AUTH-6006-STD for Fernbrook Systems (VENDOR-6006) REVOKED effective 2026-06-01, following an adverse vendor audit finding. No reinstatement has been issued as of the benchmark reference date.",
+      "predicate": "VENDOR-6006.standing_authorization_revocation_notice"
+    },
+    {
+      "id": "DOC-PO-6007",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6007", "po_id": "PO-6007", "issued": "2026-03-01",
+      "content": "PURCHASE ORDER PO-6007. Vendor: Oakhaven Freight Systems (VENDOR-6007). Amount authorized: $20,000.00. Description: quarterly freight services.",
+      "predicate": "PO-6007.authorized_amount", "value": "20000"
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-6007A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6007", "issued": "2026-05-15", "amends": "DOC-PO-6007",
+      "content": "PURCHASE ORDER AMENDMENT PO-6007-A1, amending PO-6007. Vendor: Oakhaven Freight Systems (VENDOR-6007). Revised amount authorized: $24,000.00 (additional route added). Approved by: R. Castellano (Manager).",
+      "predicate": "PO-6007.authorized_amount", "value": "24000"
+    },
+    {
+      "id": "DOC-INVOICE-6007",
+      "type": "invoice", "source_class": "INVOICE",
+      "content": "INVOICE INV-70211. From: Oakhaven Freight Systems (VENDOR-6007). To: ExergyNet Corp. PO reference: PO-6007. Amount: $27,000.00. Invoice date: 2026-06-10. No amendment or change order referenced beyond PO-6007-A1.",
+      "predicate": "PO-6007.invoiced_amount", "value": "27000"
+    }
+  ]
+}
