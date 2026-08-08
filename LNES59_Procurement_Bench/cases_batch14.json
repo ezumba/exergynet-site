@@ -1,0 +1,33 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 11 (packet I), strictly after documents_batch14.json and after extraction was verified directly (including correcting a grounding_document_ids omission caught during verification, before any case text was written). DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B14-001",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "TEMPORAL", "POLICY", "SUPERSESSION"],
+      "query": "Was Director T. Osei's $30,000 approval of the Q3 vendor consolidation contract within their authority?",
+      "grounding_document_ids": ["DOC-EMAIL-DIRECTOR-30K-V3", "DOC-APPROVAL-MATRIX-V3-OLD", "DOC-APPROVAL-MATRIX-V3-NEW"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "correct_summary": "Within authority: $30,000 is under the CURRENT Director limit of $50,000 (Approval Matrix V3, revised 2026-04-01). The OLD matrix's $25,000 Director limit (which $30,000 WOULD have exceeded) expired 2026-03-31 and no longer governs. Tests that the policy tier table ITSELF has a real temporal lifecycle, not just approvals/POs -- a genuinely new predicate family for supersession (two competing tier tables for the same predicate, not two competing approval amounts)."
+      },
+      "ungoverned_failure_mode": "Model applies the outdated $25,000 Director limit from the expired policy version, incorrectly flagging a $30,000 approval as over-limit.",
+      "predicate": "CT-2026-Q3CONSOL.director_approval",
+      "compare_against_predicate": "APPROVAL_MATRIX_V3.limits"
+    },
+    {
+      "case_id": "LNES59-B14-002",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "TEMPORAL", "POLICY"],
+      "query": "Was Director T. Osei's $75,000 approval of the facilities upgrade contract within their authority?",
+      "grounding_document_ids": ["DOC-EMAIL-DIRECTOR-75K-V4", "DOC-APPROVAL-MATRIX-V4-FUTUREINCREASE", "DOC-APPROVAL-MATRIX-V4-CURRENT"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "correct_summary": "Not within authority: $75,000 exceeds the CURRENT Director limit of $50,000. A board-approved increase to $100,000 exists and is real, but does not take effect until 2026-10-01 -- it has not yet arrived as of the benchmark reference date, so it does not govern this approval. The Director's own awareness of the pending increase ('I know the new limits take effect this quarter') does not make it apply early. Parallel to B5-001's future-effective payment-terms test, applied to authority tiers specifically."
+      },
+      "ungoverned_failure_mode": "Model applies the future $100,000 limit because the Director explicitly referenced it and it is genuinely real and board-approved, treating awareness of a pending change as equivalent to the change already being in force.",
+      "predicate": "CT-2026-FACUPGRADE.director_approval",
+      "compare_against_predicate": "APPROVAL_MATRIX_V4.limits"
+    }
+  ]
+}
