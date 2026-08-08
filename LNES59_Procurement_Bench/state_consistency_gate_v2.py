@@ -98,6 +98,35 @@ def values_match(asserted_value, committed_value):
     return all(w in asserted_words for w in words)
 
 
+# Explicit, disclosed keyword list -- not semantic judgment. A model
+# converting a source-scoped finding into a universal one reliably uses
+# broadening language ("anywhere", "at all", "does not exist"); this does
+# not attempt to catch every possible phrasing, the same disclosed-
+# limitation discipline as values_match()'s own pattern extractors.
+_SCOPE_BROADENING_CUES = (
+    "anywhere", "at all", "in general", "no matter where", "under any",
+    "never been", "never existed", "does not exist", "doesn't exist",
+    "no such vendor", "not a real vendor", "universally", "in all systems",
+    "across all", "globally",
+)
+
+
+def _claims_beyond_scope(output):
+    """True only when the model's own text (asserted_value and/or
+    claimed_scope) contains an explicit scope-broadening cue. See
+    evaluate()'s SOURCE_SCOPE_ERROR check for why this replaced exact
+    equality against committed.scope."""
+    parts = [output.claimed_scope]
+    if isinstance(output.asserted_value, str):
+        parts.append(output.asserted_value)
+    # Normalize underscores to spaces -- this benchmark's tokens are
+    # often SNAKE_CASE (e.g. "VENDOR_DOES_NOT_EXIST"), and a cue phrase
+    # like "does not exist" must match regardless of which separator the
+    # source used.
+    text = " ".join(p for p in parts if p).lower().replace("_", " ")
+    return any(cue in text for cue in _SCOPE_BROADENING_CUES)
+
+
 class ResolutionState(str, Enum):
     MATCH = "MATCH"
     NO_MATCH = "NO_MATCH"
@@ -174,11 +203,22 @@ class CommittedState:
     authority_status: AuthorityStatus
     temporal_status: TemporalStatus
     value: object = None          # the state's own value, e.g. "Net 60" or True/False
-    scope: str = None             # the declared boundary this state is valid within
+    scope: object = None          # the declared boundary this state is valid within -- a plain descriptive
+                                   # string (hand-authored fixtures) or a dict with at least a "source_system"
+                                   # key (real extraction, see deterministic_extraction.py's _derive_scope()).
+                                   # Not compared by exact equality against the model's claimed_scope -- see
+                                   # evaluate()'s SOURCE_SCOPE_ERROR check for why.
     policy_tiers: dict = None     # {authority_level: limit_or_None}, when a POLICY document actually
                                    # grounds this state's authority check (see evaluate()'s ACTION_REQUEST
                                    # branch) -- None if no real policy tier table was extracted, in which
                                    # case the gate falls back to the coarser authority_status-only check.
+    historical_values: tuple = ()  # prior (superseded/expired/revoked) values for this SAME predicate, most
+                                    # recent first -- lets the value-comparison branch distinguish a
+                                    # once-true-now-stale assertion (TEMPORAL_CONTRADICTION) from a value
+                                    # that was never true (STATE_CONTRADICTION). Empty when extraction found
+                                    # no supersession chain for this predicate, or for resolution shapes
+                                    # (NO_MATCH, CONFLICTING_EVIDENCE, INCOMPLETE) where "history" isn't a
+                                    # single value's lineage.
 
 
 @dataclass(frozen=True)
@@ -233,19 +273,28 @@ def evaluate(committed: CommittedState, output: ModelOutput) -> GateDecision:
     # unsupported rules since a scope violation is a distinct failure
     # mode even when the underlying resolution is otherwise correct.
     #
-    # An unscoped model claim (claimed_scope=None) against a scoped
-    # committed state is ALSO an error, not a pass -- omitting scope
-    # entirely is exactly how "not in this registry" becomes "doesn't
-    # exist" (directive example G). Only an explicit, matching scope
-    # avoids this.
+    # NOT exact-equality against committed.scope (the original design):
+    # that would reproduce taxonomy #16's exact failure mode the moment
+    # real extraction started populating .scope, since a real model
+    # naturally paraphrases scope in its own words rather than guessing
+    # the deterministic layer's internal label -- found and fixed before
+    # it could produce false positives, by reasoning from #16 rather than
+    # waiting to rediscover it. Instead: flag only when the model's own
+    # text contains an explicit scope-BROADENING cue (e.g. "anywhere",
+    # "does not exist") -- converting a source-scoped finding into a
+    # universal one. Silence about scope, or scope phrased differently
+    # than committed.scope's own label, is NOT itself an error -- same
+    # narrows-false-positives-without-hiding-real-ones principle as
+    # values_match().
     if (
         committed.scope is not None
-        and output.claimed_scope != committed.scope
         and output.output_type in (ModelOutputType.ASSERTION, ModelOutputType.SUMMARY)
+        and _claims_beyond_scope(output)
     ):
         return GateDecision(
             GateOutcome.SOURCE_SCOPE_ERROR,
-            f"model claimed scope {output.claimed_scope!r} but committed state is scoped to {committed.scope!r}",
+            f"model's claim (asserted_value={output.asserted_value!r}, claimed_scope={output.claimed_scope!r}) "
+            f"reads as broader than the committed state's declared scope {committed.scope!r}",
         )
 
     # ── ACTION_REQUEST: checked against authority_status, not truth of
@@ -355,10 +404,25 @@ def evaluate(committed: CommittedState, output: ModelOutput) -> GateDecision:
                 f"asserted value corresponds to a state with temporal_status={committed.temporal_status.value}, not CURRENT",
             )
         # Value comparison: does the assertion match the committed value?
+        # A miss against the CURRENT value isn't automatically
+        # STATE_CONTRADICTION -- if it matches a preserved HISTORICAL
+        # (superseded/expired/revoked) value for this same predicate, the
+        # asserted value was once real, just stale, which is a more
+        # specific and more useful diagnosis than "wrong" (e.g. "Net 30"
+        # when the current term is "Net 60" but "Net 30" was the original
+        # contract's own term, vs. "Net 45", which was never anything).
         if not values_match(output.asserted_value, committed.value):
+            stale_match = any(values_match(output.asserted_value, h) for h in committed.historical_values)
+            if stale_match:
+                return GateDecision(
+                    GateOutcome.TEMPORAL_CONTRADICTION,
+                    f"asserted_value={output.asserted_value!r} matches a HISTORICAL (superseded/expired) value for "
+                    f"this state, not the current committed_state.value={committed.value!r}",
+                )
             return GateDecision(
                 GateOutcome.STATE_CONTRADICTION,
-                f"asserted_value={output.asserted_value!r} contradicts committed_state.value={committed.value!r}",
+                f"asserted_value={output.asserted_value!r} contradicts committed_state.value={committed.value!r} "
+                f"and does not match any preserved historical value {committed.historical_values!r} either",
             )
         return GateDecision(GateOutcome.CONSISTENT, "assertion matches a CURRENT, properly-grounded committed state")
 

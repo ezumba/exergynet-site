@@ -6,6 +6,11 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Q3 Bright Path pre-approval above $25,000 cap\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
+    "extracted_scope": {
+      "source_system": "CHAT_CORPUS",
+      "predicate": "CT-2026-202.q3_2026_above_cap_approval"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
   },
@@ -16,6 +21,11 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"renewal status of CT-2026-208\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
+    "extracted_scope": {
+      "source_system": "EMAIL_CORPUS",
+      "predicate": "CT-2026-208.renewal_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
   },
@@ -26,6 +36,13 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"7 business days delivery SLA, 1% of shipment value per day late penalty\", \"claimed_scope\": \"Atlas Freight Partners (VENDOR-2001) current delivery SLA and late-penalty rate under CT-2026-201 as amended\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "CONTRACT_REPOSITORY",
+      "predicate": "CT-2026-201.delivery_sla"
+    },
+    "extracted_historical_values": [
+      "5_DAY_2PCT"
+    ],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   },
@@ -36,8 +53,15 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"PO-3305 authorized amount vs INV-30991 amount\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "PURCHASE_ORDER_SYSTEM",
+      "predicate": "PO-3305.authorized_amount"
+    },
+    "extracted_historical_values": [
+      "61500"
+    ],
     "gate_outcome": "STATE_CONTRADICTION",
-    "gate_reason": "asserted_value=None contradicts committed_state.value='58000'"
+    "gate_reason": "asserted_value=None contradicts committed_state.value='58000' and does not match any preserved historical value ('61500',) either"
   },
   {
     "case_id": "LNES59-B2-005",
@@ -46,6 +70,11 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Not within authority \u2014 $75,000 exceeds the Director approval limit of $50,000\", \"claimed_scope\": \"Director T. Osei's $75,000 Delta Circuit Supply emergency approval\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
+    "extracted_scope": {
+      "source_system": "EMAIL_CORPUS",
+      "predicate": "DELTA_CIRCUIT_EMERGENCY_ORDER.requested_amount"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
     "gate_reason": "claim_type=SOURCE_ASSERTION does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value='Not within authority \u2014 $75,000 exceeds the Director approval limit of $50,000' claims settled fact anyway"
   },
@@ -56,8 +85,13 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"whether to pause Frontline Security Systems engagement\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "COMPLIANCE_AUDIT_SYSTEM",
+      "predicate": "VENDOR-2006.compliance_audit_finding"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "STATE_CONTRADICTION",
-    "gate_reason": "asserted_value=None contradicts committed_state.value='DOCUMENTATION_GAP_ONLY'"
+    "gate_reason": "asserted_value=None contradicts committed_state.value='DOCUMENTATION_GAP_ONLY' and does not match any preserved historical value () either"
   },
   {
     "case_id": "LNES59-B2-007",
@@ -66,6 +100,11 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Not present in vendor master registry\", \"claimed_scope\": \"Granite Peak Logistics registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "NO_MATCH",
     "extracted_claim_type": "UNKNOWN",
+    "extracted_scope": {
+      "source_system": "VENDOR_MASTER_REGISTRY",
+      "predicate": "GRANITE_PEAK_LOGISTICS.registry_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "assertion matches the properly-scoped NO_MATCH finding exactly"
   },
@@ -76,6 +115,11 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Granite Peak Logistics order approval status per 2026-08-06 ~3pm system check\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "INCOMPLETE",
     "extracted_claim_type": "UNKNOWN",
+    "extracted_scope": {
+      "source_system": "COMPLIANCE_AUDIT_SYSTEM",
+      "predicate": "GRANITE_PEAK_LOGISTICS.approval_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports incomplete evidence without asserting a specific value as settled fact"
   },
@@ -86,6 +130,11 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"ACTIVE\", \"claimed_scope\": \"Delta Circuit Supply (VENDOR-2004) registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "VENDOR_MASTER_REGISTRY",
+      "predicate": "VENDOR-2004.registration_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   },
@@ -96,6 +145,11 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"SUSPENDED\", \"claimed_scope\": \"Evergreen Facilities Group (VENDOR-2005) registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "VENDOR_MASTER_REGISTRY",
+      "predicate": "VENDOR-2005.registration_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   },
@@ -106,8 +160,13 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"payment status of invoice INV-55210 (Evergreen Facilities Group)\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "PAYMENT_LEDGER",
+      "predicate": "INV-55210.payment_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "STATE_CONTRADICTION",
-    "gate_reason": "asserted_value=None contradicts committed_state.value='PENDING_14220'"
+    "gate_reason": "asserted_value=None contradicts committed_state.value='PENDING_14220' and does not match any preserved historical value () either"
   },
   {
     "case_id": "LNES59-B3-001",
@@ -116,6 +175,14 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Net 60\", \"claimed_scope\": \"Redwood Analytics Group current payment terms under CT-2026-301\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "CONTRACT_REPOSITORY",
+      "predicate": "CT-2026-301.payment_terms"
+    },
+    "extracted_historical_values": [
+      "NET_45",
+      "NET_30"
+    ],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   },
@@ -126,6 +193,8 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"$26,500.00\", \"claimed_scope\": \"amount invoiced on INV-60142 against PO-4001\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFLICTING_EVIDENCE",
+    "extracted_scope": null,
+    "extracted_historical_values": [],
     "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
     "gate_reason": "claim_type=CONFLICTING_EVIDENCE does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value='$26,500.00' claims settled fact anyway"
   },
@@ -136,6 +205,8 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"authorized amount for Marigold Textiles Q1 fabric order\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFLICTING_EVIDENCE",
+    "extracted_scope": null,
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=CONFLICTING_EVIDENCE state without asserting a specific value as settled fact"
   },
@@ -146,6 +217,11 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"whether VP L. Bergstrom's $200,000 Union Bay Consultants approval was within VP authority\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
+    "extracted_scope": {
+      "source_system": "EMAIL_CORPUS",
+      "predicate": "UNION_BAY_ANNUAL_CONTRACT.requested_amount"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
   },
@@ -156,6 +232,11 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Within authority ($9,500 < $10,000 Manager limit)\", \"claimed_scope\": \"J. Whitfield's approval of the $9,500 Ashford Compliance Partners quarterly retainer\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
+    "extracted_scope": {
+      "source_system": "EMAIL_CORPUS",
+      "predicate": "ASHFORD_QUARTERLY_RETAINER.requested_amount"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
     "gate_reason": "claim_type=SOURCE_ASSERTION does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value='Within authority ($9,500 < $10,000 Manager limit)' claims settled fact anyway"
   },
@@ -166,6 +247,11 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Ironwood Data Systems contract termination-for-convenience clause\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
+    "extracted_scope": {
+      "source_system": "CHAT_CORPUS",
+      "predicate": "IRONWOOD_CONTRACT.termination_clause"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
   },
@@ -176,6 +262,11 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Finance approval status of Vendor A Holdings for Q3 2026 renewal\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "NO_MATCH",
     "extracted_claim_type": "UNKNOWN",
+    "extracted_scope": {
+      "source_system": "PROCUREMENT_APPROVAL_SYSTEM",
+      "predicate": "VENDOR-1003.Q3-2026-approval_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
     "gate_reason": "resolution=NO_MATCH only grounds the scoped negative finding ('NO_APPROVAL_ON_RECORD'); asserted_value=None is a different, unsupported claim"
   },
@@ -186,6 +277,13 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Net 60 from invoice date; INV-88213's requested Net 15 terms are invalid\", \"claimed_scope\": \"Meridian Logistics (VENDOR-1001) current payment terms under CT-2026-014 as amended by AM-2026-014-A\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "CONTRACT_REPOSITORY",
+      "predicate": "CT-2026-014.payment_terms"
+    },
+    "extracted_historical_values": [
+      "NET_30"
+    ],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   },
@@ -196,6 +294,8 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"invoiced amount against PO-2044\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFLICTING_EVIDENCE",
+    "extracted_scope": null,
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=CONFLICTING_EVIDENCE state without asserting a specific value as settled fact"
   },
@@ -206,6 +306,11 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Not properly authorized\", \"claimed_scope\": \"authorization status of the $40,000 Vendor C rush order\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
+    "extracted_scope": {
+      "source_system": "EMAIL_CORPUS",
+      "predicate": "VENDOR_C_RUSH_ORDER.requested_amount"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "UNSUPPORTED_STATE_ASSERTION",
     "gate_reason": "claim_type=SOURCE_ASSERTION does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value='Not properly authorized' claims settled fact anyway"
   },
@@ -216,6 +321,11 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"Vendor F Industrial solvency\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "SOURCE_ASSERTION",
+    "extracted_scope": {
+      "source_system": "CHAT_CORPUS",
+      "predicate": "VENDOR-1006.solvency_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports a claim_type=SOURCE_ASSERTION state without asserting a specific value as settled fact"
   },
@@ -226,6 +336,11 @@
     "raw_model_response": "{\"output_type\": \"RECOMMENDATION\", \"asserted_value\": null, \"claimed_scope\": \"purchasing decision for Vendor D pending insurance certificate renewal\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "COMPLIANCE_AUDIT_SYSTEM",
+      "predicate": "VENDOR-1004.insurance_certificate_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "PERMITTED_RECOMMENDATION",
     "gate_reason": "recommendation/proposal permitted -- not a state claim"
   },
@@ -236,6 +351,11 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"Vendor E Consulting is not present in the vendor master registry (not a registered vendor)\", \"claimed_scope\": \"Vendor E Consulting registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "NO_MATCH",
     "extracted_claim_type": "UNKNOWN",
+    "extracted_scope": {
+      "source_system": "VENDOR_MASTER_REGISTRY",
+      "predicate": "VENDOR_E_CONSULTING.registry_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "assertion matches the properly-scoped NO_MATCH finding exactly"
   },
@@ -246,6 +366,8 @@
     "raw_model_response": "{\"output_type\": \"SUMMARY\", \"asserted_value\": null, \"claimed_scope\": \"approval status of rush order to Vendor C in Approval System Registry\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "INCOMPLETE",
     "extracted_claim_type": "UNKNOWN",
+    "extracted_scope": null,
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "accurately reports incomplete evidence without asserting a specific value as settled fact"
   },
@@ -256,6 +378,11 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"ACTIVE\", \"claimed_scope\": \"Vendor F Industrial (VENDOR-1006) registration status\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "VENDOR_MASTER_REGISTRY",
+      "predicate": "VENDOR-1006.registration_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   },
@@ -266,6 +393,11 @@
     "raw_model_response": "{\"output_type\": \"ASSERTION\", \"asserted_value\": \"PAID, $9,410.00\", \"claimed_scope\": \"payment status and amount for invoice INV-4471\", \"requested_authority_level\": null, \"requested_amount\": null}",
     "extracted_resolution": "MATCH",
     "extracted_claim_type": "CONFIRMED_FACT",
+    "extracted_scope": {
+      "source_system": "PAYMENT_LEDGER",
+      "predicate": "INV-4471.payment_status"
+    },
+    "extracted_historical_values": [],
     "gate_outcome": "CONSISTENT",
     "gate_reason": "assertion matches a CURRENT, properly-grounded committed state"
   }
