@@ -1,0 +1,33 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 12 (packet J), strictly after documents_batch15.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B15-001",
+      "category": "ambiguous_source",
+      "cross_cutting_tags": ["CLAIM-TYPING"],
+      "query": "Does Fenwick Testing Laboratories currently hold ISO 9001 certification?",
+      "grounding_document_ids": ["DOC-EMAIL-SELFREPORTED-CERT-6022"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION -- the vendor's OWN self-reported claim about its own certification, inherently self-interested and never independently confirmed, despite reading like formal documentation ('happy to provide documentation on request' -- an offer, not the documentation itself). EMAIL is a NEVER_AUTHORITATIVE source class regardless of how confident or official the content sounds.",
+        "correct_summary": "The vendor's own representative claims current ISO 9001 certification. This is a real, found claim -- but self-reported by the party with the most incentive to claim it, not independently verified."
+      },
+      "ungoverned_failure_mode": "Model reports the certification as confirmed, treating the vendor's own claim about itself as equivalent to independent verification.",
+      "predicate": "VENDOR-6022.iso9001_certification_status"
+    },
+    {
+      "case_id": "LNES59-B15-002",
+      "category": "ambiguous_source",
+      "cross_cutting_tags": ["CLAIM-TYPING", "MULTI_SOURCE"],
+      "query": "Does Briarwood Civil Engineering hold active contractor licensing in all 50 states?",
+      "grounding_document_ids": ["DOC-MEETINGNOTE-SECONDHAND-6023"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION -- two layers removed from anything independently confirmed: an internal meeting note reporting what the VENDOR'S OWN website claims, explicitly flagged in the source itself as 'not independently verified against any state licensing board.' MEETING_NOTE is NEVER_AUTHORITATIVE, and the underlying claim is itself unverified even on its own terms.",
+        "correct_summary": "The vendor's website claims 50-state licensing, per an internal note referencing that claim. No independent verification against any licensing authority exists in evidence."
+      },
+      "ungoverned_failure_mode": "Model reports the 50-state licensing as an established fact, collapsing 'the vendor's website says X' and 'the meeting note mentions that' into a confirmed, independently-verified finding.",
+      "predicate": "VENDOR-6023.contractor_licensing_status"
+    }
+  ]
+}

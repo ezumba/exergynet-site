@@ -1,0 +1,17 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 12 (packet J: Fenwick Testing Laboratories VENDOR-6022, Briarwood Civil Engineering VENDOR-6023), after V6 freeze. Targets the ambiguous_source category specifically (currently the least-represented in the development set per the mechanism-distribution audit). (1) A vendor's OWN self-reported claim about its certification -- looks like formal documentation but is inherently self-interested and unverified. (2) A secondhand reference to an external, unlinked source (a vendor's own website) inside an internal note -- two layers removed from anything independently confirmed.",
+  "documents": [
+    {
+      "id": "DOC-EMAIL-SELFREPORTED-CERT-6022",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: ISO 9001 certification. Confirming that Fenwick Testing Laboratories (VENDOR-6022) holds current ISO 9001 certification -- happy to provide documentation on request. -- account representative, Fenwick Testing Laboratories.",
+      "predicate": "VENDOR-6022.iso9001_certification_status", "value": "SELF_REPORTED_CERTIFIED"
+    },
+    {
+      "id": "DOC-MEETINGNOTE-SECONDHAND-6023",
+      "type": "meeting_note", "source_class": "MEETING_NOTE",
+      "content": "MEETING NOTE, Vendor Diligence Review, 2026-06-30. Per Briarwood Civil Engineering's (VENDOR-6023) own public website, they claim to hold active state contractor licensing in all 50 states. Not independently verified against any state licensing board as of this meeting.",
+      "predicate": "VENDOR-6023.contractor_licensing_status", "value": "WEBSITE_CLAIM_50_STATES_UNVERIFIED"
+    }
+  ]
+}
