@@ -6,14 +6,18 @@
     {"file": "documents_batch2.json", "tranche": 2, "sha256": "23168d872e3bd218fbc650256d0a00d5bae5d7f51d5dee8639637666a42e79d4", "size_bytes": 12628},
     {"file": "documents_batch3.json", "tranche": 3, "sha256": "4b308fb84a821bc57cb1b4fd9d37fc214f365331b5392c013f69fec13fb2f06a", "size_bytes": 6712},
     {"file": "documents_batch4.json", "tranche": 4, "sha256": "d685f175eca956e0ba78ce6ffbb3913fc757a5ee7f8f8eae90f3ddd73b0073cc", "size_bytes": 4358},
-    {"file": "documents_batch5.json", "tranche": 5, "sha256": "0d8ba268d4d5276889d4f98f916e0af91238389bbeb65eb3ccb92e66afc4e2bf", "size_bytes": 4626}
+    {"file": "documents_batch5.json", "tranche": 5, "sha256": "0d8ba268d4d5276889d4f98f916e0af91238389bbeb65eb3ccb92e66afc4e2bf", "size_bytes": 4626},
+    {"file": "documents_batch6.json", "tranche": 6, "sha256": "e4bde7a78f8dd0cfb8a2c878f84166597d450e0dc93a7b0c0a3690c19ea3c5b3", "size_bytes": 3669},
+    {"file": "documents_batch7.json", "tranche": 7, "sha256": "9741737085e6072e5bf3a7f1b49e31fd50583711f322bef0743324614d59f970", "size_bytes": 1817}
   ],
   "case_sets": [
     {"file": "cases.json", "tranche": 1, "role": "development", "sha256": "7c6862fa9a52a7c4e80ecf670af6d989b61eb9f00bee169ddedc762063df01dd", "size_bytes": 11310},
     {"file": "cases_batch2.json", "tranche": 2, "role": "development", "sha256": "c9759d58de289cee07a2c929f4238867dcd2a19bf4fc953e43c0a8d5f9a0ef7d", "size_bytes": 14820, "_note": "hash updated 2026-08-08 for the B2-006 query-text correction, see LNES59_PREDICATE_SEMANTICS.md"},
     {"file": "cases_batch3.json", "tranche": 3, "role": "development", "sha256": "c60f4edfca3316839919ec65fa21269b88049e617f330d18e42f54efab777ea8", "size_bytes": 8882, "_note": "hash updated 2026-08-08 for the B3-002 query-text correction, see LNES59_PREDICATE_SEMANTICS.md"},
     {"file": "cases_batch4.json", "tranche": 4, "role": "development", "sha256": "39432c0908e669d709c297278f610a681af4a69030c662aec9093932f005b150", "size_bytes": 4834, "_note": "Phase 5 tranche 1 -- LNES59-B4-001..004"},
-    {"file": "cases_batch5.json", "tranche": 5, "role": "development", "sha256": "615db173fee385a90633b3c81454cd9a3c8e0165821b152e2723121f30a72d94", "size_bytes": 4338, "_note": "Phase 5 tranche 2 -- LNES59-B5-001..003, taxonomy #21 (future-effective) + first real REVOKED exercise + multi-dimensional authority (right role/amount, wrong vendor)"}
+    {"file": "cases_batch5.json", "tranche": 5, "role": "development", "sha256": "615db173fee385a90633b3c81454cd9a3c8e0165821b152e2723121f30a72d94", "size_bytes": 4338, "_note": "Phase 5 tranche 2 -- LNES59-B5-001..003, taxonomy #21 (future-effective) + first real REVOKED exercise + multi-dimensional authority (right role/amount, wrong vendor)"},
+    {"file": "cases_batch6.json", "tranche": 6, "role": "development", "sha256": "c94a3344efeec5a0d70273dd1975cd2370729934d5254946fb83bf6aeb7f2a14", "size_bytes": 3845, "_note": "Phase 5 tranche 3, packet A (Wrenfield Analytics) -- LNES59-B6-001..003: 4-hop temporal chain, wrong-business-unit authority, fresh PO-vs-invoice conflict"},
+    {"file": "cases_batch7.json", "tranche": 7, "role": "development", "sha256": "9602d932034ca11b9d8e92b35a44ef8df11e8b744aa0664541250c315ccabf96", "size_bytes": 3130, "_note": "Phase 5 tranche 4, packet B -- LNES59-B7-001..003: taxonomy #23 (expiration + honest hedge), fresh NO_MATCH+scope, fresh open-world claim-type instance"}
   ],
   "development": {
     "_note": "Every case_set listed above is role=development as of this manifest version. No holdout case_sets exist yet -- LNES59_HOLDOUT_MANIFEST.json will introduce them once the corpus is complete and architecture-stable. A case_set's role is never changed in place; a case promoted to holdout would need to move to a NEW file with role=holdout, leaving the development file's history intact."

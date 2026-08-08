@@ -1,0 +1,24 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 4 (packet B: three independent single-vendor scenarios -- Solmark Industrial VENDOR-6002, Thornfield Risk Advisors VENDOR-6003, Larkspur Municipal Services VENDOR-6004), after V5 freeze (commit 660b78e), specifically to exercise taxonomy #23's fix (temporal expiration + honest hedge) plus NO_MATCH+scope and a fresh open-world claim-type instance distinct from LNES59-B4-004.",
+  "documents": [
+    {
+      "id": "DOC-APPROVAL-6002-TEMP",
+      "type": "approval_matrix", "source_class": "APPROVAL_SYSTEM_RECORD",
+      "effective_from": "2026-04-01", "effective_until": "2026-06-30",
+      "content": "TEMPORARY SPENDING AUTHORIZATION: Solmark Industrial (VENDOR-6002) approved for expedited-track purchases up to $15,000 through 2026-06-30, per the Q2 vendor consolidation initiative. This authorization does not renew automatically.",
+      "predicate": "VENDOR-6002.temporary_spending_authorization", "value": "AUTHORIZED_TEMP_15K"
+    },
+    {
+      "id": "DOC-VENDOR-REGISTRY-SEARCH-6003",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Thornfield Risk Advisors\". Full registry searched, all 1,842 active and inactive entries. Result: NO MATCH. Thornfield Risk Advisors is not present in the vendor master registry.",
+      "value": "NOT_IN_REGISTRY", "predicate": "VENDOR-6003.registry_status"
+    },
+    {
+      "id": "DOC-LICENSE-STATUS-6004",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "COMPLIANCE SYSTEM QUERY: Larkspur Municipal Services (VENDOR-6004) business license status. Compliance database unavailable at query time -- status could not be determined.",
+      "predicate": "VENDOR-6004.business_license_status"
+    }
+  ]
+}

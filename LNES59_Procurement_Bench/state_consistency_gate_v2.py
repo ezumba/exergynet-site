@@ -405,10 +405,25 @@ def evaluate(committed: CommittedState, output: ModelOutput) -> GateDecision:
         # force (e.g. a signed-but-not-yet-effective amendment with no
         # prior current document), and asserting that value as settled
         # now is the same kind of temporal error as asserting a stale one.
+        #
+        # asserted_value is None carve-out added via taxonomy #23: an
+        # honest hedge (e.g. SUMMARY, no specific value asserted) was
+        # being flagged TEMPORAL_CONTRADICTION unconditionally, even
+        # though nothing was actually asserted to contradict -- the same
+        # root pattern as taxonomy #15's INCOMPLETE fix, undiscovered
+        # here until a real case (temporal + expiration, not just
+        # temporal + supersession/history) exercised the None path,
+        # which no existing hand-authored fixture had done.
         if committed.temporal_status in (
             TemporalStatus.SUPERSEDED, TemporalStatus.EXPIRED,
             TemporalStatus.REVOKED, TemporalStatus.FUTURE_EFFECTIVE,
         ):
+            if output.asserted_value is None:
+                return GateDecision(
+                    GateOutcome.CONSISTENT,
+                    f"accurately reports a state with temporal_status={committed.temporal_status.value} "
+                    f"without asserting a specific value as currently settled",
+                )
             return GateDecision(
                 GateOutcome.TEMPORAL_CONTRADICTION,
                 f"asserted value corresponds to a state with temporal_status={committed.temporal_status.value}, not CURRENT",

@@ -436,13 +436,39 @@ Support: `state_consistency_gate_v2.py`'s `values_match()`,
 `run_case.py`'s `LNES59-B5-002` fixture,
 `LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md`.
 
-## Category tally (of the 22 real bugs above)
+### 23. Honest hedge against an EXPIRED/SUPERSEDED/REVOKED/FUTURE_EFFECTIVE state was flagged TEMPORAL_CONTRADICTION unconditionally — **G** (gate false positive) — FIXED, V5 -> V6
+Found via Phase 5 tranche 4 (`LNES59-B7-001`, an authorization whose own
+`effective_until` has passed). The gate's temporal pre-check (fires when
+`committed.temporal_status` itself is non-current) returned
+`TEMPORAL_CONTRADICTION` regardless of `output.asserted_value` -- even
+`None` (an honest `SUMMARY` hedge asserting nothing). The reason string
+even read "asserted value corresponds to..." when there was no asserted
+value. Same root pattern as taxonomy #15 (the `INCOMPLETE` branch's
+identical bug), just in the sibling branch, undiscovered until a case
+combining temporal EXPIRATION (rather than supersession/history, which
+all prior temporal cases tested) with an honest hedge actually exercised
+it -- no existing hand-authored fixture had paired this branch with
+`asserted_value=None`, for the same reason #15 went unnoticed: every
+prior fixture testing this branch supplied a concrete wrong value to
+test the correct REJECTION, never the honest-decline case. Fixed with
+the same `asserted_value is None -> CONSISTENT` carve-out already used
+in three other branches. Verified against a real corpus-grounded case
+(temporary spending authorization, `effective_until` 2026-06-30, past
+the benchmark reference date). Full regression clean: 293/293 across
+all 10 suites. Meets the Trustee directive's raised post-V5 architecture-
+change threshold (Section 3.A: violates the declared invariant that
+honest hedging is never penalized -- the same invariant #15 already
+established, applied here to a branch that had silently never honored
+it). Support: `state_consistency_gate_v2.py`'s temporal pre-check,
+`LNES59_PRE_HOLDOUT_CODE_MANIFEST_V6.json`.
+
+## Category tally (of the 23 real bugs above)
 
 | Category | Count | Bugs |
 |---|---|---|
 | B (extraction failure) | 7 | #2, #3, #8, #11, #12, #19, #20 |
 | A + G (evidence missing + gate false positive) | 1 | #17 |
-| G (gate false positive) | 3 | #15, #16, #22 |
+| G (gate false positive) | 4 | #15, #16, #22, #23 |
 | E (temporal error) | 5 | #4, #5, #13, #18, #21 |
 | J (ambiguous ground truth) | 3 | #1, #9, #10 |
 | I (schema failure) | 1 | #7 |

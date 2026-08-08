@@ -1,0 +1,52 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 3 (packet A: Wrenfield Analytics, VENDOR-6001), after V5 freeze (commit 660b78e). Rich enterprise packet -- one vendor's fuller procurement history, multiple documents, multiple DIFFERENT case questions derived from it, per the Trustee directive's explicit preference for this over isolated single-purpose documents. Corpus-first: documents below, cases in cases_batch6.json written strictly after and after extraction was verified directly.",
+  "documents": [
+    {
+      "id": "DOC-CONTRACT-6001",
+      "type": "signed_contract", "source_class": "SIGNED_CONTRACT",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "MASTER SERVICES AGREEMENT CT-2026-6001. Between ExergyNet Corp and Wrenfield Analytics (VENDOR-6001). Payment terms: Net 30 from invoice date.",
+      "predicate": "CT-2026-6001.payment_terms", "value": "NET_30"
+    },
+    {
+      "id": "DOC-AMENDMENT-6001A",
+      "type": "signed_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-03-01", "amends": "DOC-CONTRACT-6001",
+      "content": "AMENDMENT AM-2026-6001-A to CT-2026-6001. Payment terms amended from Net 30 to Net 45, effective 2026-03-01.",
+      "predicate": "CT-2026-6001.payment_terms", "value": "NET_45"
+    },
+    {
+      "id": "DOC-AMENDMENT-6001B",
+      "type": "signed_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-05-01", "amends": "DOC-AMENDMENT-6001A",
+      "content": "AMENDMENT AM-2026-6001-B to CT-2026-6001, amending AM-2026-6001-A. Payment terms amended a second time, from Net 45 to Net 60, effective 2026-05-01.",
+      "predicate": "CT-2026-6001.payment_terms", "value": "NET_60"
+    },
+    {
+      "id": "DOC-AMENDMENT-6001C",
+      "type": "signed_amendment", "source_class": "SIGNED_AMENDMENT",
+      "effective_from": "2026-07-01", "amends": "DOC-AMENDMENT-6001B",
+      "content": "AMENDMENT AM-2026-6001-C to CT-2026-6001, amending AM-2026-6001-B. Payment terms amended a THIRD time, from Net 60 to Net 15 (accelerated terms, vendor cash-flow accommodation), effective 2026-07-01. Fourth generation of this contract's payment terms overall.",
+      "predicate": "CT-2026-6001.payment_terms", "value": "NET_15"
+    },
+    {
+      "id": "DOC-EMAIL-DIRECTOR-BUSINESSUNIT-WEST",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Wrenfield renewal, WEST region. Approving the $28,000 Wrenfield Analytics services renewal for the WEST region operations team -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "predicate": "BUSINESS_UNIT_WEST.WRENFIELD_RENEWAL.contract_authority", "value": "28000"
+    },
+    {
+      "id": "DOC-PO-6001E",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6001", "po_id": "PO-6001E", "issued": "2026-07-10",
+      "content": "PURCHASE ORDER PO-6001E. Vendor: Wrenfield Analytics (VENDOR-6001). Amount authorized: $28,000.00. Business unit: EAST region operations. Description: services renewal -- unrelated transaction to the WEST region approval despite the matching vendor and dollar amount.",
+      "predicate": "PO-6001E.authorized_amount", "value": "28000"
+    },
+    {
+      "id": "DOC-INVOICE-6001E",
+      "type": "invoice", "source_class": "INVOICE",
+      "content": "INVOICE INV-91004. From: Wrenfield Analytics (VENDOR-6001). To: ExergyNet Corp, EAST region operations. PO reference: PO-6001E. Amount: $31,500.00. Invoice date: 2026-07-20. No amendment or change order referenced.",
+      "predicate": "PO-6001E.invoiced_amount", "value": "31500"
+    }
+  ]
+}

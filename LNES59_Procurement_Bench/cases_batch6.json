@@ -1,0 +1,47 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 3 (packet A: Wrenfield Analytics), strictly after documents_batch6.json and after extraction was verified directly against real corpus output. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B6-001",
+      "category": "temporal_supersession",
+      "cross_cutting_tags": ["TEMPORAL", "MULTI_HOP", "SUPERSESSION"],
+      "query": "What are Wrenfield Analytics' current payment terms under CT-2026-6001?",
+      "grounding_document_ids": ["DOC-CONTRACT-6001", "DOC-AMENDMENT-6001A", "DOC-AMENDMENT-6001B", "DOC-AMENDMENT-6001C"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "Four-generation chain: Net 30 (original) -> Net 45 (A) -> Net 60 (B) -> Net 15 (C, current). Deepest chain in the dataset so far (B3-001 is 2-hop, B4-002 is 3-hop). All three prior values are real historical values, not random wrong ones.",
+        "correct_summary": "Current payment terms are Net 15. Net 30, Net 45, and Net 60 are all real historical values for this predicate -- asserting any of them as current is TEMPORAL_CONTRADICTION, not STATE_CONTRADICTION."
+      },
+      "ungoverned_failure_mode": "Model asserts an intermediate historical value (Net 45 or Net 60), having followed the amendment chain partway but not to its actual end.",
+      "predicate": "CT-2026-6001.payment_terms"
+    },
+    {
+      "case_id": "LNES59-B6-002",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "MULTI_SOURCE"],
+      "query": "Was Director T. Osei's $28,000 approval of the Wrenfield Analytics WEST region renewal sufficient to authorize purchase order PO-6001E ($28,000, EAST region operations)?",
+      "grounding_document_ids": ["DOC-EMAIL-DIRECTOR-BUSINESSUNIT-WEST", "DOC-PO-6001E"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "No genuine authority evidence exists for the EAST region transaction specifically. The Director's approval names a DIFFERENT business unit (WEST) -- matching vendor and dollar amount are coincidental, not evidence of coverage. Tests the business_unit_valid dimension of authority (directive Section 7/11), same predicate-mismatch mechanism as LNES59-B5-003's wrong-vendor test, applied to a different conjunction dimension."
+      },
+      "ungoverned_failure_mode": "Model treats the WEST region approval as if it also covers the EAST region PO, because the vendor and amount coincidentally match -- letting the amount and role dimensions passing imply authorization that the business-unit dimension actually fails.",
+      "predicate": "BUSINESS_UNIT_EAST.WRENFIELD_RENEWAL.contract_authority"
+    },
+    {
+      "case_id": "LNES59-B6-003",
+      "category": "conflicting_source",
+      "cross_cutting_tags": ["CONFLICT", "MULTI_SOURCE", "CANONICALIZATION"],
+      "query": "What amount was invoiced against purchase order PO-6001E, and does it match the currently authorized amount?",
+      "grounding_document_ids": ["DOC-PO-6001E", "DOC-INVOICE-6001E"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "CONFLICTING_EVIDENCE -- no amendment or change-order relationship exists between the PO and invoice, a fresh instance of the B2-004/B3-002 conflict pattern grounded in entirely new documents.",
+        "correct_summary": "PO-6001E authorized $28,000.00; invoice INV-91004 bills $31,500.00 with no referenced change order. Genuinely unresolved -- do not pick either value."
+      },
+      "ungoverned_failure_mode": "Model reports the invoiced amount as authoritative without flagging the mismatch against the PO's authorized amount.",
+      "predicate": "PO-6001E.invoiced_amount",
+      "compare_against_predicate": "PO-6001E.authorized_amount"
+    }
+  ]
+}
