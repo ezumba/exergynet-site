@@ -1,0 +1,104 @@
+{
+  "_purpose": "Pre-holdout architecture freeze manifest, V2 -- supersedes LNES59_PRE_HOLDOUT_CODE_MANIFEST.json (V1) for the purpose of gating holdout construction, but V1 is preserved unmodified, not deleted, for chronology.",
+  "_frozen_2026-08-08": true,
+  "supersedes": {
+    "manifest": "LNES59_PRE_HOLDOUT_CODE_MANIFEST.json",
+    "freeze_commit": "f176510",
+    "code_commit": "04a8c8779d068451e12de86988f216d6345908c4"
+  },
+  "git_commit": "e86a39277c1410e7ac028118525f93a792819967",
+  "git_repo": "exergynet",
+  "why_a_v2_freeze_was_needed": [
+    "Phase 4.1: resolved LNES59-B3-002's open predicate-scoping question (query text corrected, not architecture -- see LNES59_PREDICATE_SEMANTICS.md).",
+    "Phase 4.1: resolved LNES59-B2-006's same-root-cause-family query/predicate mismatch (query text corrected, classified NOT AMBIGUOUS_GROUND_TRUTH).",
+    "Phase 4.3: resolved the third disclosed scope case (valid scoped uncertainty) -- confirmed working via existing mechanism, no gate code change, but a new disclosed limitation (sparse 2-word value word-fallback) was found and recorded.",
+    "Phase 4.4: added LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md, the target structured-claim interface and values_match() rule classification (benchmark adapter vs architectural primitive)."
+  ],
+  "frozen_scope": [
+    "state_consistency_gate_v2.py",
+    "deterministic_extraction.py",
+    "LNES59_STATE_SCHEMA.md",
+    "LNES59_AUTHORITY_MODEL.md",
+    "LNES59_PREDICATE_SEMANTICS.md",
+    "LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md"
+  ],
+  "explicitly_not_frozen": {
+    "cases.json / cases_batch2.json / cases_batch3.json / documents*.json": "dataset content, not architecture -- scaling to 150 cases (Phase 5) adds MORE of these under the frozen rules, does not modify frozen code. Note: cases_batch2.json and cases_batch3.json DID change in this pass (B2-006, B3-002 query text) -- that is dataset repair, explicitly authorized pre-Phase-5, not a frozen-architecture change.",
+    "run_case.py, arm_x2.py, run_x2_arm.py, metrics.py": "harness/runner code -- may still change to support new arms (X0, X1, B0-B4) without re-opening the frozen gate/extraction/schema/predicate-semantics/scope logic",
+    "test_*.py": "test files may grow (new cases need new fixtures) but must not be used to justify changing frozen behavior -- a new failing test against frozen code is a finding to record, not a license to patch the freeze"
+  },
+  "components": {
+    "state_schema": {
+      "version": "1.0",
+      "file": "LNES59_STATE_SCHEMA.md",
+      "sha256": "ef754b070fefdc6f9a2e6a97c293fa5f1d631ea74cb2bf20267d6f322db47a9f",
+      "size_bytes": 7497,
+      "changed_since_v1": false
+    },
+    "authority_model": {
+      "version": "1.0",
+      "file": "LNES59_AUTHORITY_MODEL.md",
+      "sha256": "e98b7a99cfbcb0d6cb3eb2eb4be17d228ba31719560d5cd6b24eb3d13308f143",
+      "size_bytes": 4888,
+      "changed_since_v1": false
+    },
+    "gate": {
+      "version": "2.1",
+      "_version_note": "UNCHANGED from V1 -- same file, same hash. Phase 4.1-4.3's resolutions needed no gate code changes (the third scope case worked via existing values_match(); B3-002/B2-006 were dataset-side query text fixes).",
+      "file": "state_consistency_gate_v2.py",
+      "sha256": "74c0b904a2fcb15aec882b2401e29c8c3c417a2c9d0c27c9285fe8938419822e",
+      "size_bytes": 23818,
+      "changed_since_v1": false
+    },
+    "extraction": {
+      "version": "1.2",
+      "_version_note": "UNCHANGED from V1 -- same file, same hash. See gate.version note above; same reasoning applies.",
+      "file": "deterministic_extraction.py",
+      "sha256": "0249b0d048fefcb5f60667e39ee7a03882940f2f5412171564e3a4f24d8e5afe",
+      "size_bytes": 22328,
+      "changed_since_v1": false
+    },
+    "predicate_schema": {
+      "version": "1.0",
+      "_version_note": "NEW at V2 -- first version. Defines EXACT_PREDICATE, PREDICATE_ALIAS, PREDICATE_SUBTYPE, DERIVED_PREDICATE, UNRELATED_PREDICATE, UNRESOLVED_RELATIONSHIP and the general grounding rule.",
+      "file": "LNES59_PREDICATE_SEMANTICS.md",
+      "sha256": "92d894908d0f8e1a0331752f4b9d6ee0df7ff15dcf17f8e1ded6fe5fe81bfc84",
+      "size_bytes": 8640,
+      "changed_since_v1": "new file"
+    },
+    "scope_semantics": {
+      "version": "1.1",
+      "_version_note": "1.0 = V1 freeze (_derive_scope() + _claims_beyond_scope(), 2/3 directive cases verified). 1.1 = this freeze -- third case verified working via existing mechanism (no code change, hence gate.version unchanged), disclosed limitation added to taxonomy #17.",
+      "implemented_in": ["deterministic_extraction.py", "state_consistency_gate_v2.py"],
+      "spec_file": "LNES59_STATE_SCHEMA.md"
+    },
+    "temporal_lineage": {
+      "version": "1.0",
+      "_version_note": "Unchanged since V1 -- historical_values mechanism (taxonomy #18), no changes this pass.",
+      "implemented_in": ["deterministic_extraction.py", "state_consistency_gate_v2.py"]
+    },
+    "candidate_claim_architecture": {
+      "version": "0.1-design-only",
+      "_version_note": "NEW at V2 -- documentation/design-boundary only, not implemented. Target structured-claim interface (MODEL TEXT -> CANDIDATE CLAIM -> CANONICAL VALUE -> COMPARISON) and values_match() adapter-vs-primitive classification.",
+      "file": "LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md",
+      "sha256": "82d19e6a8cec04f8919b06ddb50902c92d846c58640045b366a5fe210fd553c2",
+      "size_bytes": 6294,
+      "changed_since_v1": "new file"
+    }
+  },
+  "regression_suite_state_at_freeze": {
+    "test_state_consistency_gate_v2.py": "28/28",
+    "test_gate_v2_batch2.py": "19/19",
+    "test_values_match.py": "17/17",
+    "test_scope_and_history.py": "8/8 (was 7/7 at V1 -- scope 3/3 now genuinely passes instead of documenting a skip; 1 new disclosed-limitation fixture added)",
+    "validate_extraction_against_cases.py": "27/27",
+    "run_case.py": "50/50",
+    "_total": "149/149, all green at the frozen commit"
+  },
+  "known_remaining_limitations_at_freeze": [
+    "Sparse (2-word) NO_MATCH value tokens (e.g. NO_APPROVAL_ON_RECORD) are vulnerable to a vague hedge false-matching values_match()'s word-fallback without genuinely restating the finding -- disclosed in taxonomy #17, not fixed (see LNES59_PREDICATE_SEMANTICS.md and LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md for context). Phase 5 case authoring should prefer richer value tokens for new NO_MATCH predicates where practical.",
+    "CandidateClaim architecture is design-only -- ModelOutput still carries a single free-text asserted_value, not the full structured claim (subject/predicate/canonical_value/displayed_value/scope/effective_time/claim_type/source_reference). Deferred deliberately, not an oversight -- see LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md.",
+    "PREDICATE_ALIAS category is defined but has zero real instances in the corpus -- untested in practice, only specified.",
+    "No B0-B4 baseline or full X0-X1 sweep has been run -- X2 is the only arm with real empirical data (X2_REAL_RUN_2026-08-08.md, 27/27 dev-set cases)."
+  ]
+}
