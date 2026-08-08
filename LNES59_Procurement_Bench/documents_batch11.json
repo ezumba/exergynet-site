@@ -1,0 +1,38 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 8 (packet F: Silverlake Municipal Contractors VENDOR-6011, Meadowcross Analytics VENDOR-6012, Waverunner Environmental Services VENDOR-6013), after V6 freeze. Three distinct attacks: (1) dramatic authority violation with a new JUNIOR_BUYER tier (directive Section 5's $500k-vs-$100k example), (2) VP's UNLIMITED financial authority still failing on the business-unit dimension (unlimited amount != global authority), (3) a realistic semantic collision (shortlisted vs awarded) using ordinary procurement vocabulary, NOT constructed as a deliberate values_match() trap.",
+  "documents": [
+    {
+      "id": "DOC-APPROVAL-MATRIX-V2",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "PROCUREMENT APPROVAL MATRIX V2 (effective 2026-01-01), extends the standard matrix with a Junior Buyer tier for routine low-value purchases: Junior Buyer up to $5,000; Manager up to $10,000; Director up to $50,000; VP unlimited within board-approved budget.",
+      "predicate": "APPROVAL_MATRIX_V2.limits",
+      "tiers": {"JUNIOR_BUYER": 5000, "MANAGER": 10000, "DIRECTOR": 50000, "VP": null}
+    },
+    {
+      "id": "DOC-EMAIL-JUNIORBUYER-500K",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Silverlake infrastructure contract. Approving $500,000 for the Silverlake Municipal Contractors (VENDOR-6011) infrastructure contract -- proceeding within my authority as Junior Buyer.",
+      "predicate": "VENDOR-6011.contract_authority", "value": "500000"
+    },
+    {
+      "id": "DOC-EMAIL-VP-NORTH-MEADOWCROSS",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Meadowcross annual contract, NORTH region. Approving the $200,000 annual contract with Meadowcross Analytics (VENDOR-6012) for the NORTH region operations team -- within my unlimited VP authority per the current approval matrix and board-approved FY26 budget. -- L. Bergstrom, VP Operations.",
+      "predicate": "BUSINESS_UNIT_NORTH.MEADOWCROSS.contract_authority", "value": "200000"
+    },
+    {
+      "id": "DOC-PO-SOUTH-MEADOWCROSS",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6012", "po_id": "PO-6012S", "issued": "2026-06-05",
+      "content": "PURCHASE ORDER PO-6012S. Vendor: Meadowcross Analytics (VENDOR-6012). Amount authorized: $200,000.00. Business unit: SOUTH region operations. Description: annual contract -- unrelated transaction to the NORTH region VP approval despite the matching vendor and dollar amount.",
+      "predicate": "PO-6012S.authorized_amount", "value": "200000"
+    },
+    {
+      "id": "DOC-RFP-STATUS-6013",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "RFP STATUS RECORD, Q3 Waste Management Services RFP. Waverunner Environmental Services (VENDOR-6013) has been SHORTLISTED -- one of three finalists under active evaluation. No award decision has been made as of the report date.",
+      "predicate": "VENDOR-6013.rfp_award_status", "value": "SHORTLISTED_NOT_AWARDED"
+    }
+  ]
+}
