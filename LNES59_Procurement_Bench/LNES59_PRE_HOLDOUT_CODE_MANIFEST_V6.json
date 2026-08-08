@@ -1,0 +1,60 @@
+{
+  "_purpose": "Pre-holdout architecture freeze manifest, V6 -- supersedes V5. V1-V5 all preserved unmodified for chronology.",
+  "_frozen_2026-08-08": true,
+  "supersedes": {"manifest": "LNES59_PRE_HOLDOUT_CODE_MANIFEST_V5.json", "freeze_commit": "660b78e", "code_commit": "609b3c09ccb36bc05764cf8ef1071c40caa5cea7"},
+  "lineage": [
+    {"version": "V1", "commit": "f176510", "reason": "closed scope + historical-value preservation gaps"},
+    {"version": "V2", "commit": "1ab0336", "reason": "predicate semantics + third scope case + CandidateClaim doc -- no code changes"},
+    {"version": "V3", "commit": "6cae952", "reason": "taxonomy #19 -- 'maintenance' marker collision"},
+    {"version": "V4", "commit": "3f5722a", "reason": "taxonomy #20 -- unavailability false-negative matrix"},
+    {"version": "V5", "commit": "609b3c0", "reason": "taxonomy #21 (future-effective fix) + taxonomy #22 (BENCHMARK_ADAPTER_LIMIT_REACHED, disclosed)"},
+    {"version": "V6", "commit": "ad8f426", "reason": "taxonomy #23 -- honest hedge against EXPIRED/SUPERSEDED/REVOKED/FUTURE_EFFECTIVE state was flagged TEMPORAL_CONTRADICTION unconditionally, same root pattern as #15, found via a real case pairing temporal expiration with an honest hedge for the first time"}
+  ],
+  "git_commit": "ad8f4264facb04e46ab48b4f402ff631f0196f4e",
+  "git_repo": "exergynet",
+  "why_a_v6_freeze_was_needed": [
+    "Taxonomy #23: the gate's temporal pre-check now carves out asserted_value=None -> CONSISTENT, matching the invariant taxonomy #15 already established for the INCOMPLETE branch. Meets the Trustee directive's raised post-V5 threshold (Section 3.A -- violates a declared invariant)."
+  ],
+  "frozen_scope": [
+    "state_consistency_gate_v2.py", "deterministic_extraction.py", "LNES59_STATE_SCHEMA.md",
+    "LNES59_AUTHORITY_MODEL.md", "LNES59_PREDICATE_SEMANTICS.md", "LNES59_CANDIDATE_CLAIM_ARCHITECTURE.md"
+  ],
+  "explicitly_not_frozen": {
+    "cases*.json / documents*.json": "dataset content -- documents_batch6-7.json/cases_batch6-7.json are Phase 5 tranches 3-4 (6 new DEVELOPMENT cases: B6-001..003, B7-001..003), more tranches follow toward 100",
+    "dataset_registry.py, LNES59_DATASET_MANIFEST.json, case_view.py": "infrastructure",
+    "run_case.py, arm_x2.py, run_x2_arm.py, metrics.py, validate_extraction_against_cases.py": "harness/runner code",
+    "test_*.py": "test files grow with the dataset and with each red-team pass"
+  },
+  "components": {
+    "state_schema": {"version": "1.0", "sha256": "ef754b070fefdc6f9a2e6a97c293fa5f1d631ea74cb2bf20267d6f322db47a9f", "changed_since_v5": false},
+    "authority_model": {"version": "1.0", "sha256": "e98b7a99cfbcb0d6cb3eb2eb4be17d228ba31719560d5cd6b24eb3d13308f143", "changed_since_v5": false},
+    "gate": {
+      "version": "2.3",
+      "_version_note": "2.2 = V5. 2.3 = this freeze -- temporal pre-check gained the asserted_value=None -> CONSISTENT carve-out (taxonomy #23).",
+      "file": "state_consistency_gate_v2.py", "sha256": "6155f0b83ca3920ca330fe92d4e8f414f496979c2f5938f09cb5b640dc1c5054", "size_bytes": 25447, "changed_since_v5": true
+    },
+    "extraction": {"version": "1.5", "sha256": "4f2b445f51f3581bd392cb8b9370d5e5c172dfb2c4d672da63a2c61f31b2f54a", "changed_since_v5": false},
+    "predicate_schema": {"version": "1.0", "sha256": "92d894908d0f8e1a0331752f4b9d6ee0df7ff15dcf17f8e1ded6fe5fe81bfc84", "changed_since_v5": false},
+    "candidate_claim_architecture": {"version": "0.2-design-only", "sha256": "e76fb2bad56abef4f30663be8499ec68034494d8c94a4ffb086162dca02c20f8", "changed_since_v5": false}
+  },
+  "regression_suite_state_at_freeze": {
+    "test_state_consistency_gate_v2.py": "28/28", "test_gate_v2_batch2.py": "19/19", "test_values_match.py": "17/17",
+    "test_scope_and_history.py": "8/8", "test_no_match_stress.py": "5/5", "test_open_world_claim_types.py": "3/3",
+    "test_leakage.py": "83/83 (was 71 -- +12 for batch6/7's 6 new cases)", "test_unavailability_detection.py": "13/13",
+    "validate_extraction_against_cases.py": "40/40 (was 34 -- +6)", "run_case.py": "77/77 (was 64 -- +13)",
+    "_total": "293/293, all green at the frozen commit -- DETERMINISTIC REGRESSION SUITE, not benchmark/blind accuracy"
+  },
+  "dataset_state_at_freeze": {
+    "total_documents": 70, "total_cases": 40, "target_development_cases": 100, "target_holdout_cases": 50, "target_total_cases": 150,
+    "development_cases_remaining_to_100": 60,
+    "new_this_tranche": {"documents": 10, "cases": 6, "case_ids": ["LNES59-B6-001", "LNES59-B6-002", "LNES59-B6-003", "LNES59-B7-001", "LNES59-B7-002", "LNES59-B7-003"]}
+  },
+  "known_remaining_limitations_at_freeze": [
+    "Taxonomy #17 and #22: sparse/subset-word-collision risks in values_match()'s compound-word fallback -- BENCHMARK_ADAPTER_LIMIT_REACHED, disclosed, not fixed further.",
+    "CandidateClaim architecture remains design-only.",
+    "PREDICATE_ALIAS category remains unused in the corpus.",
+    "REVOKED detection exercised once (B5-002), not yet stress-tested for edge cases (e.g. a revocation itself later revoked).",
+    "'Required approval classes' (e.g. policy demanding BOTH Director AND Legal sign-off) is not modeled at all -- policy_tiers is single-dimensional (one role -> one limit). Flagged by the Trustee directive Section 7 as a priority for the remaining development cases; not yet built or confirmed as a real gap.",
+    "No B0-B4 baseline or full X0-X1 sweep has been run -- X2 remains the only arm with real empirical data."
+  ]
+}
