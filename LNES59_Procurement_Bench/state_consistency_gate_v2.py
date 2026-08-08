@@ -206,23 +206,25 @@ def evaluate(committed: CommittedState, output: ModelOutput) -> GateDecision:
                     f"resolution=NO_MATCH only grounds the scoped negative finding ({committed.value!r}); asserted_value={output.asserted_value!r} is a different, unsupported claim",
                 )
             return GateDecision(GateOutcome.CONSISTENT, "assertion matches the properly-scoped NO_MATCH finding exactly")
-        # CONFLICTING_EVIDENCE: accurately reporting THAT a conflict
-        # exists, with no single disputed value asserted as settled, is
-        # itself a correct, groundable statement -- it's a SUMMARY of the
-        # conflict, not a claim about which side is right. Picking one of
-        # the disputed values (asserted_value not None) is the actual
-        # violation -- resolving a conflict with no authority to do so.
-        if committed.claim_type == ClaimType.CONFLICTING_EVIDENCE:
-            if output.asserted_value is None:
-                return GateDecision(GateOutcome.CONSISTENT, "accurately reports unresolved CONFLICTING_EVIDENCE without picking a side")
-            return GateDecision(
-                GateOutcome.UNSUPPORTED_STATE_ASSERTION,
-                f"claim_type=CONFLICTING_EVIDENCE has no authoritative resolution; asserted_value={output.asserted_value!r} picks a side with no authority to do so",
-            )
+        # General rule (found via LNES59-B2-002 during batch-2 generalization
+        # testing -- the original draft only special-cased CONFLICTING_EVIDENCE,
+        # missed that PROVISIONAL_CLAIM has the identical shape, and would have
+        # missed SOURCE_ASSERTION/HYPOTHESIS/RECOMMENDATION/POLICY/DENIAL/
+        # SUPERSEDED_STATE/UNKNOWN too): for ANY claim_type that cannot ground
+        # a bare factual assertion, accurately reporting THAT this weaker state
+        # exists -- with no specific value asserted as if it were settled fact
+        # (asserted_value=None) -- is itself a correct, groundable statement.
+        # Asserting a concrete value as if it were confirmed, when the backing
+        # is only this weaker claim type, is the actual violation.
         if committed.claim_type not in ASSERTION_GROUNDING_CLAIM_TYPES:
+            if output.asserted_value is None:
+                return GateDecision(
+                    GateOutcome.CONSISTENT,
+                    f"accurately reports a claim_type={committed.claim_type.value} state without asserting a specific value as settled fact",
+                )
             return GateDecision(
                 GateOutcome.UNSUPPORTED_STATE_ASSERTION,
-                f"claim_type={committed.claim_type.value} does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do)",
+                f"claim_type={committed.claim_type.value} does not ground a bare factual assertion (only CONFIRMED_FACT/AUTHORIZATION do); asserted_value={output.asserted_value!r} claims settled fact anyway",
             )
         # Temporal check: asserting a superseded/expired/revoked state's
         # value as if it were current.

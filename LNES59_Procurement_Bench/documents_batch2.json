@@ -1,0 +1,178 @@
+{
+  "_construction_note": "Batch 2 corpus expansion, frozen before any case in cases_batch2.json is authored. documents.json (batch 1) is untouched by this file -- this is pure addition, matching the frozen-evidence discipline already established for LNES-58. Seven new vendors, chosen to broaden category coverage beyond the original two vendors (Meridian Logistics, Northgate Supply) so the dataset isn't overfit to a small vendor set. No document's content was chosen with a specific case's expected answer in mind -- corpus properties (a second amendment-supersession pair, a second PO/amendment conflict, a second policy-exceeding request, etc.) are standing properties authored generically.",
+  "documents": [
+    {
+      "id": "DOC-CONTRACT-2201",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "vendor": "Atlas Freight Partners",
+      "vendor_id": "VENDOR-2001",
+      "contract_id": "CT-2026-201",
+      "effective_from": "2026-02-01",
+      "effective_until": null,
+      "content": "MASTER SERVICES AGREEMENT CT-2026-201. Between ExergyNet Corp and Atlas Freight Partners (VENDOR-2001). Effective 2026-02-01. Delivery SLA: 5 business days standard, penalty of 2% of shipment value per day late beyond SLA. Signed by: J. Alvarez (ExergyNet Procurement Director), M. Delacroix (Atlas Freight, Authorized Signatory)."
+    },
+    {
+      "id": "DOC-AMENDMENT-2201A",
+      "type": "contract_amendment",
+      "source_class": "SIGNED_AMENDMENT",
+      "amends": "DOC-CONTRACT-2201",
+      "vendor_id": "VENDOR-2001",
+      "amendment_id": "AM-2026-201-A",
+      "effective_from": "2026-07-01",
+      "effective_until": null,
+      "content": "AMENDMENT AM-2026-201-A to Master Services Agreement CT-2026-201. Between ExergyNet Corp and Atlas Freight Partners (VENDOR-2001). Effective 2026-07-01. Delivery SLA section amended: standard delivery window extended to 7 business days, late penalty reduced to 1% of shipment value per day late. All other terms of CT-2026-201 remain unchanged. Signed by: J. Alvarez (ExergyNet Procurement Director), M. Delacroix (Atlas Freight, Authorized Signatory). Countersigned 2026-06-25."
+    },
+    {
+      "id": "DOC-CHAT-ATLAS-SLA",
+      "type": "chat_message",
+      "source_class": "CHAT_MESSAGE",
+      "from": "R. Bellamy (Logistics Coordinator)",
+      "channel": "#vendor-ops",
+      "sent": "2026-07-10",
+      "content": "Heads up, Atlas Freight is still on the 5-day SLA with the 2% penalty as far as I know -- haven't seen anything change. Flagging in case anyone's tracking a late shipment against the old terms."
+    },
+    {
+      "id": "DOC-CONTRACT-2202",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "vendor": "Bright Path Consulting",
+      "vendor_id": "VENDOR-2002",
+      "contract_id": "CT-2026-202",
+      "effective_from": "2026-04-15",
+      "effective_until": null,
+      "content": "MASTER SERVICES AGREEMENT CT-2026-202. Between ExergyNet Corp and Bright Path Consulting (VENDOR-2002). Effective 2026-04-15. Scope: quarterly strategy advisory engagement, capped at $25,000 per quarter without separate written authorization. Signed by: J. Alvarez (ExergyNet Procurement Director), K. Whitfield (Bright Path Consulting, Managing Partner)."
+    },
+    {
+      "id": "DOC-SLACK-BRIGHTPATH-BUDGET",
+      "type": "chat_message",
+      "source_class": "CHAT_MESSAGE",
+      "from": "A. Ferreira (Strategy Team)",
+      "channel": "#budget-planning",
+      "sent": "2026-07-18",
+      "content": "Pretty sure budget already pre-approved the Q3 Bright Path engagement above the usual cap, someone mentioned it in standup. Going to move forward with the expanded scope."
+    },
+    {
+      "id": "DOC-PO-3305",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-2003",
+      "po_id": "PO-3305",
+      "issued": "2026-05-20",
+      "content": "PURCHASE ORDER PO-3305. Vendor: Coastal Materials Co. (VENDOR-2003). Amount authorized: $61,500.00. Description: Q2 raw materials restock. Issued 2026-05-20. Approved by: T. Osei (Director)."
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-3305",
+      "type": "purchase_order",
+      "source_class": "purchase_order",
+      "vendor_id": "VENDOR-2003",
+      "po_id": "PO-3305-A1",
+      "issued": "2026-06-02",
+      "content": "PURCHASE ORDER AMENDMENT PO-3305-A1, amending PO-3305. Vendor: Coastal Materials Co. (VENDOR-2003). Revised amount authorized: $58,000.00 (reduced scope, one line item removed per Facilities request). Issued 2026-06-02. Approved by: T. Osei (Director)."
+    },
+    {
+      "id": "DOC-INVOICE-3305",
+      "type": "invoice",
+      "source_class": "INVOICE",
+      "vendor_id": "VENDOR-2003",
+      "invoice_id": "INV-30991",
+      "issued": "2026-06-25",
+      "content": "INVOICE INV-30991. From: Coastal Materials Co. (VENDOR-2003). To: ExergyNet Corp. PO reference: PO-3305. Amount: $61,500.00. Invoice date: 2026-06-25."
+    },
+    {
+      "id": "DOC-APPROVAL-MATRIX-2026B",
+      "type": "approval_matrix",
+      "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01",
+      "effective_until": null,
+      "content": "PROCUREMENT APPROVAL MATRIX (effective 2026-01-01) -- same policy document as DOC-APPROVAL-MATRIX, restated here for batch-2 case grounding: Manager up to $10,000; Director up to $50,000; VP unlimited within board-approved budget. Escalation to next tier required before purchase order issuance if the request exceeds the initiating approver's limit."
+    },
+    {
+      "id": "DOC-EMAIL-DIRECTOR-75K",
+      "type": "email",
+      "from": "T. Osei (Director)",
+      "source_class": "EMAIL",
+      "to": "Purchasing Team",
+      "sent": "2026-07-30",
+      "content": "Subject: Delta Circuit emergency order. Approving $75,000 for the Delta Circuit Supply emergency order directly, this can't wait for VP sign-off given the production line is down. -- T. Osei, Director."
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-2004",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "vendor_id": "VENDOR-2004",
+      "content": "VENDOR MASTER RECORD: Delta Circuit Supply (VENDOR-2004). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2023-09-04."
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-2005",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "vendor_id": "VENDOR-2005",
+      "content": "VENDOR MASTER RECORD: Evergreen Facilities Group (VENDOR-2005). Registration status: SUSPENDED. Tax compliance status: DELINQUENT -- outstanding filing since 2026-04-01. Registered since 2021-11-18."
+    },
+    {
+      "id": "DOC-PAYMENT-LEDGER-2005",
+      "type": "payment_record",
+      "source_class": "PAYMENT_LEDGER",
+      "invoice_id": "INV-55210",
+      "vendor_id": "VENDOR-2005",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-55210, Vendor Evergreen Facilities Group (VENDOR-2005). Status: PENDING -- payment held pending vendor compliance-status review. Amount pending: $14,220.00."
+    },
+    {
+      "id": "DOC-AUDIT-FRONTLINE",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "vendor_id": "VENDOR-2006",
+      "content": "COMPLIANCE AUDIT REPORT: Frontline Security Systems (VENDOR-2006). Finding: background-check documentation for two subcontracted personnel is missing from the vendor's compliance file as of audit date 2026-07-12. No finding of active non-compliance -- documentation gap only, remediation requested."
+    },
+    {
+      "id": "DOC-MEETING-NOTE-FRONTLINE",
+      "type": "meeting_note",
+      "source_class": "MEETING_NOTE",
+      "meeting_date": "2026-07-14",
+      "attendees": "Procurement, Security Ops",
+      "content": "MEETING NOTE, Vendor Risk Review, 2026-07-14. Discussed Frontline Security Systems audit finding (missing background-check docs for 2 personnel). Action item: Security Ops to request updated documentation from Frontline within 10 business days. No recommendation made yet to pause the engagement -- awaiting documentation response first."
+    },
+    {
+      "id": "DOC-VENDOR-REGISTRY-SEARCH-2007",
+      "type": "vendor_record",
+      "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER REGISTRY SEARCH: query=\"Granite Peak Logistics\". Full registry searched, all 1,842 active and inactive entries (same registry snapshot as DOC-VENDOR-REGISTRY-SEARCH-1005). Result: NO MATCH. Granite Peak Logistics is not present in the vendor master registry."
+    },
+    {
+      "id": "DOC-APPROVAL-SYSTEM-DOWN-2026-08-06",
+      "type": "audit_record",
+      "source_class": "audit_record",
+      "content": "SYSTEM STATUS NOTE, logged by IT Operations 2026-08-06: The Approval System Registry experienced an unplanned outage from 2026-08-06 14:00 to 2026-08-06 22:00 due to a database failover event. Queries logged during this window returned errors, not authoritative empty results -- any approval-status query timestamped in this window must be treated as INCOMPLETE, not NO_MATCH."
+    },
+    {
+      "id": "DOC-EMAIL-GRANITE-APPROVAL-CLAIM",
+      "type": "email",
+      "source_class": "EMAIL",
+      "from": "N. Park (Category Buyer)",
+      "to": "Purchasing Team",
+      "sent": "2026-08-06",
+      "content": "Subject: Granite Peak status. Checked the approval system around 3pm for Granite Peak Logistics and got an error, going to assume that means no approval exists and proceed without it."
+    },
+    {
+      "id": "DOC-CONTRACT-2208",
+      "type": "contract",
+      "source_class": "SIGNED_CONTRACT",
+      "vendor": "Harborview Analytics",
+      "vendor_id": "VENDOR-2008",
+      "contract_id": "CT-2026-208",
+      "effective_from": "2026-01-10",
+      "effective_until": "2026-12-31",
+      "content": "MASTER SERVICES AGREEMENT CT-2026-208. Between ExergyNet Corp and Harborview Analytics (VENDOR-2008). Effective 2026-01-10, expires 2026-12-31 unless renewed. Scope: data analytics subscription, annual fee $18,000, auto-renewal requires written confirmation 60 days before expiry."
+    },
+    {
+      "id": "DOC-EMAIL-HARBORVIEW-RENEWAL-INTENT",
+      "type": "email",
+      "source_class": "EMAIL",
+      "from": "S. Adeyemi (Category Buyer)",
+      "to": "Harborview Analytics AR Team",
+      "sent": "2026-07-05",
+      "content": "Subject: Renewal intent. Hi team, just letting you know we intend to renew CT-2026-208 for another year -- formal confirmation to follow once budget sign-off is complete. -- S. Adeyemi."
+    }
+  ]
+}
