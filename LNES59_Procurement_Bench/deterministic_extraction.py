@@ -122,7 +122,18 @@ _NO_RECORD_MARKERS = ("NO RECORD FOUND", "NO MATCH")
 # contract", or other ordinary service-description usage. Same disclosed-
 # limitation discipline as the rest of this file's sentinel-phrase
 # matching: covers phrasing actually used in this corpus, not general NLP.
-_UNAVAILABLE_MARKERS = ("outage", "scheduled maintenance", "maintenance window", "unavailable", "errors, not authoritative")
+# "offline" and "could not be accessed" added via Phase 5's SHOULD/MUST-
+# NOT red-team matrix (test_unavailability_detection.py): both are
+# plausible, realistic system-status phrasings that the marker list
+# missed entirely (2/5 SHOULD-detect cases failed before this fix), and
+# neither collides with any of the 5 MUST-NOT business-vocabulary cases
+# or any existing document in the corpus (verified by direct scan before
+# adding). Same discipline as the "maintenance" narrowing above: general
+# repair for a real, demonstrated gap, not speculative hardening.
+_UNAVAILABLE_MARKERS = (
+    "outage", "scheduled maintenance", "maintenance window", "unavailable",
+    "errors, not authoritative", "offline", "could not be accessed",
+)
 
 # Which source_class values ground a bare CONFIRMED_FACT-type claim by
 # default (subject to the NO_MATCH/unavailable overrides below), versus

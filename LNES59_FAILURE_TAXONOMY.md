@@ -313,11 +313,61 @@ created with explicit V2 -> V3 lineage, V2 preserved unmodified. Support:
 `deterministic_extraction.py`'s `_UNAVAILABLE_MARKERS`,
 `LNES59_PRE_HOLDOUT_CODE_MANIFEST_V3.json`.
 
-## Category tally (of the 19 real bugs above)
+### 20. `_UNAVAILABLE_MARKERS` missed two plausible real phrasings ("offline", "could not be accessed") — **B** (extraction failure) — FIXED, V3 -> V4
+Found via the Phase 5 Section 9 red-team matrix built specifically
+because taxonomy #19 exposed this subsystem as unreliable. Ran the
+directive's own SHOULD-detect / MUST-NOT-trigger phrase list directly
+against `_is_unavailable()`: all 5 MUST-NOT cases correctly did not
+trigger (confirming the taxonomy #19 fix holds), but 2 of 5 SHOULD-detect
+cases -- "database offline" and "records could not be accessed" -- were
+not detected at all, an outright miss rather than a false positive.
+Neither phrasing existed in any real document in the corpus yet, but
+both are realistic, plausible system-status language a future document
+easily could use, and a miss here means genuinely unavailable evidence
+would be silently treated as available (a worse failure mode than #19's
+false positive, since it produces confident wrong answers instead of an
+overly-cautious `INCOMPLETE`). Verified before fixing that neither new
+marker collides with any of the 5 MUST-NOT cases or any existing
+document (direct corpus scan). Fixed by adding both to
+`_UNAVAILABLE_MARKERS`. Regression: `test_unavailability_detection.py`
+(13/13, new), full suite re-run (247/247 across all 10 suites).
+
+**Cross-domain framing, carried forward for the final analysis (per
+directive Section 6):** taxonomies #19 and #20 are the same underlying
+lesson from two directions. #19 showed a marker specific enough for the
+original ~50 documents becoming unsafe once independently-authored
+procurement vocabulary used the same word in an ordinary sense (a
+healthcare-adjacent "system maintenance" heuristic colliding with
+"equipment maintenance"). #20 showed the reverse: a marker list narrow
+enough to avoid #19's collision was ALSO narrow enough to miss real
+unavailability language it was never tested against. Both trace to the
+same root property -- sentinel-phrase matching's accuracy is bounded by
+how thoroughly its phrase list has been red-teamed against the domain's
+actual vocabulary, in BOTH directions, not just tuned reactively against
+whatever collision happened to be found first:
+
+```
+HEURISTIC DERIVED FOR ONE DOCUMENT SET (or one direction of testing)
+        |
+DOMAIN VOCABULARY THE HEURISTIC WAS NEVER TESTED AGAINST
+        |
+FALSE STATE (either FALSE INCOMPLETE, #19, or FALSE MATCH/AVAILABLE, #20)
+        |
+GENERALIZED REPAIR, VERIFIED IN BOTH DIRECTIONS AT ONCE
+```
+
+Per the Trustee directive's Section 5/6 process: this required a real
+extraction-logic change, so V3 does not remain the frozen architecture --
+`LNES59_PRE_HOLDOUT_CODE_MANIFEST_V4.json` supersedes it, V1-V3 all
+preserved unmodified. Support: `deterministic_extraction.py`'s
+`_UNAVAILABLE_MARKERS`, `test_unavailability_detection.py`,
+`LNES59_PRE_HOLDOUT_CODE_MANIFEST_V4.json`.
+
+## Category tally (of the 20 real bugs above)
 
 | Category | Count | Bugs |
 |---|---|---|
-| B (extraction failure) | 7 | #2, #3, #8, #11, #12, #19 |
+| B (extraction failure) | 8 | #2, #3, #8, #11, #12, #19, #20 |
 | A + G (evidence missing + gate false positive) | 1 | #17 |
 | G (gate false positive) | 2 | #15, #16 |
 | E (temporal error) | 4 | #4, #5, #13, #18 |
