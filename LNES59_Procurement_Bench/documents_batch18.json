@@ -1,0 +1,30 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 15 (packet M: Willowmere Data Systems VENDOR-6028, Thornbury Engineering Group VENDOR-6029, Ashcombe Freight Partners VENDOR-6030), after V7 freeze (commit 1f2d839). Targets: (1) INCOMPLETE + valid HYPOTHESIS as its own dedicated case (not just a shared fixture), (2) INCOMPLETE + valid RECOMMENDATION as its own dedicated case, (3) multiple authoritative sources from DIFFERENT authority domains (vendor compliance eligibility is one domain, dollar-amount approval is another) both required for a valid purchase -- a genuinely new combination, not yet tested.",
+  "documents": [
+    {
+      "id": "DOC-CREDIT-CHECK-UNAVAILABLE-6028",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "CREDIT CHECK SYSTEM QUERY: Willowmere Data Systems (VENDOR-6028) financial standing check. Third-party credit bureau service unavailable at query time -- check could not be completed.",
+      "predicate": "VENDOR-6028.financial_standing_status"
+    },
+    {
+      "id": "DOC-BACKGROUND-CHECK-UNAVAILABLE-6029",
+      "type": "audit_record", "source_class": "audit_record",
+      "content": "BACKGROUND SCREENING SYSTEM QUERY: Thornbury Engineering Group (VENDOR-6029) principal-officer screening check. Screening vendor's API returned errors, not authoritative results, for the duration of the query window.",
+      "predicate": "VENDOR-6029.principal_screening_status"
+    },
+    {
+      "id": "DOC-COMPLIANCE-ELIGIBLE-6030",
+      "type": "audit_record", "source_class": "audit_record",
+      "effective_from": "2026-03-01", "effective_until": null,
+      "content": "COMPLIANCE ELIGIBILITY RECORD: Ashcombe Freight Partners (VENDOR-6030) cleared for procurement engagement -- current insurance, licensing, and safety audit all pass as of this record's effective date. Eligible for new purchase orders.",
+      "predicate": "VENDOR-6030.compliance_eligibility_status", "value": "ELIGIBLE"
+    },
+    {
+      "id": "DOC-EMAIL-DIRECTOR-40K-6030",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Ashcombe Freight annual contract. Approving $40,000 for the Ashcombe Freight Partners (VENDOR-6030) annual freight contract -- within my Director authority per the current approval matrix. -- T. Osei, Director.",
+      "predicate": "CT-2026-6030.director_amount_approval", "value": "40000"
+    }
+  ]
+}
