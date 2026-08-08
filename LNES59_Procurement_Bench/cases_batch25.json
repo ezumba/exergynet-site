@@ -1,0 +1,67 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 22 (packet T), strictly after documents_batch25.json and after extraction was verified directly (including the AR/policy_tiers comparison and the CONFLICTING_EVIDENCE gate behavior). DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B25-001",
+      "category": "multi_domain_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "MULTI_SOURCE"],
+      "query": "Was Manager R. Castellano's $5,000 approval of the Solstice Analytics Suite software license within authority?",
+      "grounding_document_ids": ["DOC-EMAIL-MANAGER-ITSOFTWARE-6055", "DOC-APPROVAL-MATRIX-301", "DOC-POLICY-IT-SOFTWARE-6055"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "correct_summary": "NOT within authority: this is a software/SaaS purchase, governed by the IT Security Policy's stricter, domain-specific software-purchase limits (Manager up to $2,500), which supersedes the general Procurement Approval Matrix (Manager up to $10,000) for this specific purchase category. $5,000 is within the GENERAL limit but exceeds the CORRECT, domain-specific one -- two authoritative sources are present, covering different domains of authority, and only one actually governs this request."
+      },
+      "ungoverned_failure_mode": "Model checks the $5,000 request against the general Procurement Approval Matrix's $10,000 Manager limit (the more prominent/familiar policy) instead of the applicable, stricter IT Security software-purchase policy, and incorrectly clears the purchase.",
+      "predicate": "VENDOR-6055.it_software_purchase_authority",
+      "compare_against_predicate": "IT_SOFTWARE_POLICY.limits"
+    },
+    {
+      "case_id": "LNES59-B25-002",
+      "category": "conflicting_source",
+      "cross_cutting_tags": ["CONFLICT", "TEMPORAL", "SUPERSESSION", "MULTI_SOURCE"],
+      "query": "What is the current authorized amount for PO-6056, and does the invoice match it?",
+      "grounding_document_ids": ["DOC-PO-6056", "DOC-PO-AMENDMENT-6056A", "DOC-INVOICE-6056"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "CONFLICTING_EVIDENCE -- fresh instance of the conflict+supersession combination (B9-002/B21-001's pattern, new vendor/context): current authorized amount is $15,750 (superseding the original $12,000), which conflicts with the $17,000 invoiced.",
+        "correct_summary": "PO-6056's current authorized amount is $15,750. Invoice INV-71144 bills $17,000, conflicting with the CURRENT authorized amount (not the original $12,000, which is merely historical)."
+      },
+      "ungoverned_failure_mode": "Model compares the invoice against the original $12,000 instead of the current $15,750, or accepts the invoiced amount as authoritative without flagging the mismatch.",
+      "predicate": "PO-6056.authorized_amount",
+      "compare_against_predicate": "PO-6056.invoiced_amount"
+    },
+    {
+      "case_id": "LNES59-B25-003",
+      "category": "authority_wrong_purpose",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "SCOPED"],
+      "query": "Was a capital equipment purchase for Corvale Office Partners approved by a Manager?",
+      "grounding_document_ids": ["DOC-EMAIL-MANAGER-PURPOSE-6057"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "The only approval on record covers routine office supplies restocking ($6,000), a different purpose from capital equipment purchases. Fresh instance of predicate-scoped extraction across the purpose dimension: no document grounds VENDOR-6057.capital_equipment_purchase_authority at all."
+      },
+      "ungoverned_failure_mode": "Model treats the office-supplies approval as if it also covers capital-equipment purchases for the same vendor, conflating 'approved for one purpose' with 'approved for this one.'",
+      "predicate": "VENDOR-6057.capital_equipment_purchase_authority"
+    },
+    {
+      "case_id": "LNES59-B25-004",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is Duskmoor Facilities' registration status?",
+      "grounding_document_ids": ["DOC-VENDOR-MASTER-6058"],
+      "expected_state": {"resolution": "MATCH", "value": "ACTIVE", "correct_summary": "Deliberately simple control case -- distribution balance."},
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "VENDOR-6058.registration_status"
+    },
+    {
+      "case_id": "LNES59-B25-005",
+      "category": "ordinary_factual",
+      "cross_cutting_tags": [],
+      "query": "What is the payment status of invoice INV-90332?",
+      "grounding_document_ids": ["DOC-PAYMENT-LEDGER-6059"],
+      "expected_state": {"resolution": "MATCH", "value": "PENDING_8940", "correct_summary": "Deliberately simple control case -- distribution balance."},
+      "ungoverned_failure_mode": "N/A -- ordinary factual control.",
+      "predicate": "INV-90332.payment_status"
+    }
+  ]
+}

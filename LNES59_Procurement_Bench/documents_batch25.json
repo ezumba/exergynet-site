@@ -1,0 +1,58 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 22 (packet T: Solstice Analytics Suite VENDOR-6055, Wintermere Fabrication VENDOR-6056/PO-6056, Corvale Office Partners VENDOR-6057, Duskmoor Facilities VENDOR-6058, Ellingham Freight VENDOR-6059). Attacking combinations: (1) multiple authoritative sources with different domains of authority -- a general procurement policy (Manager $10,000) and a stricter, domain-specific IT Security software-purchase policy (Manager $2,500) both present in grounding; compare_against_predicate must select the correct domain-specific one, not the general one, for a software purchase. (2) temporal + conflict, fresh instance (new vendor/PO, same PO-4002/PO-6035 pattern). (3) authority + wrong purpose, fresh instance (office-supplies approval misread as covering capital-equipment authority). (4)-(5) ordinary factual controls.",
+  "documents": [
+    {
+      "id": "DOC-POLICY-IT-SOFTWARE-6055",
+      "type": "approval_matrix", "source_class": "PROCUREMENT_POLICY",
+      "effective_from": "2026-01-01", "effective_until": null,
+      "content": "IT SECURITY POLICY -- SOFTWARE PURCHASE APPROVAL LIMITS (effective 2026-01-01, supersedes the general Procurement Approval Matrix for software/SaaS purchases specifically due to license-sprawl and data-security review requirements): Manager up to $2,500; Director up to $25,000; VP unlimited within board-approved budget.",
+      "predicate": "IT_SOFTWARE_POLICY.limits",
+      "tiers": {"MANAGER": 2500, "DIRECTOR": 25000, "VP": null}
+    },
+    {
+      "id": "DOC-EMAIL-MANAGER-ITSOFTWARE-6055",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Solstice Analytics Suite license. Approving $5,000 for the Solstice Analytics Suite (VENDOR-6055) annual software license -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-6055.it_software_purchase_authority", "value": "5000"
+    },
+    {
+      "id": "DOC-PO-6056",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6056", "po_id": "PO-6056", "issued": "2025-10-01",
+      "content": "PURCHASE ORDER PO-6056. Vendor: Wintermere Fabrication (VENDOR-6056). Amount authorized: $12,000.00. Description: custom metal fabrication order. Approved by: R. Castellano (Manager).",
+      "predicate": "PO-6056.authorized_amount", "value": "12000"
+    },
+    {
+      "id": "DOC-PO-AMENDMENT-6056A",
+      "type": "purchase_order", "source_class": "purchase_order",
+      "vendor_id": "VENDOR-6056", "issued": "2026-02-01", "amends": "DOC-PO-6056",
+      "content": "PURCHASE ORDER AMENDMENT PO-6056-A1, amending PO-6056. Vendor: Wintermere Fabrication (VENDOR-6056). Revised amount authorized: $15,750.00 (added a secondary tooling line item). Approved by: T. Osei (Director).",
+      "predicate": "PO-6056.authorized_amount", "value": "15750"
+    },
+    {
+      "id": "DOC-INVOICE-6056",
+      "type": "invoice", "source_class": "INVOICE",
+      "issued": "2026-07-01",
+      "content": "INVOICE INV-71144. Vendor: Wintermere Fabrication (VENDOR-6056), for PO-6056. Amount billed: $17,000.00.",
+      "predicate": "PO-6056.invoiced_amount", "value": "17000"
+    },
+    {
+      "id": "DOC-EMAIL-MANAGER-PURPOSE-6057",
+      "type": "email", "source_class": "EMAIL",
+      "content": "Subject: Corvale Office Partners -- supplies restock. Approving $6,000 for the Corvale Office Partners (VENDOR-6057) routine office supplies restocking order -- within my Manager authority per the current approval matrix. -- R. Castellano, Manager.",
+      "predicate": "VENDOR-6057.office_supplies_purchase_authority", "value": "6000"
+    },
+    {
+      "id": "DOC-VENDOR-MASTER-6058",
+      "type": "vendor_record", "source_class": "VENDOR_MASTER",
+      "content": "VENDOR MASTER RECORD: Duskmoor Facilities (VENDOR-6058). Registration status: ACTIVE. Tax compliance status: CURRENT. Registered since 2022-09-30.",
+      "predicate": "VENDOR-6058.registration_status", "value": "ACTIVE"
+    },
+    {
+      "id": "DOC-PAYMENT-LEDGER-6059",
+      "type": "payment_ledger", "source_class": "PAYMENT_LEDGER",
+      "content": "PAYMENT LEDGER ENTRY. Invoice INV-90332, Vendor Ellingham Freight (VENDOR-6059). Status: PENDING -- payment held pending three-way match verification. Amount pending: $8,940.00.",
+      "predicate": "INV-90332.payment_status", "value": "PENDING_8940"
+    }
+  ]
+}
