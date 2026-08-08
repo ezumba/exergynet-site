@@ -172,21 +172,26 @@ polished away.
 no real model had been called — every point where that boundary came up
 in this sprint was named explicitly and held, the same way production
 deployment was held earlier in this session until you explicitly said
-"go." That has since changed in one narrow, honestly-scoped way: a 5-case
-X2 smoke run against real, isolated Claude subagents (via the Agent tool,
-not the Anthropic API — see `X2_REAL_RUN_2026-08-08.md`) produced the
-sprint's first genuinely empirical result: 4/5 CONSISTENT, 1/5 a real
-STATE_CONTRADICTION catch (the gate correctly flagged a case where the
-model over-hedged past a confirmed fact). This is 5 of 27 dev-set cases,
-one arm of seven, no comparator baseline — it does not answer the
-sprint's empirical question, it is the first real data point toward
-answering it.
+"go." That has since changed: the full 27-case dev set was run through
+X2 against real, isolated Claude subagents (via the Agent tool, not the
+Anthropic API — see `X2_REAL_RUN_2026-08-08.md`), and it did more than
+produce empirical results — it found two real bugs in
+`state_consistency_gate_v2.py` that 47 hand-authored fixtures across
+three test files never surfaced, because those fixtures were all written
+by the same person who wrote the extraction code and always typed
+matching representations by construction. One bug (the gate punishing
+honest hedging under incomplete evidence) is fixed and regression-tested.
+The other (the gate comparing a model's natural-language answer against
+an internal coded token) is the single largest cause of non-`CONSISTENT`
+outcomes in the run — 6 of 27 cases, every one the model being
+substantively correct — and is deliberately left unpatched pending real
+design work, not hacked around. This is one arm of seven, no comparator
+baseline — it does not answer the sprint's empirical question, but it
+is real progress toward answering it, and it changed the architecture
+along the way.
 
-**WHAT WOULD CHANGE THE CONCLUSION:** Running the rest of X2 (22 more
-dev-set cases), the other xLMP arms (X0, X1), and the B0–B3 baselines
-against a real model, at a scale that supports the `metrics.py`
-computations. That's still the next decision point, not a default next
-step — the 5-case run does not by itself authorize scaling up; it
-demonstrates the mechanism works and surfaces a real prompt-design
-consideration (the subagents' apparent bias toward hedging) worth
-accounting for before a larger run.
+**WHAT WOULD CHANGE THE CONCLUSION:** Building the other xLMP arms (X0,
+X1) and the B0–B3 baselines against a real model, at a scale that
+supports the `metrics.py` computations, ideally after resolving bug #16
+(the value-comparison gap) so results aren't dominated by a known
+artifact. That's still the next decision point, not a default next step.
