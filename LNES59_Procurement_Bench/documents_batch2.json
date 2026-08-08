@@ -65,6 +65,7 @@
       "id": "DOC-PO-AMENDMENT-3305",
       "type": "purchase_order",
       "source_class": "purchase_order",
+      "amends": "DOC-PO-3305",
       "vendor_id": "VENDOR-2003",
       "po_id": "PO-3305-A1",
       "issued": "2026-06-02",
