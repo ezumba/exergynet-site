@@ -1,0 +1,22 @@
+{
+  "_purpose": "LNES-59.2B frozen prompt/template hashes (comparator spec section 9/18: 'Hash every prompt/template used by every arm. Do not alter prompts after holdout execution begins.'). All 8 arms share the same CandidateClaim response-format instructions; they differ only in the evidence section each arm's build_prompt_* function constructs (arm_prompts.py).",
+  "shared_response_format_instructions": {
+    "source": "candidate_claim.CANDIDATE_CLAIM_SCHEMA_INSTRUCTIONS",
+    "sha256_of_text": "0977663f34aad70efa1b376dc26b974b5af3abf9e3bd28e4cde45c69be2f0ab8"
+  },
+  "prompt_construction_code": {
+    "arm_prompts.py": "1b3da7e1e93226a83a00850540d3c77aaf72cf2aaa713ddd5229e7086f2a9bb7",
+    "candidate_claim.py": "250fac8483ef7949a3e4f99e0e74490d1b163d6ef7b14faec05a665251b4a8f5"
+  },
+  "per_arm_builders": {
+    "B0": "arm_prompts.build_prompt_b0",
+    "B1": "arm_prompts.build_prompt_retrieved (arm_label='B1_DENSE_RAG')",
+    "B2": "arm_prompts.build_prompt_retrieved (arm_label='B2_HYBRID_RAG')",
+    "B3": "arm_prompts.build_prompt_retrieved (arm_label='B3_HYBRID_RERANKER')",
+    "B4": "arm_prompts.build_prompt_structured_facts",
+    "X0": "arm_prompts.build_prompt_x0",
+    "X1": "arm_prompts.build_prompt_state_envelope",
+    "X2": "arm_prompts.build_prompt_state_envelope (identical to X1 -- diverges only post-generation via the gate)"
+  },
+  "rule": "Do not alter prompts after holdout execution begins. If an arm requires a different prompt because of its architecture, the reason is documented above (evidence-section shape only, never the response-format instructions, which are identical across all 8 arms). Prompts are not tuned against holdout results -- development-only calibration (section 15) covers debugging serialization/prompt-format issues, never holdout-result-driven wording changes."
+}
