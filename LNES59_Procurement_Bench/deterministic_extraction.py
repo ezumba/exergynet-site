@@ -18,36 +18,54 @@ gap is real and is exactly what Section 9's model-assisted path (not
 yet built) would need to close for anything beyond this synthetic
 benchmark. Flagging this now so it isn't quietly assumed away later.
 
-A second, distinct limitation -- CONFIRMED to be systemic, not a single
-anecdote, via run_case.py's end-to-end harness (2 of 34 governed/
-ungoverned fixture pairs, both in the "governed" direction, both with the
-identical root cause): this pipeline treats any authoritative
-(non-SOURCE_ASSERTION) document present in a case's grounding set as
-answering the question, without checking whether that document is
-actually authoritative for the SPECIFIC predicate being asked about (per
-LNES59_AUTHORITY_MODEL.md's predicate-domain table).
+A second limitation, FIXED (see extract_case_state's `target_predicate`
+parameter): the pipeline originally treated any authoritative
+(non-SOURCE_ASSERTION) document in a case's grounding set as answering
+the question, without checking whether it actually speaks to the
+SPECIFIC predicate asked about -- confirmed systemic via run_case.py's
+harness (3 real cases hit this: B2-001, SMOKE-002, B2-004), not a single
+anecdote. Fixed by tagging every document and case with a `predicate`
+string (corpus/case metadata, generic, not conditioned on any expected
+answer -- same discipline as the `value`/`amends` additions) and scoping
+resolution to documents whose predicate matches. A related, smaller bug
+surfaced while fixing this: purchase-order documents use `issued`, not
+`effective_from`, so the supersession check couldn't fire for PO
+amendments at all -- `_effective_date()` now falls back to `issued`.
 
-- B2-001 (Bright Path pre-approval): grounds in the base contract
-  (authoritative for the $25,000 approval CAP) alongside a chat message
-  claiming an above-cap exception was granted. The pipeline returns the
-  contract's own CONFIRMED_FACT/CURRENT classification as if it answered
-  "was the exception granted," when the contract only establishes the
-  cap, not whether any specific exception exists.
-- SMOKE-002 and B2-004 (both temporal-supersession/conflicting-source
-  cases involving an INVOICE alongside a contract-amendment or PO-
-  amendment pair): an INVOICE document has no effective_from/until, so
-  _resolve_temporal_status defaults it to CURRENT -- which then collides
-  with the amendment that's genuinely CURRENT for the payment_terms/
-  authorized_amount predicate, producing a spurious CONFLICTING_EVIDENCE
-  result. The invoice is authoritative for "what was invoiced," not for
-  the predicate the amendment governs; they were never actually
-  competing claims about the same thing.
+Two DISTINCT, NOT-yet-fixed limitations, confirmed precisely (not just
+suspected) by comparing this pipeline's real output against the isolated
+gate tests' hand-built CommittedState objects in run_case.py:
 
-Real predicate-aware authority matching (does THIS document actually
-speak to THIS predicate) is not implemented -- documented here as a
-known, now-quantified gap rather than patched with per-case special
-rules, which would fix these three test cases without fixing the
-underlying limitation that will keep recurring as the dataset scales.
+1. **`.value` only ever reflects the CURRENT resolution, never history.**
+   `_resolve_predicate_group` always returns the single current value
+   when one exists; a superseded-but-real value is indistinguishable from
+   an arbitrary wrong one once it reaches the gate. Both still get
+   correctly flagged (as STATE_CONTRADICTION rather than the more
+   specific TEMPORAL_CONTRADICTION), so this doesn't produce a false
+   negative -- it loses diagnostic specificity. Real fix: extraction
+   would need to preserve historical values per predicate, not just the
+   current one.
+2. **`.scope` is never set at all.** The gate's SOURCE_SCOPE_ERROR check
+   requires `committed.scope` to be non-None; since this pipeline never
+   sets it, that check can never fire from real extraction, and a
+   dropped-scope claim is instead caught one branch later as the more
+   generic UNSUPPORTED_STATE_ASSERTION -- again correctly caught, again
+   less specific than it could be.
+3. **`authority_status` is never actually computed from POLICY documents
+   and a requested amount.** It's hardcoded NOT_APPLICABLE in every
+   classify_document branch; the POLICY_LIMITED status used for
+   SMOKE-004/B2-005 exists only in the isolated gate tests' hand-built
+   fixtures. In the real pipeline, an over-limit ACTION_REQUEST is
+   currently caught via UNVERIFIED authority (no document at all speaks
+   to the specific requested-amount predicate once scoped), which happens
+   to still produce AUTHORITY_VIOLATION for the right top-level reason --
+   but the pipeline has never actually read a policy's tier/limit table
+   and compared it against a requested amount. This is the most
+   consequential of the three remaining gaps: the other two lose
+   specificity on already-caught errors, this one means the "was this
+   request within policy" check isn't really implemented yet, just
+   coincidentally producing a correct-looking outcome via a different
+   mechanism.
 
 Pipeline (per document): normalize -> classify claim_type ->
 resolve supersession chain -> bind provenance -> done. Authority
@@ -120,10 +138,22 @@ def _is_unavailable(doc):
     return any(m in doc["content"] for m in _UNAVAILABLE_MARKERS)
 
 
+def _effective_date(doc):
+    """Contracts/amendments use effective_from; purchase orders (which
+    have no formal 'effective' concept, just an issue date) use `issued`
+    instead. Found via a real bug: DOC-PO-AMENDMENT-3305 has an `amends`
+    link but no `effective_from`, so the supersession check below could
+    never fire for it -- both the original PO and its amendment defaulted
+    to CURRENT, producing a spurious CONFLICTING_EVIDENCE. Falling back to
+    `issued` fixes this without assuming every document type shares the
+    same field name for "when did this become the operative record"."""
+    return doc.get("effective_from") or doc.get("issued")
+
+
 def _resolve_temporal_status(doc, corpus, as_of=BENCHMARK_AS_OF):
     """CURRENT unless a later amendment supersedes this doc, or its own
     effective_until has passed as of the benchmark reference date."""
-    eff_from = doc.get("effective_from")
+    eff_from = _effective_date(doc)
     eff_until = doc.get("effective_until")
     if eff_from and eff_from > as_of:
         return TemporalStatus.FUTURE_EFFECTIVE
@@ -134,7 +164,7 @@ def _resolve_temporal_status(doc, corpus, as_of=BENCHMARK_AS_OF):
     # as of the reference date.
     for other in corpus.values():
         if other.get("amends") == doc["id"]:
-            other_from = other.get("effective_from")
+            other_from = _effective_date(other)
             if other_from and other_from <= as_of:
                 return TemporalStatus.SUPERSEDED
     return TemporalStatus.CURRENT
@@ -183,93 +213,137 @@ def classify_document(doc_id, corpus, as_of=BENCHMARK_AS_OF):
     }
 
 
-def extract_case_state(grounding_document_ids, corpus, as_of=BENCHMARK_AS_OF):
-    """Cross-document extraction for one case: resolves conflicts between
-    multiple grounding documents, applies the never-authoritative rule
-    for source/chat/meeting docs, and picks the single CommittedState the
-    gate should be evaluated against.
+def _resolve_predicate_group(classifications_for_predicate):
+    """Core single-predicate resolution logic: given ONLY the
+    classifications of documents that actually speak to one specific
+    predicate, resolve MATCH/NO_MATCH/INCOMPLETE and any genuine same-
+    predicate collision (e.g. two documents both claiming to be the
+    CURRENT value for the same fact, with no clean supersession chain
+    between them). Returns a dict shaped like classify_document's output
+    (not yet a CommittedState -- extract_case_state wraps it, so it can
+    also layer the cross-predicate comparison on top)."""
+    if not classifications_for_predicate:
+        return None
 
-    Returns a CommittedState with `.value` populated from the chosen
-    document's own structured `value` field (added to the corpus
-    specifically to make this possible -- see the module-level note on
-    why this isn't NLP-derived). Does not set `.scope` -- scope strings
-    used in this benchmark's cases are predicate/subject descriptions
-    (e.g. "CT-2026-014 payment_terms") this pass does not attempt to
-    auto-derive from a query; left to the caller for now."""
-    classifications = [
-        (doc_id, classify_document(doc_id, corpus, as_of))
-        for doc_id in grounding_document_ids
-    ]
-
-    # Only non-authoritative (SOURCE_ASSERTION) among all grounding docs?
-    #
-    # Found via cross-validation against LNES59-SMOKE-005 (analyst
-    # cash-flow hypothesis, grounded only in a CHAT_MESSAGE): this branch
-    # originally returned INCOMPLETE unconditionally here, which is wrong.
-    # A hedge/hypothesis that WAS found (someone said it, in a chat
-    # message that exists) is a real MATCH on a SOURCE_ASSERTION/
-    # HYPOTHESIS-shaped state, just weakly authoritative -- not the same
-    # situation as an authoritative source existing but being unavailable
-    # (the actual INCOMPLETE case, e.g. SMOKE-008's approval-DB outage,
-    # which is detected separately via _is_unavailable and doesn't reach
-    # this branch at all, since that document IS in `authoritative`).
-    # INCOMPLETE here would incorrectly imply "nothing could be checked,"
-    # when in fact something (the hedge itself) was found and simply
-    # isn't strong enough to ground a fact -- exactly what the gate's
-    # own UNSUPPORTED_STATE_ASSERTION handling for SOURCE_ASSERTION/
-    # HYPOTHESIS claim types already exists to enforce downstream.
-    authoritative = [c for _, c in classifications if c["claim_type"] != ClaimType.SOURCE_ASSERTION]
+    authoritative = [c for c in classifications_for_predicate if c["claim_type"] != ClaimType.SOURCE_ASSERTION]
     if not authoritative:
-        hedges = [c for _, c in classifications]
-        return CommittedState(
-            resolution=ResolutionState.MATCH, claim_type=ClaimType.SOURCE_ASSERTION,
-            authority_status=AuthorityStatus.UNVERIFIED, temporal_status=TemporalStatus.NOT_APPLICABLE,
-            value=hedges[0].get("value") if hedges else None,
-        )
+        # Only non-authoritative (SOURCE_ASSERTION) docs speak to this
+        # predicate. Found via cross-validation against LNES59-SMOKE-005
+        # (analyst cash-flow hypothesis, grounded only in a CHAT_MESSAGE):
+        # this originally returned INCOMPLETE unconditionally, which is
+        # wrong. A hedge that WAS found (someone said it, in a message
+        # that exists) is a real MATCH on a SOURCE_ASSERTION/HYPOTHESIS-
+        # shaped state, just weakly authoritative -- not the same
+        # situation as an authoritative source existing but being
+        # unavailable (the actual INCOMPLETE case below).
+        return {
+            "resolution": ResolutionState.MATCH, "claim_type": ClaimType.SOURCE_ASSERTION,
+            "authority_status": AuthorityStatus.UNVERIFIED, "temporal_status": TemporalStatus.NOT_APPLICABLE,
+            "value": classifications_for_predicate[0].get("value"),
+        }
 
-    # Any INCOMPLETE among the authoritative docs takes precedence --
-    # an unavailable authoritative source can't be overridden by a
-    # different authoritative source claiming otherwise; report the gap
-    # honestly rather than picking a side.
     incompletes = [c for c in authoritative if c["resolution"] == ResolutionState.INCOMPLETE]
     if incompletes:
-        return CommittedState(
-            resolution=ResolutionState.INCOMPLETE, claim_type=ClaimType.UNKNOWN,
-            authority_status=AuthorityStatus.NOT_APPLICABLE, temporal_status=TemporalStatus.NOT_APPLICABLE,
-        )
+        return {
+            "resolution": ResolutionState.INCOMPLETE, "claim_type": ClaimType.UNKNOWN,
+            "authority_status": AuthorityStatus.NOT_APPLICABLE, "temporal_status": TemporalStatus.NOT_APPLICABLE,
+            "value": None,
+        }
 
     no_matches = [c for c in authoritative if c["resolution"] == ResolutionState.NO_MATCH]
     matches = [c for c in authoritative if c["resolution"] == ResolutionState.MATCH]
 
     if matches and no_matches:
-        # A registry NO_MATCH alongside a genuine MATCH on the same
-        # grounding set is itself a real conflict worth surfacing, not
-        # silently resolved either direction.
-        return CommittedState(
-            resolution=ResolutionState.MATCH, claim_type=ClaimType.CONFLICTING_EVIDENCE,
-            authority_status=AuthorityStatus.NOT_APPLICABLE, temporal_status=TemporalStatus.NOT_APPLICABLE,
-        )
+        return {
+            "resolution": ResolutionState.MATCH, "claim_type": ClaimType.CONFLICTING_EVIDENCE,
+            "authority_status": AuthorityStatus.NOT_APPLICABLE, "temporal_status": TemporalStatus.NOT_APPLICABLE,
+            "value": None,
+        }
     if no_matches and not matches:
-        return CommittedState(
-            resolution=ResolutionState.NO_MATCH, claim_type=ClaimType.UNKNOWN,
-            authority_status=AuthorityStatus.NOT_APPLICABLE, temporal_status=TemporalStatus.NOT_APPLICABLE,
-            value=no_matches[0].get("value"),
-        )
+        return {
+            "resolution": ResolutionState.NO_MATCH, "claim_type": ClaimType.UNKNOWN,
+            "authority_status": AuthorityStatus.NOT_APPLICABLE, "temporal_status": TemporalStatus.NOT_APPLICABLE,
+            "value": no_matches[0].get("value"),
+        }
 
-    # All authoritative docs MATCH. If more than one, and their temporal
-    # statuses disagree about which is CURRENT in a way that isn't a
-    # clean supersession (i.e. more than one claims CURRENT), that's
-    # CONFLICTING_EVIDENCE; a clean supersession chain naturally leaves
-    # exactly one CURRENT.
+    # All authoritative docs for THIS predicate MATCH. More than one
+    # claiming CURRENT with no clean supersession chain resolving it is a
+    # genuine same-predicate collision.
     current_ones = [c for c in matches if c["temporal_status"] == TemporalStatus.CURRENT]
     if len(current_ones) > 1:
+        return {
+            "resolution": ResolutionState.MATCH, "claim_type": ClaimType.CONFLICTING_EVIDENCE,
+            "authority_status": AuthorityStatus.NOT_APPLICABLE, "temporal_status": TemporalStatus.NOT_APPLICABLE,
+            "value": None,
+        }
+    chosen = current_ones[0] if current_ones else matches[0]
+    return {
+        "resolution": chosen["resolution"], "claim_type": chosen["claim_type"],
+        "authority_status": chosen["authority_status"], "temporal_status": chosen["temporal_status"],
+        "value": chosen.get("value"),
+    }
+
+
+def extract_case_state(grounding_document_ids, target_predicate, corpus, as_of=BENCHMARK_AS_OF,
+                        compare_against_predicate=None):
+    """Cross-document extraction for one case.
+
+    `target_predicate` scopes resolution to documents that actually speak
+    to the specific fact being asked about (per each document's own
+    `predicate` field -- corpus metadata, not case-conditioned; see the
+    module-level note on why this is a legitimate addition and not the
+    X3 anti-pattern). This fixes a real, confirmed-systemic bug in the
+    prior version: without predicate scoping, an INVOICE document (no
+    effective_from/until, so it defaults to CURRENT) would spuriously
+    collide with a genuinely-current contract/PO amendment governing a
+    DIFFERENT predicate, producing false CONFLICTING_EVIDENCE.
+
+    `compare_against_predicate`, when given, resolves a SECOND predicate
+    group and -- if both groups resolve to concrete, differing values --
+    surfaces the disagreement as CONFLICTING_EVIDENCE. This is how a case
+    that deliberately wants two related-but-distinct facts cross-checked
+    (e.g. "does the invoiced amount match the current authorized amount?")
+    stays expressible without collapsing back into "any two authoritative
+    docs in the grounding set collide," which is what caused the bug this
+    predicate-scoping fix addresses in the first place.
+
+    Returns a CommittedState with `.value` populated (see module note on
+    the corpus's structured `value` fields). Does not set `.scope`."""
+    classifications = [
+        classify_document(doc_id, corpus, as_of) | {"predicate": corpus[doc_id].get("predicate")}
+        for doc_id in grounding_document_ids
+    ]
+
+    primary_group = [c for c in classifications if c["predicate"] == target_predicate]
+    primary = _resolve_predicate_group(primary_group)
+    if primary is None:
+        # No grounding document actually speaks to the declared target
+        # predicate -- a real gap (case/corpus mismatch), surfaced as
+        # INCOMPLETE rather than silently returning an empty/default state.
         return CommittedState(
-            resolution=ResolutionState.MATCH, claim_type=ClaimType.CONFLICTING_EVIDENCE,
+            resolution=ResolutionState.INCOMPLETE, claim_type=ClaimType.UNKNOWN,
             authority_status=AuthorityStatus.NOT_APPLICABLE, temporal_status=TemporalStatus.NOT_APPLICABLE,
         )
-    chosen = current_ones[0] if current_ones else matches[0]
+
+    if compare_against_predicate:
+        other_group = [c for c in classifications if c["predicate"] == compare_against_predicate]
+        other = _resolve_predicate_group(other_group)
+        if (
+            other is not None
+            and primary["resolution"] == ResolutionState.MATCH
+            and other["resolution"] == ResolutionState.MATCH
+            and primary["value"] is not None
+            and other["value"] is not None
+            and primary["value"] != other["value"]
+        ):
+            return CommittedState(
+                resolution=ResolutionState.MATCH, claim_type=ClaimType.CONFLICTING_EVIDENCE,
+                authority_status=AuthorityStatus.NOT_APPLICABLE, temporal_status=TemporalStatus.NOT_APPLICABLE,
+                value=None,
+            )
+
     return CommittedState(
-        resolution=chosen["resolution"], claim_type=chosen["claim_type"],
-        authority_status=chosen["authority_status"], temporal_status=chosen["temporal_status"],
-        value=chosen.get("value"),
+        resolution=primary["resolution"], claim_type=primary["claim_type"],
+        authority_status=primary["authority_status"], temporal_status=primary["temporal_status"],
+        value=primary.get("value"),
     )

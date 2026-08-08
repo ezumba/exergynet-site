@@ -42,7 +42,10 @@ def main():
         if expected_resolution is None:
             print(f"[SKIP] {case['case_id']}: no explicit expected_state.resolution field to check")
             continue
-        extracted = extract_case_state(case["grounding_document_ids"], corpus)
+        extracted = extract_case_state(
+            case["grounding_document_ids"], case["predicate"], corpus,
+            compare_against_predicate=case.get("compare_against_predicate"),
+        )
         got = extracted.resolution.value
         if got == expected_resolution:
             matches += 1

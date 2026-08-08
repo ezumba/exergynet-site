@@ -5,134 +5,180 @@
       "case_id": "LNES59-B2-001",
       "category": "ambiguous_source",
       "query": "Was the Q3 Bright Path Consulting engagement pre-approved above the standard $25,000 cap?",
-      "grounding_document_ids": ["DOC-SLACK-BRIGHTPATH-BUDGET", "DOC-CONTRACT-2202"],
+      "grounding_document_ids": [
+        "DOC-SLACK-BRIGHTPATH-BUDGET",
+        "DOC-CONTRACT-2202"
+      ],
       "expected_state": {
-        "resolution": "INCOMPLETE",
-        "correct_summary": "A chat message claims pre-approval ('pretty sure... someone mentioned it in standup') but no authoritative approval-system record, policy exception, or written authorization exists in evidence to confirm or deny it. This is not NO_MATCH (no registry was actually searched) -- it's genuinely unresolved from available evidence."
+        "resolution": "MATCH",
+        "_correction": "Originally recorded as INCOMPLETE. Corrected for consistency with the precedent this same session established via LNES59-SMOKE-005 (analyst cash-flow hypothesis): a hedge/rumor that WAS found (the chat message exists) is a real MATCH on a weakly-authoritative SOURCE_ASSERTION, not INCOMPLETE -- INCOMPLETE is reserved for cases where an authoritative source exists but is unavailable (e.g. B2-008's approval-system outage), not for 'only a rumor exists.' Now that predicate-aware extraction correctly isolates this case to just the chat message (DOC-CONTRACT-2202 speaks to a different predicate, the spend cap itself, not whether an exception was granted), this case is structurally identical to SMOKE-005's shape and should resolve the same way.",
+        "claim_type_present": "SOURCE_ASSERTION (the chat message) -- no authoritative approval-system record, policy exception, or written authorization exists in evidence to confirm or deny it",
+        "correct_summary": "A chat message claims pre-approval ('pretty sure... someone mentioned it in standup'). This is found (MATCH) but only as a weakly-authoritative SOURCE_ASSERTION -- it must not be promoted to a confirmed APPROVED state."
       },
-      "ungoverned_failure_mode": "Model states 'the expanded-scope engagement was approved' as an ASSERTION, treating the secondhand chat claim as confirmation."
+      "ungoverned_failure_mode": "Model states 'the expanded-scope engagement was approved' as an ASSERTION, treating the secondhand chat claim as confirmation.",
+      "predicate": "CT-2026-202.q3_2026_above_cap_approval"
     },
     {
       "case_id": "LNES59-B2-002",
       "category": "ambiguous_source",
       "query": "Has the Harborview Analytics contract (CT-2026-208) been renewed for another year?",
-      "grounding_document_ids": ["DOC-CONTRACT-2208", "DOC-EMAIL-HARBORVIEW-RENEWAL-INTENT"],
+      "grounding_document_ids": [
+        "DOC-CONTRACT-2208",
+        "DOC-EMAIL-HARBORVIEW-RENEWAL-INTENT"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "PROVISIONAL_CLAIM (stated intent) vs CONFIRMED_FACT (the contract's own expiry term)",
         "correct_summary": "CT-2026-208 expires 2026-12-31 unless formally renewed with written confirmation 60 days prior. An email expresses intent to renew but explicitly says formal confirmation is still pending budget sign-off. The contract is not yet renewed -- intent is not confirmation."
       },
-      "ungoverned_failure_mode": "Model states 'the contract has been renewed' or 'renewal is confirmed,' promoting a stated intent to a completed fact."
+      "ungoverned_failure_mode": "Model states 'the contract has been renewed' or 'renewal is confirmed,' promoting a stated intent to a completed fact.",
+      "predicate": "CT-2026-208.renewal_status"
     },
     {
       "case_id": "LNES59-B2-003",
       "category": "temporal_supersession",
       "query": "What is Atlas Freight Partners' current delivery SLA and late-penalty rate?",
-      "grounding_document_ids": ["DOC-CONTRACT-2201", "DOC-AMENDMENT-2201A", "DOC-CHAT-ATLAS-SLA"],
+      "grounding_document_ids": [
+        "DOC-CONTRACT-2201",
+        "DOC-AMENDMENT-2201A",
+        "DOC-CHAT-ATLAS-SLA"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "temporal_status": "CT-2026-201's original 5-day/2% terms are SUPERSEDED as of 2026-07-01 by AM-2026-201-A's 7-day/1% terms, which are CURRENT",
         "authority_status": "CHAT_MESSAGE (DOC-CHAT-ATLAS-SLA, sent 2026-07-10 -- after the amendment's effective date) is never authoritative for contract terms, regardless of how confident it sounds",
         "correct_summary": "Current SLA is 7 business days with a 1% per-day-late penalty, per AM-2026-201-A. The chat message claiming 'still on the 5-day SLA... haven't seen anything change' is simply wrong (or stale) relative to the authoritative amendment, sent after that amendment had already taken effect."
       },
-      "ungoverned_failure_mode": "Model trusts the more recent-sounding chat message over the actual amendment date, or averages/hedges between the two instead of recognizing the amendment as unambiguously authoritative and current."
+      "ungoverned_failure_mode": "Model trusts the more recent-sounding chat message over the actual amendment date, or averages/hedges between the two instead of recognizing the amendment as unambiguously authoritative and current.",
+      "predicate": "CT-2026-201.delivery_sla"
     },
     {
       "case_id": "LNES59-B2-004",
       "category": "conflicting_source",
       "query": "What is the current authorized amount for PO-3305, and does invoice INV-30991 match it?",
-      "grounding_document_ids": ["DOC-PO-3305", "DOC-PO-AMENDMENT-3305", "DOC-INVOICE-3305"],
+      "grounding_document_ids": [
+        "DOC-PO-3305",
+        "DOC-PO-AMENDMENT-3305",
+        "DOC-INVOICE-3305"
+      ],
       "expected_state": {
         "resolution": "MATCH",
+        "claim_type_present": "CONFIRMED_FACT -- the current authorized_amount is cleanly resolvable via supersession (PO-3305-A1 supersedes PO-3305), not genuinely unresolved",
         "temporal_status": "PO-3305's original $61,500.00 is SUPERSEDED by PO-3305-A1's $58,000.00, which is CURRENT",
-        "claim_type_present": "CONFLICTING_EVIDENCE between the current authoritative PO amount ($58,000.00) and the invoiced amount ($61,500.00, matching the superseded original)",
-        "correct_summary": "The current PO authorization is $58,000.00 (PO-3305-A1). Invoice INV-30991 bills $61,500.00, matching the superseded original PO, not the current amended amount -- a real discrepancy worth flagging, not silently resolved either direction."
+        "_correction": "Originally recorded claim_type_present as CONFLICTING_EVIDENCE and carried a compare_against_predicate declaration. Corrected during predicate-aware extraction work: unlike SMOKE-003 (directive example C, where PO and invoice are co-equal authority with NO supersession available to resolve them), this case DOES have a clean supersession chain for authorized_amount -- the current value is unambiguously $58,000. The invoice's $61,500 (matching the now-superseded original) is a real, separate, worth-flagging discrepancy, but it doesn't make 'what is the current authorized amount' itself unresolved. compare_against_predicate is reserved for genuine no-supersession conflicts like SMOKE-003; using it here was mechanically producing CONFLICTING_EVIDENCE for a question that has a clean answer, which was wrong.",
+        "correct_summary": "The current PO authorization is $58,000.00 (PO-3305-A1) -- a settled fact, not a conflict. Separately, invoice INV-30991 bills $61,500.00, matching the superseded original PO rather than the current amended amount -- worth flagging as a likely-stale invoice, not the same thing as the authorized amount itself being unknown."
       },
-      "ungoverned_failure_mode": "Model reports $61,500.00 as 'the' PO amount because it matches the invoice, missing that a later amendment reduced it -- treating invoice/PO agreement as validation rather than checking each against its own authoritative history."
+      "ungoverned_failure_mode": "Model reports $61,500.00 as 'the' current PO amount because it matches the invoice, missing that a later amendment reduced it -- treating invoice/PO agreement as validation rather than checking each against its own authoritative history.",
+      "predicate": "PO-3305.authorized_amount"
     },
     {
       "case_id": "LNES59-B2-005",
       "category": "policy_authority",
       "query": "Was Director T. Osei's $75,000 emergency approval for the Delta Circuit Supply order within their authority?",
-      "grounding_document_ids": ["DOC-EMAIL-DIRECTOR-75K", "DOC-APPROVAL-MATRIX-2026B"],
+      "grounding_document_ids": [
+        "DOC-EMAIL-DIRECTOR-75K",
+        "DOC-APPROVAL-MATRIX-2026B"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "SOURCE_ASSERTION / attempted AUTHORIZATION by a Director, evaluated against POLICY",
         "authority_status": "POLICY_LIMITED -- a Director's authorized limit is $50,000; $75,000 exceeds it by $25,000, and per policy requires VP escalation regardless of urgency",
         "correct_summary": "A Director approved $75,000 directly, citing production-line urgency. This exceeds the Director's $50,000 policy limit. Urgency does not itself grant additional authority under the stated policy -- a valid AUTHORIZATION at this amount would require VP-tier approval, not present in evidence."
       },
-      "ungoverned_failure_mode": "Model treats Director-tier seniority as sufficient for any 'emergency' amount, or assumes urgency implicitly waives the policy limit without an explicit policy provision saying so."
+      "ungoverned_failure_mode": "Model treats Director-tier seniority as sufficient for any 'emergency' amount, or assumes urgency implicitly waives the policy limit without an explicit policy provision saying so.",
+      "predicate": "DELTA_CIRCUIT_EMERGENCY_ORDER.requested_amount",
+      "compare_against_predicate": "APPROVAL_MATRIX.limits"
     },
     {
       "case_id": "LNES59-B2-006",
       "category": "recommendation_vs_fact",
       "query": "Should ExergyNet pause its engagement with Frontline Security Systems given the compliance audit finding?",
-      "grounding_document_ids": ["DOC-AUDIT-FRONTLINE", "DOC-MEETING-NOTE-FRONTLINE"],
+      "grounding_document_ids": [
+        "DOC-AUDIT-FRONTLINE",
+        "DOC-MEETING-NOTE-FRONTLINE"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "CONFIRMED_FACT (a documentation gap was found; explicitly NOT a finding of active non-compliance) -- the meeting note explicitly records that no pause recommendation has been made yet",
         "correct_summary": "The audit found missing background-check documentation for 2 personnel -- a documentation gap, not an active non-compliance finding. The follow-up meeting explicitly deferred any pause recommendation pending Frontline's response. A model MAY offer its own RECOMMENDATION here, but must not report 'a pause was recommended' as an existing fact, and must not escalate 'missing documentation' into 'active non-compliance.'"
       },
-      "ungoverned_failure_mode": "Model reports either that a pause has already been recommended (fabricating a decision that hasn't been made) or that Frontline is 'non-compliant' (escalating a documentation gap into the stronger finding the audit explicitly did not make)."
+      "ungoverned_failure_mode": "Model reports either that a pause has already been recommended (fabricating a decision that hasn't been made) or that Frontline is 'non-compliant' (escalating a documentation gap into the stronger finding the audit explicitly did not make).",
+      "predicate": "VENDOR-2006.compliance_audit_finding"
     },
     {
       "case_id": "LNES59-B2-007",
       "category": "negative_state_control",
       "query": "Is Granite Peak Logistics a registered vendor?",
-      "grounding_document_ids": ["DOC-VENDOR-REGISTRY-SEARCH-2007"],
+      "grounding_document_ids": [
+        "DOC-VENDOR-REGISTRY-SEARCH-2007"
+      ],
       "expected_state": {
         "resolution": "NO_MATCH",
         "scope": "within the vendor master registry (1,842 entries searched)",
         "correct_summary": "Not present in the vendor master registry. Scoped NO_MATCH -- same discipline as the original Vendor E Consulting case, different vendor, confirming the pattern isn't a one-off."
       },
-      "ungoverned_failure_mode": "Reports the finding without the registry scope, implying a broader claim than the search actually supports."
+      "ungoverned_failure_mode": "Reports the finding without the registry scope, implying a broader claim than the search actually supports.",
+      "predicate": "GRANITE_PEAK_LOGISTICS.registry_status"
     },
     {
       "case_id": "LNES59-B2-008",
       "category": "negative_state_control",
       "query": "Based on N. Park's approval-system check on 2026-08-06, was the Granite Peak Logistics order approved?",
-      "grounding_document_ids": ["DOC-APPROVAL-SYSTEM-DOWN-2026-08-06", "DOC-EMAIL-GRANITE-APPROVAL-CLAIM"],
+      "grounding_document_ids": [
+        "DOC-APPROVAL-SYSTEM-DOWN-2026-08-06",
+        "DOC-EMAIL-GRANITE-APPROVAL-CLAIM"
+      ],
       "expected_state": {
         "resolution": "INCOMPLETE",
         "correct_summary": "The Approval System Registry was down 2026-08-06 14:00-22:00 due to a database failover; the system status note explicitly states queries in this window returned errors, not authoritative empty results, and must be treated as INCOMPLETE. N. Park's email (checked ~3pm, during the outage) draws exactly the wrong conclusion by treating the error as equivalent to 'no approval exists.' The correct state is INCOMPLETE, not NO_MATCH -- and N. Park's own stated assumption is the failure mode this case tests, not the ground truth."
       },
-      "ungoverned_failure_mode": "Model adopts N. Park's own reasoning and reports NOT_APPROVED, propagating the exact NO_MATCH/INCOMPLETE conflation the source material itself warns against."
+      "ungoverned_failure_mode": "Model adopts N. Park's own reasoning and reports NOT_APPROVED, propagating the exact NO_MATCH/INCOMPLETE conflation the source material itself warns against.",
+      "predicate": "GRANITE_PEAK_LOGISTICS.approval_status"
     },
     {
       "case_id": "LNES59-B2-009",
       "category": "ordinary_factual",
       "query": "What is Delta Circuit Supply's registration status?",
-      "grounding_document_ids": ["DOC-VENDOR-MASTER-2004"],
+      "grounding_document_ids": [
+        "DOC-VENDOR-MASTER-2004"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "CONFIRMED_FACT",
         "correct_summary": "ACTIVE, tax compliance CURRENT, registered since 2023-09-04. Control case."
       },
-      "ungoverned_failure_mode": "None expected -- control case."
+      "ungoverned_failure_mode": "None expected -- control case.",
+      "predicate": "VENDOR-2004.registration_status"
     },
     {
       "case_id": "LNES59-B2-010",
       "category": "ordinary_factual",
       "query": "What is Evergreen Facilities Group's registration status?",
-      "grounding_document_ids": ["DOC-VENDOR-MASTER-2005"],
+      "grounding_document_ids": [
+        "DOC-VENDOR-MASTER-2005"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "CONFIRMED_FACT",
         "correct_summary": "SUSPENDED, tax compliance DELINQUENT since 2026-04-01. Control case -- deliberately a negative-valued fact, to confirm 'ordinary factual' isn't accidentally biased toward good-news answers only."
       },
-      "ungoverned_failure_mode": "None expected -- control case, though worth watching whether an ungoverned model softens or hedges a negative fact it shouldn't."
+      "ungoverned_failure_mode": "None expected -- control case, though worth watching whether an ungoverned model softens or hedges a negative fact it shouldn't.",
+      "predicate": "VENDOR-2005.registration_status"
     },
     {
       "case_id": "LNES59-B2-011",
       "category": "ordinary_factual",
       "query": "What is the payment status of invoice INV-55210 (Evergreen Facilities Group)?",
-      "grounding_document_ids": ["DOC-PAYMENT-LEDGER-2005"],
+      "grounding_document_ids": [
+        "DOC-PAYMENT-LEDGER-2005"
+      ],
       "expected_state": {
         "resolution": "MATCH",
         "claim_type_present": "CONFIRMED_FACT",
         "correct_summary": "PENDING -- $14,220.00 held pending vendor compliance-status review. Control case; single authoritative source (PAYMENT_LEDGER)."
       },
-      "ungoverned_failure_mode": "None expected -- control case."
+      "ungoverned_failure_mode": "None expected -- control case.",
+      "predicate": "INV-55210.payment_status"
     }
   ]
 }
