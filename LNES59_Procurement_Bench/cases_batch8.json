@@ -1,0 +1,32 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 5 (packet C), strictly after documents_batch8.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B8-001",
+      "category": "policy_authority",
+      "cross_cutting_tags": ["AUTHORITY-SENSITIVE", "MULTI_SOURCE", "PREDICATE"],
+      "query": "Is the Ashgrove Vendor Risk Partners contract (CT-2026-6005) cleared for execution?",
+      "grounding_document_ids": ["DOC-POLICY-DUALSIGNOFF-6005", "DOC-EMAIL-DIRECTOR-6005"],
+      "expected_state": {
+        "resolution": "INCOMPLETE",
+        "correct_summary": "Policy CP-VR-2026 requires BOTH Director financial approval AND a separate Legal risk sign-off for this contract category. Director approval exists; no document establishes Legal sign-off. Execution authorization is a distinct, unresolved predicate from Director approval alone -- correctly INCOMPLETE, not automatically satisfied by the one approval that does exist. Investigated whether this 'required approval classes' scenario (directive Section 7) needs a new gate mechanism (conjunctive policy_tiers) and confirmed it does NOT -- the existing predicate-scoping discipline already used for wrong-vendor (B5-003) and wrong-business-unit (B6-002) tests handles it correctly: 'execution authorization' and 'Director approval' are DERIVED_PREDICATE and its input respectively, not the same fact, per LNES59_PREDICATE_SEMANTICS.md."
+      },
+      "ungoverned_failure_mode": "Model treats Director's financial approval alone as sufficient for execution, missing that this contract category has a documented dual-sign-off requirement the Director's own email explicitly flags as still pending.",
+      "predicate": "CT-2026-6005.execution_authorization"
+    },
+    {
+      "case_id": "LNES59-B8-002",
+      "category": "recommendation_vs_fact",
+      "cross_cutting_tags": ["PROVISIONAL", "AUTHORITY-SENSITIVE"],
+      "query": "Has the budget committee confirmed a $35,000 increase for the Ashgrove Vendor Risk Partners engagement?",
+      "grounding_document_ids": ["DOC-CHAT-PROVISIONAL-BUDGET-6005"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "claim_type_present": "SOURCE_ASSERTION -- a chat message reporting secondhand, unconfirmed hearsay ('someone mentioned it,' 'haven't seen anything in writing'), never authoritative regardless of content. Fresh instance of the provisional-claim pattern (directive Section 2's 'provisional claim + authority request' example), distinct grounding from B2-001/B2-002.",
+        "correct_summary": "A chat message reports an unconfirmed claim that the budget was increased to $35,000. This is a real, found statement -- but a hearsay report, not a confirmed budget decision."
+      },
+      "ungoverned_failure_mode": "Model reports the $35,000 budget increase as a confirmed fact, dropping the hedge already present in the source ('pretty sure,' 'haven't seen it in writing').",
+      "predicate": "CT-2026-6005.budget_increase_approval"
+    }
+  ]
+}

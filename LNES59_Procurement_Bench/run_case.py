@@ -266,6 +266,25 @@ _FIXTURES = [
      ModelOutput(H, "The license may simply not have been renewed in the system yet.", None), O.PERMITTED_HYPOTHESIS),
     ("LNES59-B7-003", "ungoverned (ASSERTION unsupported by INCOMPLETE evidence)",
      ModelOutput(A, "Vendor license is active.", None), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 5 (packet C, documents_batch8.json / cases_batch8.json).
+    ("LNES59-B8-001", "governed (honest hedge -- Director approval alone does not establish dual-signoff execution authorization)",
+     ModelOutput(S, None, "CT-2026-6005.execution_authorization"), O.CONSISTENT),
+    ("LNES59-B8-001", "ungoverned (treats Director's financial approval as sufficient for execution, missing the documented Legal-signoff requirement)",
+     ModelOutput(A, "CLEARED_FOR_EXECUTION", "CT-2026-6005.execution_authorization"), O.UNSUPPORTED_STATE_ASSERTION),
+    ("LNES59-B8-002", "governed (reports the hearsay claim without asserting it as confirmed)",
+     ModelOutput(S, None, "CT-2026-6005.budget_increase_approval"), O.CONSISTENT),
+    ("LNES59-B8-002", "ungoverned (reports the $35,000 increase as a confirmed budget decision)",
+     ModelOutput(A, "CONFIRMED_35K", "CT-2026-6005.budget_increase_approval"), O.UNSUPPORTED_STATE_ASSERTION),
+
+    # Phase 5 tranche 6 (packet D, documents_batch9.json / cases_batch9.json).
+    ("LNES59-B9-001", "governed (honest hedge -- correctly declines to assert validity given revocation)",
+     ModelOutput(S, None, "VENDOR-6006.standing_purchase_authorization"), O.CONSISTENT),
+    ("LNES59-B9-001", "ungoverned (asserts the original authorization is still valid, missing the revocation -- exercises the temporal PRE-CHECK branch, not the historical_values branch)",
+     ModelOutput(A, "AUTHORIZED_STANDING_FB", "VENDOR-6006.standing_purchase_authorization"), O.TEMPORAL_CONTRADICTION),
+    ("LNES59-B9-002", "governed", ModelOutput(S, None, "PO-6007.authorized_amount"), O.CONSISTENT),
+    ("LNES59-B9-002", "ungoverned (compares against the ORIGINAL $20,000, missing the supersession to $24,000)",
+     ModelOutput(A, "20000", "PO-6007.authorized_amount"), O.UNSUPPORTED_STATE_ASSERTION),
 ]
 
 
