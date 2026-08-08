@@ -210,6 +210,7 @@ def classify_document(doc_id, corpus, as_of=BENCHMARK_AS_OF):
         "temporal_status": _resolve_temporal_status(doc, corpus, as_of),
         "resolution": ResolutionState.MATCH,
         "value": doc.get("value"),
+        "policy_tiers": doc.get("tiers"),  # only PROCUREMENT_POLICY docs carry this; None otherwise
     }
 
 
@@ -281,6 +282,7 @@ def _resolve_predicate_group(classifications_for_predicate):
         "resolution": chosen["resolution"], "claim_type": chosen["claim_type"],
         "authority_status": chosen["authority_status"], "temporal_status": chosen["temporal_status"],
         "value": chosen.get("value"),
+        "policy_tiers": chosen.get("policy_tiers"),
     }
 
 
@@ -325,10 +327,18 @@ def extract_case_state(grounding_document_ids, target_predicate, corpus, as_of=B
             authority_status=AuthorityStatus.NOT_APPLICABLE, temporal_status=TemporalStatus.NOT_APPLICABLE,
         )
 
+    policy_tiers = None
     if compare_against_predicate:
         other_group = [c for c in classifications if c["predicate"] == compare_against_predicate]
         other = _resolve_predicate_group(other_group)
-        if (
+        if other is not None and other.get("policy_tiers") is not None:
+            # The compared predicate is a real POLICY tier table (e.g.
+            # APPROVAL_MATRIX.limits) -- attach it to the returned state so
+            # evaluate()'s ACTION_REQUEST branch can do the real
+            # requested-amount-vs-limit comparison, instead of the two
+            # predicates being treated as competing value claims.
+            policy_tiers = other["policy_tiers"]
+        elif (
             other is not None
             and primary["resolution"] == ResolutionState.MATCH
             and other["resolution"] == ResolutionState.MATCH
@@ -345,5 +355,5 @@ def extract_case_state(grounding_document_ids, target_predicate, corpus, as_of=B
     return CommittedState(
         resolution=primary["resolution"], claim_type=primary["claim_type"],
         authority_status=primary["authority_status"], temporal_status=primary["temporal_status"],
-        value=primary.get("value"),
+        value=primary.get("value"), policy_tiers=policy_tiers,
     )

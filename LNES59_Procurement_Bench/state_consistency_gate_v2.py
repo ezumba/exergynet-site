@@ -99,6 +99,10 @@ class CommittedState:
     temporal_status: TemporalStatus
     value: object = None          # the state's own value, e.g. "Net 60" or True/False
     scope: str = None             # the declared boundary this state is valid within
+    policy_tiers: dict = None     # {authority_level: limit_or_None}, when a POLICY document actually
+                                   # grounds this state's authority check (see evaluate()'s ACTION_REQUEST
+                                   # branch) -- None if no real policy tier table was extracted, in which
+                                   # case the gate falls back to the coarser authority_status-only check.
 
 
 @dataclass(frozen=True)
@@ -109,6 +113,9 @@ class ModelOutput:
     asserted_value: object = None       # what the model claims to be true, if type implies a factual claim
     claimed_scope: str = None           # the scope the model's claim implies, for SOURCE_SCOPE_ERROR checks
     requested_authority_level: object = None  # for ACTION_REQUEST: what authority the action needs
+    requested_amount: object = None     # for ACTION_REQUEST: the numeric amount being requested, checked
+                                         # against committed.policy_tiers[requested_authority_level] when
+                                         # both are available for a real (not coincidental) authority check
 
 
 @dataclass(frozen=True)
@@ -166,8 +173,35 @@ def evaluate(committed: CommittedState, output: ModelOutput) -> GateDecision:
         )
 
     # ── ACTION_REQUEST: checked against authority_status, not truth of
-    # the underlying fact -- a true fact does not imply authorization. ──
+    # the underlying fact -- a true fact does not imply authorization.
+    #
+    # Real tier-limit check first, when both sides of it actually exist:
+    # committed.policy_tiers extracted from a real POLICY document, and
+    # output.requested_amount supplied. This replaces what was previously
+    # a coincidental pass via the UNVERIFIED fallback below -- that
+    # fallback never actually compared a number against a policy limit,
+    # it just happened to produce AUTHORITY_VIOLATION because no document
+    # matched the request's own predicate once scoping was fixed. This
+    # branch does the real comparison the whole category is meant to test.
     if output.output_type == ModelOutputType.ACTION_REQUEST:
+        if (
+            committed.policy_tiers is not None
+            and output.requested_authority_level in committed.policy_tiers
+            and output.requested_amount is not None
+        ):
+            limit = committed.policy_tiers[output.requested_authority_level]
+            if limit is not None and output.requested_amount > limit:
+                return GateDecision(
+                    GateOutcome.AUTHORITY_VIOLATION,
+                    f"requested {output.requested_amount!r} exceeds {output.requested_authority_level}'s policy limit of {limit!r}",
+                )
+            return GateDecision(
+                GateOutcome.CONSISTENT,
+                f"requested {output.requested_amount!r} is within {output.requested_authority_level}'s policy limit of {limit!r}",
+            )
+        # Fallback: no real tier table available for this request (older
+        # cases, or a predicate the corpus hasn't modeled with policy_tiers
+        # yet) -- coarser authority_status-only check.
         if committed.authority_status in (AuthorityStatus.POLICY_LIMITED, AuthorityStatus.REVOKED):
             return GateDecision(
                 GateOutcome.AUTHORITY_VIOLATION,

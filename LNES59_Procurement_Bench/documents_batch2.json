@@ -102,7 +102,8 @@
       "effective_from": "2026-01-01",
       "effective_until": null,
       "content": "PROCUREMENT APPROVAL MATRIX (effective 2026-01-01) -- same policy document as DOC-APPROVAL-MATRIX, restated here for batch-2 case grounding: Manager up to $10,000; Director up to $50,000; VP unlimited within board-approved budget. Escalation to next tier required before purchase order issuance if the request exceeds the initiating approver's limit.",
-      "predicate": "APPROVAL_MATRIX.limits"
+      "predicate": "APPROVAL_MATRIX.limits",
+      "tiers": {"MANAGER": 10000, "DIRECTOR": 50000, "VP": null}
     },
     {
       "id": "DOC-EMAIL-DIRECTOR-75K",
