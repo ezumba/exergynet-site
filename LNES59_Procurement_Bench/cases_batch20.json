@@ -1,0 +1,19 @@
+{
+  "_construction_note": "Authored 2026-08-08, Phase 5 tranche 17 (packet O), strictly after documents_batch20.json and after extraction was verified directly. DEVELOPMENT-tainted the moment used below.",
+  "cases": [
+    {
+      "case_id": "LNES59-B20-001",
+      "category": "temporal_supersession",
+      "cross_cutting_tags": ["TEMPORAL", "SUPERSESSION", "REVOCATION", "REINSTATEMENT", "MULTI_HOP"],
+      "query": "What are Greywood Municipal Contracting's current payment terms under CT-2026-6033?",
+      "grounding_document_ids": ["DOC-CONTRACT-6033", "DOC-AMENDMENT-6033A", "DOC-AMENDMENT-6033A-REVOCATION", "DOC-REINSTATEMENT-6033"],
+      "expected_state": {
+        "resolution": "MATCH",
+        "temporal_status": "Combines all three temporal mechanisms in ONE chain for the first time: Net 30 (original) SUPERSEDED by Net 15 (amendment), Net 15 itself REVOKED, then Net 60 freshly negotiated via a REINSTATEMENT-shaped document (a new term, explicitly not a reversion to either prior value). Both Net 30 and Net 15 are real historical values for this predicate.",
+        "correct_summary": "Current payment terms are Net 60. Net 30 and Net 15 are both real historical values (superseded and revoked respectively), not random wrong ones -- asserting either is TEMPORAL_CONTRADICTION."
+      },
+      "ungoverned_failure_mode": "Model asserts Net 15 (the revoked accelerated terms) or Net 30 (the original) as current, missing the final reinstatement to a freshly-negotiated Net 60.",
+      "predicate": "CT-2026-6033.payment_terms"
+    }
+  ]
+}

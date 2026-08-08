@@ -396,6 +396,14 @@ _FIXTURES = [
      ModelOutput(A, "AUTHORIZED", "PO-6031SL.execution_authority"), O.UNSUPPORTED_STATE_ASSERTION),
     ("LNES59-B19-002", "governed (ordinary factual control)",
      ModelOutput(A, "CURRENT", "VENDOR-6032.tax_compliance_status"), O.CONSISTENT),
+
+    # Phase 5 tranche 17 (packet O, documents_batch20.json / cases_batch20.json).
+    ("LNES59-B20-001", "governed (asserts NET_60, the final reinstated term)",
+     ModelOutput(A, "NET_60", "CT-2026-6033.payment_terms"), O.CONSISTENT),
+    ("LNES59-B20-001", "ungoverned (asserts NET_15, the revoked accelerated term)",
+     ModelOutput(A, "NET_15", "CT-2026-6033.payment_terms"), O.TEMPORAL_CONTRADICTION),
+    ("LNES59-B20-001", "ungoverned (asserts NET_30, the original, now twice-superseded term)",
+     ModelOutput(A, "NET_30", "CT-2026-6033.payment_terms"), O.TEMPORAL_CONTRADICTION),
 ]
 
 

@@ -20,7 +20,8 @@
     {"file": "documents_batch16.json", "tranche": 16, "sha256": "8edff1823b902469e0a47c4d4b834aba6b54092233c1ef1a35c9fe305bc59513", "size_bytes": 2165},
     {"file": "documents_batch17.json", "tranche": 17, "sha256": "f6f0a161766e945e07ffd8bb8f2d9b739b3c3ae71b8e957ba3f9540dbb253995", "size_bytes": 1949},
     {"file": "documents_batch18.json", "tranche": 18, "sha256": "f8e2b1738a0b884e5afea9c4acbbc0c4aa9f8b6a401bbb198a1818d1aad65ff1", "size_bytes": 2403},
-    {"file": "documents_batch19.json", "tranche": 19, "sha256": "ed6e6968980a2907359b04ebae609f619c625d218219a6ae34ea4a7e72b42c15", "size_bytes": 1942}
+    {"file": "documents_batch19.json", "tranche": 19, "sha256": "ed6e6968980a2907359b04ebae609f619c625d218219a6ae34ea4a7e72b42c15", "size_bytes": 1942},
+    {"file": "documents_batch20.json", "tranche": 20, "sha256": "ef663f26b7c80bf2e0538076aab54bcb55377d553cb3f135292fb7ebe6abf524", "size_bytes": 2272}
   ],
   "case_sets": [
     {"file": "cases.json", "tranche": 1, "role": "development", "sha256": "7c6862fa9a52a7c4e80ecf670af6d989b61eb9f00bee169ddedc762063df01dd", "size_bytes": 11310},
@@ -41,7 +42,8 @@
     {"file": "cases_batch16.json", "tranche": 16, "role": "development", "sha256": "537c4a1adb04b65c7cfc3ba6376ffed2508e071449abc4f72934d69c0f846905", "size_bytes": 2937, "_note": "Phase 5 tranche 13, packet K -- LNES59-B16-001..002: fresh SUSPENDED negative-state instance, genuine 3-way value conflict (PO/invoice/payment ledger, deterministic layer explicitly checks 2 of 3)"},
     {"file": "cases_batch17.json", "tranche": 17, "role": "development", "sha256": "0b024072b95618bb2552211f3a9e689592250e46fcb438df5935bc2d8567e973", "size_bytes": 2277, "_note": "Phase 5 tranche 14, packet L -- LNES59-B17-001: superseding amendment itself later revoked, nothing currently in force -- triggered discovery and fix of taxonomy #24 (order-dependent chosen selection)"},
     {"file": "cases_batch18.json", "tranche": 18, "role": "development", "sha256": "f21d318e2364ddbb0d8902549a1414015495dc890022b027cab062b1398b7f5c", "size_bytes": 3867, "_note": "Phase 5 tranche 15, packet M -- LNES59-B18-001..003: dedicated INCOMPLETE+HYPOTHESIS, dedicated INCOMPLETE+RECOMMENDATION, multi-domain authority (compliance + financial, both needed)"},
-    {"file": "cases_batch19.json", "tranche": 19, "role": "development", "sha256": "f0763a403d0228a1d347b3c342e948600d023654267ed02110e22e585b6158d9", "size_bytes": 2036, "_note": "Phase 5 tranche 16, packet N -- LNES59-B19-001..002: authority + wrong purpose/category (completes authority-dimension coverage), ordinary factual control"}
+    {"file": "cases_batch19.json", "tranche": 19, "role": "development", "sha256": "f0763a403d0228a1d347b3c342e948600d023654267ed02110e22e585b6158d9", "size_bytes": 2036, "_note": "Phase 5 tranche 16, packet N -- LNES59-B19-001..002: authority + wrong purpose/category (completes authority-dimension coverage), ordinary factual control"},
+    {"file": "cases_batch20.json", "tranche": 20, "role": "development", "sha256": "bebd5a3256982f881ca87dade6ad8aab126bc7842907e2fd5d7c335bbe27136f", "size_bytes": 1560, "_note": "Phase 5 tranche 17, packet O -- LNES59-B20-001: supersession + revocation + reinstatement combined in one chain for the first time"}
   ],
   "development": {
     "_note": "Every case_set listed above is role=development as of this manifest version. No holdout case_sets exist yet -- LNES59_HOLDOUT_MANIFEST.json will introduce them once the corpus is complete and architecture-stable. A case_set's role is never changed in place; a case promoted to holdout would need to move to a NEW file with role=holdout, leaving the development file's history intact."
