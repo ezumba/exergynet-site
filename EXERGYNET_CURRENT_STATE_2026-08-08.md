@@ -1,9 +1,19 @@
 # ExergyNet Current State — 2026-08-08
 
-**Prepared:** Phase 6 of the post-LNES-59 consolidation directive.
+**Prepared:** Phase 6 of the post-LNES-59 consolidation directive; updated
+same day per the continuity directive's maturity-separation requirement.
 Single index answering the questions below; each answer links to the
 document that actually supports it — this file summarizes, it is not the
 source of truth for any individual claim.
+
+**Maturity levels, never mixed:**
+
+| Level | Meaning | What's currently at this level |
+|---|---|---|
+| **LIVE PRODUCTION** | Actually verified running and serving | xLMP data plane (ingest/recall/roots) — Portal app, L0 Apex Router, storage surface confirmed HEALTHY this session |
+| **VALIDATED / NOT DEPLOYED** | Real holdout/benchmark evidence exists; not in the live route surface | LNES-59 V7 deterministic state-governance gate (8%→0% false-authoritative-state, 84%=84% candidate accuracy, sealed 50-case holdout) |
+| **DESIGNED / R&D** | Architecture and protocol exist; no implementation run yet | LNES-60 Physical Truth foundation (9 artifacts, synthetic harness protocol not yet executed); the V7 production insertion plan (design only, not deployed) |
+| **DEGRADED / UNKNOWN** | Live-tested this session, result was not HEALTHY, or could not be reached to test | Vanguard reasoning gateway (DEGRADED — up, backend not answering); Vanguard Proposer, `mcp.exergynet.org`'s real endpoint, `biological_proxy` legacy xLMP routes (UNKNOWN — unreachable from this session, not confirmed down) |
 
 ---
 
@@ -88,6 +98,44 @@ disclosed); production deployment of any LNES-59 mechanism; full
 SSH-level confirmation of the model runtime stack (blocked this session,
 `PROJECT_BLOCKERS.md` BLK-010); whether `biological_proxy`'s legacy xLMP
 surface is still live.
+
+---
+
+## LNES-60 status (added this session)
+
+LNES-60 Physical Truth architecture has been fully designed and documented
+in `LNES60_Physical_Truth/`. Nine deliverables produced:
+
+- `LNES60_PHYSICAL_TRUTH_ARCHITECTURE.md` — four-plane truth model,
+  governing principle, layer separation
+- `LNES60_TRUTH_STATE_SCHEMA.json` — state and resolution state definitions
+- `LNES60_WITNESS_TRUST_MODEL.md` — nine trust properties, admissibility
+  logic, explicit non-claims
+- `LNES60_KTX_TEST_MATRIX.md` — 15 adversarial test classes (≥30 synthetic
+  instances), stratification requirement
+- `LNES60_EDGE_WITNESS_INTEGRATION_MAP.md` — xLMP object-type mapping,
+  commit-time vs. resolution-time separation, open dependencies
+- `LNES60_XLMP_LNES22_HANDSHAKE.md` — handshake payload spec, LNES-22
+  boundary constraints, fail-closed rule
+- `LNES60_FAILURE_TAXONOMY.md` — 11 pre-registered failure categories
+- `LNES60_EXPERIMENT_PROTOCOL.md` — three-phase protocol (synthetic →
+  bench hardware → aircraft integration); Phase 1 only is current scope
+- `PATENT_AI_MEMORY_CONTROL_PLANE_2026/LNES60_PATENT_DISCLOSURE_NOTE.md`
+  — five candidate new-matter items, DRAFT, not filed
+
+White paper updated to v1.6: Section 35.5 added (LNES-60, DESIGNED status).
+
+**Status: DESIGNED — no physical experiment conducted, no synthetic harness
+executed, no real sensor data processed.**
+
+## X2 real run status (same session, earlier)
+
+First real model run of the X2 arm (27 dev cases) completed earlier in
+this session. Found and fixed bugs #15 (INCOMPLETE evidence carve-out)
+and #16 (natural-language vs. coded-token value comparison) in
+`state_consistency_gate_v2.py`. 18/27 CONSISTENT after fixes (67%).
+All regression suites green. Files not yet committed at time of prior
+state doc; committed this session as part of the LNES-60 package.
 
 ---
 

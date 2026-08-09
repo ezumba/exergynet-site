@@ -1,0 +1,88 @@
+{
+  "_purpose": "Machine-readable state schema for LNES-60 Physical Truth. R&D/DESIGNED, not implemented in production. Companion to LNES60_PHYSICAL_TRUTH_ARCHITECTURE.md.",
+  "_governing_principle": "Never encode SENSOR_ALWAYS_WINS. Verified physical evidence may invalidate a document-derived operational conclusion only when the witness's identity, calibration, freshness, integrity, scope, and applicability are established.",
+
+  "truth_planes": {
+    "documentary_state": {
+      "fields": ["maintenance_history", "inspection_history", "part_provenance", "approved_configuration", "service_life", "maintenance_action"],
+      "temporal_note": "Historical records within this plane are immutable once committed; current-state conclusions derived FROM them are separately time-indexed and may become stale without altering the historical record itself."
+    },
+    "command_digital_state": {
+      "fields": ["mission_profile", "payload", "firmware", "software", "motor_map", "control_parameters", "expected_hardware_ids"]
+    },
+    "physical_witness_state": {
+      "fields": ["strain", "elongation", "geometry", "temperature", "vibration", "electrical_signature", "hardware_identity", "position", "cycle_count", "manufacturing_process_telemetry"],
+      "requires": "witness_trust_state (a physical_witness_state reading without an associated, currently-valid witness_trust_state record is not admissible evidence -- see LNES60_WITNESS_TRUST_MODEL.md)"
+    },
+    "witness_trust_state": {
+      "fields": ["sensor_identity", "aircraft_component_binding", "calibration", "freshness", "hardware_signature", "anti_replay_token", "measurement_uncertainty", "sensor_health", "measurement_scope"],
+      "role": "Governs whether a physical_witness_state reading is admissible and how much weight it carries. Distinct from cryptographic integrity (a signature proves origin/non-tampering, not trustworthiness of the underlying measurement)."
+    }
+  },
+
+  "resolution_states": {
+    "VERIFIED_MATCH": {
+      "meaning": "Documentary, command, and physical witness planes agree, and the witness trust state is fully established (identity, calibration, freshness, scope all valid).",
+      "release_implication": "Eligible input to RELEASE_ELIGIBLE, subject to LNES-22's own separate policy evaluation."
+    },
+    "DOCUMENT_PHYSICAL_CONFLICT": {
+      "meaning": "A trusted physical witness reading contradicts a documentary-derived current-state conclusion. The documentary record itself is NOT altered (see documentary_state.temporal_note) -- only the current-state conclusion is marked in conflict.",
+      "release_implication": "HOLD, pending human resolution."
+    },
+    "CONFIGURATION_MISMATCH": {
+      "meaning": "Command/digital state (e.g. expected_hardware_ids, firmware) does not match physical witness hardware_identity or another verified plane.",
+      "release_implication": "HOLD."
+    },
+    "SENSOR_CONFLICT": {
+      "meaning": "Two or more currently-valid, currently-trusted witnesses for the same measurement scope disagree with each other.",
+      "release_implication": "HOLD -- the conflict is preserved, not resolved by picking one sensor (see failure taxonomy item 13)."
+    },
+    "SENSOR_DEGRADED": {
+      "meaning": "A witness's trust state indicates reduced but non-zero confidence (e.g. sensor_health below nominal, elevated measurement_uncertainty) -- not fully disqualifying, but not full-weight evidence either.",
+      "release_implication": "Context-dependent per LNES-22 policy; not itself sufficient for RELEASE_ELIGIBLE without corroboration."
+    },
+    "STALE_WITNESS": {
+      "meaning": "A witness reading's freshness has lapsed relative to a subsequent event that could have changed physical reality (e.g. a hard landing occurring after the reading -- see failure taxonomy item 5), OR relative to a fixed validity window regardless of intervening events.",
+      "release_implication": "Not admissible as current evidence; does not by itself invalidate the underlying historical reading."
+    },
+    "WITNESS_SCOPE_ERROR": {
+      "meaning": "A witness reading's measurement_scope or aircraft_component_binding does not cover the entity/predicate being evaluated (e.g. a reading bound to the wrong component, or a reading whose scope is narrower than the claim being checked -- see failure taxonomy item 8).",
+      "release_implication": "Not admissible for the claim in question; may remain valid evidence for its actual scope."
+    },
+    "UNVERIFIED": {
+      "meaning": "A claim exists in one or more planes but the witness trust state required to evaluate it has not been established (e.g. calibration record missing).",
+      "release_implication": "HOLD or INCOMPLETE depending on whether verification is in-progress or unavailable."
+    },
+    "INCOMPLETE": {
+      "meaning": "Required evidence across the planes has not been fully gathered -- structurally distinct from UNVERIFIED (evidence present but not trust-verified) and from a NO_MATCH-style negative finding (evidence gathering complete, nothing found).",
+      "release_implication": "Never resolves to RELEASE_ELIGIBLE by default."
+    },
+    "RELEASE_ELIGIBLE": {
+      "meaning": "Terminal engineering-authorization output: no unresolved conflict, no stale/out-of-scope/unverified witness blocking the claim, planes reconciled per the governing principle.",
+      "explicit_non_claim": "This is an ENGINEERING authorization output, not autonomous regulatory return-to-service and not a substitute for any legally required inspection or human signoff. LNES-22 performs its own separate policy evaluation before any action authority is granted."
+    },
+    "HOLD": {
+      "meaning": "Terminal engineering-authorization output: a conflict or unresolved condition exists that must not be silently resolved.",
+      "explicit_non_claim": "A HOLD from LNES-60 does not itself take any physical action -- it is a state, consumed by LNES-22, which determines actual system behavior."
+    }
+  },
+
+  "engineering_envelope_discipline": {
+    "rule": "No universal safety thresholds are hardcoded in this schema or its companion documents (e.g. no fixed tether-elongation percentage, pawl-tolerance millimeter value, or print-deviation temperature is asserted as a real engineering limit).",
+    "representation": "All numeric thresholds used anywhere in the LNES-60 test harness are represented as ENGINEERING_ENVELOPE parameters, explicitly labeled synthetic, supplied per test case -- never as defaults implying real qualified engineering data.",
+    "schema_field": {
+      "engineering_envelope": {
+        "parameter_name": "string, e.g. 'tether_elongation_pct_max'",
+        "value": "number",
+        "label": "MUST be one of: 'SYNTHETIC_TEST_VALUE' | 'QUALIFIED_ENGINEERING_DATA' (the latter never used by this schema's own test harness, reserved for a future real-data integration explicitly out of scope here)",
+        "source": "string, free text, e.g. 'LNES60_KTX_TEST_MATRIX.md test class 1'"
+      }
+    }
+  },
+
+  "witness_envelope_type_discipline": {
+    "rule": "Every witness object carries an explicit type tag distinguishing simulated from hardware-sourced data.",
+    "values": ["SIMULATED_WITNESS", "HARDWARE_WITNESS"],
+    "hard_rule": "SIMULATED_WITNESS data must never be presented, logged, or reported as HARDWARE_WITNESS (aircraft telemetry) data, anywhere in the system or its outputs."
+  }
+}
