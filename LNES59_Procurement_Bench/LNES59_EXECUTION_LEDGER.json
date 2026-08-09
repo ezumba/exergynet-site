@@ -1,0 +1,3205 @@
+{
+  "entries": {
+    "LNES59-H01::B0": {
+      "case_id": "LNES59-H01",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H01__B0.json",
+      "completion_timestamp": "2026-08-08T21:34:18Z"
+    },
+    "LNES59-H01::B1": {
+      "case_id": "LNES59-H01",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H01__B1.json",
+      "completion_timestamp": "2026-08-08T21:34:18Z"
+    },
+    "LNES59-H01::B2": {
+      "case_id": "LNES59-H01",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H01__B2.json",
+      "completion_timestamp": "2026-08-08T21:34:18Z"
+    },
+    "LNES59-H01::B3": {
+      "case_id": "LNES59-H01",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H01__B3.json",
+      "completion_timestamp": "2026-08-08T21:34:38Z"
+    },
+    "LNES59-H01::B4": {
+      "case_id": "LNES59-H01",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H01__B4.json",
+      "completion_timestamp": "2026-08-08T21:34:18Z"
+    },
+    "LNES59-H01::X0": {
+      "case_id": "LNES59-H01",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H01__X0.json",
+      "completion_timestamp": "2026-08-08T21:34:38Z"
+    },
+    "LNES59-H01::X1": {
+      "case_id": "LNES59-H01",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H01__X1.json",
+      "completion_timestamp": "2026-08-08T21:35:05Z"
+    },
+    "LNES59-H01::X2": {
+      "case_id": "LNES59-H01",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H01__X2.json",
+      "completion_timestamp": "2026-08-08T21:34:38Z"
+    },
+    "LNES59-H02::B0": {
+      "case_id": "LNES59-H02",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H02__B0.json",
+      "completion_timestamp": "2026-08-08T21:36:10Z"
+    },
+    "LNES59-H02::B1": {
+      "case_id": "LNES59-H02",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H02__B1.json",
+      "completion_timestamp": "2026-08-08T21:36:10Z"
+    },
+    "LNES59-H02::B2": {
+      "case_id": "LNES59-H02",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H02__B2.json",
+      "completion_timestamp": "2026-08-08T21:36:10Z"
+    },
+    "LNES59-H02::B3": {
+      "case_id": "LNES59-H02",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H02__B3.json",
+      "completion_timestamp": "2026-08-08T21:36:10Z"
+    },
+    "LNES59-H02::B4": {
+      "case_id": "LNES59-H02",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H02__B4.json",
+      "completion_timestamp": "2026-08-08T21:36:10Z"
+    },
+    "LNES59-H02::X0": {
+      "case_id": "LNES59-H02",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H02__X0.json",
+      "completion_timestamp": "2026-08-08T21:36:37Z"
+    },
+    "LNES59-H02::X1": {
+      "case_id": "LNES59-H02",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H02__X1.json",
+      "completion_timestamp": "2026-08-08T21:36:37Z"
+    },
+    "LNES59-H02::X2": {
+      "case_id": "LNES59-H02",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H02__X2.json",
+      "completion_timestamp": "2026-08-08T21:36:37Z"
+    },
+    "LNES59-H03::B0": {
+      "case_id": "LNES59-H03",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H03__B0.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H03::B1": {
+      "case_id": "LNES59-H03",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H03__B1.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H03::B2": {
+      "case_id": "LNES59-H03",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H03__B2.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H03::B3": {
+      "case_id": "LNES59-H03",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H03__B3.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H03::B4": {
+      "case_id": "LNES59-H03",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H03__B4.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H03::X0": {
+      "case_id": "LNES59-H03",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H03__X0.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H03::X1": {
+      "case_id": "LNES59-H03",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H03__X1.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H03::X2": {
+      "case_id": "LNES59-H03",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H03__X2.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H04::B0": {
+      "case_id": "LNES59-H04",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H04__B0.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H04::B1": {
+      "case_id": "LNES59-H04",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H04__B1.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H04::B2": {
+      "case_id": "LNES59-H04",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H04__B2.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H04::B3": {
+      "case_id": "LNES59-H04",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H04__B3.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H04::B4": {
+      "case_id": "LNES59-H04",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H04__B4.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H04::X0": {
+      "case_id": "LNES59-H04",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H04__X0.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H04::X1": {
+      "case_id": "LNES59-H04",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H04__X1.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H04::X2": {
+      "case_id": "LNES59-H04",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H04__X2.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H05::B0": {
+      "case_id": "LNES59-H05",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H05__B0.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H05::B1": {
+      "case_id": "LNES59-H05",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H05__B1.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H05::B2": {
+      "case_id": "LNES59-H05",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H05__B2.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H05::B3": {
+      "case_id": "LNES59-H05",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H05__B3.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H05::B4": {
+      "case_id": "LNES59-H05",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H05__B4.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H05::X0": {
+      "case_id": "LNES59-H05",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H05__X0.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H05::X1": {
+      "case_id": "LNES59-H05",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H05__X1.json",
+      "completion_timestamp": "2026-08-08T21:38:31Z"
+    },
+    "LNES59-H05::X2": {
+      "case_id": "LNES59-H05",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H05__X2.json",
+      "completion_timestamp": "2026-08-08T21:38:32Z"
+    },
+    "LNES59-H06::B0": {
+      "case_id": "LNES59-H06",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H06__B0.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H06::B1": {
+      "case_id": "LNES59-H06",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H06__B1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H06::B2": {
+      "case_id": "LNES59-H06",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H06__B2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H06::B3": {
+      "case_id": "LNES59-H06",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H06__B3.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H06::B4": {
+      "case_id": "LNES59-H06",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H06__B4.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H06::X0": {
+      "case_id": "LNES59-H06",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H06__X0.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H06::X1": {
+      "case_id": "LNES59-H06",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H06__X1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H06::X2": {
+      "case_id": "LNES59-H06",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H06__X2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H07::B0": {
+      "case_id": "LNES59-H07",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H07__B0.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H07::B1": {
+      "case_id": "LNES59-H07",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H07__B1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H07::B2": {
+      "case_id": "LNES59-H07",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H07__B2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H07::B3": {
+      "case_id": "LNES59-H07",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H07__B3.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H07::B4": {
+      "case_id": "LNES59-H07",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H07__B4.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H07::X0": {
+      "case_id": "LNES59-H07",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H07__X0.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H07::X1": {
+      "case_id": "LNES59-H07",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H07__X1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H07::X2": {
+      "case_id": "LNES59-H07",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H07__X2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H08::B0": {
+      "case_id": "LNES59-H08",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H08__B0.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H08::B1": {
+      "case_id": "LNES59-H08",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H08__B1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H08::B2": {
+      "case_id": "LNES59-H08",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H08__B2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H08::B3": {
+      "case_id": "LNES59-H08",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H08__B3.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H08::B4": {
+      "case_id": "LNES59-H08",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H08__B4.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H08::X0": {
+      "case_id": "LNES59-H08",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H08__X0.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H08::X1": {
+      "case_id": "LNES59-H08",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H08__X1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H08::X2": {
+      "case_id": "LNES59-H08",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H08__X2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H09::B0": {
+      "case_id": "LNES59-H09",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H09__B0.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H09::B1": {
+      "case_id": "LNES59-H09",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H09__B1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H09::B2": {
+      "case_id": "LNES59-H09",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H09__B2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H09::B3": {
+      "case_id": "LNES59-H09",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H09__B3.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H09::B4": {
+      "case_id": "LNES59-H09",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H09__B4.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H09::X0": {
+      "case_id": "LNES59-H09",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H09__X0.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H09::X1": {
+      "case_id": "LNES59-H09",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H09__X1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H09::X2": {
+      "case_id": "LNES59-H09",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H09__X2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H10::B0": {
+      "case_id": "LNES59-H10",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H10__B0.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H10::B1": {
+      "case_id": "LNES59-H10",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H10__B1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H10::B2": {
+      "case_id": "LNES59-H10",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H10__B2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H10::B3": {
+      "case_id": "LNES59-H10",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H10__B3.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H10::B4": {
+      "case_id": "LNES59-H10",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H10__B4.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H10::X0": {
+      "case_id": "LNES59-H10",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H10__X0.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H10::X1": {
+      "case_id": "LNES59-H10",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H10__X1.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H10::X2": {
+      "case_id": "LNES59-H10",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H10__X2.json",
+      "completion_timestamp": "2026-08-08T21:41:03Z"
+    },
+    "LNES59-H11::B0": {
+      "case_id": "LNES59-H11",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H11__B0.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H11::B1": {
+      "case_id": "LNES59-H11",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H11__B1.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H11::B2": {
+      "case_id": "LNES59-H11",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H11__B2.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H11::B3": {
+      "case_id": "LNES59-H11",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H11__B3.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H11::B4": {
+      "case_id": "LNES59-H11",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H11__B4.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H11::X0": {
+      "case_id": "LNES59-H11",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H11__X0.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H11::X1": {
+      "case_id": "LNES59-H11",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H11__X1.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H11::X2": {
+      "case_id": "LNES59-H11",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H11__X2.json",
+      "completion_timestamp": "2026-08-08T21:42:34Z"
+    },
+    "LNES59-H12::B0": {
+      "case_id": "LNES59-H12",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H12__B0.json",
+      "completion_timestamp": "2026-08-08T21:43:36Z"
+    },
+    "LNES59-H12::B1": {
+      "case_id": "LNES59-H12",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H12__B1.json",
+      "completion_timestamp": "2026-08-08T21:43:36Z"
+    },
+    "LNES59-H12::B2": {
+      "case_id": "LNES59-H12",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H12__B2.json",
+      "completion_timestamp": "2026-08-08T21:43:36Z"
+    },
+    "LNES59-H12::B3": {
+      "case_id": "LNES59-H12",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H12__B3.json",
+      "completion_timestamp": "2026-08-08T21:43:36Z"
+    },
+    "LNES59-H12::B4": {
+      "case_id": "LNES59-H12",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H12__B4.json",
+      "completion_timestamp": "2026-08-08T21:43:36Z"
+    },
+    "LNES59-H12::X0": {
+      "case_id": "LNES59-H12",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H12__X0.json",
+      "completion_timestamp": "2026-08-08T21:43:36Z"
+    },
+    "LNES59-H12::X1": {
+      "case_id": "LNES59-H12",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H12__X1.json",
+      "completion_timestamp": "2026-08-08T21:43:52Z"
+    },
+    "LNES59-H12::X2": {
+      "case_id": "LNES59-H12",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H12__X2.json",
+      "completion_timestamp": "2026-08-08T21:43:52Z"
+    },
+    "LNES59-H13::B0": {
+      "case_id": "LNES59-H13",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H13__B0.json",
+      "completion_timestamp": "2026-08-08T21:44:36Z"
+    },
+    "LNES59-H13::B1": {
+      "case_id": "LNES59-H13",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H13__B1.json",
+      "completion_timestamp": "2026-08-08T21:44:37Z"
+    },
+    "LNES59-H13::B2": {
+      "case_id": "LNES59-H13",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H13__B2.json",
+      "completion_timestamp": "2026-08-08T21:44:37Z"
+    },
+    "LNES59-H13::B3": {
+      "case_id": "LNES59-H13",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H13__B3.json",
+      "completion_timestamp": "2026-08-08T21:44:37Z"
+    },
+    "LNES59-H13::B4": {
+      "case_id": "LNES59-H13",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H13__B4.json",
+      "completion_timestamp": "2026-08-08T21:44:37Z"
+    },
+    "LNES59-H13::X0": {
+      "case_id": "LNES59-H13",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H13__X0.json",
+      "completion_timestamp": "2026-08-08T21:44:37Z"
+    },
+    "LNES59-H13::X1": {
+      "case_id": "LNES59-H13",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H13__X1.json",
+      "completion_timestamp": "2026-08-08T21:45:47Z"
+    },
+    "LNES59-H13::X2": {
+      "case_id": "LNES59-H13",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H13__X2.json",
+      "completion_timestamp": "2026-08-08T21:44:51Z"
+    },
+    "LNES59-H14::B0": {
+      "case_id": "LNES59-H14",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H14__B0.json",
+      "completion_timestamp": "2026-08-08T21:45:47Z"
+    },
+    "LNES59-H14::B1": {
+      "case_id": "LNES59-H14",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H14__B1.json",
+      "completion_timestamp": "2026-08-08T21:45:47Z"
+    },
+    "LNES59-H14::B2": {
+      "case_id": "LNES59-H14",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H14__B2.json",
+      "completion_timestamp": "2026-08-08T21:45:47Z"
+    },
+    "LNES59-H14::B3": {
+      "case_id": "LNES59-H14",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H14__B3.json",
+      "completion_timestamp": "2026-08-08T21:45:47Z"
+    },
+    "LNES59-H14::B4": {
+      "case_id": "LNES59-H14",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H14__B4.json",
+      "completion_timestamp": "2026-08-08T21:45:47Z"
+    },
+    "LNES59-H14::X0": {
+      "case_id": "LNES59-H14",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H14__X0.json",
+      "completion_timestamp": "2026-08-08T21:45:47Z"
+    },
+    "LNES59-H14::X1": {
+      "case_id": "LNES59-H14",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H14__X1.json",
+      "completion_timestamp": "2026-08-08T21:46:25Z"
+    },
+    "LNES59-H14::X2": {
+      "case_id": "LNES59-H14",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H14__X2.json",
+      "completion_timestamp": "2026-08-08T21:46:25Z"
+    },
+    "LNES59-H15::B0": {
+      "case_id": "LNES59-H15",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H15__B0.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H15::B1": {
+      "case_id": "LNES59-H15",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H15__B1.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H15::B2": {
+      "case_id": "LNES59-H15",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H15__B2.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H15::B3": {
+      "case_id": "LNES59-H15",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H15__B3.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H15::B4": {
+      "case_id": "LNES59-H15",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H15__B4.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H15::X0": {
+      "case_id": "LNES59-H15",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H15__X0.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H15::X1": {
+      "case_id": "LNES59-H15",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H15__X1.json",
+      "completion_timestamp": "2026-08-08T22:25:44Z"
+    },
+    "LNES59-H15::X2": {
+      "case_id": "LNES59-H15",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 3,
+      "result_path": "raw_results\\LNES59-H15__X2.json",
+      "completion_timestamp": "2026-08-08T22:25:44Z",
+      "error_state": "persist_error: TypeError: '>' not supported between instances of 'str' and 'int'"
+    },
+    "LNES59-H16::B0": {
+      "case_id": "LNES59-H16",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H16__B0.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H16::B1": {
+      "case_id": "LNES59-H16",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H16__B1.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H16::B2": {
+      "case_id": "LNES59-H16",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H16__B2.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H16::B3": {
+      "case_id": "LNES59-H16",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H16__B3.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H16::B4": {
+      "case_id": "LNES59-H16",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H16__B4.json",
+      "completion_timestamp": "2026-08-08T22:25:44Z"
+    },
+    "LNES59-H16::X0": {
+      "case_id": "LNES59-H16",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H16__X0.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H16::X1": {
+      "case_id": "LNES59-H16",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H16__X1.json",
+      "completion_timestamp": "2026-08-08T22:24:50Z"
+    },
+    "LNES59-H16::X2": {
+      "case_id": "LNES59-H16",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H16__X2.json",
+      "completion_timestamp": "2026-08-08T22:25:44Z"
+    },
+    "LNES59-H17::B0": {
+      "case_id": "LNES59-H17",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H17__B0.json",
+      "completion_timestamp": "2026-08-08T22:26:39Z"
+    },
+    "LNES59-H17::B1": {
+      "case_id": "LNES59-H17",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H17__B1.json",
+      "completion_timestamp": "2026-08-08T22:26:39Z"
+    },
+    "LNES59-H17::B2": {
+      "case_id": "LNES59-H17",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H17__B2.json",
+      "completion_timestamp": "2026-08-08T22:26:39Z"
+    },
+    "LNES59-H17::B3": {
+      "case_id": "LNES59-H17",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H17__B3.json",
+      "completion_timestamp": "2026-08-08T22:26:39Z"
+    },
+    "LNES59-H17::B4": {
+      "case_id": "LNES59-H17",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H17__B4.json",
+      "completion_timestamp": "2026-08-08T22:26:39Z"
+    },
+    "LNES59-H17::X0": {
+      "case_id": "LNES59-H17",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H17__X0.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H17::X1": {
+      "case_id": "LNES59-H17",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H17__X1.json",
+      "completion_timestamp": "2026-08-08T22:26:39Z"
+    },
+    "LNES59-H17::X2": {
+      "case_id": "LNES59-H17",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H17__X2.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H18::B0": {
+      "case_id": "LNES59-H18",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H18__B0.json",
+      "completion_timestamp": "2026-08-08T22:26:39Z"
+    },
+    "LNES59-H18::B1": {
+      "case_id": "LNES59-H18",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H18__B1.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H18::B2": {
+      "case_id": "LNES59-H18",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H18__B2.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H18::B3": {
+      "case_id": "LNES59-H18",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H18__B3.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H18::B4": {
+      "case_id": "LNES59-H18",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H18__B4.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H18::X0": {
+      "case_id": "LNES59-H18",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H18__X0.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H18::X1": {
+      "case_id": "LNES59-H18",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H18__X1.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H18::X2": {
+      "case_id": "LNES59-H18",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H18__X2.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H19::B0": {
+      "case_id": "LNES59-H19",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H19__B0.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H19::B1": {
+      "case_id": "LNES59-H19",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H19__B1.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H19::B2": {
+      "case_id": "LNES59-H19",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H19__B2.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H19::B3": {
+      "case_id": "LNES59-H19",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H19__B3.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H19::B4": {
+      "case_id": "LNES59-H19",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H19__B4.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H19::X0": {
+      "case_id": "LNES59-H19",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H19__X0.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H19::X1": {
+      "case_id": "LNES59-H19",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H19__X1.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H19::X2": {
+      "case_id": "LNES59-H19",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H19__X2.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H20::B0": {
+      "case_id": "LNES59-H20",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H20__B0.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H20::B1": {
+      "case_id": "LNES59-H20",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H20__B1.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H20::B2": {
+      "case_id": "LNES59-H20",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H20__B2.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H20::B3": {
+      "case_id": "LNES59-H20",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H20__B3.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H20::B4": {
+      "case_id": "LNES59-H20",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H20__B4.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H20::X0": {
+      "case_id": "LNES59-H20",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H20__X0.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H20::X1": {
+      "case_id": "LNES59-H20",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H20__X1.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H20::X2": {
+      "case_id": "LNES59-H20",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H20__X2.json",
+      "completion_timestamp": "2026-08-08T22:27:39Z"
+    },
+    "LNES59-H21::B0": {
+      "case_id": "LNES59-H21",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H21__B0.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H21::B1": {
+      "case_id": "LNES59-H21",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H21__B1.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H21::B2": {
+      "case_id": "LNES59-H21",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H21__B2.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H21::B3": {
+      "case_id": "LNES59-H21",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H21__B3.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H21::B4": {
+      "case_id": "LNES59-H21",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H21__B4.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H21::X0": {
+      "case_id": "LNES59-H21",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H21__X0.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H21::X1": {
+      "case_id": "LNES59-H21",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H21__X1.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H21::X2": {
+      "case_id": "LNES59-H21",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H21__X2.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H22::B0": {
+      "case_id": "LNES59-H22",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H22__B0.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H22::B1": {
+      "case_id": "LNES59-H22",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H22__B1.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H22::B2": {
+      "case_id": "LNES59-H22",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H22__B2.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H22::B3": {
+      "case_id": "LNES59-H22",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H22__B3.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H22::B4": {
+      "case_id": "LNES59-H22",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H22__B4.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H22::X0": {
+      "case_id": "LNES59-H22",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H22__X0.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H22::X1": {
+      "case_id": "LNES59-H22",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H22__X1.json",
+      "completion_timestamp": "2026-08-08T22:28:32Z"
+    },
+    "LNES59-H22::X2": {
+      "case_id": "LNES59-H22",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H22__X2.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H23::B0": {
+      "case_id": "LNES59-H23",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H23__B0.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H23::B1": {
+      "case_id": "LNES59-H23",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H23__B1.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H23::B2": {
+      "case_id": "LNES59-H23",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H23__B2.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H23::B3": {
+      "case_id": "LNES59-H23",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H23__B3.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H23::B4": {
+      "case_id": "LNES59-H23",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H23__B4.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H23::X0": {
+      "case_id": "LNES59-H23",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H23__X0.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H23::X1": {
+      "case_id": "LNES59-H23",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H23__X1.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H23::X2": {
+      "case_id": "LNES59-H23",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H23__X2.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H24::B0": {
+      "case_id": "LNES59-H24",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H24__B0.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H24::B1": {
+      "case_id": "LNES59-H24",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H24__B1.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H24::B2": {
+      "case_id": "LNES59-H24",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H24__B2.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H24::B3": {
+      "case_id": "LNES59-H24",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H24__B3.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H24::B4": {
+      "case_id": "LNES59-H24",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H24__B4.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H24::X0": {
+      "case_id": "LNES59-H24",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H24__X0.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H24::X1": {
+      "case_id": "LNES59-H24",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H24__X1.json",
+      "completion_timestamp": "2026-08-08T22:29:28Z"
+    },
+    "LNES59-H24::X2": {
+      "case_id": "LNES59-H24",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H24__X2.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H25::B0": {
+      "case_id": "LNES59-H25",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H25__B0.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H25::B1": {
+      "case_id": "LNES59-H25",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H25__B1.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H25::B2": {
+      "case_id": "LNES59-H25",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H25__B2.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H25::B3": {
+      "case_id": "LNES59-H25",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H25__B3.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H25::B4": {
+      "case_id": "LNES59-H25",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H25__B4.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H25::X0": {
+      "case_id": "LNES59-H25",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H25__X0.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H25::X1": {
+      "case_id": "LNES59-H25",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H25__X1.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H25::X2": {
+      "case_id": "LNES59-H25",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H25__X2.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H26::B0": {
+      "case_id": "LNES59-H26",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H26__B0.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H26::B1": {
+      "case_id": "LNES59-H26",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H26__B1.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H26::B2": {
+      "case_id": "LNES59-H26",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H26__B2.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H26::B3": {
+      "case_id": "LNES59-H26",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H26__B3.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H26::B4": {
+      "case_id": "LNES59-H26",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H26__B4.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H26::X0": {
+      "case_id": "LNES59-H26",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H26__X0.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H26::X1": {
+      "case_id": "LNES59-H26",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H26__X1.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H26::X2": {
+      "case_id": "LNES59-H26",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H26__X2.json",
+      "completion_timestamp": "2026-08-08T22:33:37Z"
+    },
+    "LNES59-H27::B0": {
+      "case_id": "LNES59-H27",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H27__B0.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H27::B1": {
+      "case_id": "LNES59-H27",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H27__B1.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H27::B2": {
+      "case_id": "LNES59-H27",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H27__B2.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H27::B3": {
+      "case_id": "LNES59-H27",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H27__B3.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H27::B4": {
+      "case_id": "LNES59-H27",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H27__B4.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H27::X0": {
+      "case_id": "LNES59-H27",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H27__X0.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H27::X1": {
+      "case_id": "LNES59-H27",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H27__X1.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H27::X2": {
+      "case_id": "LNES59-H27",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H27__X2.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H28::B0": {
+      "case_id": "LNES59-H28",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H28__B0.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H28::B1": {
+      "case_id": "LNES59-H28",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H28__B1.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H28::B2": {
+      "case_id": "LNES59-H28",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H28__B2.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H28::B3": {
+      "case_id": "LNES59-H28",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H28__B3.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H28::B4": {
+      "case_id": "LNES59-H28",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H28__B4.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H28::X0": {
+      "case_id": "LNES59-H28",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H28__X0.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H28::X1": {
+      "case_id": "LNES59-H28",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H28__X1.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H28::X2": {
+      "case_id": "LNES59-H28",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H28__X2.json",
+      "completion_timestamp": "2026-08-08T22:34:59Z"
+    },
+    "LNES59-H29::B0": {
+      "case_id": "LNES59-H29",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H29__B0.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H29::B1": {
+      "case_id": "LNES59-H29",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H29__B1.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H29::B2": {
+      "case_id": "LNES59-H29",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H29__B2.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H29::B3": {
+      "case_id": "LNES59-H29",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H29__B3.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H29::B4": {
+      "case_id": "LNES59-H29",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H29__B4.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H29::X0": {
+      "case_id": "LNES59-H29",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H29__X0.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H29::X1": {
+      "case_id": "LNES59-H29",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H29__X1.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H29::X2": {
+      "case_id": "LNES59-H29",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H29__X2.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H30::B0": {
+      "case_id": "LNES59-H30",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H30__B0.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H30::B1": {
+      "case_id": "LNES59-H30",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H30__B1.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H30::B2": {
+      "case_id": "LNES59-H30",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H30__B2.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H30::B3": {
+      "case_id": "LNES59-H30",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H30__B3.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H30::B4": {
+      "case_id": "LNES59-H30",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H30__B4.json",
+      "completion_timestamp": "2026-08-08T22:35:40Z"
+    },
+    "LNES59-H30::X0": {
+      "case_id": "LNES59-H30",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H30__X0.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H30::X1": {
+      "case_id": "LNES59-H30",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H30__X1.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H30::X2": {
+      "case_id": "LNES59-H30",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H30__X2.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H31::B0": {
+      "case_id": "LNES59-H31",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H31__B0.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H31::B1": {
+      "case_id": "LNES59-H31",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H31__B1.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H31::B2": {
+      "case_id": "LNES59-H31",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H31__B2.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H31::B3": {
+      "case_id": "LNES59-H31",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H31__B3.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H31::B4": {
+      "case_id": "LNES59-H31",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H31__B4.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H31::X0": {
+      "case_id": "LNES59-H31",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H31__X0.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H31::X1": {
+      "case_id": "LNES59-H31",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H31__X1.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H31::X2": {
+      "case_id": "LNES59-H31",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H31__X2.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H32::B0": {
+      "case_id": "LNES59-H32",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H32__B0.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H32::B1": {
+      "case_id": "LNES59-H32",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H32__B1.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H32::B2": {
+      "case_id": "LNES59-H32",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H32__B2.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H32::B3": {
+      "case_id": "LNES59-H32",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H32__B3.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H32::B4": {
+      "case_id": "LNES59-H32",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H32__B4.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H32::X0": {
+      "case_id": "LNES59-H32",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H32__X0.json",
+      "completion_timestamp": "2026-08-08T22:36:19Z"
+    },
+    "LNES59-H32::X1": {
+      "case_id": "LNES59-H32",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H32__X1.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H32::X2": {
+      "case_id": "LNES59-H32",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H32__X2.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H33::B0": {
+      "case_id": "LNES59-H33",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H33__B0.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H33::B1": {
+      "case_id": "LNES59-H33",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H33__B1.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H33::B2": {
+      "case_id": "LNES59-H33",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H33__B2.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H33::B3": {
+      "case_id": "LNES59-H33",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H33__B3.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H33::B4": {
+      "case_id": "LNES59-H33",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H33__B4.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H33::X0": {
+      "case_id": "LNES59-H33",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H33__X0.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H33::X1": {
+      "case_id": "LNES59-H33",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H33__X1.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H33::X2": {
+      "case_id": "LNES59-H33",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H33__X2.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H34::B0": {
+      "case_id": "LNES59-H34",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H34__B0.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H34::B1": {
+      "case_id": "LNES59-H34",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H34__B1.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H34::B2": {
+      "case_id": "LNES59-H34",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H34__B2.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H34::B3": {
+      "case_id": "LNES59-H34",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H34__B3.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H34::B4": {
+      "case_id": "LNES59-H34",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H34__B4.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H34::X0": {
+      "case_id": "LNES59-H34",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H34__X0.json",
+      "completion_timestamp": "2026-08-08T22:36:58Z"
+    },
+    "LNES59-H34::X1": {
+      "case_id": "LNES59-H34",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H34__X1.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H34::X2": {
+      "case_id": "LNES59-H34",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H34__X2.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H35::B0": {
+      "case_id": "LNES59-H35",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H35__B0.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H35::B1": {
+      "case_id": "LNES59-H35",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H35__B1.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H35::B2": {
+      "case_id": "LNES59-H35",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H35__B2.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H35::B3": {
+      "case_id": "LNES59-H35",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H35__B3.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H35::B4": {
+      "case_id": "LNES59-H35",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H35__B4.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H35::X0": {
+      "case_id": "LNES59-H35",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H35__X0.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H35::X1": {
+      "case_id": "LNES59-H35",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H35__X1.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H35::X2": {
+      "case_id": "LNES59-H35",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H35__X2.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H36::B0": {
+      "case_id": "LNES59-H36",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H36__B0.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H36::B1": {
+      "case_id": "LNES59-H36",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H36__B1.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H36::B2": {
+      "case_id": "LNES59-H36",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H36__B2.json",
+      "completion_timestamp": "2026-08-08T22:37:39Z"
+    },
+    "LNES59-H36::B3": {
+      "case_id": "LNES59-H36",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H36__B3.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H36::B4": {
+      "case_id": "LNES59-H36",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H36__B4.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H36::X0": {
+      "case_id": "LNES59-H36",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H36__X0.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H36::X1": {
+      "case_id": "LNES59-H36",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H36__X1.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H36::X2": {
+      "case_id": "LNES59-H36",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H36__X2.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H37::B0": {
+      "case_id": "LNES59-H37",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H37__B0.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H37::B1": {
+      "case_id": "LNES59-H37",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H37__B1.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H37::B2": {
+      "case_id": "LNES59-H37",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H37__B2.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H37::B3": {
+      "case_id": "LNES59-H37",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H37__B3.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H37::B4": {
+      "case_id": "LNES59-H37",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H37__B4.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H37::X0": {
+      "case_id": "LNES59-H37",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H37__X0.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H37::X1": {
+      "case_id": "LNES59-H37",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H37__X1.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H37::X2": {
+      "case_id": "LNES59-H37",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H37__X2.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H38::B0": {
+      "case_id": "LNES59-H38",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H38__B0.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H38::B1": {
+      "case_id": "LNES59-H38",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H38__B1.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H38::B2": {
+      "case_id": "LNES59-H38",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H38__B2.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H38::B3": {
+      "case_id": "LNES59-H38",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H38__B3.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H38::B4": {
+      "case_id": "LNES59-H38",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H38__B4.json",
+      "completion_timestamp": "2026-08-08T22:38:24Z"
+    },
+    "LNES59-H38::X0": {
+      "case_id": "LNES59-H38",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H38__X0.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H38::X1": {
+      "case_id": "LNES59-H38",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H38__X1.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H38::X2": {
+      "case_id": "LNES59-H38",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H38__X2.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H39::B0": {
+      "case_id": "LNES59-H39",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H39__B0.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H39::B1": {
+      "case_id": "LNES59-H39",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H39__B1.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H39::B2": {
+      "case_id": "LNES59-H39",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H39__B2.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H39::B3": {
+      "case_id": "LNES59-H39",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H39__B3.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H39::B4": {
+      "case_id": "LNES59-H39",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H39__B4.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H39::X0": {
+      "case_id": "LNES59-H39",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H39__X0.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H39::X1": {
+      "case_id": "LNES59-H39",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H39__X1.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H39::X2": {
+      "case_id": "LNES59-H39",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H39__X2.json",
+      "completion_timestamp": "2026-08-08T22:39:11Z"
+    },
+    "LNES59-H40::B0": {
+      "case_id": "LNES59-H40",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H40__B0.json",
+      "completion_timestamp": "2026-08-08T22:40:11Z"
+    },
+    "LNES59-H40::B1": {
+      "case_id": "LNES59-H40",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H40__B1.json",
+      "completion_timestamp": "2026-08-08T22:40:11Z"
+    },
+    "LNES59-H40::B2": {
+      "case_id": "LNES59-H40",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H40__B2.json",
+      "completion_timestamp": "2026-08-08T22:40:11Z"
+    },
+    "LNES59-H40::B3": {
+      "case_id": "LNES59-H40",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H40__B3.json",
+      "completion_timestamp": "2026-08-08T22:40:11Z"
+    },
+    "LNES59-H40::B4": {
+      "case_id": "LNES59-H40",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H40__B4.json",
+      "completion_timestamp": "2026-08-08T22:40:11Z"
+    },
+    "LNES59-H40::X0": {
+      "case_id": "LNES59-H40",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H40__X0.json",
+      "completion_timestamp": "2026-08-08T22:40:11Z"
+    },
+    "LNES59-H40::X1": {
+      "case_id": "LNES59-H40",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H40__X1.json",
+      "completion_timestamp": "2026-08-08T22:40:11Z"
+    },
+    "LNES59-H40::X2": {
+      "case_id": "LNES59-H40",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H40__X2.json",
+      "completion_timestamp": "2026-08-08T22:40:11Z"
+    },
+    "LNES59-H41::B0": {
+      "case_id": "LNES59-H41",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H41__B0.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H41::B1": {
+      "case_id": "LNES59-H41",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H41__B1.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H41::B2": {
+      "case_id": "LNES59-H41",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H41__B2.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H41::B3": {
+      "case_id": "LNES59-H41",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H41__B3.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H41::B4": {
+      "case_id": "LNES59-H41",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H41__B4.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H41::X0": {
+      "case_id": "LNES59-H41",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H41__X0.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H41::X1": {
+      "case_id": "LNES59-H41",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H41__X1.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H41::X2": {
+      "case_id": "LNES59-H41",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H41__X2.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H42::B0": {
+      "case_id": "LNES59-H42",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H42__B0.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H42::B1": {
+      "case_id": "LNES59-H42",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H42__B1.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H42::B2": {
+      "case_id": "LNES59-H42",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H42__B2.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H42::B3": {
+      "case_id": "LNES59-H42",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H42__B3.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H42::B4": {
+      "case_id": "LNES59-H42",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H42__B4.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H42::X0": {
+      "case_id": "LNES59-H42",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H42__X0.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H42::X1": {
+      "case_id": "LNES59-H42",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H42__X1.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H42::X2": {
+      "case_id": "LNES59-H42",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H42__X2.json",
+      "completion_timestamp": "2026-08-08T22:41:35Z"
+    },
+    "LNES59-H43::B0": {
+      "case_id": "LNES59-H43",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H43__B0.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H43::B1": {
+      "case_id": "LNES59-H43",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H43__B1.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H43::B2": {
+      "case_id": "LNES59-H43",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H43__B2.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H43::B3": {
+      "case_id": "LNES59-H43",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H43__B3.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H43::B4": {
+      "case_id": "LNES59-H43",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H43__B4.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H43::X0": {
+      "case_id": "LNES59-H43",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H43__X0.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H43::X1": {
+      "case_id": "LNES59-H43",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H43__X1.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H43::X2": {
+      "case_id": "LNES59-H43",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H43__X2.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H44::B0": {
+      "case_id": "LNES59-H44",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H44__B0.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H44::B1": {
+      "case_id": "LNES59-H44",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H44__B1.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H44::B2": {
+      "case_id": "LNES59-H44",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H44__B2.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H44::B3": {
+      "case_id": "LNES59-H44",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H44__B3.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H44::B4": {
+      "case_id": "LNES59-H44",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H44__B4.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H44::X0": {
+      "case_id": "LNES59-H44",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H44__X0.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H44::X1": {
+      "case_id": "LNES59-H44",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H44__X1.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H44::X2": {
+      "case_id": "LNES59-H44",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H44__X2.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H45::B0": {
+      "case_id": "LNES59-H45",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H45__B0.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H45::B1": {
+      "case_id": "LNES59-H45",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H45__B1.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H45::B2": {
+      "case_id": "LNES59-H45",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H45__B2.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H45::B3": {
+      "case_id": "LNES59-H45",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H45__B3.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H45::B4": {
+      "case_id": "LNES59-H45",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H45__B4.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H45::X0": {
+      "case_id": "LNES59-H45",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H45__X0.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H45::X1": {
+      "case_id": "LNES59-H45",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H45__X1.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H45::X2": {
+      "case_id": "LNES59-H45",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H45__X2.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H46::B0": {
+      "case_id": "LNES59-H46",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H46__B0.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H46::B1": {
+      "case_id": "LNES59-H46",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H46__B1.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H46::B2": {
+      "case_id": "LNES59-H46",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H46__B2.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H46::B3": {
+      "case_id": "LNES59-H46",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H46__B3.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H46::B4": {
+      "case_id": "LNES59-H46",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H46__B4.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H46::X0": {
+      "case_id": "LNES59-H46",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H46__X0.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H46::X1": {
+      "case_id": "LNES59-H46",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H46__X1.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H46::X2": {
+      "case_id": "LNES59-H46",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H46__X2.json",
+      "completion_timestamp": "2026-08-08T22:42:56Z"
+    },
+    "LNES59-H47::B0": {
+      "case_id": "LNES59-H47",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H47__B0.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H47::B1": {
+      "case_id": "LNES59-H47",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H47__B1.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H47::B2": {
+      "case_id": "LNES59-H47",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H47__B2.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H47::B3": {
+      "case_id": "LNES59-H47",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H47__B3.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H47::B4": {
+      "case_id": "LNES59-H47",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H47__B4.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H47::X0": {
+      "case_id": "LNES59-H47",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H47__X0.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H47::X1": {
+      "case_id": "LNES59-H47",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H47__X1.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H47::X2": {
+      "case_id": "LNES59-H47",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H47__X2.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H48::B0": {
+      "case_id": "LNES59-H48",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H48__B0.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H48::B1": {
+      "case_id": "LNES59-H48",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H48__B1.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H48::B2": {
+      "case_id": "LNES59-H48",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H48__B2.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H48::B3": {
+      "case_id": "LNES59-H48",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H48__B3.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H48::B4": {
+      "case_id": "LNES59-H48",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H48__B4.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H48::X0": {
+      "case_id": "LNES59-H48",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H48__X0.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H48::X1": {
+      "case_id": "LNES59-H48",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H48__X1.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H48::X2": {
+      "case_id": "LNES59-H48",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H48__X2.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H49::B0": {
+      "case_id": "LNES59-H49",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H49__B0.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H49::B1": {
+      "case_id": "LNES59-H49",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H49__B1.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H49::B2": {
+      "case_id": "LNES59-H49",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H49__B2.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H49::B3": {
+      "case_id": "LNES59-H49",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H49__B3.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H49::B4": {
+      "case_id": "LNES59-H49",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H49__B4.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H49::X0": {
+      "case_id": "LNES59-H49",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H49__X0.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H49::X1": {
+      "case_id": "LNES59-H49",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H49__X1.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H49::X2": {
+      "case_id": "LNES59-H49",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H49__X2.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H50::B0": {
+      "case_id": "LNES59-H50",
+      "arm": "B0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H50__B0.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H50::B1": {
+      "case_id": "LNES59-H50",
+      "arm": "B1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H50__B1.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H50::B2": {
+      "case_id": "LNES59-H50",
+      "arm": "B2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H50__B2.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H50::B3": {
+      "case_id": "LNES59-H50",
+      "arm": "B3",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H50__B3.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H50::B4": {
+      "case_id": "LNES59-H50",
+      "arm": "B4",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H50__B4.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H50::X0": {
+      "case_id": "LNES59-H50",
+      "arm": "X0",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H50__X0.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H50::X1": {
+      "case_id": "LNES59-H50",
+      "arm": "X1",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H50__X1.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    },
+    "LNES59-H50::X2": {
+      "case_id": "LNES59-H50",
+      "arm": "X2",
+      "status": "completed",
+      "attempts": 1,
+      "result_path": "raw_results\\LNES59-H50__X2.json",
+      "completion_timestamp": "2026-08-08T22:44:31Z"
+    }
+  }
+}
