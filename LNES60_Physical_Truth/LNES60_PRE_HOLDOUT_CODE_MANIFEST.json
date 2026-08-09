@@ -1,0 +1,56 @@
+{
+  "_purpose": "LNES-60 Phase 1 architecture freeze manifest. Sealed before holdout authoring begins. No changes to the frozen decision-logic files below are permitted after this point, regardless of holdout results.",
+  "_scope_note": "Frozen scope is the DECISION-LOGIC engine only (the 7 files below) -- matching LNES-59's precedent of freezing state_consistency_gate_v2.py/deterministic_extraction.py while allowing execution/authoring tooling to keep evolving after freeze. lnes60/synthetic_generator.py is holdout-AUTHORING tooling, not decision logic, and is explicitly NOT frozen -- it is reused (with a fresh case-ID prefix and aircraft-ID offset parameter) to author the post-freeze holdout, exactly as LNES-59's explode_prompts.py/execution-ledger tooling was built after that project's own freeze without violating it.",
+  "frozen_date": "2026-08-08",
+  "freeze_commit": "784c55f",
+  "architecture_version": "P1-0.1.0",
+  "frozen_files": [
+    "lnes60/state_types.py",
+    "lnes60/witness_types.py",
+    "lnes60/witness_validator.py",
+    "lnes60/temporal_resolver.py",
+    "lnes60/configuration_resolver.py",
+    "lnes60/convergence_engine.py",
+    "lnes60/release_policy.py"
+  ],
+  "file_hashes": {
+    "lnes60/state_types.py": "8de13af462fd429c7edda5b4694b331b72f5936a79cd658e41bc746355268d92",
+    "lnes60/witness_types.py": "064ea488796a8b7452e61baf5da7a3082074bea53c5e1a9833bb963c27895231",
+    "lnes60/witness_validator.py": "a486feef4a8961b561756e66fb8c5fb37da2c20be5aafc3a6474b4d3ac7e7a31",
+    "lnes60/temporal_resolver.py": "8dc02b675b59517507a92c1ed5e653efe0a2f85460029d5c4a9c4623d3866418",
+    "lnes60/configuration_resolver.py": "ba2017938a3c396aa7663906c28f2fbd25bad7021613988152ef713ecc81d89f",
+    "lnes60/convergence_engine.py": "4cc710ab6a8356134386ff89bae18ec2f301bda638b9b26c5c45ad060d4f840d",
+    "lnes60/release_policy.py": "6c8fd189b75ecd576411876f7b2406a0c48e2b0a05073773e3549b4a394c0a26"
+  },
+  "not_frozen_reused_for_holdout_authoring": {
+    "lnes60/synthetic_generator.py": "parameterized post-freeze (prefix/aircraft_offset args added, additive only, dev-case behavior unchanged) so it can author the holdout with a guaranteed-disjoint fresh ID space -- see LNES60_HOLDOUT_MANIFEST.json for the holdout-authoring commit"
+  },
+  "development_case_count": 100,
+  "development_case_classes": 20,
+  "development_mismatches_at_freeze": 0,
+  "unit_test_count": 19,
+  "unit_test_status_at_freeze": "19/19 passing",
+  "defect_log": "LNES60_PHASE1_DEV_DEFECT_LOG.md",
+  "defects_found_and_fixed": [
+    {
+      "id": "DEV-DEFECT-1",
+      "summary": "SENSOR_DEGRADED misclassification from continuous measurement uncertainty conflated with discrete sensor health",
+      "type": "structural_repair",
+      "fixed": true
+    },
+    {
+      "id": "DEV-DEFECT-2",
+      "summary": "Ground-truth specification error in a newly-authored test (config-epoch staleness), caught against already-frozen KTX test matrix class 14",
+      "type": "ground_truth_correction",
+      "fixed": true
+    }
+  ],
+  "known_limitations": [
+    "Convergence engine evaluates one (aircraft, component, predicate) query at a time; multi-predicate release aggregation is exercised only at release_policy.py, not inside the convergence engine itself.",
+    "SENSOR_CONFLICT resolution requires at least 2 currently-admissible witnesses reporting different string values for the same predicate -- numeric near-duplicate disagreement (e.g. 4.9% vs 5.0% elongation) is not distinguished from an exact-match agreement; no tolerance-band comparison is implemented for numeric witness values in Phase 1.",
+    "Configuration epoch resolution (temporal_resolver.resolve_configuration_epoch) assumes epoch-changing events are correctly and completely recorded; a missing epoch-changing event record is indistinguishable from 'no epoch change occurred' -- this is a known gap consistent with the general principle that the engine can only reason over evidence that was actually committed.",
+    "The witness_validator's admissibility check order is fixed (aircraft/component binding, scope, signature, replay, calibration, freshness, health) -- for a witness failing multiple properties simultaneously, only the first-checked failure is reported as the reason, per a documented priority order, not because the other failures don't exist.",
+    "No real sensor hardware, calibration system, or aircraft was involved in producing this manifest -- see LNES60_EXPERIMENT_PROTOCOL.md and the witness envelope type discipline (SIMULATED_WITNESS only)."
+  ],
+  "no_architecture_changes_after_this_point": true
+}

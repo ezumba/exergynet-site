@@ -69,9 +69,9 @@ def _mk_trust(rng, witness_id, aircraft_id, component_id, scope, t, epoch="EPOCH
     )
 
 
-def generate_case(rng: random.Random, idx: int, ktx_class: str) -> SyntheticCase:
-    cid = f"DEV-{idx:03d}"
-    aircraft = f"KTX-{100 + idx}"
+def generate_case(rng: random.Random, idx: int, ktx_class: str, prefix: str = "DEV", aircraft_offset: int = 100) -> SyntheticCase:
+    cid = f"{prefix}-{idx:03d}"
+    aircraft = f"KTX-{aircraft_offset + idx}"
     component = "TETHER-1"
     now = f"2026-08-{(idx % 28) + 1:02d}T{8 + (idx % 10):02d}:00:00"
     scope = "tether.elongation"
@@ -243,18 +243,23 @@ def generate_case(rng: random.Random, idx: int, ktx_class: str) -> SyntheticCase
     )
 
 
-def generate_dataset(n: int, seed: int, exclude_ids: Optional[set] = None) -> List[SyntheticCase]:
-    """Corpus-first generation across all 18 KTX classes, cycling through
+def generate_dataset(n: int, seed: int, exclude_ids: Optional[set] = None,
+                      prefix: str = "DEV", aircraft_offset: int = 100) -> List[SyntheticCase]:
+    """Corpus-first generation across all KTX classes, cycling through
     them with parameter variation driven by a seeded RNG for
-    reproducibility. `exclude_ids` lets the holdout generator guarantee a
-    fresh ID space disjoint from the dev corpus (LNES-59 precedent)."""
+    reproducibility. `prefix`/`aircraft_offset` let the holdout generator
+    guarantee a fresh ID space disjoint from the dev corpus (LNES-59
+    precedent) -- dev uses prefix='DEV', aircraft_offset=100; holdout
+    uses prefix='HOLD', aircraft_offset=9000, so no case_id or aircraft_id
+    can ever collide between the two corpora even by construction, not
+    just by convention."""
     rng = random.Random(seed)
     cases = []
     i = 0
     while len(cases) < n:
         i += 1
         ktx_class = KTX_CLASSES[(i - 1) % len(KTX_CLASSES)]
-        case = generate_case(rng, i, ktx_class)
+        case = generate_case(rng, i, ktx_class, prefix=prefix, aircraft_offset=aircraft_offset)
         if exclude_ids and case.case_id in exclude_ids:
             continue
         cases.append(case)
