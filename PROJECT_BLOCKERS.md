@@ -303,12 +303,91 @@ Public-claim impact:      None — this blocked a one-time verification step,
                           what's live.
 ```
 
+## BLK-010 — Model-health verification session — network access, recurrence of BLK-009 pattern
+
+```
+Subsystem:               A read-only, zero-write model/service health
+                          verification pass (post-benchmark consolidation
+                          work) needed SSH-level access to two production
+                          hosts and a direct application port on one of
+                          them; a separate, unauthenticated HTTPS path to
+                          the same hosts' public-facing domains worked
+                          normally throughout.
+Blocker class:            NETWORK_OPERATIONAL
+Status:                   OPEN. Same symptom shape as BLK-009 (connections
+                          silently time out rather than refuse, consistent
+                          with an IP-allowlist boundary rather than a host
+                          outage) but not yet confirmed as the identical
+                          root cause — the operator's egress address for
+                          this specific session was not independently
+                          checked against the allowlist before this entry
+                          was recorded, so "expired temporary entry from
+                          BLK-009" is the leading hypothesis, not a
+                          confirmed finding.
+Current state:            HTTPS access to public application domains
+                          confirmed healthy throughout (app serving, one
+                          API layer confirmed live). One dependent
+                          service's HTTP gateway responded successfully
+                          but returned its own built-in degraded-fallback
+                          message rather than a real completion, meaning
+                          at least one backend reasoning service is not
+                          currently reachable by its own gateway either —
+                          a separate, real finding from the SSH-access
+                          question, not explained by it alone.
+Exact unblock condition:  Operator adds a temporary, narrowly-scoped
+                          inbound allowlist entry for the current session's
+                          egress address (same remediation shape as
+                          BLK-009), or confirms an alternate access path
+                          (e.g., a session-manager-style path referenced
+                          as available for one of the two hosts) is usable
+                          instead of direct SSH.
+Owner:                    Operator
+Last verified:            2026-08-08
+Public-claim impact:      None — blocks a verification step, not a
+                          deployed capability. The degraded backend
+                          reasoning service noted above is not separately
+                          claimed as fully healthy anywhere public-facing.
+```
+
+## BLK-011 — Exposed credential in a local CLI tool's help text
+
+```
+Subsystem:               A locally-run deployment/diagnostic CLI tool used
+                          for authorized production-host operations prints
+                          a configuration-example block when invoked with
+                          a standard help flag; that block was found to
+                          contain what appears to be a real, current
+                          credential value in plaintext, alongside other
+                          real (non-placeholder) configuration values, not
+                          a placeholder.
+Blocker class:            AUTHORIZATION_CREDENTIAL
+Status:                   OPEN — flagged to the operator directly at
+                          discovery. Operator's decision: continue current
+                          work without rotating immediately; rotation
+                          deferred to operator's own schedule.
+Current state:            The credential has not been independently
+                          re-used or re-printed since discovery. No
+                          confirmation yet that rotation has occurred.
+Exact unblock condition:  Operator rotates the credential and updates its
+                          local configuration; separately, the CLI tool's
+                          help text should be corrected to show a
+                          placeholder instead of a real value so this
+                          cannot recur on a future invocation (including by
+                          a future agent session running the same help
+                          command).
+Owner:                    Operator
+Last verified:            2026-08-08
+Public-claim impact:      None — internal tooling only, not a public-facing
+                          claim.
+```
+
 ---
 
 ## Revision log for this register
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-08-08 | Added BLK-010 (open, network access) and BLK-011 (open, exposed CLI credential) | Discovered during post-LNES-59 model-health consolidation pass: production-host SSH access unreachable from this session (same symptom shape as BLK-009, not yet confirmed identical root cause) prevented full model-restoration work; separately, a local CLI tool's `--help` output was found to print a real credential in plaintext, flagged to the operator, rotation deferred at operator's request |
 | 2026-08-07 | Added BLK-009 (resolved) — a one-time read-only production diagnostic was initially blocked by a stale IP-allowlist entry, then unblocked after the operator added a temporary allowlist entry for their current address. | Discovered-and-resolved blocker during LNES-58.11 production root-verification compatibility work; recorded per this register's standing update rule even though resolution happened within the same session. |
 | 2026-08-06 | Published a fully sanitized version of this register (all entries), replacing the operational version that contains infrastructure specifics. The unsanitized version remains available privately, outside this repository. | This repository is public; the register's working-detail version must never be pushed. A clean, safe-to-review version was needed so governance status can eventually be shared without exposing infrastructure topology. |
 | 2026-08-05 | Register created (6 entries), replacing an earlier undifferentiated "resource-blocked" list that mis-classified several credential/network/dependency blockers as resource blockers. | Operator correction: remediation paths differ by blocker class; a single "resource-blocked" label obscured that. |
