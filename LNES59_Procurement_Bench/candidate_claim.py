@@ -60,6 +60,22 @@ def parse_candidate_claim(raw_text):
     claim_type = data.get("claim_type")
     if claim_type not in CLAIM_TYPES:
         raise CandidateClaimParseError(f"claim_type {claim_type!r} is not one of {CLAIM_TYPES}")
+    requested_amount = data.get("requested_amount")
+    if isinstance(requested_amount, str):
+        # Infrastructure robustness fix (LNES-59.2B execution, H15::X2): a model
+        # sometimes emits a numeric-looking string ("50001") instead of a JSON
+        # number for this field. The frozen gate's ACTION_REQUEST comparison
+        # (requested_amount > limit) requires a real number -- this coercion
+        # happens here, before the gate, and never touches
+        # state_consistency_gate_v2.py or changes what value is being compared,
+        # only its Python type. Semantically neutral: same value, correct type.
+        try:
+            requested_amount = int(requested_amount)
+        except ValueError:
+            try:
+                requested_amount = float(requested_amount)
+            except ValueError:
+                pass  # leave as-is; the gate's own None-check will surface it as INDETERMINATE
     return {
         "subject": data.get("subject"),
         "predicate": data.get("predicate"),
@@ -70,7 +86,7 @@ def parse_candidate_claim(raw_text):
         "effective_time": data.get("effective_time"),
         "confidence_or_uncertainty": data.get("confidence_or_uncertainty"),
         "requested_authority_level": data.get("requested_authority_level"),
-        "requested_amount": data.get("requested_amount"),
+        "requested_amount": requested_amount,
         "raw_prose": data.get("raw_prose"),
     }
 
