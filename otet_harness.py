@@ -57,8 +57,8 @@ COMMANDS:
 
 Config (~/.env.otet or exergynet/.env.otet):
   PORTAL_URL=https://portal.exergynet.org
-  ADMIN_EMAIL=ezumbadynastytrust@gmail.com
-  ADMIN_PASSWORD=ExergyAdmin2026!
+  ADMIN_EMAIL=<your-admin-email>
+  ADMIN_PASSWORD=<your-admin-password>
   SSH_KEY_PATH=/path/to/key.pem   (optional — overrides default search)
 """
 
