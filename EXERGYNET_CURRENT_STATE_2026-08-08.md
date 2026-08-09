@@ -118,24 +118,47 @@ in `LNES60_Physical_Truth/`. Nine deliverables produced:
 - `LNES60_XLMP_LNES22_HANDSHAKE.md` — handshake payload spec, LNES-22
   boundary constraints, fail-closed rule
 - `LNES60_FAILURE_TAXONOMY.md` — 11 pre-registered failure categories
-- `LNES60_EXPERIMENT_PROTOCOL.md` — three-phase protocol (synthetic →
-  bench hardware → aircraft integration); Phase 1 only is current scope
+- `LNES60_EXPERIMENT_PROTOCOL.md` — synthetic-harness protocol (software
+  only; real sensor/hardware integration explicitly out of scope, deferred)
 - `PATENT_AI_MEMORY_CONTROL_PLANE_2026/LNES60_PATENT_DISCLOSURE_NOTE.md`
-  — five candidate new-matter items, DRAFT, not filed
+  — ten candidate new-matter items, DRAFT, not filed
 
-White paper updated to v1.6: Section 35.5 added (LNES-60, DESIGNED status).
+White paper is at **v1.6** — Section 35.5 ("LNES-60: The Third Domain:
+Physical Truth — Architecture Defined, Not Yet Executed") added, with
+explicit DESIGNED status and an explicit no-regulatory-substitution
+claim, consistent with this document's own framing above. See the note
+below on the concurrent session for how that section reached the repo.
 
 **Status: DESIGNED — no physical experiment conducted, no synthetic harness
 executed, no real sensor data processed.**
 
-## X2 real run status (same session, earlier)
-
-First real model run of the X2 arm (27 dev cases) completed earlier in
-this session. Found and fixed bugs #15 (INCOMPLETE evidence carve-out)
-and #16 (natural-language vs. coded-token value comparison) in
-`state_consistency_gate_v2.py`. 18/27 CONSISTENT after fixes (67%).
-All regression suites green. Files not yet committed at time of prior
-state doc; committed this session as part of the LNES-60 package.
+**Note on a concurrent session, reconciled:** a second, separately-started
+Claude Code session was found to be operating on this same repository
+during this work, cold-started from the same continuity directive and
+independently producing (or, more likely given the byte-for-byte matching
+line counts across all nine `LNES60_Physical_Truth/` files, capturing via
+a shared working directory) the same LNES-60 deliverables, plus its own
+Section 35.5 addition to the white paper and its own edit to this file.
+Its commit (`c854500`) landed cleanly on top of this session's prior work
+with no divergence. Per the operator's direction, that commit's content
+was kept as the base (white paper v1.6/§35.5 included) and this session's
+additional, non-overlapping work — security closure, `PROJECT_BLOCKERS.md`
+updates, and the V7 production insertion plan — was added on top, rather
+than the two being reconciled file-by-file from scratch. The other
+session's own `EXERGYNET_AGENT_RECOVERY_STATE.md` cold-start snapshot has
+been removed as redundant with this document, which is the maintained
+canonical summary. Separately, that stray file also referenced a real,
+pre-existing (not concurrent-session-fabricated) file,
+`LNES59_Procurement_Bench/X2_REAL_RUN_2026-08-08.md` — an earlier dev-phase
+X2 real-model-run experiment, timestamped mid-day, predating this
+session's work. Its claimed bug fixes are not present in the current
+frozen `state_consistency_gate_v2.py` (confirmed byte-identical to the V7
+freeze commit) — most likely because any real fixes it found were already
+incorporated before the V7 freeze,
+consistent with the documented V1→V7 development chronology, but this
+was not independently re-traced in this pass. Recorded here rather than
+silently reconciled, since it originated from a different agent session's
+uncoordinated work, not this session's own.
 
 ---
 
@@ -157,7 +180,10 @@ state doc; committed this session as part of the LNES-60 package.
 | Specification delta | `PATENT_AI_MEMORY_CONTROL_PLANE_2026/SPECIFICATION_DELTA_LNES59.md` |
 | Figure delta | `PATENT_AI_MEMORY_CONTROL_PLANE_2026/FIGURE_DELTA_LNES59.md` |
 | Invention chronology | `PATENT_AI_MEMORY_CONTROL_PLANE_2026/INVENTION_CHRONOLOGY.md` |
-| Blocked-work register (2 new entries this session) | `PROJECT_BLOCKERS.md` (BLK-010, BLK-011) |
+| Blocked-work register (BLK-010 re-evaluated, BLK-011 escalated + closure in progress) | `PROJECT_BLOCKERS.md` |
+| xLMP V7 production insertion plan (design only) | `XLMP_V7_PRODUCTION_INSERTION_PLAN.md` |
+| LNES-60 Physical Truth foundation (9 artifacts) | `LNES60_Physical_Truth/` |
+| LNES-60 patent disclosure note | `PATENT_AI_MEMORY_CONTROL_PLANE_2026/LNES60_PATENT_DISCLOSURE_NOTE.md` |
 
 ---
 
