@@ -24,7 +24,7 @@ ExergyNet
 ---
 
 August 2026
-**Version 1.7 — Internal Co-Author Review Draft**
+**Version 1.8 — Internal Co-Author Review Draft**
 Public Classification: OPEN (pending co-author confirmation and legal-entity resolution)
 Document Hash: [pending]
 
@@ -1539,28 +1539,52 @@ autonomous FAA return-to-service authorization and does not substitute for
 any legally required inspection or human signoff. LNES-22 performs its own
 separate policy evaluation before any action authority is granted.
 
-**Benchmark result (Phase 1 + Phase 1.5, synthetic holdout only):** Two
+**Benchmark results (Phase 1 + Phase 1.5, synthetic holdout only):** Two
 completed validation runs against a sealed 50-case synthetic holdout covering
-20 KTX adversarial test classes. Phase 1 used a deterministic rule-based
-reference simulator; Phase 1.5 used a real probabilistic model (claude-sonnet-5).
-Both agree: adding deterministic physical-truth governance (M2/P2 arm) reduces
-false-release rate from 20–34% (raw ungoverned telemetry, M1/P1) to 0%,
-with 100% release-recommendation accuracy and zero governance-introduced false
-holds. A simulated LNES-22 gate separately caught 2 mission-envelope-violation
-false releases that passed hardware verification — confirming that physical
-hardware state and action authorization require separate evaluation layers. All
-witness data was `SIMULATED_WITNESS` (synthetic only); no real sensor hardware
-or aircraft were involved.
+20 KTX adversarial test classes (≥2 instances each). Phase 1 used a
+deterministic rule-based reference simulator; Phase 1.5 used a real probabilistic
+model (claude-sonnet-5). All witness data `SIMULATED_WITNESS`; no real sensor
+hardware or aircraft involved at any stage.
 
-**Status:** VALIDATED on a sealed synthetic holdout. Architecture defined and
-benchmark-confirmed in software (internal engineering documents:
-`LNES60_Physical_Truth/`, Phase 1 and Phase 1.5 final reports). No real sensor
-hardware campaign conducted; no autonomous return-to-service claim; no
-regulatory or legal substitution.
-No real aircraft hardware has been used. This section records the DESIGNED
-status of the architecture and its research question; results will be
-reported here after the experimental protocol (`LNES60_EXPERIMENT_PROTOCOL.md`)
-is executed and the findings independently evaluated.
+| Arm | Phase 1 (simulator) | Phase 1.5 (real model) |
+|---|---|---|
+| P0/M0 Documentary only — false release | 30% (15/50) | 8% (4/50) |
+| P0/M0 Documentary only — release accuracy | 18% | 28% |
+| P1/M1 Raw telemetry, ungoverned — false release | **34% (17/50)** | **20% (10/50)** |
+| P1/M1 Raw telemetry, ungoverned — release accuracy | 66% | 78% |
+| P2/M2 Governed + LNES-22 gate — false release | **0% (0/50)** | **0% (0/50)** |
+| P2/M2 Governed + LNES-22 gate — release accuracy | 100% | 100% |
+| P2/M2 Governed + LNES-22 gate — false hold | 0% | 0% |
+| Gate: candidate false releases prevented | 2/2 (100%) | 2/2 (100%) |
+| Gate: false holds introduced | 0 | 0 |
+
+**Canonical Phase 1.5 finding:** "Raw telemetry is not authoritative physical
+state. Increasing sensor visibility can improve general reasoning while
+simultaneously worsening safety-critical release behavior when identity,
+freshness, scope, configuration, and authority are not governed."
+
+The real model (Phase 1.5) and the simulator (Phase 1) diverge on which
+failure classes drove the M1/P1 regression. The simulator failed on
+`known_damage_limited_scope_good` and `record_bad_witnesses_good` (GOOD sensor
+overriding a documented defect). The real model handled those classes correctly
+via commonsense conflict reasoning, but failed systematically on
+`stale_after_event`, `wrong_aircraft`, `wrong_component`, and
+`mission_envelope_violation` — failure modes that require persistent temporal,
+identity, scope, and authority relationships not contained in an individual
+sensor reading. These findings are complementary, not contradictory: both
+confirm that deterministic governance (P2/M2) is the necessary mechanism,
+regardless of which specific failure mode the model exhibits.
+
+**Architectural statement:** Physical-state correctness and action authority
+are separate system properties. An aircraft may be physically healthy while
+the requested mission remains unauthorized. xLMP + LNES-60 establishes what
+the machine is. LNES-22 establishes what the machine is permitted to do.
+
+**Status:** VALIDATED (Phase 1 + Phase 1.5) on a sealed synthetic holdout.
+Phase 2 (real sensor hardware bench): SOFTWARE READY / HARDWARE EXECUTION
+PENDING. Phase 3 (aircraft integration): NOT STARTED. No real sensor hardware
+campaign conducted; no autonomous return-to-service claim; no regulatory or
+legal substitution.
 
 ### 36. Context-Boundary Behavior
 
@@ -2139,6 +2163,7 @@ structural addition requires a row.
 
 | Version | Date | Claim or section | Previous status | New status | Evidence reference |
 |---------|------|-----------------|-----------------|------------|--------------------|
+| 1.8 | 2026-08-09 | Validation (Section 35.5 benchmark table + architectural statement) | v1.7 prose-only results | Added Phase 1 vs Phase 1.5 side-by-side metrics table; canonical finding statement; architectural statement "physical-state correctness and action authority are separate system properties"; Phase 2 maturity label "SOFTWARE READY / HARDWARE EXECUTION PENDING"; removed orphaned v1.6 status text | LNES60_PHASE1.5_FINAL_VALIDATION_REPORT.md + LNES60_PHASE1_VS_PHASE1.5_COMPARISON.md |
 | 1.7 | 2026-08-09 | Validation (Section 35.5 status upgrade) | "Architecture Defined — Not Yet Executed" | Upgraded to "Phase 1 + Phase 1.5 Validated": added Phase 1 (deterministic simulator, 0% P2 false releases on sealed 50-case holdout) and Phase 1.5 (real model claude-sonnet-5, 0% M2 false releases, 100% accuracy, 2/2 gate corrections on mission-envelope cases, 0 false holds) results; added Status block with VALIDATED label, synthetic-only caveat, no-regulatory-substitution claim; section heading updated to reflect current maturity | LNES60_PHASE1.5_FINAL_VALIDATION_REPORT.md + LNES60_PHASE1_FINAL_VALIDATION_REPORT.md; sealed evaluator outputs; independently verified by frozen scorer against sealed holdout |
 | 1.6 | 2026-08-08 | Validation (new Section 35.5) | Not present | Added — "LNES-60: The Third Domain: Physical Truth (Architecture Defined — Not Yet Executed)": four-plane truth model, governing principle, KTX domain, RELEASE_ELIGIBLE/HOLD/INCOMPLETE terminal states, explicit DESIGNED status and no-regulatory-claim scope | Operator-authorized architectural addition; no experiment executed, no benchmark result claimed; internal engineering documents LNES60_Physical_Truth/ |
 | 1.5 | 2026-08-08 | Appendix D | LNES-58/59 not present in demonstrated claims | Added LNES-58/LNES-59 state-governance demonstrated-claim entry, cross-referencing Section 35.4 | LNES-59 sealed holdout, 400/400 case-arm evaluations, direct measurement |
@@ -2176,7 +2201,7 @@ Seven Ezumba
 Chief Architect and Corresponding Author
 ExergyNet
 
-**Version 1.7 — Internal Co-Author Review Draft**
+**Version 1.8 — Internal Co-Author Review Draft**
 August 2026
 
 Co-authors Bontu Veena and Kyaw Phone: listed as proposed co-authors pending

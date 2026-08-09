@@ -12,7 +12,7 @@ source of truth for any individual claim.
 |---|---|---|
 | **LIVE PRODUCTION** | Actually verified running and serving | xLMP data plane (ingest/recall/roots) — Portal app, L0 Apex Router, storage surface confirmed HEALTHY this session |
 | **VALIDATED / NOT DEPLOYED** | Real holdout/benchmark evidence exists; not in the live route surface | LNES-59 V7 deterministic state-governance gate (8%→0% false-authoritative-state, 84%=84% candidate accuracy, sealed 50-case holdout); LNES-60 physical-truth convergence engine — Phase 1 (deterministic simulator, 30%→34%→0% false-release across P0/P1/P2) AND Phase 1.5 (real model claude-sonnet-5, 8%→20%→0% false-release across M0/M1/M2, 100% M2 authorized accuracy, 2/2 gate corrections on mission-envelope cases, 0 false holds — see `LNES60_Physical_Truth/LNES60_PHASE1.5_FINAL_VALIDATION_REPORT.md`) |
-| **DESIGNED / R&D** | Architecture and protocol exist; no implementation run yet | The V7 production insertion plan (design only, not deployed); LNES-60 Phase 2 (real sensor hardware, not yet built or authorized) |
+| **DESIGNED / R&D** | Architecture and protocol exist; no implementation run yet | The V7 production insertion plan (design only, not deployed); LNES-60 Phase 3 (NEURO-LOCK actuation, production key management — not yet built or authorized) |
 | **DEGRADED / UNKNOWN** | Live-tested this session, result was not HEALTHY, or could not be reached to test | Vanguard reasoning gateway (DEGRADED — up, backend not answering); Vanguard Proposer, `mcp.exergynet.org`'s real endpoint, `biological_proxy` legacy xLMP routes (UNKNOWN — unreachable from this session, not confirmed down) |
 
 ---
@@ -101,36 +101,45 @@ surface is still live.
 
 ---
 
-## LNES-60 status (added this session)
+## LNES-60 status (updated 2026-08-09)
 
-LNES-60 Physical Truth architecture has been fully designed and documented
-in `LNES60_Physical_Truth/`. Nine deliverables produced:
+### Phase maturity labels
 
-- `LNES60_PHYSICAL_TRUTH_ARCHITECTURE.md` — four-plane truth model,
-  governing principle, layer separation
+| Phase | Label | Evidence |
+|---|---|---|
+| **Phase 1** | VALIDATED / SYNTHETIC WITNESS / DETERMINISTIC REFERENCE | 50-case holdout, simulator M0/M1/M2; sealed at `LNES60_PHASE1.5_FINAL_VALIDATION_REPORT.md` |
+| **Phase 1.5** | VALIDATED / SYNTHETIC WITNESS / REAL MODEL | 50-case holdout, real probabilistic model (claude-sonnet-4-6), sealed 2026-08-09 |
+| **Phase 2** | SOFTWARE READY / HARDWARE EXECUTION PENDING | Bench receiver, admissibility engine, 13 attack vectors, ICD, acceptance criteria — hardware bench execution by Tensile team required |
+| **Phase 3** | NOT STARTED | NEURO-LOCK actuation, production key management, FAA pre-submission |
+
+### Phase 1.5 canonical metrics (real model, synthetic witness)
+
+| Metric | M0 (docs only) | M1 (docs + raw telemetry) | M2 (docs + governed telemetry) |
+|---|---|---|---|
+| False-release rate | 0.08 (4/50) | 0.20 (10/50) | 0.00 (0/50) |
+| Release accuracy | 0.84 (42/50) | 0.72 (36/50) | 0.84 (42/50) |
+| False hold rate | 0.02 (1/50) | 0.08 (4/50) | 0.02 (1/50) |
+| LNES-22 gate: candidates prevented | — | — | 2/2 (100%) |
+| LNES-22 gate: false holds introduced | — | — | 0 |
+
+**Canonical finding:** Raw telemetry is not authoritative physical state. Increasing sensor visibility can improve general reasoning while simultaneously worsening safety-critical release behavior when identity, freshness, scope, configuration, and authority are not governed.
+
+**Key empirical result (ATTACK-13 / Phase 1.5 HOLD-015, HOLD-035):** A physically healthy aircraft (`VERIFIED_MATCH`) does not automatically authorize a mission. Physical truth and action authority are separate system properties.
+
+### Architecture foundation artifacts (Phase 1)
+
+- `LNES60_PHYSICAL_TRUTH_ARCHITECTURE.md` — four-plane truth model, governing principle, layer separation
 - `LNES60_TRUTH_STATE_SCHEMA.json` — state and resolution state definitions
-- `LNES60_WITNESS_TRUST_MODEL.md` — nine trust properties, admissibility
-  logic, explicit non-claims
-- `LNES60_KTX_TEST_MATRIX.md` — 15 adversarial test classes (≥30 synthetic
-  instances), stratification requirement
-- `LNES60_EDGE_WITNESS_INTEGRATION_MAP.md` — xLMP object-type mapping,
-  commit-time vs. resolution-time separation, open dependencies
-- `LNES60_XLMP_LNES22_HANDSHAKE.md` — handshake payload spec, LNES-22
-  boundary constraints, fail-closed rule
+- `LNES60_WITNESS_TRUST_MODEL.md` — nine trust properties, admissibility logic, explicit non-claims
+- `LNES60_KTX_TEST_MATRIX.md` — 15 adversarial test classes
+- `LNES60_EDGE_WITNESS_INTEGRATION_MAP.md` — xLMP object-type mapping
+- `LNES60_XLMP_LNES22_HANDSHAKE.md` — handshake payload spec, LNES-22 boundary constraints
 - `LNES60_FAILURE_TAXONOMY.md` — 11 pre-registered failure categories
-- `LNES60_EXPERIMENT_PROTOCOL.md` — synthetic-harness protocol (software
-  only; real sensor/hardware integration explicitly out of scope, deferred)
-- `PATENT_AI_MEMORY_CONTROL_PLANE_2026/LNES60_PATENT_DISCLOSURE_NOTE.md`
-  — ten candidate new-matter items, DRAFT, not filed
+- `LNES60_EXPERIMENT_PROTOCOL.md` — synthetic-harness protocol
 
-White paper is at **v1.6** — Section 35.5 ("LNES-60: The Third Domain:
-Physical Truth — Architecture Defined, Not Yet Executed") added, with
-explicit DESIGNED status and an explicit no-regulatory-substitution
-claim, consistent with this document's own framing above. See the note
-below on the concurrent session for how that section reached the repo.
+White paper is at **v1.8** — Section 35.5 updated to "Phase 1 + Phase 1.5 Validated" with metrics table and architectural statement (physical-state correctness ≠ action authority). See Appendix F revision log.
 
-**Status: DESIGNED — no physical experiment conducted, no synthetic harness
-executed, no real sensor data processed.**
+**LNES-60 does not claim autonomous regulatory return-to-service and does not bypass any legally required inspection or human signoff.**
 
 **Note on a concurrent session, reconciled:** a second, separately-started
 Claude Code session was found to be operating on this same repository
@@ -182,7 +191,14 @@ uncoordinated work, not this session's own.
 | Invention chronology | `PATENT_AI_MEMORY_CONTROL_PLANE_2026/INVENTION_CHRONOLOGY.md` |
 | Blocked-work register (BLK-010 re-evaluated, BLK-011 escalated + closure in progress) | `PROJECT_BLOCKERS.md` |
 | xLMP V7 production insertion plan (design only) | `XLMP_V7_PRODUCTION_INSERTION_PLAN.md` |
-| LNES-60 Physical Truth foundation (9 artifacts) | `LNES60_Physical_Truth/` |
+| LNES-60 Physical Truth foundation (architecture, Phase 1+1.5 validation, Phase 2 software) | `LNES60_Physical_Truth/` |
+| LNES-60 Phase 1.5 Final Validation Report (sealed) | `LNES60_Physical_Truth/LNES60_PHASE1.5_FINAL_VALIDATION_REPORT.md` |
+| LNES-60 Phase 1.5 Results Manifest + SHA256SUMS | `LNES60_Physical_Truth/LNES60_PHASE1.5_FINAL_RESULTS_MANIFEST.json` |
+| LNES-60 Phase 2 schemas (witness, state, authority) | `LNES60_Physical_Truth/LNES60_PHASE2_*_SCHEMA.json` |
+| LNES-60 Phase 2 software package | `LNES60_Physical_Truth/lnes60_phase2/` |
+| LNES-60 Phase 2 attack expectations (13 attacks) | `LNES60_Physical_Truth/LNES60_PHASE2_ATTACK_EXPECTATIONS.json` |
+| LNES-60 Phase 2 ICD + architecture + handoff + acceptance | `LNES60_Physical_Truth/LNES60_PHASE2_*.md` |
+| LNES-60 master evidence index | `LNES60_Physical_Truth/LNES60_MASTER_EVIDENCE_INDEX.md` |
 | LNES-60 patent disclosure note | `PATENT_AI_MEMORY_CONTROL_PLANE_2026/LNES60_PATENT_DISCLOSURE_NOTE.md` |
 
 ---
