@@ -1,0 +1,159 @@
+{
+  "_schema_name": "LNES-60 Phase 2 Attack Expectations",
+  "_schema_version": "1.0",
+  "_purpose": "Pre-registered expected outcomes for all 13 ratified Phase 2 attack scenarios. These are the contract between ExergyNet software and the Tensile hardware team. A hardware run is only valid if it exercises the specific conditions described here and the receiver produces the corresponding expected outputs.",
+  "_attack_semantics_note": "Not all attacks produce packet rejection. A valid signature on a stale or wrong-aircraft packet is an expected and important result — the system must correctly distinguish cryptographic acceptance from admissibility from state resolution. Calling non-admissible packets 'forged' is an error.",
+
+  "attacks": [
+    {
+      "attack_id": "ATTACK-01",
+      "name": "Physical disconnect (detached sensor)",
+      "description": "The sensor physically separates from the component but continues signing packets. The signed telemetry values reflect ambient conditions, not the component state.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE",
+      "admissibility_failure_reason": "SENSOR_FAILED or SENSOR_HEALTH_DEGRADED (sensor health registry detects disconnect via health field or heartbeat)",
+      "expected_convergence_state": "UNVERIFIED",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "sensor_health field in packet, or sequence anomaly, or physical disconnect detection in firmware",
+      "note": "One sub-case where disconnect is detectable (health field), one where it is not from the packet alone — the undetectable sub-case is the hardest."
+    },
+    {
+      "attack_id": "ATTACK-02",
+      "name": "Frozen-good replay",
+      "description": "A previously valid GOOD packet from a pre-event time window is replayed after a hard landing or maintenance event.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE",
+      "admissibility_failure_reason": "STALE_AFTER_EVENT: anti-replay check (nonce already seen) OR event-relative freshness check (reading predates event)",
+      "expected_convergence_state": "STALE_WITNESS",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "replay_guard (nonce), sequence check, and event-timestamp comparison in witness_admissibility",
+      "note": "Chain break (previous_witness_hash mismatch) is the additional detection signal when the attacker cannot provide a continuous chain."
+    },
+    {
+      "attack_id": "ATTACK-03",
+      "name": "Pod A → Pod B substitution (wrong component)",
+      "description": "A valid witness packet from TETHER-2 (or equivalent) is submitted for a claim about TETHER-1. Packet is authentic; binding is wrong.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE",
+      "admissibility_failure_reason": "WRONG_COMPONENT: component_id in packet does not match registered binding for this sensor against this claim",
+      "expected_convergence_state": "WITNESS_SCOPE_ERROR",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "scope_validator: component binding cross-reference"
+    },
+    {
+      "attack_id": "ATTACK-04",
+      "name": "Aircraft A → Aircraft B substitution (wrong aircraft)",
+      "description": "A valid witness packet from aircraft KTX-9001 is submitted for a claim about KTX-9002. Packet is authentic; aircraft binding is wrong.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE",
+      "admissibility_failure_reason": "WRONG_AIRCRAFT: aircraft_id in packet does not match the claim's target aircraft",
+      "expected_convergence_state": "WITNESS_SCOPE_ERROR",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "scope_validator: aircraft binding cross-reference"
+    },
+    {
+      "attack_id": "ATTACK-05",
+      "name": "Configuration-epoch replay",
+      "description": "A valid packet from configuration epoch EPOCH_0 is submitted after a configuration change (EPOCH_1). The packet was correct for its epoch but the system has since been reconfigured.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE",
+      "admissibility_failure_reason": "EPOCH_MISMATCH: packet's configuration_epoch does not match the current commanded configuration epoch",
+      "expected_convergence_state": "STALE_WITNESS",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "epoch_validator: configuration_epoch field vs current commanded state"
+    },
+    {
+      "attack_id": "ATTACK-06",
+      "name": "Calibration expiration",
+      "description": "A packet is submitted after the sensor's calibration record has expired. The sensor continues to produce readings; the calibration is no longer current.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE",
+      "admissibility_failure_reason": "CALIBRATION_EXPIRED: calibration_valid_until < measurement_timestamp",
+      "expected_convergence_state": "UNVERIFIED",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "calibration_validator: validity window check"
+    },
+    {
+      "attack_id": "ATTACK-07",
+      "name": "Counter rollback",
+      "description": "A packet is submitted with a sequence_number lower than or equal to the last seen sequence from this device.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE",
+      "admissibility_failure_reason": "SEQUENCE_ROLLBACK: sequence_number <= last seen sequence for this witness_device_id",
+      "expected_convergence_state": "STALE_WITNESS",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "replay_guard: per-device sequence tracking"
+    },
+    {
+      "attack_id": "ATTACK-08",
+      "name": "Duplicate signed packet",
+      "description": "An identical packet (same nonce) is submitted twice. The second submission must be rejected as a replay.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE (second submission)",
+      "admissibility_failure_reason": "REPLAY_DETECTED: nonce already seen for this witness_device_id",
+      "expected_convergence_state": "STALE_WITNESS",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "replay_guard: nonce tracking"
+    },
+    {
+      "attack_id": "ATTACK-09",
+      "name": "Wrong measurement scope",
+      "description": "A sensor reading for tether.temperature is submitted for a claim about tether.elongation. The scope of the measurement does not cover the claimed predicate.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE",
+      "admissibility_failure_reason": "SCOPE_MISMATCH: measurement_type does not cover the predicate under evaluation",
+      "expected_convergence_state": "WITNESS_SCOPE_ERROR",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "scope_validator: measurement_type vs claim predicate matching"
+    },
+    {
+      "attack_id": "ATTACK-10",
+      "name": "Contradictory trusted witnesses",
+      "description": "Two simultaneously admitted, calibrated, fresh, correctly-bound witnesses from different sensors report contradictory values for the same predicate.",
+      "expected_crypto_result": "VALID_SIGNATURE (both)",
+      "expected_admissibility_result": "ADMISSIBLE (both pass all trust checks)",
+      "admissibility_failure_reason": "N/A — conflict is at convergence layer, not admissibility",
+      "expected_convergence_state": "SENSOR_CONFLICT",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "convergence_engine: multi-witness contradiction detection",
+      "note": "This is a convergence-layer result, not an admissibility rejection. Both witnesses are valid; they disagree. The system must not pick one silently."
+    },
+    {
+      "attack_id": "ATTACK-11",
+      "name": "Tampered signed packet",
+      "description": "A valid packet is intercepted and a field (e.g. measurement_value) is modified before submission. The signature no longer covers the tampered content.",
+      "expected_crypto_result": "INVALID_SIGNATURE",
+      "expected_admissibility_result": "REJECTED AT CRYPTO LAYER (never reaches admissibility)",
+      "admissibility_failure_reason": "N/A",
+      "expected_convergence_state": "UNVERIFIED (packet rejected before contributing)",
+      "expected_lnes22_result": "HOLD (insufficient admitted evidence)",
+      "detection_mechanism": "crypto_verifier: Ed25519 signature verification over canonical serialization"
+    },
+    {
+      "attack_id": "ATTACK-12",
+      "name": "Wrong firmware",
+      "description": "A packet is submitted with a firmware_hash that does not match the registered firmware version for this device. The device may have been modified or the firmware registry is stale.",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "INADMISSIBLE",
+      "admissibility_failure_reason": "FIRMWARE_MISMATCH: firmware_hash does not match registered value for witness_device_id",
+      "expected_convergence_state": "UNVERIFIED",
+      "expected_lnes22_result": "HOLD",
+      "detection_mechanism": "witness_admissibility: firmware hash cross-reference against key_registry"
+    },
+    {
+      "attack_id": "ATTACK-13",
+      "name": "Valid physical state / invalid mission",
+      "description": "The aircraft hardware is in a verified healthy state (VERIFIED_MATCH). The requested mission parameters exceed the authorized configuration envelope (e.g. payload mass beyond the certified limit for this tether configuration).",
+      "expected_crypto_result": "VALID_SIGNATURE",
+      "expected_admissibility_result": "ADMISSIBLE",
+      "admissibility_failure_reason": "N/A",
+      "expected_convergence_state": "VERIFIED_MATCH",
+      "expected_lnes22_result": "HOLD (mission outside envelope)",
+      "detection_mechanism": "lnes22_adapter: mission_within_envelope check against engineering envelope policy",
+      "note": "This is the critical 'PHYSICAL TRUTH != ACTION AUTHORITY' case. The hardware is fine. The mission is not authorized. A system that collapses these two evaluations into one will produce a false release. The LNES-22 gate is the detection mechanism, not the physical-truth layer."
+    }
+  ],
+
+  "_total_attacks": 13,
+  "_validation_requirement": "All 13 attacks must be exercised by the hardware bench and receiver before Phase 2 is declared complete. Expected results are the contract; deviations require investigation and may indicate receiver defects or attack-semantics mismatches."
+}

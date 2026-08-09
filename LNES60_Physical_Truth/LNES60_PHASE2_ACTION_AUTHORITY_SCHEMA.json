@@ -1,0 +1,92 @@
+{
+  "_schema_name": "LNES-60 Phase 2 LNES-22 Action Authority Schemas",
+  "_schema_version": "1.0",
+  "_purpose": "Canonical schemas for the LNES-22 action-authority layer in the LNES-60 Phase 2 context. Three sub-schemas: MissionRequest (input), AuthorizationDecision (output), and the handshake payload passed from the physical-truth layer to LNES-22.",
+  "_boundary_rule": "The physical-truth resolution layer (xLMP+LNES-60) determines WHAT IS TRUE about the aircraft. LNES-22 determines WHAT IS PERMITTED given that truth and the mission request. These are separate evaluations. A physically healthy aircraft may be held if the mission is unauthorized.",
+  "_information_minimization": "The handshake payload from physical-truth to LNES-22 contains only the resolved state — NOT raw evidence, raw sensor values, raw documentary text, or model reasoning. LNES-22 must not re-evaluate physical evidence; it must consume already-resolved state.",
+  "_no_neurolock_in_phase2": "NEURO-LOCK actuation commands are NOT issued in Phase 2. Local simulation only.",
+
+  "MissionRequest": {
+    "_description": "Request to authorize an aircraft mission. Submitted to LNES-22 alongside the resolved Aircraft State Object.",
+    "schema_version": { "type": "string", "example": "1.0" },
+    "mission_id": { "type": "string", "description": "Unique mission identifier." },
+    "aircraft_id": { "type": "string", "description": "Must match the Aircraft State Object's aircraft_id." },
+    "configuration_epoch": { "type": "string", "description": "Configuration epoch the mission is authorized against. Must match the Aircraft State Object." },
+    "payload_ref": { "type": ["string", "null"], "description": "Reference to payload/configuration specification." },
+    "requested_action": {
+      "type": "string",
+      "description": "Specific action being requested (e.g. PREFLIGHT_RELEASE, MOTOR_ARM, TAKEOFF_AUTHORIZE).",
+      "example": "PREFLIGHT_RELEASE"
+    },
+    "operational_conditions_ref": { "type": ["string", "null"], "description": "Reference to operational conditions specification (weather, site, time window)." },
+    "authorization_policy_version": { "type": "string", "description": "Version of the engineering envelope policy being applied." },
+    "mission_within_envelope": {
+      "type": "boolean",
+      "description": "Pre-evaluated flag: has the mission profile been checked against the authorized configuration envelope? True means the mission parameters fall within the authorized range for this aircraft/configuration. LNES-22 validates this against the policy version."
+    },
+    "mission_envelope_reason": {
+      "type": "string",
+      "description": "Human-readable explanation if mission_within_envelope is false. Empty string if true."
+    }
+  },
+
+  "PhysicalTruthHandshakePayload": {
+    "_description": "Minimal payload from the physical-truth layer to LNES-22. Contains only what LNES-22 needs — no raw evidence, no model reasoning.",
+    "schema_version": { "type": "string" },
+    "resolution_state": {
+      "type": "string",
+      "enum": ["VERIFIED_MATCH", "DOCUMENT_PHYSICAL_CONFLICT", "CONFIGURATION_MISMATCH", "SENSOR_CONFLICT", "SENSOR_DEGRADED", "STALE_WITNESS", "WITNESS_SCOPE_ERROR", "UNVERIFIED", "INCOMPLETE"],
+      "description": "The physical truth convergence result."
+    },
+    "release_decision": {
+      "type": "string",
+      "enum": ["RELEASE_ELIGIBLE", "HOLD", "INCOMPLETE"],
+      "description": "The engineering release decision from release_policy.py."
+    },
+    "resolved_predicate": { "type": "string", "description": "The physical predicate that was evaluated." },
+    "contributing_planes": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["DOCUMENTARY", "COMMAND", "PHYSICAL_WITNESS", "WITNESS_TRUST"] },
+      "description": "Which evidence planes contributed to the resolution."
+    },
+    "conflict_detail": {
+      "type": ["object", "null"],
+      "description": "Conflict information if resolution_state is DOCUMENT_PHYSICAL_CONFLICT, SENSOR_CONFLICT, or CONFIGURATION_MISMATCH. Null otherwise. Contains type and reason_codes only, not raw evidence values."
+    },
+    "resolution_timestamp": { "type": "string", "format": "ISO 8601" },
+    "state_envelope_root": { "type": "string", "description": "provenance_root from the Aircraft State Object. Enables LNES-22 to verify it is consuming the correct state version." },
+    "_excluded_fields": "raw sensor values, raw documentary text, model reasoning chains, private keys, calibration data"
+  },
+
+  "AuthorizationDecision": {
+    "_description": "Output of LNES-22 action-authority evaluation. This is the final release or hold decision, combining physical truth with mission authorization.",
+    "schema_version": { "type": "string" },
+    "decision_id": { "type": "string", "description": "Unique decision identifier for audit purposes." },
+    "mission_id": { "type": "string" },
+    "aircraft_id": { "type": "string" },
+    "action_authority": {
+      "type": "string",
+      "enum": ["RELEASE", "HOLD", "INCOMPLETE"],
+      "description": "RELEASE: both physical state and mission authorization pass. HOLD: either physical state or mission authorization prevents release. INCOMPLETE: insufficient information to decide."
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Explanation of HOLD or INCOMPLETE decisions. Empty for RELEASE."
+    },
+    "physical_truth_verdict": {
+      "type": "string",
+      "description": "The resolution_state and release_decision from the handshake payload, preserved for audit."
+    },
+    "mission_authorization_verdict": {
+      "type": "string",
+      "enum": ["WITHIN_ENVELOPE", "OUTSIDE_ENVELOPE", "UNKNOWN"],
+      "description": "Whether the mission was within the authorized configuration envelope."
+    },
+    "policy_version": { "type": "string" },
+    "state_root": { "type": "string", "description": "state_envelope_root from the handshake payload." },
+    "mission_root": { "type": ["string", "null"], "description": "Hash of the mission request." },
+    "decision_timestamp": { "type": "string", "format": "ISO 8601" },
+    "decision_receipt": { "type": "string", "description": "SHA-256 of the canonical serialization of this decision record, for tamper-evident audit." }
+  }
+}

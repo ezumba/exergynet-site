@@ -1,0 +1,144 @@
+{
+  "_schema_name": "LNES-60 Phase 2 Hardware Witness Packet",
+  "_schema_version": "1.0",
+  "_purpose": "Canonical schema for a physical witness packet submitted by the KTX Tensile-Lift hardware bench. Every field is required unless marked optional. All numeric thresholds are ENGINEERING_ENVELOPE parameters and must be configured per component type — none are hardcoded here.",
+  "_security_notice": "Do NOT embed private keys, calibration secrets, or production credentials in packets or test fixtures.",
+  "_encoding": "JSON, UTF-8. Canonical serialization for signature: sort keys lexicographically, no whitespace, UTF-8 bytes. Signature covers all fields EXCEPT 'signature' itself.",
+
+  "schema_version": {
+    "type": "string",
+    "pattern": "^\\d+\\.\\d+$",
+    "example": "1.0",
+    "description": "Schema version this packet conforms to. Receiver rejects mismatches."
+  },
+
+  "aircraft_id": {
+    "type": "string",
+    "description": "Canonical aircraft identifier matching the LNES-60 aircraft registry. Not the sensor device ID. Must match the claim being evaluated.",
+    "example": "KTX-9001"
+  },
+
+  "component_id": {
+    "type": "string",
+    "description": "Canonical component identifier (e.g. TETHER-1, MOTOR-PORT-AFT). Must match the specific component the measurement covers.",
+    "example": "TETHER-1"
+  },
+
+  "sensor_id": {
+    "type": "string",
+    "description": "Logical sensor identifier (e.g. ELONGATION-SENSOR-A). Not the device hardware ID. Registered in the sensor registry against the component.",
+    "example": "ELONGATION-SENSOR-A"
+  },
+
+  "witness_device_id": {
+    "type": "string",
+    "description": "Physical device hardware identifier (e.g. hardware serial number or secure element ID). Separately registered against sensor_id and aircraft_id in the key registry.",
+    "example": "SE-DEVICE-001"
+  },
+
+  "measurement_type": {
+    "type": "string",
+    "description": "What physical property is being measured. Must match sensor registry's declared measurement_type for this sensor.",
+    "example": "tether.elongation"
+  },
+
+  "measurement_value": {
+    "type": "number",
+    "description": "Numeric measurement in the declared unit. Must be finite (not NaN or Infinity). Receiver rejects NaN/Infinity explicitly.",
+    "example": 0.023
+  },
+
+  "unit": {
+    "type": "string",
+    "description": "Physical unit of measurement_value. Must match sensor registry declaration.",
+    "example": "mm/m"
+  },
+
+  "measurement_uncertainty": {
+    "type": "number",
+    "description": "1-sigma measurement uncertainty in the same unit. Must be non-negative and finite.",
+    "minimum": 0,
+    "example": 0.002
+  },
+
+  "measurement_timestamp": {
+    "type": "string",
+    "format": "ISO 8601",
+    "description": "UTC timestamp of the physical measurement event. Used for event-relative freshness and staleness evaluation.",
+    "example": "2026-08-09T14:30:00Z"
+  },
+
+  "sequence_number": {
+    "type": "integer",
+    "description": "Monotonically increasing per-device counter. Receiver rejects rollbacks and gaps beyond the configured tolerance. Never reset without invalidating all prior replay guard state.",
+    "minimum": 0,
+    "example": 142
+  },
+
+  "nonce": {
+    "type": "string",
+    "description": "Random or counter-derived anti-replay token. Must be unique per packet from this device. Receiver tracks seen nonces and rejects duplicates.",
+    "example": "a3f9c12e8b4d7056"
+  },
+
+  "configuration_epoch": {
+    "type": "string",
+    "description": "Epoch identifier of the aircraft/component configuration this measurement is taken against. Receiver validates that the configuration epoch matches the commanded state for the claim being evaluated.",
+    "example": "EPOCH_0"
+  },
+
+  "calibration_record_hash": {
+    "type": "string",
+    "description": "SHA-256 hex digest of the current calibration record for this sensor. Receiver looks up the registered calibration record and validates hash match and validity window.",
+    "example": "a1b2c3d4e5f6..."
+  },
+
+  "calibration_valid_until": {
+    "type": "string",
+    "format": "ISO 8601",
+    "description": "Expiry of the calibration record referenced by calibration_record_hash. Receiver checks this against measurement_timestamp.",
+    "example": "2027-01-01T00:00:00Z"
+  },
+
+  "firmware_hash": {
+    "type": "string",
+    "description": "SHA-256 hex digest of the witness device firmware at measurement time. Cross-checked against the firmware registry for this device.",
+    "example": "d4e5f6a1b2c3..."
+  },
+
+  "witness_version": {
+    "type": "string",
+    "description": "Witness packet protocol version implemented by the device firmware. Receiver may reject versions it does not support.",
+    "example": "1.0"
+  },
+
+  "previous_witness_hash": {
+    "type": ["string", "null"],
+    "description": "SHA-256 hex digest of the canonical serialization of the immediately preceding packet from this device. Null for the first packet in a sequence. Chain breaks flag potential replay or physical disconnect.",
+    "example": "f6a1b2c3d4e5..."
+  },
+
+  "signature_algorithm": {
+    "type": "string",
+    "description": "Signature algorithm. Required value for Phase 2: Ed25519. Receiver rejects unknown algorithms.",
+    "enum": ["Ed25519"],
+    "example": "Ed25519"
+  },
+
+  "signature_key_id": {
+    "type": "string",
+    "description": "Key identifier used to look up the public key in the receiver's key registry. The private key must never appear in the packet or logs.",
+    "example": "KTX-BENCH-KEY-001"
+  },
+
+  "signature": {
+    "type": "string",
+    "description": "Base64url-encoded Ed25519 signature over the canonical serialization of all other fields (sorted keys, no whitespace, UTF-8). Covers everything except this field itself.",
+    "example": "BASE64URL_ENCODED_SIGNATURE"
+  },
+
+  "_field_count": 22,
+  "_required_fields": "all",
+  "_thresholds_note": "No numeric safety thresholds (elongation limits, calibration windows, staleness windows) are hardcoded in this schema. All are ENGINEERING_ENVELOPE parameters configured per component type in the receiver's configuration files.",
+  "_private_key_discipline": "Private keys used to generate signatures MUST NOT appear in packet data, logs, test fixtures, or any committed file. Use TEST-KEY-ONLY-labeled ephemeral keys for all bench validation runs."
+}
