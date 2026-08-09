@@ -1,0 +1,16 @@
+{
+  "arm": "P1",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-031",
+  "aircraft_id": "KTX-9031",
+  "configuration_epoch": null,
+  "operational_state": "WITNESS_SCOPE_ERROR",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "witness bound to a different aircraft/component (KTX-9031/TETHER-2)"
+  ],
+  "evidence_refs": [
+    "HOLD-031-W1"
+  ],
+  "uncertainty": null
+}

@@ -1,0 +1,22 @@
+{
+  "arm": "P2",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-020",
+  "aircraft_id": "KTX-9020",
+  "configuration_epoch": null,
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "DOCUMENT_PHYSICAL_CONFLICT on predicate 'tether.condition'"
+  ],
+  "evidence_refs": [
+    "HOLD-020-D1",
+    "HOLD-020-W1"
+  ],
+  "uncertainty": null,
+  "witness_validation": [],
+  "converged_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "candidate_decision": "HOLD",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to DOCUMENT_PHYSICAL_CONFLICT, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

@@ -1,0 +1,24 @@
+{
+  "arm": "P2",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-045",
+  "aircraft_id": "KTX-9045",
+  "configuration_epoch": null,
+  "operational_state": "CONFIGURATION_MISMATCH",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "expected motor_id=MOTOR_A (command state, epoch EPOCH_0) but witness reports motor_id=MOTOR_B",
+    "CONFIGURATION_MISMATCH on predicate 'motor.identity'"
+  ],
+  "evidence_refs": [
+    "HOLD-045-W1"
+  ],
+  "uncertainty": null,
+  "witness_validation": [
+    "expected motor_id=MOTOR_A (command state, epoch EPOCH_0) but witness reports motor_id=MOTOR_B"
+  ],
+  "converged_state": "CONFIGURATION_MISMATCH",
+  "candidate_decision": "HOLD",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to CONFIGURATION_MISMATCH, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

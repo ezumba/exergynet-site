@@ -1,0 +1,21 @@
+{
+  "arm": "P2",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-037",
+  "aircraft_id": "KTX-9037",
+  "configuration_epoch": null,
+  "operational_state": "INCOMPLETE",
+  "release_recommendation": "INCOMPLETE",
+  "reason_codes": [
+    "INCOMPLETE on predicate 'tether.condition'"
+  ],
+  "evidence_refs": [
+    "HOLD-037-D1"
+  ],
+  "uncertainty": null,
+  "witness_validation": [],
+  "converged_state": "INCOMPLETE",
+  "candidate_decision": "INCOMPLETE",
+  "authority_decision": "INCOMPLETE",
+  "gate_reason": "At least one required predicate has no admissible evidence -- release eligibility cannot be determined, distinct from an active HOLD-worthy conflict."
+}

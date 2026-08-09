@@ -1,0 +1,22 @@
+{
+  "arm": "P2",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-027",
+  "aircraft_id": "KTX-9027",
+  "configuration_epoch": null,
+  "operational_state": "STALE_WITNESS",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "STALE: event-based: hard_landing (event HOLD-027-E1) occurred at 2026-08-28T07:00:00, after this reading was taken at 2026-08-28T06:00:00 -- the reading cannot establish post-event state",
+    "STALE_WITNESS on predicate 'tether.condition'"
+  ],
+  "evidence_refs": [],
+  "uncertainty": null,
+  "witness_validation": [
+    "STALE: event-based: hard_landing (event HOLD-027-E1) occurred at 2026-08-28T07:00:00, after this reading was taken at 2026-08-28T06:00:00 -- the reading cannot establish post-event state"
+  ],
+  "converged_state": "STALE_WITNESS",
+  "candidate_decision": "HOLD",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to STALE_WITNESS, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

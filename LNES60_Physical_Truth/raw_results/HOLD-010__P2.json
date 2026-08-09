@@ -1,0 +1,22 @@
+{
+  "arm": "P2",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-010",
+  "aircraft_id": "KTX-9010",
+  "configuration_epoch": null,
+  "operational_state": "WITNESS_SCOPE_ERROR",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "WRONG_AIRCRAFT: witness bound to KTX-999, claim is about KTX-9010",
+    "WITNESS_SCOPE_ERROR on predicate 'tether.condition'"
+  ],
+  "evidence_refs": [],
+  "uncertainty": null,
+  "witness_validation": [
+    "WRONG_AIRCRAFT: witness bound to KTX-999, claim is about KTX-9010"
+  ],
+  "converged_state": "WITNESS_SCOPE_ERROR",
+  "candidate_decision": "HOLD",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to WITNESS_SCOPE_ERROR, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

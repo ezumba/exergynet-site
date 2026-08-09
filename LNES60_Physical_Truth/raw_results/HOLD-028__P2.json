@@ -1,0 +1,22 @@
+{
+  "arm": "P2",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-028",
+  "aircraft_id": "KTX-9028",
+  "configuration_epoch": null,
+  "operational_state": "SENSOR_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "SENSOR_CONFLICT on predicate 'tether.condition'"
+  ],
+  "evidence_refs": [
+    "HOLD-028-W1",
+    "HOLD-028-W2"
+  ],
+  "uncertainty": null,
+  "witness_validation": [],
+  "converged_state": "SENSOR_CONFLICT",
+  "candidate_decision": "HOLD",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to SENSOR_CONFLICT, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}
