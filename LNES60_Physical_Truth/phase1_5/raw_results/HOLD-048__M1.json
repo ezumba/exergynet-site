@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-048",
+  "aircraft_id": "KTX-9048",
+  "operational_state": "SENSOR_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "Two physical readings for the same measurement_scope (tether.elongation) at the identical timestamp and configuration epoch directly disagree: one reports elongation_pct = 'GOOD' and the other 'BAD'. Both sensors are calibrated, healthy, and have valid hardware signatures, so neither can be dismissed as untrustworthy. With no documentary records to arbitrate, this is an unresolved sensor-to-sensor conflict, so the component must be held pending reconciliation."
+  ],
+  "evidence_refs": [
+    "HOLD-048-W1",
+    "HOLD-048-W2"
+  ]
+}

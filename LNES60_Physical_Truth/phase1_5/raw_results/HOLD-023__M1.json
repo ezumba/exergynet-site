@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-023",
+  "aircraft_id": "KTX-9023",
+  "operational_state": "WITNESS_SCOPE_ERROR",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The documentary record claims SERVICEABLE, but the only physical witness (process_temp_c='BAD') is scoped to hub.manufacturing_process, not to the part/aircraft's serviceability condition being checked -- it does not cover what is being asked despite being current, calibrated, and hardware-verified. Because no in-scope physical evidence corroborates the SERVICEABLE claim and the available reading flags 'BAD', the item should be held rather than released."
+  ],
+  "evidence_refs": [
+    "HOLD-023-D1",
+    "HOLD-023-W1"
+  ]
+}

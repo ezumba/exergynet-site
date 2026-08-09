@@ -1,0 +1,20 @@
+{
+  "arm": "M2",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-026",
+  "aircraft_id": "KTX-9026",
+  "operational_state": "CONFIGURATION_MISMATCH",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "expected firmware_version=FW_2.1 (command state, epoch EPOCH_0) but witness reports firmware_version=FW_1.9",
+    "CONFIGURATION_MISMATCH on predicate 'motor.firmware'"
+  ],
+  "evidence_refs": [
+    "HOLD-026-W1"
+  ],
+  "converged_state": "CONFIGURATION_MISMATCH",
+  "candidate_decision": "HOLD",
+  "candidate_operational_state": "CONFIGURATION_MISMATCH",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to CONFIGURATION_MISMATCH, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

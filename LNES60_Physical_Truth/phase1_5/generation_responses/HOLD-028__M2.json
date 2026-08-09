@@ -1,0 +1,1 @@
+{"operational_state": "SENSOR_CONFLICT", "release_recommendation": "HOLD", "reasoning": "The physical witness readings for tether.condition disagree with each other (one reports BAD, another reports GOOD), a direct sensor conflict. This unresolved discrepancy in the physical evidence means release cannot be supported until the conflict is resolved."}

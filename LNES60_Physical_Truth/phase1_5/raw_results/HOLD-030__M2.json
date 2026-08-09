@@ -1,0 +1,18 @@
+{
+  "arm": "M2",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-030",
+  "aircraft_id": "KTX-9030",
+  "operational_state": "WITNESS_SCOPE_ERROR",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "WRONG_AIRCRAFT: witness bound to KTX-999, claim is about KTX-9030",
+    "WITNESS_SCOPE_ERROR on predicate 'tether.condition'"
+  ],
+  "evidence_refs": [],
+  "converged_state": "WITNESS_SCOPE_ERROR",
+  "candidate_decision": "HOLD",
+  "candidate_operational_state": "WITNESS_SCOPE_ERROR",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to WITNESS_SCOPE_ERROR, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

@@ -1,0 +1,5 @@
+{
+  "operational_state": "UNVERIFIED",
+  "release_recommendation": "HOLD",
+  "reasoning": "The only evidence is a single part_provenance entry that itself is labeled a 'claim' of SERVICEABLE, with no corroborating inspection report, witness record, or independent confirmation. A bare, uncorroborated claim does not constitute reliable evidence either confirming or denying serviceability, leaving an unresolved trust issue, so release should be held pending independent verification."
+}

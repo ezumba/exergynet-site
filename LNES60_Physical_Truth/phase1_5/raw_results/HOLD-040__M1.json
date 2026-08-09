@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-040",
+  "aircraft_id": "KTX-9040",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The documentary record claims SERVICEABLE, but the trustworthy physical sensor witness (calibration current, sensor_health=NOMINAL, hardware_signature_valid=True, low measurement_uncertainty=0.027, same timestamp, matching scope tether.elongation) reports elongation_pct = 'BAD', directly contradicting the serviceable claim with an indicated defect. This is a direct document-physical conflict, so the item must be held."
+  ],
+  "evidence_refs": [
+    "HOLD-040-D1",
+    "HOLD-040-W1"
+  ]
+}

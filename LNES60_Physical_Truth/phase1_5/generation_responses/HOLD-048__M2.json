@@ -1,0 +1,1 @@
+{"operational_state": "SENSOR_CONFLICT", "release_recommendation": "HOLD", "reasoning": "Two physical witness readings for tether.condition directly disagree (BAD vs GOOD), an unresolved sensor conflict, so the aircraft cannot be confirmed safe for release until the discrepancy is resolved."}

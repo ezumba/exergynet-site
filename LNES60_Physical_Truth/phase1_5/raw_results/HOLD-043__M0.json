@@ -1,0 +1,14 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-043",
+  "aircraft_id": "KTX-9043",
+  "operational_state": "INCOMPLETE",
+  "release_recommendation": "INCOMPLETE",
+  "reason_codes": [
+    "The only documentary record provided is a single part_provenance entry claiming 'SERVICEABLE'. No maintenance history, configuration records, or inspection history were supplied despite being cited as relevant record types, and no live sensor/telemetry data is available either. A single uncorroborated provenance claim is not sufficient documentary basis to confirm or deny release eligibility, so there is not enough evidence to reach a release decision."
+  ],
+  "evidence_refs": [
+    "HOLD-043-D1"
+  ]
+}

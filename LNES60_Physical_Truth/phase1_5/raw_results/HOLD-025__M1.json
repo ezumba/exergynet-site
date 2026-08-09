@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-025",
+  "aircraft_id": "KTX-9025",
+  "operational_state": "CONFIGURATION_MISMATCH",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The expected motor_id per configuration state (EPOCH_0) is MOTOR_A, but the physical sensor witness at the same epoch and timestamp reports hardware_id = MOTOR_B. The reading itself is trustworthy (calibration current, sensor_health NOMINAL, hardware_signature_valid, correct scope, not stale), so this is a genuine identity mismatch rather than a sensor trust issue, requiring a hold pending reconciliation."
+  ],
+  "evidence_refs": [
+    "HOLD-025-W1"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "arm": "M2",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-045",
+  "aircraft_id": "KTX-9045",
+  "operational_state": "CONFIGURATION_MISMATCH",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "expected motor_id=MOTOR_A (command state, epoch EPOCH_0) but witness reports motor_id=MOTOR_B",
+    "CONFIGURATION_MISMATCH on predicate 'motor.identity'"
+  ],
+  "evidence_refs": [
+    "HOLD-045-W1"
+  ],
+  "converged_state": "CONFIGURATION_MISMATCH",
+  "candidate_decision": "HOLD",
+  "candidate_operational_state": "CONFIGURATION_MISMATCH",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to CONFIGURATION_MISMATCH, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

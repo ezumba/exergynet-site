@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-049",
+  "aircraft_id": "KTX-9049",
+  "operational_state": "SENSOR_DEGRADED",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "No documentary records exist to cross-check against. The only physical witness for tether.elongation reports elongation_pct = 'BAD' (not a valid numeric reading) and explicitly shows calibration_current=False, meaning the sensor's calibration is not current despite sensor_health=NOMINAL and a valid hardware signature. An uncalibrated sensor producing a non-numeric 'BAD' value is not a trustworthy source for this measurement, so the reading cannot be relied upon to confirm eligibility. This is a degraded-source situation rather than a confirmed defect or an outright absence of evidence, so HOLD is warranted until a properly calibrated reading is obtained."
+  ],
+  "evidence_refs": [
+    "HOLD-049-W1"
+  ]
+}
