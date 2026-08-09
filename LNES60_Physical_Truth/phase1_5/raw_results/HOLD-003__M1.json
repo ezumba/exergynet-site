@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-003",
+  "aircraft_id": "KTX-9003",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The documentary record claims the part is SERVICEABLE, but the physical sensor witness taken at the same timestamp reports process_temp_c as 'BAD' -- an explicit fault/anomalous value, not a valid temperature reading. The sensor itself is trustworthy (calibration_current=True, sensor_health=NOMINAL, hardware_signature_valid=True), so the fault indication cannot be dismissed as sensor error; it directly contradicts the SERVICEABLE claim, so the part must be held pending resolution."
+  ],
+  "evidence_refs": [
+    "HOLD-003-D1",
+    "HOLD-003-W1"
+  ]
+}

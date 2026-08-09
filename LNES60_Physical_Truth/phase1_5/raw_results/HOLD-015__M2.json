@@ -13,7 +13,7 @@
     "HOLD-015-W1"
   ],
   "converged_state": "VERIFIED_MATCH",
-  "candidate_decision": "HOLD",
+  "candidate_decision": "RELEASE_ELIGIBLE",
   "candidate_operational_state": "VERIFIED_MATCH",
   "authority_decision": "HOLD",
   "gate_reason": "Mission profile exceeds validated aircraft configuration -- hardware may be individually healthy, but the requested mission is not authorized for this configuration."

@@ -1,10 +1,17 @@
 """
-Phase 1.5 pilot: collects generation_responses/{case_id}__{arm}.json (real
+Phase 1.5: collects generation_responses/{case_id}__{arm}.json (real
 subagent output, one Read+Write per file, no case_id/ground-truth shown to
 the model -- see build_prompts.py / dispatch), builds raw result records in
 the same schema arm_p0/p1/p2.py already use, and scores with the UNCHANGED
 lnes60/evaluator.py against the sealed LNES60_EVALUATOR_HOLDOUT.json ground
-truth, restricted to the 18 pilot case_ids.
+truth.
+
+Scores whatever cases currently have ALL THREE arm responses present in
+generation_responses/ (not a fixed list) -- this script is re-run as
+dispatch coverage grows toward the full 50-case holdout, so it must not
+assume completeness. Cases with partial coverage (e.g. dispatch was
+interrupted by an API session limit mid-run) are skipped and reported,
+never silently treated as missing == wrong.
 
 M2's authorized decision is NOT taken from the model -- exactly like P2 in
 Phase 1, it is computed by re-running the FROZEN convergence_engine.py +
@@ -86,11 +93,25 @@ def main():
     with open(os.path.join(ROOT, "LNES60_RUNNER_HOLDOUT.json"), encoding="utf-8") as f:
         all_cases = {c["case_id"]: c for c in json.load(f)["cases"]}
 
+    complete_case_ids = sorted(
+        cid for cid in all_cases
+        if all(os.path.exists(os.path.join(RESPONSES_DIR, f"{cid}__{arm}.json")) for arm in ("M0", "M1", "M2"))
+    )
+    incomplete_case_ids = sorted(
+        cid for cid in all_cases
+        if cid not in complete_case_ids
+        and any(os.path.exists(os.path.join(RESPONSES_DIR, f"{cid}__{arm}.json")) for arm in ("M0", "M1", "M2"))
+    )
+    print(f"complete_cases={len(complete_case_ids)} incomplete_cases={len(incomplete_case_ids)} "
+          f"not_started={50 - len(complete_case_ids) - len(incomplete_case_ids)}")
+    if incomplete_case_ids:
+        print(f"incomplete (partial arm coverage, skipped): {incomplete_case_ids}")
+
     os.makedirs(RAW_DIR, exist_ok=True)
     errors = []
     written = 0
 
-    for case_id in PILOT_CASE_IDS:
+    for case_id in complete_case_ids:
         case = all_cases[case_id]
 
         for arm in ("M0", "M1", "M2"):
@@ -152,25 +173,29 @@ def main():
             "mission_within_envelope": c.get("mission_within_envelope", True),
             "ktx_class": c["ktx_class"],
         }
-        for c in eval_cases if c["case_id"] in PILOT_CASE_IDS
+        for c in eval_cases if c["case_id"] in complete_case_ids
     }
-    assert len(ground_truth) == len(PILOT_CASE_IDS), (
-        f"expected ground truth for all {len(PILOT_CASE_IDS)} pilot cases, got {len(ground_truth)}"
+    assert len(ground_truth) == len(complete_case_ids), (
+        f"expected ground truth for all {len(complete_case_ids)} complete cases, got {len(ground_truth)}"
     )
 
     results_by_arm = {"M0": [], "M1": [], "M2": []}
     for path in sorted(glob.glob(os.path.join(RAW_DIR, "*.json"))):
         with open(path, encoding="utf-8") as f:
             r = json.load(f)
+        if r["case_id"] not in complete_case_ids:
+            continue
         results_by_arm[r["arm"]].append(r)
 
     scores = {arm: score_arm(results, ground_truth) for arm, results in results_by_arm.items()}
     m2_delta = candidate_vs_authorized_delta(results_by_arm["M2"], ground_truth)
 
     output = {
-        "n_pilot_cases": len(PILOT_CASE_IDS),
+        "n_complete_cases": len(complete_case_ids),
+        "n_incomplete_cases_skipped": len(incomplete_case_ids),
+        "incomplete_case_ids_skipped": incomplete_case_ids,
         "n_total_evaluations": sum(len(v) for v in results_by_arm.values()),
-        "pilot_case_ids": PILOT_CASE_IDS,
+        "complete_case_ids": complete_case_ids,
         "per_arm": scores,
         "m2_candidate_vs_authorized_delta": m2_delta,
         "m0_to_m1_delta": {
@@ -183,11 +208,12 @@ def main():
         },
     }
 
-    with open(os.path.join(SCRIPT_DIR, "LNES60_PHASE1.5_PILOT_evaluator_output.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(SCRIPT_DIR, "LNES60_PHASE1.5_evaluator_output.json"), "w", encoding="utf-8") as f:
         json.dump(output, f, indent=2)
 
     print(json.dumps({
-        "n_pilot_cases": output["n_pilot_cases"],
+        "n_complete_cases": output["n_complete_cases"],
+        "n_incomplete_cases_skipped": output["n_incomplete_cases_skipped"],
         "n_total_evaluations": output["n_total_evaluations"],
         "M0": {k: v for k, v in scores["M0"].items() if k != "per_ktx_class"},
         "M1": {k: v for k, v in scores["M1"].items() if k != "per_ktx_class"},

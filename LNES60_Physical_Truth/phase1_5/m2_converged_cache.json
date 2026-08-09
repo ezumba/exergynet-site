@@ -1,123 +1,10 @@
 {
-  "HOLD-014": {
-    "operational_state": "WITNESS_SCOPE_ERROR",
-    "reason_codes": [
-      "SCOPE_MISMATCH: witness scope 'tether.temperature' does not cover claim 'tether.elongation'"
-    ],
-    "evidence_refs": [
-      "HOLD-014-D1"
-    ]
-  },
-  "HOLD-034": {
-    "operational_state": "WITNESS_SCOPE_ERROR",
-    "reason_codes": [
-      "SCOPE_MISMATCH: witness scope 'tether.temperature' does not cover claim 'tether.elongation'"
-    ],
-    "evidence_refs": [
-      "HOLD-034-D1"
-    ]
-  },
-  "HOLD-016": {
+  "HOLD-001": {
     "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
     "reason_codes": [],
     "evidence_refs": [
-      "HOLD-016-D1",
-      "HOLD-016-W1"
-    ]
-  },
-  "HOLD-036": {
-    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
-    "reason_codes": [],
-    "evidence_refs": [
-      "HOLD-036-D1",
-      "HOLD-036-W1"
-    ]
-  },
-  "HOLD-015": {
-    "operational_state": "VERIFIED_MATCH",
-    "reason_codes": [],
-    "evidence_refs": [
-      "HOLD-015-D1",
-      "HOLD-015-W1"
-    ]
-  },
-  "HOLD-035": {
-    "operational_state": "VERIFIED_MATCH",
-    "reason_codes": [],
-    "evidence_refs": [
-      "HOLD-035-D1",
-      "HOLD-035-W1"
-    ]
-  },
-  "HOLD-019": {
-    "operational_state": "STALE_WITNESS",
-    "reason_codes": [
-      "STALE: event-based: powertrain_replacement (event HOLD-019-E1) occurred at 2026-08-20T06:00:00, after this reading was taken at 2026-08-20T05:00:00 -- the reading cannot establish post-event state"
-    ],
-    "evidence_refs": []
-  },
-  "HOLD-039": {
-    "operational_state": "STALE_WITNESS",
-    "reason_codes": [
-      "STALE: event-based: powertrain_replacement (event HOLD-039-E1) occurred at 2026-08-12T06:00:00, after this reading was taken at 2026-08-12T05:00:00 -- the reading cannot establish post-event state"
-    ],
-    "evidence_refs": []
-  },
-  "HOLD-013": {
-    "operational_state": "UNVERIFIED",
-    "reason_codes": [
-      "SENSOR_FAILED: sensor health status is FAILED"
-    ],
-    "evidence_refs": []
-  },
-  "HOLD-033": {
-    "operational_state": "UNVERIFIED",
-    "reason_codes": [
-      "SENSOR_FAILED: sensor health status is FAILED"
-    ],
-    "evidence_refs": []
-  },
-  "HOLD-017": {
-    "operational_state": "INCOMPLETE",
-    "reason_codes": [],
-    "evidence_refs": [
-      "HOLD-017-D1"
-    ]
-  },
-  "HOLD-037": {
-    "operational_state": "INCOMPLETE",
-    "reason_codes": [],
-    "evidence_refs": [
-      "HOLD-037-D1"
-    ]
-  },
-  "HOLD-012": {
-    "operational_state": "STALE_WITNESS",
-    "reason_codes": [
-      "REPLAY_DETECTED: anti_replay_token HOLD-012-replay-token already seen or reading flagged as replay"
-    ],
-    "evidence_refs": []
-  },
-  "HOLD-032": {
-    "operational_state": "STALE_WITNESS",
-    "reason_codes": [
-      "REPLAY_DETECTED: anti_replay_token HOLD-032-replay-token already seen or reading flagged as replay"
-    ],
-    "evidence_refs": []
-  },
-  "HOLD-007": {
-    "operational_state": "STALE_WITNESS",
-    "reason_codes": [
-      "STALE: event-based: hard_landing (event HOLD-007-E1) occurred at 2026-08-08T07:00:00, after this reading was taken at 2026-08-08T06:00:00 -- the reading cannot establish post-event state"
-    ],
-    "evidence_refs": []
-  },
-  "HOLD-018": {
-    "operational_state": "VERIFIED_MATCH",
-    "reason_codes": [],
-    "evidence_refs": [
-      "HOLD-018-D1",
-      "HOLD-018-W1"
+      "HOLD-001-D1",
+      "HOLD-001-W1"
     ]
   },
   "HOLD-002": {
@@ -128,6 +15,47 @@
       "HOLD-002-W1"
     ]
   },
+  "HOLD-003": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-003-D1",
+      "HOLD-003-W1"
+    ]
+  },
+  "HOLD-004": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-004-D1",
+      "HOLD-004-W1"
+    ]
+  },
+  "HOLD-005": {
+    "operational_state": "CONFIGURATION_MISMATCH",
+    "reason_codes": [
+      "expected motor_id=MOTOR_A (command state, epoch EPOCH_0) but witness reports motor_id=MOTOR_B"
+    ],
+    "evidence_refs": [
+      "HOLD-005-W1"
+    ]
+  },
+  "HOLD-006": {
+    "operational_state": "CONFIGURATION_MISMATCH",
+    "reason_codes": [
+      "expected firmware_version=FW_2.1 (command state, epoch EPOCH_0) but witness reports firmware_version=FW_1.9"
+    ],
+    "evidence_refs": [
+      "HOLD-006-W1"
+    ]
+  },
+  "HOLD-007": {
+    "operational_state": "STALE_WITNESS",
+    "reason_codes": [
+      "STALE: event-based: hard_landing (event HOLD-007-E1) occurred at 2026-08-08T07:00:00, after this reading was taken at 2026-08-08T06:00:00 -- the reading cannot establish post-event state"
+    ],
+    "evidence_refs": []
+  },
   "HOLD-008": {
     "operational_state": "SENSOR_CONFLICT",
     "reason_codes": [],
@@ -135,5 +63,329 @@
       "HOLD-008-W1",
       "HOLD-008-W2"
     ]
+  },
+  "HOLD-009": {
+    "operational_state": "UNVERIFIED",
+    "reason_codes": [
+      "CALIBRATION_EXPIRED: reading's calibration record is not current"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-010": {
+    "operational_state": "WITNESS_SCOPE_ERROR",
+    "reason_codes": [
+      "WRONG_AIRCRAFT: witness bound to KTX-999, claim is about KTX-9010"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-011": {
+    "operational_state": "WITNESS_SCOPE_ERROR",
+    "reason_codes": [
+      "WRONG_COMPONENT: witness bound to TETHER-2, claim is about TETHER-1"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-012": {
+    "operational_state": "STALE_WITNESS",
+    "reason_codes": [
+      "REPLAY_DETECTED: anti_replay_token HOLD-012-replay-token already seen or reading flagged as replay"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-013": {
+    "operational_state": "UNVERIFIED",
+    "reason_codes": [
+      "SENSOR_FAILED: sensor health status is FAILED"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-014": {
+    "operational_state": "WITNESS_SCOPE_ERROR",
+    "reason_codes": [
+      "SCOPE_MISMATCH: witness scope 'tether.temperature' does not cover claim 'tether.elongation'"
+    ],
+    "evidence_refs": [
+      "HOLD-014-D1"
+    ]
+  },
+  "HOLD-015": {
+    "operational_state": "VERIFIED_MATCH",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-015-D1",
+      "HOLD-015-W1"
+    ]
+  },
+  "HOLD-016": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-016-D1",
+      "HOLD-016-W1"
+    ]
+  },
+  "HOLD-017": {
+    "operational_state": "INCOMPLETE",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-017-D1"
+    ]
+  },
+  "HOLD-018": {
+    "operational_state": "VERIFIED_MATCH",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-018-D1",
+      "HOLD-018-W1"
+    ]
+  },
+  "HOLD-019": {
+    "operational_state": "STALE_WITNESS",
+    "reason_codes": [
+      "STALE: event-based: powertrain_replacement (event HOLD-019-E1) occurred at 2026-08-20T06:00:00, after this reading was taken at 2026-08-20T05:00:00 -- the reading cannot establish post-event state"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-020": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-020-D1",
+      "HOLD-020-W1"
+    ]
+  },
+  "HOLD-021": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-021-D1",
+      "HOLD-021-W1"
+    ]
+  },
+  "HOLD-022": {
+    "operational_state": "VERIFIED_MATCH",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-022-D1",
+      "HOLD-022-W1"
+    ]
+  },
+  "HOLD-023": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-023-D1",
+      "HOLD-023-W1"
+    ]
+  },
+  "HOLD-024": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-024-D1",
+      "HOLD-024-W1"
+    ]
+  },
+  "HOLD-025": {
+    "operational_state": "CONFIGURATION_MISMATCH",
+    "reason_codes": [
+      "expected motor_id=MOTOR_A (command state, epoch EPOCH_0) but witness reports motor_id=MOTOR_B"
+    ],
+    "evidence_refs": [
+      "HOLD-025-W1"
+    ]
+  },
+  "HOLD-026": {
+    "operational_state": "CONFIGURATION_MISMATCH",
+    "reason_codes": [
+      "expected firmware_version=FW_2.1 (command state, epoch EPOCH_0) but witness reports firmware_version=FW_1.9"
+    ],
+    "evidence_refs": [
+      "HOLD-026-W1"
+    ]
+  },
+  "HOLD-027": {
+    "operational_state": "STALE_WITNESS",
+    "reason_codes": [
+      "STALE: event-based: hard_landing (event HOLD-027-E1) occurred at 2026-08-28T07:00:00, after this reading was taken at 2026-08-28T06:00:00 -- the reading cannot establish post-event state"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-028": {
+    "operational_state": "SENSOR_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-028-W1",
+      "HOLD-028-W2"
+    ]
+  },
+  "HOLD-029": {
+    "operational_state": "UNVERIFIED",
+    "reason_codes": [
+      "CALIBRATION_EXPIRED: reading's calibration record is not current"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-030": {
+    "operational_state": "WITNESS_SCOPE_ERROR",
+    "reason_codes": [
+      "WRONG_AIRCRAFT: witness bound to KTX-999, claim is about KTX-9030"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-031": {
+    "operational_state": "WITNESS_SCOPE_ERROR",
+    "reason_codes": [
+      "WRONG_COMPONENT: witness bound to TETHER-2, claim is about TETHER-1"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-032": {
+    "operational_state": "STALE_WITNESS",
+    "reason_codes": [
+      "REPLAY_DETECTED: anti_replay_token HOLD-032-replay-token already seen or reading flagged as replay"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-033": {
+    "operational_state": "UNVERIFIED",
+    "reason_codes": [
+      "SENSOR_FAILED: sensor health status is FAILED"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-034": {
+    "operational_state": "WITNESS_SCOPE_ERROR",
+    "reason_codes": [
+      "SCOPE_MISMATCH: witness scope 'tether.temperature' does not cover claim 'tether.elongation'"
+    ],
+    "evidence_refs": [
+      "HOLD-034-D1"
+    ]
+  },
+  "HOLD-035": {
+    "operational_state": "VERIFIED_MATCH",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-035-D1",
+      "HOLD-035-W1"
+    ]
+  },
+  "HOLD-036": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-036-D1",
+      "HOLD-036-W1"
+    ]
+  },
+  "HOLD-037": {
+    "operational_state": "INCOMPLETE",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-037-D1"
+    ]
+  },
+  "HOLD-038": {
+    "operational_state": "VERIFIED_MATCH",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-038-D1",
+      "HOLD-038-W1"
+    ]
+  },
+  "HOLD-039": {
+    "operational_state": "STALE_WITNESS",
+    "reason_codes": [
+      "STALE: event-based: powertrain_replacement (event HOLD-039-E1) occurred at 2026-08-12T06:00:00, after this reading was taken at 2026-08-12T05:00:00 -- the reading cannot establish post-event state"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-040": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-040-D1",
+      "HOLD-040-W1"
+    ]
+  },
+  "HOLD-041": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-041-D1",
+      "HOLD-041-W1"
+    ]
+  },
+  "HOLD-042": {
+    "operational_state": "VERIFIED_MATCH",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-042-D1",
+      "HOLD-042-W1"
+    ]
+  },
+  "HOLD-043": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-043-D1",
+      "HOLD-043-W1"
+    ]
+  },
+  "HOLD-044": {
+    "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-044-D1",
+      "HOLD-044-W1"
+    ]
+  },
+  "HOLD-045": {
+    "operational_state": "CONFIGURATION_MISMATCH",
+    "reason_codes": [
+      "expected motor_id=MOTOR_A (command state, epoch EPOCH_0) but witness reports motor_id=MOTOR_B"
+    ],
+    "evidence_refs": [
+      "HOLD-045-W1"
+    ]
+  },
+  "HOLD-046": {
+    "operational_state": "CONFIGURATION_MISMATCH",
+    "reason_codes": [
+      "expected firmware_version=FW_2.1 (command state, epoch EPOCH_0) but witness reports firmware_version=FW_1.9"
+    ],
+    "evidence_refs": [
+      "HOLD-046-W1"
+    ]
+  },
+  "HOLD-047": {
+    "operational_state": "STALE_WITNESS",
+    "reason_codes": [
+      "STALE: event-based: hard_landing (event HOLD-047-E1) occurred at 2026-08-20T07:00:00, after this reading was taken at 2026-08-20T06:00:00 -- the reading cannot establish post-event state"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-048": {
+    "operational_state": "SENSOR_CONFLICT",
+    "reason_codes": [],
+    "evidence_refs": [
+      "HOLD-048-W1",
+      "HOLD-048-W2"
+    ]
+  },
+  "HOLD-049": {
+    "operational_state": "UNVERIFIED",
+    "reason_codes": [
+      "CALIBRATION_EXPIRED: reading's calibration record is not current"
+    ],
+    "evidence_refs": []
+  },
+  "HOLD-050": {
+    "operational_state": "WITNESS_SCOPE_ERROR",
+    "reason_codes": [
+      "WRONG_AIRCRAFT: witness bound to KTX-999, claim is about KTX-9050"
+    ],
+    "evidence_refs": []
   }
 }

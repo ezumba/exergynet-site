@@ -1,0 +1,1 @@
+{"operational_state": "DOCUMENT_PHYSICAL_CONFLICT", "release_recommendation": "HOLD", "reasoning": "The documentary record claims the tether is SERVICEABLE, but the physical witness reading reports BAD condition, a direct document-vs-physical contradiction. This unresolved conflict on a hardware/component state means release cannot be considered safe until reconciled."}

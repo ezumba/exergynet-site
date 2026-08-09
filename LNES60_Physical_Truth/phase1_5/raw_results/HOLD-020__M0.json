@@ -1,0 +1,14 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-020",
+  "aircraft_id": "KTX-9020",
+  "operational_state": "UNVERIFIED",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The only documentary record is a single 'service_life' claim of SERVICEABLE with no supporting maintenance history, configuration records, or inspection history to cross-check it against, and no independent source corroborates the claim. A lone, uncorroborated status assertion does not constitute reliable evidence of airworthiness, so release cannot be confidently approved."
+  ],
+  "evidence_refs": [
+    "HOLD-020-D1"
+  ]
+}

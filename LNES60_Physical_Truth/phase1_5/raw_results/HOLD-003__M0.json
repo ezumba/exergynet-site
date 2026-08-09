@@ -1,0 +1,14 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-003",
+  "aircraft_id": "KTX-9003",
+  "operational_state": "UNVERIFIED",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The only evidence is a single documentary claim of 'SERVICEABLE' from part_provenance with no corroborating inspection, sensor, or physical evidence, and no live telemetry was provided to cross-check it. An uncorroborated single-source claim does not establish confidence for release, so the aircraft/component is held pending independent verification."
+  ],
+  "evidence_refs": [
+    "HOLD-003-D1"
+  ]
+}

@@ -61,7 +61,7 @@ M1_PREAMBLE = """You are reviewing an aircraft release decision using documentar
 DOCUMENTARY RECORDS:
 """
 
-M2_PREAMBLE = """You are reviewing an aircraft release decision. A governed physical-state reconciliation system has already combined documentary records, command/configuration state, physical sensor witnesses, and witness trust checks (calibration, freshness, scope, replay, identity) into a single resolved state below. You are NOT being shown the raw underlying evidence -- only the already-reconciled conclusion. Interpret this resolved state and decide whether the aircraft/component is eligible for release.
+M2_PREAMBLE = """You are reviewing an aircraft release decision. A governed physical-state reconciliation system has already combined documentary records, command/configuration state, physical sensor witnesses, and witness trust checks (calibration, freshness, scope, replay, identity) into a single resolved state below. You are NOT being shown the raw underlying evidence, and you are NOT being shown mission-profile/configuration-envelope information -- a separate downstream authorization gate checks that. Interpret ONLY this resolved hardware/component state and decide whether it supports release.
 
 RESOLVED PHYSICAL STATE:
 """
@@ -136,10 +136,6 @@ def build_m2_prompt(case):
     if converged.reason_codes:
         lines.append("system reason codes:")
         lines += [f"  - {rc}" for rc in converged.reason_codes]
-    mission_ok = case.get("mission_within_envelope", True)
-    lines.append(f"\nmission profile within authorized engineering envelope: {mission_ok}")
-    if not mission_ok:
-        lines.append(f"mission envelope note: {case.get('mission_envelope_reason', '')}")
 
     body = "\n".join(lines)
     return M2_PREAMBLE + body + "\n\n" + RESPONSE_SCHEMA, converged
@@ -147,12 +143,21 @@ def build_m2_prompt(case):
 
 def main():
     with open(os.path.join(ROOT, "LNES60_RUNNER_HOLDOUT.json"), encoding="utf-8") as f:
-        all_cases = {c["case_id"]: c for c in json.load(f)["cases"]}
+        holdout_cases = json.load(f)["cases"]
+        all_cases = {c["case_id"]: c for c in holdout_cases}
+
+    # Full-scale Phase 1.5: all 50 sealed holdout cases, not just the pilot
+    # subset. M0/M1 prompts are unchanged from the pilot (regenerating them
+    # is a harmless no-op, byte-identical for the 18 pilot cases). M2
+    # prompts are regenerated for ALL 50 cases -- including the 18 pilot
+    # cases -- because build_m2_prompt no longer leaks mission-envelope
+    # status to the model (see LNES60_PHASE1.5_PILOT_REPORT.md Section 5).
+    all_case_ids = sorted(all_cases.keys())
 
     os.makedirs(PROMPTS_DIR, exist_ok=True)
     written = 0
     converged_cache = {}
-    for case_id in PILOT_CASE_IDS:
+    for case_id in all_case_ids:
         case = all_cases[case_id]
 
         m0 = build_m0_prompt(case)
@@ -173,7 +178,7 @@ def main():
     with open(os.path.join(SCRIPT_DIR, "m2_converged_cache.json"), "w", encoding="utf-8") as f:
         json.dump(converged_cache, f, indent=2)
 
-    print(f"wrote {written} prompt files for {len(PILOT_CASE_IDS)} cases x 3 arms into {PROMPTS_DIR}")
+    print(f"wrote {written} prompt files for {len(all_case_ids)} cases x 3 arms into {PROMPTS_DIR}")
 
 
 if __name__ == "__main__":

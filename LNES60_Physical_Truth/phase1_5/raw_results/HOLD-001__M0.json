@@ -1,0 +1,14 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-001",
+  "aircraft_id": "KTX-9001",
+  "operational_state": "INCOMPLETE",
+  "release_recommendation": "INCOMPLETE",
+  "reason_codes": [
+    "The only evidence provided is a single, uncorroborated documentary claim ('SERVICEABLE' recorded 2026-08-02T09:00:00) with no maintenance history, configuration records, inspection history, or any physical/sensor data to cross-check it against. One bare self-asserted status entry is not sufficient documentary basis to confidently confirm or deny release eligibility, so there is not enough evidence to reach a conclusion."
+  ],
+  "evidence_refs": [
+    "HOLD-001-D1"
+  ]
+}

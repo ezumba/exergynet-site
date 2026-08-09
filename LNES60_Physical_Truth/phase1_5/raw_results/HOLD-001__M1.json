@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-001",
+  "aircraft_id": "KTX-9001",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The documentary record claims the component is SERVICEABLE, but the physical sensor witness for tether.elongation at the same timestamp reports elongation_pct = 'BAD', an out-of-tolerance/defect reading. The sensor itself is trustworthy (calibration current, sensor_health=NOMINAL, hardware_signature_valid=True, correct scope and epoch), so this is not a sensor trust issue but a direct conflict between the document's claim and the physical evidence. Any known defect or conflict requires a HOLD."
+  ],
+  "evidence_refs": [
+    "HOLD-001-D1",
+    "HOLD-001-W1"
+  ]
+}

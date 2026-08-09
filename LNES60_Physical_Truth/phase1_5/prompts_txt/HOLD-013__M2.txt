@@ -1,4 +1,4 @@
-You are reviewing an aircraft release decision. A governed physical-state reconciliation system has already combined documentary records, command/configuration state, physical sensor witnesses, and witness trust checks (calibration, freshness, scope, replay, identity) into a single resolved state below. You are NOT being shown the raw underlying evidence -- only the already-reconciled conclusion. Interpret this resolved state and decide whether the aircraft/component is eligible for release.
+You are reviewing an aircraft release decision. A governed physical-state reconciliation system has already combined documentary records, command/configuration state, physical sensor witnesses, and witness trust checks (calibration, freshness, scope, replay, identity) into a single resolved state below. You are NOT being shown the raw underlying evidence, and you are NOT being shown mission-profile/configuration-envelope information -- a separate downstream authorization gate checks that. Interpret ONLY this resolved hardware/component state and decide whether it supports release.
 
 RESOLVED PHYSICAL STATE:
 predicate under review: tether.condition
@@ -7,8 +7,6 @@ contributing evidence planes: (none)
 conflict detail: {"type": "inadmissible_witness"}
 system reason codes:
   - SENSOR_FAILED: sensor health status is FAILED
-
-mission profile within authorized engineering envelope: True
 
 Respond with ONLY a single JSON object (no other text, no markdown fences):
 

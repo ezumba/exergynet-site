@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-020",
+  "aircraft_id": "KTX-9020",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The documentary record claims SERVICEABLE, but the physical sensor reading for tether.elongation reports elongation_pct = 'BAD' at the same timestamp. The sensor is trustworthy (calibration current, sensor_health NOMINAL, hardware_signature_valid True, low measurement_uncertainty) and correctly scoped to the property in question, so the reading cannot be dismissed as degraded or out of scope. A trustworthy physical witness directly contradicts the document's serviceability claim, so this is a document-physical conflict and the item must be held."
+  ],
+  "evidence_refs": [
+    "HOLD-020-D1",
+    "HOLD-020-W1"
+  ]
+}
