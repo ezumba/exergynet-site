@@ -1,0 +1,16 @@
+{
+  "arm": "P0",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-021",
+  "aircraft_id": "KTX-9021",
+  "configuration_epoch": null,
+  "operational_state": "VERIFIED_MATCH",
+  "release_recommendation": "RELEASE_ELIGIBLE",
+  "reason_codes": [
+    "documentary record states SERVICEABLE; no physical evidence was provided to this arm to check against"
+  ],
+  "evidence_refs": [
+    "HOLD-021-D1"
+  ],
+  "uncertainty": null
+}

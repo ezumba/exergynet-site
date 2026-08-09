@@ -1,0 +1,22 @@
+{
+  "arm": "P2",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-049",
+  "aircraft_id": "KTX-9049",
+  "configuration_epoch": null,
+  "operational_state": "UNVERIFIED",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "CALIBRATION_EXPIRED: reading's calibration record is not current",
+    "UNVERIFIED on predicate 'tether.condition'"
+  ],
+  "evidence_refs": [],
+  "uncertainty": null,
+  "witness_validation": [
+    "CALIBRATION_EXPIRED: reading's calibration record is not current"
+  ],
+  "converged_state": "UNVERIFIED",
+  "candidate_decision": "INCOMPLETE",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to UNVERIFIED, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

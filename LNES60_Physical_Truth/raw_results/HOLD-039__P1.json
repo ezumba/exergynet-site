@@ -1,0 +1,16 @@
+{
+  "arm": "P1",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-039",
+  "aircraft_id": "KTX-9039",
+  "configuration_epoch": null,
+  "operational_state": "VERIFIED_MATCH",
+  "release_recommendation": "RELEASE_ELIGIBLE",
+  "reason_codes": [
+    "motor_id value matches expected (epoch currency not checked by this arm)"
+  ],
+  "evidence_refs": [
+    "HOLD-039-W1"
+  ],
+  "uncertainty": null
+}

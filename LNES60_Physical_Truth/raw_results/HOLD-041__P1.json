@@ -1,0 +1,17 @@
+{
+  "arm": "P1",
+  "model_label": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM",
+  "case_id": "HOLD-041",
+  "aircraft_id": "KTX-9041",
+  "configuration_epoch": null,
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "witness reports BAD"
+  ],
+  "evidence_refs": [
+    "HOLD-041-D1",
+    "HOLD-041-W1"
+  ],
+  "uncertainty": null
+}

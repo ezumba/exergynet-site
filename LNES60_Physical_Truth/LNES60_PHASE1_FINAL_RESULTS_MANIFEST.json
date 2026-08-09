@@ -1,0 +1,59 @@
+{
+  "_purpose": "LNES-60 Phase 1 final results seal. Sealed after the 150/150 blind matrix, frozen evaluator, and final report.",
+  "status": "SEALED -- LNES-60 PHASE 1 PHYSICAL TRUTH VALIDATION COMPLETE",
+  "sealed_date": "2026-08-08",
+  "architecture_version": "P1-0.1.0",
+  "chronology": {
+    "architecture_freeze_commit": "784c55f",
+    "architecture_freeze_manifest_sha256": "1b7fdd2065731be6b89b29ca258ebc64dd6fb11e167293cedb3706401f9d6f5a",
+    "holdout_manifest_sha256": "6c89c5945300d76b9c081fef7618ad791939fccd4a04be71ca8a0ec61de8f0ab",
+    "experiment_manifest_sha256": "29112054af098bed51143a97f243de114fdffe79eb337e972137eda527dc5958"
+  },
+  "generation_mechanism": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM (lnes60/model_simulator.py) -- every result in this manifest is a DETERMINISTIC HARNESS RESULT, disclosed throughout raw output and the final report, per the directive's explicit fallback instruction. No real-model generation occurred.",
+  "execution_summary": {
+    "development_cases": 100,
+    "development_mismatches_at_freeze": 0,
+    "holdout_cases": 50,
+    "ktx_classes_covered": 20,
+    "arms": 3,
+    "total_primary_evaluations": 150,
+    "attempted": 150,
+    "completed": 150,
+    "errors": 0,
+    "leakage_tests": 4,
+    "leakage_tests_status": "4/4 passing"
+  },
+  "evidence_hashes": {
+    "final_report_sha256": "a65856414f6d13f9dc9efa4ee7227e0dd486687e56c09d497d06682751b0051b",
+    "raw_results_corpus_sha256": "60cb427129ad823a5ec48d89228ec16326010ce021e9cee7ecf1ac4347e8e886",
+    "raw_results_corpus_note": "sha256 over sorted (filename || file bytes) concatenation of all 150 raw_results/*.json files",
+    "evaluator_output_sha256": "f414a5e20e43de76a92d166af485f1400fe32f93c2071eee91e4e7e78a0f86f0"
+  },
+  "headline_metrics": {
+    "P0": {"operational_state_accuracy": 0.18, "release_recommendation_accuracy": 0.18, "false_release_rate": 0.30},
+    "P1": {"operational_state_accuracy": 0.64, "release_recommendation_accuracy": 0.66, "false_release_rate": 0.34},
+    "P2_authorized": {"operational_state_accuracy": 1.0, "release_recommendation_accuracy": 1.0, "false_release_rate": 0.0},
+    "p2_candidate_vs_authorized": {
+      "candidate_false_release_count": 2,
+      "authorized_false_release_count": 0,
+      "absolute_reduction": 2,
+      "relative_reduction_pct": 100.0,
+      "cases": ["HOLD-015", "HOLD-035"]
+    }
+  },
+  "notable_finding": "P1 (raw telemetry, ungoverned) regressed below P0 (documentary only) on 2 of 20 KTX classes (known_damage_limited_scope_good, record_bad_witnesses_good) -- raw telemetry without governance let a scope-limited or documentary-contradicted 'GOOD' reading override a known documented defect. Reported as found, not smoothed over.",
+  "deliverables": {
+    "final_report": "LNES60_PHASE1_FINAL_VALIDATION_REPORT.md",
+    "dev_defect_log": "LNES60_PHASE1_DEV_DEFECT_LOG.md",
+    "hardware_requirements": "LNES60_PHASE2_HARDWARE_REQUIREMENTS.md",
+    "engine_package": "lnes60/",
+    "raw_results_dir": "raw_results/",
+    "evaluator_output": "LNES60_evaluator_output.json"
+  },
+  "governance_notes": {
+    "no_engine_modification_after_freeze": true,
+    "holdout_never_run_against_engine_during_authoring": true,
+    "holdout_failures_would_have_been_recorded_not_fixed": "moot on this holdout -- 0 P2 failures occurred, but the discipline was upheld throughout (no tuning after freeze)"
+  },
+  "terminal_condition": "LNES-60 PHASE 1 PHYSICAL TRUTH VALIDATION COMPLETE"
+}
