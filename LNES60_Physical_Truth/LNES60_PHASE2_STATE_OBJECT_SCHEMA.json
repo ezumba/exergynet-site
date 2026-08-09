@@ -1,0 +1,113 @@
+{
+  "_schema_name": "LNES-60 Phase 2 Aircraft State Object",
+  "_schema_version": "1.0",
+  "_purpose": "Canonical output of the physical-truth convergence layer. Produced by the convergence engine after evaluating all admitted witness evidence. This object is the input to the LNES-22 action-authority layer. RELEASE_ELIGIBLE is NOT a raw sensor state — it is a derived engineering result produced by this convergence process.",
+
+  "schema_version": { "type": "string", "example": "1.0" },
+
+  "aircraft_id": { "type": "string", "description": "Canonical aircraft identifier." },
+  "component_id": { "type": "string", "description": "Component evaluated, if component-scoped." },
+  "predicate": { "type": "string", "description": "Physical claim that was evaluated (e.g. tether.elongation, motor.identity)." },
+  "configuration_epoch": { "type": "string", "description": "Configuration epoch against which this state was resolved." },
+
+  "state_version": {
+    "type": "string",
+    "description": "Monotonically increasing version of this state object for this aircraft/component. Incremented on each resolution."
+  },
+  "resolved_at": { "type": "string", "format": "ISO 8601", "description": "UTC timestamp of the convergence evaluation." },
+
+  "documentary_state_ref": {
+    "type": ["string", "null"],
+    "description": "Reference ID of the documentary record(s) evaluated. Null if no documentary evidence contributed."
+  },
+  "command_state_ref": {
+    "type": ["string", "null"],
+    "description": "Reference ID of the command/configuration state record evaluated."
+  },
+  "witness_refs": {
+    "type": "array",
+    "items": { "type": "string" },
+    "description": "All witness packet IDs considered (admitted + rejected)."
+  },
+  "admitted_witness_refs": {
+    "type": "array",
+    "items": { "type": "string" },
+    "description": "Witness packet IDs that passed all four admissibility checks and were used in convergence."
+  },
+  "rejected_witness_refs": {
+    "type": "array",
+    "items": { "type": "string" },
+    "description": "Witness packet IDs that failed one or more admissibility checks. Each listed in reason_codes."
+  },
+
+  "resolution_state": {
+    "type": "string",
+    "enum": [
+      "VERIFIED_MATCH",
+      "DOCUMENT_PHYSICAL_CONFLICT",
+      "CONFIGURATION_MISMATCH",
+      "SENSOR_CONFLICT",
+      "SENSOR_DEGRADED",
+      "STALE_WITNESS",
+      "WITNESS_SCOPE_ERROR",
+      "UNVERIFIED",
+      "INCOMPLETE"
+    ],
+    "description": "Operational truth state. These nine states are the exhaustive output of convergence. RELEASE_ELIGIBLE and HOLD are derived release decisions, not resolution states."
+  },
+
+  "release_decision": {
+    "type": "string",
+    "enum": ["RELEASE_ELIGIBLE", "HOLD", "INCOMPLETE"],
+    "description": "Engineering release authorization derived from resolution_state by release_policy.py. RELEASE_ELIGIBLE means: all evidence is consistent and sufficient for engineering clearance. HOLD means: a safety-relevant issue prevents clearance. INCOMPLETE means: insufficient evidence to decide."
+  },
+
+  "reason_codes": {
+    "type": "array",
+    "items": { "type": "string" },
+    "description": "Human-readable reason strings explaining non-VERIFIED_MATCH or non-RELEASE_ELIGIBLE decisions. Also documents why witnesses were rejected."
+  },
+
+  "known_conflicts": {
+    "type": "array",
+    "items": { "type": "string" },
+    "description": "DOCUMENT_PHYSICAL_CONFLICT or SENSOR_CONFLICT entries, preserved as non-collapsing state. Each identifies the pair of conflicting evidence sources."
+  },
+
+  "known_damage": {
+    "type": "array",
+    "items": { "type": "string" },
+    "description": "Historical documentary damage records. Preserved even when current physical readings are GOOD. Never mutated by a physical-state conflict."
+  },
+
+  "sensor_health_summary": {
+    "type": "object",
+    "description": "Per-sensor health flags from admitted witnesses.",
+    "additionalProperties": { "type": "string", "enum": ["NOMINAL", "DEGRADED", "FAILED", "UNKNOWN"] }
+  },
+
+  "witness_trust_summary": {
+    "type": "object",
+    "description": "Per-witness admissibility verdict and failed trust properties if any.",
+    "additionalProperties": {
+      "type": "object",
+      "properties": {
+        "admitted": { "type": "boolean" },
+        "failed_properties": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+
+  "provenance_root": {
+    "type": "string",
+    "description": "SHA-256 of the canonical serialization of all admitted evidence contributing to this state. Enables external verification that the state was derived from specific evidence."
+  },
+
+  "previous_state_root": {
+    "type": ["string", "null"],
+    "description": "provenance_root of the immediately preceding state version for this aircraft/component. Null for the first state version. Enables audit of state transitions."
+  },
+
+  "_historical_truth_preservation": "The known_damage array is append-only. A physical-state conflict (DOCUMENT_PHYSICAL_CONFLICT) never erases or mutates a historical documentary record. The current resolution_state and release_decision represent the current engineering conclusion; the historical documentary facts remain independently accessible.",
+  "_release_eligible_is_not_a_sensor_state": "RELEASE_ELIGIBLE appears only in release_decision, never in resolution_state. It is a derived policy output, not a measurement."
+}
