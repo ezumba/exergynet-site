@@ -1,0 +1,5 @@
+{
+  "operational_state": "INCOMPLETE",
+  "release_recommendation": "INCOMPLETE",
+  "reasoning": "Only a single documentary entry is provided (a service_life claim of 'SERVICEABLE'), with no accompanying maintenance history, configuration records, or inspection history despite those being the stated record categories. There is nothing to cross-check the claim against, so there is not enough evidence to confirm or refute serviceability or to make a confident release decision."
+}

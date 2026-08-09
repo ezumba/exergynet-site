@@ -1,0 +1,30 @@
+You are reviewing an aircraft release decision. A governed physical-state reconciliation system has already combined documentary records, command/configuration state, physical sensor witnesses, and witness trust checks (calibration, freshness, scope, replay, identity) into a single resolved state below. You are NOT being shown the raw underlying evidence -- only the already-reconciled conclusion. Interpret this resolved state and decide whether the aircraft/component is eligible for release.
+
+RESOLVED PHYSICAL STATE:
+predicate under review: tether.condition
+resolved operational_state: INCOMPLETE
+contributing evidence planes: documentary_state
+conflict detail: {"type": "documentary_only", "documentary_claim": "SERVICEABLE"}
+
+mission profile within authorized engineering envelope: True
+
+Respond with ONLY a single JSON object (no other text, no markdown fences):
+
+{
+  "operational_state": one of "VERIFIED_MATCH", "DOCUMENT_PHYSICAL_CONFLICT", "CONFIGURATION_MISMATCH", "SENSOR_CONFLICT", "SENSOR_DEGRADED", "STALE_WITNESS", "WITNESS_SCOPE_ERROR", "UNVERIFIED", "INCOMPLETE",
+  "release_recommendation": one of "RELEASE_ELIGIBLE", "HOLD", "INCOMPLETE",
+  "reasoning": a short free-text explanation of your decision
+}
+
+Definitions of operational_state (pick the single best fit):
+- VERIFIED_MATCH: the evidence you were given is consistent and supports the claim being checked.
+- DOCUMENT_PHYSICAL_CONFLICT: a record or reading directly contradicts another record or a known defect.
+- CONFIGURATION_MISMATCH: a configuration/identity field (e.g. hardware ID, firmware) does not match what was expected.
+- SENSOR_CONFLICT: two or more physical readings disagree with each other.
+- SENSOR_DEGRADED: a reading exists but its source is not fully trustworthy (e.g. uncalibrated).
+- STALE_WITNESS: a reading predates an event that could have changed the true state.
+- WITNESS_SCOPE_ERROR: a reading is bound to the wrong aircraft/component, or does not cover what is being asked.
+- UNVERIFIED: no reliable evidence either confirms or denies the claim.
+- INCOMPLETE: not enough evidence was provided to reach any conclusion.
+
+release_recommendation should be RELEASE_ELIGIBLE only if you are confident the aircraft/component is safe to release for the mission described. Use HOLD if there is any known defect, conflict, or unresolved trust issue. Use INCOMPLETE only if there truly is not enough evidence to decide either way.

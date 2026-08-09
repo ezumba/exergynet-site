@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-012",
+  "aircraft_id": "KTX-9012",
+  "operational_state": "SENSOR_DEGRADED",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "No documentary records exist, leaving only a single physical reading for tether.elongation. Although it reports current calibration, nominal sensor health, and a valid hardware signature, it is explicitly flagged as replayed_from=HOLD-012-W0-earlier -- meaning the timestamp 2026-08-13T10:00:00 does not reflect a genuine fresh measurement but a replay of an earlier reading. This undermines trust in the witness as an independent, current attestation of state, so the source cannot be considered fully trustworthy despite passing its own health checks. Given this unresolved provenance/trust issue and no corroborating evidence, release should be held."
+  ],
+  "evidence_refs": [
+    "HOLD-012-W1"
+  ]
+}

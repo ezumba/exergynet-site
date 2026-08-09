@@ -1,0 +1,5 @@
+{
+  "operational_state": "STALE_WITNESS",
+  "release_recommendation": "HOLD",
+  "reasoning": "No documentary records exist, and the only physical witness -- the tether elongation reading -- is explicitly marked replayed_from=HOLD-032-W0-earlier, meaning it is not a fresh, independent measurement taken for this decision but a replay of an earlier window's data. Despite passing calibration, health, and signature checks, a replayed reading cannot confirm the current true state of the component, so it must be treated as a stale witness and held."
+}

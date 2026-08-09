@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-033",
+  "aircraft_id": "KTX-9033",
+  "operational_state": "SENSOR_DEGRADED",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The only witness for tether.elongation reports sensor_health=FAILED, meaning the sensor source is not trustworthy even though calibration is current and the hardware signature is valid. A failed sensor cannot be relied upon to certify elongation as 'GOOD', so the reading's trustworthiness is unresolved and release must be held."
+  ],
+  "evidence_refs": [
+    "HOLD-033-W1"
+  ]
+}

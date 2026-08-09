@@ -1,0 +1,14 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-017",
+  "aircraft_id": "KTX-9017",
+  "operational_state": "INCOMPLETE",
+  "release_recommendation": "INCOMPLETE",
+  "reason_codes": [
+    "Only a single documentary entry is provided (a service_life claim of 'SERVICEABLE'), with no accompanying maintenance history, configuration records, or inspection history despite those being the stated record categories. There is nothing to cross-check the claim against, so there is not enough evidence to confirm or refute serviceability or to make a confident release decision."
+  ],
+  "evidence_refs": [
+    "HOLD-017-D1"
+  ]
+}

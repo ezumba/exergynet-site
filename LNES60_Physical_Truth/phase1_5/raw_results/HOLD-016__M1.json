@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-016",
+  "aircraft_id": "KTX-9016",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The inspection record claims DEFECT_CONFIRMED at 2026-08-17T14:00:00, but the physical sensor reading for the same timestamp reports elongation_pct = 'GOOD' from a trustworthy source (current calibration, nominal sensor health, valid hardware signature, low uncertainty 0.033) covering the matching scope tether.elongation. Since a reliable physical witness directly contradicts the documented defect claim at the same point in time, this is a document-physical conflict that must be resolved before release; hold pending reconciliation."
+  ],
+  "evidence_refs": [
+    "HOLD-016-D1",
+    "HOLD-016-W1"
+  ]
+}

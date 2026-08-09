@@ -1,0 +1,18 @@
+{
+  "arm": "M2",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-013",
+  "aircraft_id": "KTX-9013",
+  "operational_state": "UNVERIFIED",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "SENSOR_FAILED: sensor health status is FAILED",
+    "UNVERIFIED on predicate 'tether.condition'"
+  ],
+  "evidence_refs": [],
+  "converged_state": "UNVERIFIED",
+  "candidate_decision": "HOLD",
+  "candidate_operational_state": "UNVERIFIED",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to UNVERIFIED, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

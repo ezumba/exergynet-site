@@ -1,0 +1,19 @@
+{
+  "arm": "M2",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-037",
+  "aircraft_id": "KTX-9037",
+  "operational_state": "INCOMPLETE",
+  "release_recommendation": "INCOMPLETE",
+  "reason_codes": [
+    "INCOMPLETE on predicate 'tether.condition'"
+  ],
+  "evidence_refs": [
+    "HOLD-037-D1"
+  ],
+  "converged_state": "INCOMPLETE",
+  "candidate_decision": "INCOMPLETE",
+  "candidate_operational_state": "INCOMPLETE",
+  "authority_decision": "INCOMPLETE",
+  "gate_reason": "At least one required predicate has no admissible evidence -- release eligibility cannot be determined, distinct from an active HOLD-worthy conflict."
+}

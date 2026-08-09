@@ -1,0 +1,18 @@
+{
+  "arm": "M2",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-002",
+  "aircraft_id": "KTX-9002",
+  "operational_state": "VERIFIED_MATCH",
+  "release_recommendation": "RELEASE_ELIGIBLE",
+  "reason_codes": [],
+  "evidence_refs": [
+    "HOLD-002-D1",
+    "HOLD-002-W1"
+  ],
+  "converged_state": "VERIFIED_MATCH",
+  "candidate_decision": "RELEASE_ELIGIBLE",
+  "candidate_operational_state": "VERIFIED_MATCH",
+  "authority_decision": "RELEASE_ELIGIBLE",
+  "gate_reason": "All evaluated predicates converged to VERIFIED_MATCH and the mission envelope check (if provided) passed. This is an ENGINEERING authorization output only -- it is not autonomous regulatory return-to-service and does not substitute for any legally required inspection or human signoff."
+}
