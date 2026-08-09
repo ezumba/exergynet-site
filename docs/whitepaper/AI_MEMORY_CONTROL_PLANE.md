@@ -24,7 +24,7 @@ ExergyNet
 ---
 
 August 2026
-**Version 1.5 — Internal Co-Author Review Draft**
+**Version 1.6 — Internal Co-Author Review Draft**
 Public Classification: OPEN (pending co-author confirmation and legal-entity resolution)
 Document Hash: [pending]
 
@@ -1491,6 +1491,61 @@ and evidence hashes: internal engineering records (`LNES59_Procurement_Bench/`),
 not reproduced in full here per this paper's practice of citing evidence
 categories rather than internal file paths.
 
+### 35.5 The Third Domain: LNES-60 Physical Truth (Architecture Defined — Not Yet Executed)
+
+LNES-58 tested epistemic truth in a closed-world healthcare domain. LNES-59
+tested institutional truth in an open-world enterprise procurement domain.
+LNES-60 introduces a third truth model — **physical / configurational truth** —
+where the question changes from "which record is authoritative" to "does the
+physical object in front of the system conform to the state that any record,
+documentary, digital, or witnessed, says it should be in?"
+
+**The research question:** When documentary state, commanded configuration,
+and cryptographically witnessed physical state disagree, can ExergyNet
+deterministically establish operational state and prevent release until the
+conflict is resolved?
+
+**The new evidence plane.** LNES-58/59 operated on documentary evidence
+alone. LNES-60 introduces physical witness state — sensor-derived evidence
+about the actual physical condition of a component or aircraft — as a fourth
+evidence plane, alongside documentary state, command/digital state, and a
+witness trust state that must separately validate the sensor's identity,
+calibration, freshness, scope, and health before its reading is treated as
+admissible evidence. A sensor reading that passes cryptographic integrity
+checks is not automatically trusted; trust is a property of the full chain,
+not of any single link in it.
+
+**The governing principle (stated precisely to prevent a common
+misinterpretation):**
+
+> **Verified physical evidence may invalidate a document-derived operational
+> conclusion when the witness's identity, calibration, freshness, integrity,
+> scope, and applicability are established.**
+
+This is not "sensor always wins." A sensor reading whose trust properties
+are unverified becomes `STALE_WITNESS`, `SENSOR_DEGRADED`, or
+`WITNESS_SCOPE_ERROR` rather than an automatic override — the same
+non-collapsed resolution discipline as LNES-58/59's epistemic states,
+applied to physical evidence. And critically: a historical documentary
+fact (e.g., "technician serviced this component") is preserved even when a
+trusted physical reading contradicts the current-state conclusion derived from
+it — xLMP supersedes the conclusion, not the fact.
+
+**Target domain (architecture design phase):** KTX Tensile-Lift heavy-lift
+UAV. The initial output is an engineering pre-flight authorization gate
+producing exactly three terminal states: `RELEASE_ELIGIBLE`, `HOLD`, or
+`INCOMPLETE`. This operates as an additional safety layer; it does not claim
+autonomous FAA return-to-service authorization and does not substitute for
+any legally required inspection or human signoff. LNES-22 performs its own
+separate policy evaluation before any action authority is granted.
+
+**Status:** Architecture defined (internal engineering documents:
+`LNES60_Physical_Truth/`). Phase 1 synthetic harness not yet executed.
+No real aircraft hardware has been used. This section records the DESIGNED
+status of the architecture and its research question; results will be
+reported here after the experimental protocol (`LNES60_EXPERIMENT_PROTOCOL.md`)
+is executed and the findings independently evaluated.
+
 ### 36. Context-Boundary Behavior
 
 In an xLMP system, bounded evidence is selected to fit within budget B ≤ W.
@@ -2068,6 +2123,7 @@ structural addition requires a row.
 
 | Version | Date | Claim or section | Previous status | New status | Evidence reference |
 |---------|------|-----------------|-----------------|------------|--------------------|
+| 1.6 | 2026-08-08 | Validation (new Section 35.5) | Not present | Added — "LNES-60: The Third Domain: Physical Truth (Architecture Defined — Not Yet Executed)": four-plane truth model, governing principle, KTX domain, RELEASE_ELIGIBLE/HOLD/INCOMPLETE terminal states, explicit DESIGNED status and no-regulatory-claim scope | Operator-authorized architectural addition; no experiment executed, no benchmark result claimed; internal engineering documents LNES60_Physical_Truth/ |
 | 1.5 | 2026-08-08 | Appendix D | LNES-58/59 not present in demonstrated claims | Added LNES-58/LNES-59 state-governance demonstrated-claim entry, cross-referencing Section 35.4 | LNES-59 sealed holdout, 400/400 case-arm evaluations, direct measurement |
 | 1.5 | 2026-08-08 | LNES-22 pipeline (Section 40) | Text description only, no full state→action diagram | Added full pipeline diagram (persistent state → xLMP → model → candidate claim → state governance → authorized state → LNES-22 → execution → edge witness → persistent-state update) with explicit scope note that LNES-59 validated only through "authorized state," not action authority or physical actuation | Operator-authorized addition; describes existing architecture plus the new Section 35.4 result, no new implementation-status claim |
 | 1.5 | 2026-08-08 | Validation (new Section 35.4) | Not present | Added — "From Retrieval to Authoritative State: LNES-58 → LNES-59": full 8-arm comparator table, X1→X2 controlled-comparison result, retrieval/state-resolution/memory-authority/action-authority distinction, cross-domain framing, disclosed limitations | LNES-59 sealed post-freeze synthetic procurement holdout, 50 cases, 400 case-arm evaluations, 0 failures; `LNES59_FINAL_VALIDATION_REPORT.md` and `LNES59_FINAL_RESULTS_MANIFEST.json` (SHA-256 verified unchanged before this update) |
@@ -2103,7 +2159,7 @@ Seven Ezumba
 Chief Architect and Corresponding Author
 ExergyNet
 
-**Version 1.5 — Internal Co-Author Review Draft**
+**Version 1.6 — Internal Co-Author Review Draft**
 August 2026
 
 Co-authors Bontu Veena and Kyaw Phone: listed as proposed co-authors pending
