@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-039",
+  "aircraft_id": "KTX-9039",
+  "operational_state": "STALE_WITNESS",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The sensor reading confirming hardware_id='MOTOR_A' was measured at 2026-08-12T05:00:00 under configuration_epoch=EPOCH_0, but the expected configuration was recorded at 2026-08-12T07:00:00 under configuration_epoch=EPOCH_1 -- two hours later. The witness predates the epoch transition to EPOCH_1, so it cannot confirm the motor identity under the currently expected configuration state. No fresher reading covering EPOCH_1 is provided, so the claim is unverified and release should be held."
+  ],
+  "evidence_refs": [
+    "HOLD-039-W1"
+  ]
+}

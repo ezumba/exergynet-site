@@ -1,0 +1,5 @@
+{
+  "operational_state": "SENSOR_DEGRADED",
+  "release_recommendation": "HOLD",
+  "reasoning": "The only witness for tether.elongation reports sensor_health=FAILED, meaning the sensor source is not trustworthy even though calibration is current and the hardware signature is valid. A failed sensor cannot be relied upon to certify elongation as 'GOOD', so the reading's trustworthiness is unresolved and release must be held."
+}

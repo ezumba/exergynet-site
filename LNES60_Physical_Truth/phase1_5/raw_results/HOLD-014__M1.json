@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-014",
+  "aircraft_id": "KTX-9014",
+  "operational_state": "WITNESS_SCOPE_ERROR",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The documentary inspection confirms a defect (DEFECT_CONFIRMED) with no stated scope, while the only physical witness offered is a temp_c reading explicitly scoped to 'tether.temperature'. That narrow sensor scope does not establish it covers the same component/condition the inspection flagged as defective, so the reading cannot be used to confirm or refute the defect claim. With a confirmed defect on record and no physical evidence properly scoped to address it, the aircraft/component must be held rather than released."
+  ],
+  "evidence_refs": [
+    "HOLD-014-D1",
+    "HOLD-014-W1"
+  ]
+}

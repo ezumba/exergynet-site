@@ -1,0 +1,14 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-016",
+  "aircraft_id": "KTX-9016",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The only documentary record is an inspection with claim='DEFECT_CONFIRMED', meaning the physical condition of the aircraft/component is documented as defective. This directly conflicts with any expectation of airworthiness for release, so the aircraft cannot be considered eligible for release."
+  ],
+  "evidence_refs": [
+    "HOLD-016-D1"
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "n_pilot_cases": 18,
+  "n_total_evaluations": 54,
+  "pilot_case_ids": [
+    "HOLD-014",
+    "HOLD-034",
+    "HOLD-016",
+    "HOLD-036",
+    "HOLD-015",
+    "HOLD-035",
+    "HOLD-019",
+    "HOLD-039",
+    "HOLD-013",
+    "HOLD-033",
+    "HOLD-017",
+    "HOLD-037",
+    "HOLD-012",
+    "HOLD-032",
+    "HOLD-007",
+    "HOLD-018",
+    "HOLD-002",
+    "HOLD-008"
+  ],
+  "per_arm": {
+    "M0": {
+      "n": 18,
+      "operational_state_accuracy": 0.3333333333333333,
+      "release_recommendation_accuracy": 0.3888888888888889,
+      "false_release_rate": 0.05555555555555555,
+      "false_hold_rate": 0.05555555555555555,
+      "false_release_count": 1,
+      "false_hold_count": 1,
+      "correct_release_count": 1,
+      "correct_hold_count": 4,
+      "correct_incomplete_count": 2,
+      "per_ktx_class": {
+        "tether_condition_healthy": {
+          "n": 1,
+          "op_correct": 0,
+          "rel_correct": 0
+        },
+        "stale_after_event": {
+          "n": 1,
+          "op_correct": 0,
+          "rel_correct": 0
+        },
+        "sensor_conflict": {
+          "n": 1,
+          "op_correct": 0,
+          "rel_correct": 0
+        },
+        "replay_attack": {
+          "n": 2,
+          "op_correct": 0,
+          "rel_correct": 0
+        },
+        "detached_sensor": {
+          "n": 2,
+          "op_correct": 0,
+          "rel_correct": 0
+        },
+        "known_damage_limited_scope_good": {
+          "n": 2,
+          "op_correct": 0,
+          "rel_correct": 2
+        },
+        "mission_envelope_violation": {
+          "n": 2,
+          "op_correct": 1,
+          "rel_correct": 0
+        },
+        "record_bad_witnesses_good": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        },
+        "record_good_trust_unknown": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        },
+        "fully_consistent": {
+          "n": 1,
+          "op_correct": 1,
+          "rel_correct": 1
+        },
+        "config_epoch_stale_witness": {
+          "n": 2,
+          "op_correct": 0,
+          "rel_correct": 0
+        }
+      }
+    },
+    "M1": {
+      "n": 18,
+      "operational_state_accuracy": 0.6666666666666666,
+      "release_recommendation_accuracy": 0.7777777777777778,
+      "false_release_rate": 0.16666666666666666,
+      "false_hold_rate": 0.0,
+      "false_release_count": 3,
+      "false_hold_count": 0,
+      "correct_release_count": 2,
+      "correct_hold_count": 11,
+      "correct_incomplete_count": 1,
+      "per_ktx_class": {
+        "tether_condition_healthy": {
+          "n": 1,
+          "op_correct": 1,
+          "rel_correct": 1
+        },
+        "stale_after_event": {
+          "n": 1,
+          "op_correct": 0,
+          "rel_correct": 0
+        },
+        "sensor_conflict": {
+          "n": 1,
+          "op_correct": 1,
+          "rel_correct": 1
+        },
+        "replay_attack": {
+          "n": 2,
+          "op_correct": 1,
+          "rel_correct": 2
+        },
+        "detached_sensor": {
+          "n": 2,
+          "op_correct": 0,
+          "rel_correct": 2
+        },
+        "known_damage_limited_scope_good": {
+          "n": 2,
+          "op_correct": 1,
+          "rel_correct": 2
+        },
+        "mission_envelope_violation": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 0
+        },
+        "record_bad_witnesses_good": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        },
+        "record_good_trust_unknown": {
+          "n": 2,
+          "op_correct": 1,
+          "rel_correct": 1
+        },
+        "fully_consistent": {
+          "n": 1,
+          "op_correct": 1,
+          "rel_correct": 1
+        },
+        "config_epoch_stale_witness": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        }
+      }
+    },
+    "M2": {
+      "n": 18,
+      "operational_state_accuracy": 1.0,
+      "release_recommendation_accuracy": 1.0,
+      "false_release_rate": 0.0,
+      "false_hold_rate": 0.0,
+      "false_release_count": 0,
+      "false_hold_count": 0,
+      "correct_release_count": 2,
+      "correct_hold_count": 14,
+      "correct_incomplete_count": 2,
+      "per_ktx_class": {
+        "tether_condition_healthy": {
+          "n": 1,
+          "op_correct": 1,
+          "rel_correct": 1
+        },
+        "stale_after_event": {
+          "n": 1,
+          "op_correct": 1,
+          "rel_correct": 1
+        },
+        "sensor_conflict": {
+          "n": 1,
+          "op_correct": 1,
+          "rel_correct": 1
+        },
+        "replay_attack": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        },
+        "detached_sensor": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        },
+        "known_damage_limited_scope_good": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        },
+        "mission_envelope_violation": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        },
+        "record_bad_witnesses_good": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        },
+        "record_good_trust_unknown": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        },
+        "fully_consistent": {
+          "n": 1,
+          "op_correct": 1,
+          "rel_correct": 1
+        },
+        "config_epoch_stale_witness": {
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
+        }
+      }
+    }
+  },
+  "m2_candidate_vs_authorized_delta": {
+    "n_common_cases": 18,
+    "candidate_false_release_count": 0,
+    "authorized_false_release_count": 0,
+    "false_releases_prevented_by_gate": [],
+    "absolute_reduction": 0,
+    "relative_reduction_pct": null,
+    "gate_introduced_false_holds": []
+  },
+  "m0_to_m1_delta": {
+    "release_accuracy_change": 0.3888888888888889,
+    "false_release_rate_change": 0.1111111111111111
+  },
+  "m1_to_m2_authorized_delta": {
+    "release_accuracy_change": 0.2222222222222222,
+    "false_release_rate_change": -0.16666666666666666
+  }
+}

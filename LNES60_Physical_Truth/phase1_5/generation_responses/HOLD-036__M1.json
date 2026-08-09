@@ -1,0 +1,5 @@
+{
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reasoning": "The inspection record claims DEFECT_CONFIRMED while the physical sensor reading for the same scope (tether.elongation) at the same timestamp (2026-08-09T14:00:00) reports 'GOOD' with a trustworthy sensor (current calibration, nominal health, valid hardware signature, low uncertainty). Since the reading is contemporaneous with the inspection (not stale) and correctly scoped, this is a direct contradiction between a documentary record and a trustworthy physical witness, so the aircraft/component must be held pending reconciliation rather than released."
+}

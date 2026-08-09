@@ -1,0 +1,1 @@
+{"operational_state": "DOCUMENT_PHYSICAL_CONFLICT", "release_recommendation": "HOLD", "reasoning": "The sole documentary record is an inspection with claim='DEFECT_CONFIRMED', meaning a known defect has been recorded against the aircraft/component. This is a documented known defect, so release cannot be considered eligible until it is resolved."}

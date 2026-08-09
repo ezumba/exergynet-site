@@ -1,0 +1,14 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-014",
+  "aircraft_id": "KTX-9014",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The sole documentary record is an inspection with claim='DEFECT_CONFIRMED', meaning a known defect has been recorded against the aircraft/component. This is a documented known defect, so release cannot be considered eligible until it is resolved."
+  ],
+  "evidence_refs": [
+    "HOLD-014-D1"
+  ]
+}

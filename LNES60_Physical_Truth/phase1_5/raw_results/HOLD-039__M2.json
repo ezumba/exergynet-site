@@ -1,0 +1,18 @@
+{
+  "arm": "M2",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-039",
+  "aircraft_id": "KTX-9039",
+  "operational_state": "STALE_WITNESS",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "STALE: event-based: powertrain_replacement (event HOLD-039-E1) occurred at 2026-08-12T06:00:00, after this reading was taken at 2026-08-12T05:00:00 -- the reading cannot establish post-event state",
+    "STALE_WITNESS on predicate 'motor.identity'"
+  ],
+  "evidence_refs": [],
+  "converged_state": "STALE_WITNESS",
+  "candidate_decision": "HOLD",
+  "candidate_operational_state": "STALE_WITNESS",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to STALE_WITNESS, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

@@ -1,0 +1,14 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-018",
+  "aircraft_id": "KTX-9018",
+  "operational_state": "VERIFIED_MATCH",
+  "release_recommendation": "RELEASE_ELIGIBLE",
+  "reason_codes": [
+    "The only documentary record provided (service_life) directly states the claim SERVICEABLE with no contradicting records, no configuration mismatch, no conflicting readings, and no scope error. Since the review is documents-only by design (no live sensor/telemetry expected or required), this single consistent record supports the claim being checked."
+  ],
+  "evidence_refs": [
+    "HOLD-018-D1"
+  ]
+}

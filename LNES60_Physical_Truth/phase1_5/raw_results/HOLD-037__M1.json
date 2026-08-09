@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-037",
+  "aircraft_id": "KTX-9037",
+  "operational_state": "UNVERIFIED",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "Only a single documentary claim of SERVICEABLE exists, with no physical sensor witnesses provided at all to corroborate it. Since there is no independent physical evidence to confirm or deny the documentary claim, the true state cannot be verified, so the aircraft/component should be held rather than released on the document's word alone."
+  ],
+  "evidence_refs": [
+    "HOLD-037-D1"
+  ]
+}
