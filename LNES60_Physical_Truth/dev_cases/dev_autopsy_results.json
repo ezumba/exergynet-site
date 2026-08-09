@@ -1,0 +1,27 @@
+{
+  "total_cases": 100,
+  "class_distribution": {
+    "tether_condition_bad": 5,
+    "tether_condition_healthy": 5,
+    "am_genesis_anomaly": 5,
+    "iron_web_geometry_mismatch": 5,
+    "propulsion_identity_mismatch": 5,
+    "correct_motor_wrong_firmware": 5,
+    "stale_after_event": 5,
+    "sensor_conflict": 5,
+    "out_of_calibration_bad_sensor": 5,
+    "wrong_aircraft": 5,
+    "wrong_component": 5,
+    "replay_attack": 5,
+    "detached_sensor": 5,
+    "known_damage_limited_scope_good": 5,
+    "mission_envelope_violation": 5,
+    "record_bad_witnesses_good": 5,
+    "record_good_trust_unknown": 5,
+    "fully_consistent": 5,
+    "config_epoch_stale_witness": 5,
+    "multi_conflict_config_and_document": 5
+  },
+  "mismatch_count": 0,
+  "mismatches": []
+}
