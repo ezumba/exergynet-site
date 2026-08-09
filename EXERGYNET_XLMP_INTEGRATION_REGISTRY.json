@@ -1,0 +1,59 @@
+{
+  "_purpose": "Machine-readable companion to EXERGYNET_XLMP_INTEGRATION_REGISTRY.md. Produced by direct code search of the exergynet working tree, 2026-08-08, Phase 3 of the post-LNES-59 consolidation directive.",
+  "_scope_note": "Code-existence only. Live/running status is NOT independently confirmed in this file -- see EXERGYNET_MODEL_RUNTIME_INVENTORY.md and EXERGYNET_SYSTEM_HEALTH_FINAL.md for Phase 4 live verification.",
+  "generated_date": "2026-08-08",
+  "surfaces": [
+    {
+      "surface_id": "portal_canonical",
+      "label": "xLMP BOUNDED / xLMP STATE-AWARE (canonical)",
+      "service": "Next.js Portal",
+      "host": "portal.exergynet.org",
+      "port": 4000,
+      "backend": "filesystem/NVMe, xlmp_ds_core.ts",
+      "canonical": true,
+      "routes": [
+        {"route": "/api/xlmp/ingest", "method": "POST", "auth": "resolveUser (bearer/session)", "operation": "write", "input_schema": "multipart/form-data: file, label", "output_schema": "{ xlmp_root, shard_count, total_bytes, created_at }", "model_usage": false, "state_envelope_usage": false, "gate_usage": false, "action_authority_usage": false, "test_command": "curl -X POST https://portal.exergynet.org/api/xlmp/ingest -H 'Authorization: Bearer $EXERGYNET_API_KEY' -F 'file=@./sample.json'", "documented_publicly": true},
+        {"route": "/api/xlmp/query", "method": "POST", "auth": "resolveUser", "operation": "read", "input_schema": "{ xlmp_root, image_id?, query_params: { intent } }", "output_schema": "ZK journal: extracted result, confidence, citations (fast SHA-256 stub by default)", "model_usage": true, "state_envelope_usage": false, "gate_usage": false, "action_authority_usage": false, "test_command": "curl -X POST https://portal.exergynet.org/api/xlmp/query -H 'Authorization: Bearer $EXERGYNET_API_KEY' -d '{...}'", "documented_publicly": true},
+        {"route": "/api/xlmp/zk-query", "method": "POST", "auth": "resolveUser", "operation": "read", "input_schema": "same as /api/xlmp/query", "output_schema": "same retrieval path as /api/xlmp/query, real_proof_status surfaced separately", "model_usage": true, "documented_publicly": false, "notes": "shares one source of truth with /api/xlmp/query per in-code comment; used by Omega Carrier as fallback when ZK proof pending"},
+        {"route": "/api/xlmp/prove", "method": "POST", "auth": "resolveUser", "operation": "action", "input_schema": "{ xlmp_root }", "output_schema": "async job state", "documented_publicly": false, "notes": "real RISC Zero Groth16 proof, ~13min on CPU-only box, detached background job"},
+        {"route": "/api/xlmp/proof-status", "method": "GET", "auth": "resolveUser", "operation": "read", "input_schema": "query param xlmp_root", "output_schema": "{ xlmp_root, ...proof job state }", "documented_publicly": false},
+        {"route": "/api/xlmp/demo", "method": "GET/POST (unverified beyond header)", "auth": "none - public", "operation": "read", "notes": "synthetic patient dataset only, not a real xLMP query path; used by storage.exergynet.org demo widget", "documented_publicly": false},
+        {"route": "/api/v1/vault/content", "method": "GET", "auth": "resolveUser", "operation": "read", "input_schema": "query param root", "output_schema": "content or MemoryIntegrityViolation error (LNES-58.10 hardening)", "documented_publicly": false},
+        {"route": "/api/v1/vault/list", "method": "GET", "auth": "resolveUser", "operation": "read", "output_schema": "{ count, hollow_objects: [{ xlmp_root, intent, ... }] }", "documented_publicly": false, "notes": "explicitly the canonical list route per in-code comment distinguishing it from biological_proxy's non-canonical equivalent"}
+      ],
+      "known_consumers": [
+        {"name": "Omega Carrier", "file": "omega_carrier/omega_carrier_mcp.py", "calls": ["/api/xlmp/ingest", "/api/xlmp/query", "/api/xlmp/zk-query (fallback)"]},
+        {"name": "Dashboard/keys pages", "file": "portal/src/lib/apiServicesManifest.ts consumers", "calls": ["documentation display only"]}
+      ]
+    },
+    {
+      "surface_id": "biological_proxy_legacy",
+      "label": "LEGACY / PARTIAL xLMP",
+      "service": "biological_proxy (Express)",
+      "host": "unspecified in this pass, part of Portal deployment per repo layout",
+      "backend": "PostgreSQL xlmp_vault table (different from portal_canonical's filesystem store)",
+      "canonical": false,
+      "routes": [
+        {"route": "/api/xlmp/ingest", "method": "POST", "auth": "requireAuth", "operation": "write", "notes": "SAME PATH as portal_canonical's /api/xlmp/ingest, DIFFERENT backend -- naming collision risk if both reachable under one public origin"},
+        {"route": "/api/xlmp/query", "method": "GET", "operation": "read", "notes": "same path collision concern as ingest above"},
+        {"route": "/api/xlmp/list", "method": "GET", "operation": "read"},
+        {"route": "/api/xlmp/vanguard/ingest", "method": "POST", "operation": "write", "notes": "distinct sub-namespace, keyed by device fingerprint, not a duplicate of the ingest route above"},
+        {"route": "/api/xlmp/vanguard/recall", "method": "GET", "operation": "read", "notes": "distinct sub-namespace"},
+        {"route": "/api/meet/rooms/:id/vault-anchor", "method": "POST", "auth": "host-only", "operation": "write", "notes": "stores an already-minted xlmp_root, does not mint one"},
+        {"route": "/api/v1/cowork/session/:id/documents", "method": "POST", "operation": "write", "notes": "links an already-minted xlmp_root, does not mint one"}
+      ],
+      "known_consumers": [],
+      "live_status_confirmed": false
+    }
+  ],
+  "adjacent_non_data_plane": [
+    {"name": ".well-known/exergynet.json", "type": "public discovery document", "notes": "LNES-04 protocol discovery, describes ExergyNet as xLMP-class substrate at a discovery/marketing level, not a data-plane endpoint"},
+    {"name": "xlmp_h200_healthcheck.sh", "type": "benchmark environment health script", "notes": "targets the remote H200 benchmark box, not the production portal"}
+  ],
+  "unverified_in_this_pass": [
+    "whether biological_proxy is currently deployed and publicly reachable, or retired-but-present-in-source",
+    "whether all consumers of portal_canonical have been found by this static grep pass",
+    "whether /api/xlmp/demo's no-auth status is enforced at a reverse-proxy layer beyond the route file itself",
+    "whether Vanguard chat/compress routes stage xLMP evidence into model context"
+  ]
+}
