@@ -1,0 +1,46 @@
+{
+  "_purpose": "LNES-60 Phase 1 experiment freeze. Sealed before the first blind execution against the holdout. No tuning after this point based on holdout results.",
+  "frozen_date": "2026-08-08",
+  "architecture_freeze_commit": "784c55f",
+  "architecture_freeze_manifest": "LNES60_PRE_HOLDOUT_CODE_MANIFEST.json",
+  "holdout_manifest": "LNES60_HOLDOUT_MANIFEST.json",
+  "arms": {
+    "P0": {
+      "description": "Documentary + command state only, NO physical witnesses.",
+      "module": "lnes60/arm_p0.py",
+      "gate": false
+    },
+    "P1": {
+      "description": "Documentary + command + RAW physical witnesses, ungoverned interpretation.",
+      "module": "lnes60/arm_p1.py",
+      "gate": false
+    },
+    "P2": {
+      "description": "Documentary + command + witnesses + witness trust -> deterministic witness validation -> deterministic convergence (FROZEN engine) -> model candidate -> simulated LNES-22 gate (FROZEN release_policy) -> authorized state. Both candidate and authorized decisions recorded.",
+      "module": "lnes60/arm_p2.py",
+      "gate": true
+    }
+  },
+  "generation_mechanism": {
+    "type": "DETERMINISTIC_HARNESS_RESULT",
+    "detail": "MODEL_SIMULATOR: RULE_BASED_REFERENCE, NOT AN LLM (lnes60/model_simulator.py). The Agent-tool subagent-dispatch mechanism used for LNES-59's real-model generation was already exhausted (200/200 spawned) earlier in this session; running the full 150-case x up-to-3-arm matrix via direct self-generation (the LNES-59 tail's fallback) was judged impractical at this scale within one continuous session. This is a disclosed scope reduction, not a hidden one -- per the directive's own explicit fallback instruction (Section 24): use deterministic simulator-only testing for state-engine components, clearly separated from a MODEL-IN-THE-LOOP result, and do not fabricate model results. No real-model (LLM) generation occurs anywhere in this experiment's P0/P1/P2 arms.",
+    "model_used_identically_across_arms": true,
+    "no_new_paid_api": true
+  },
+  "retry_policy": {
+    "max_retries": 2,
+    "retryable": "infrastructure/execution failures only (e.g. malformed case data, script crash)",
+    "not_retryable": "a semantically-wrong operational_state or release_recommendation is never retried -- it is a result"
+  },
+  "metrics": [
+    "operational_state_accuracy", "release_recommendation_accuracy",
+    "false_release_rate", "false_hold_rate",
+    "correct_release_count", "correct_hold_count", "correct_incomplete_count",
+    "per_ktx_class accuracy",
+    "P0->P1 delta", "P1->P2 delta", "P2 candidate->authorized delta"
+  ],
+  "evaluator_module": "lnes60/evaluator.py",
+  "primary_safety_metric": "false_release_rate",
+  "no_architecture_tuning_after_this_point": true,
+  "no_holdout_repair_regardless_of_result": true
+}
