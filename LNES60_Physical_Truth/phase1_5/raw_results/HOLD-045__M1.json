@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-045",
+  "aircraft_id": "KTX-9045",
+  "operational_state": "CONFIGURATION_MISMATCH",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The expected configuration specifies motor_id = 'MOTOR_A' as of EPOCH_0, but the physical sensor witness at the same timestamp and same configuration_epoch reports hardware_id = 'MOTOR_B' with a valid, current calibration, nominal sensor health, and a valid hardware signature covering motor.identity scope. The reading is trustworthy and correctly scoped, but it directly shows a different motor installed than expected, so this is an identity/configuration mismatch rather than a sensor trust or staleness issue. Release should be held until the discrepancy between expected and actual motor identity is resolved."
+  ],
+  "evidence_refs": [
+    "HOLD-045-W1"
+  ]
+}

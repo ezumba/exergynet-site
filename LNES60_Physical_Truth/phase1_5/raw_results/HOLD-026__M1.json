@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-026",
+  "aircraft_id": "KTX-9026",
+  "operational_state": "CONFIGURATION_MISMATCH",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The physical sensor witness is trustworthy (calibration current, sensor_health NOMINAL, hardware_signature_valid, correct measurement_scope=motor.firmware, matching configuration_epoch=EPOCH_0, measured at the same timestamp as the expected configuration was recorded), so it reliably reports firmware_version='FW_1.9'. This directly contradicts the expected firmware_version='FW_2.1' for the same epoch and timestamp, indicating the actual installed firmware does not match the expected configuration. This is a configuration identity mismatch, not a stale or conflicting-sensor issue, so release must be held until the firmware discrepancy is resolved."
+  ],
+  "evidence_refs": [
+    "HOLD-026-W1"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "arm": "M2",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-044",
+  "aircraft_id": "KTX-9044",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "DOCUMENT_PHYSICAL_CONFLICT on predicate 'pawl.geometry'"
+  ],
+  "evidence_refs": [
+    "HOLD-044-D1",
+    "HOLD-044-W1"
+  ],
+  "converged_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "candidate_decision": "HOLD",
+  "candidate_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "authority_decision": "HOLD",
+  "gate_reason": "At least one predicate resolved to DOCUMENT_PHYSICAL_CONFLICT, which per the frozen priority order requires HOLD pending resolution -- the conflict is not silently overridden by other predicates' good state."
+}

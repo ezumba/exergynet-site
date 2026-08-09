@@ -1,0 +1,97 @@
+{
+  "_purpose": "LNES-60 Phase 1.5 final results seal. Sealed after 150/150 real-model evaluations, frozen evaluator, and final report.",
+  "status": "SEALED -- LNES-60 PHASE 1.5 REAL-MODEL VALIDATION COMPLETE",
+  "sealed_date": "2026-08-09",
+  "architecture_version": "P1-0.1.0",
+  "chronology": {
+    "phase1_architecture_freeze_commit": "784c55f",
+    "phase1_5_checkpoint_commit": "67acd3f",
+    "phase1_5_completion_date": "2026-08-09"
+  },
+  "generation_mechanism": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator) -- all 150 evaluations produced by real probabilistic model via Agent-tool dispatch. Model label preserved in every raw_results/*.json record.",
+  "execution_summary": {
+    "holdout_cases": 50,
+    "ktx_classes_covered": 20,
+    "arms": 3,
+    "arm_labels": ["M0 (documentary only)", "M1 (raw telemetry, ungoverned)", "M2 (governed + LNES-22 gate)"],
+    "total_primary_evaluations": 150,
+    "attempted": 150,
+    "completed": 150,
+    "errors": 0,
+    "infrastructure_stops": 1,
+    "infrastructure_stop_detail": "Agent-tool API session limit at 29/50; resumed in next session after reset; stop was infrastructure-only, not a scientific stopping point"
+  },
+  "evidence_hashes": {
+    "final_report_sha256": "af246d1ab3ab170c381bc69a704092c932e3e26e8e3f96c3bb1cf6586b14c2a3",
+    "raw_results_corpus_sha256": "7f2a1b3f9f75d882ad77b528bb48b65dc1e10f212500f0a6df5700112707eb70",
+    "raw_results_corpus_note": "sha256 over sorted (filename || file bytes) concatenation of all 150 raw_results/*.json files",
+    "evaluator_output_sha256": "81236f55830418a40c5a46fdc5276af087f605589261a6358767bea00a8e4bea"
+  },
+  "headline_metrics": {
+    "M0": {
+      "operational_state_accuracy": 0.18,
+      "release_recommendation_accuracy": 0.28,
+      "false_release_rate": 0.08,
+      "false_hold_rate": 0.02,
+      "false_release_count": 4,
+      "false_hold_count": 1
+    },
+    "M1": {
+      "operational_state_accuracy": 0.66,
+      "release_recommendation_accuracy": 0.78,
+      "false_release_rate": 0.20,
+      "false_hold_rate": 0.00,
+      "false_release_count": 10,
+      "false_hold_count": 0
+    },
+    "M2_candidate": {
+      "operational_state_accuracy": 1.0,
+      "candidate_false_release_count": 2,
+      "candidate_false_release_cases": ["HOLD-015", "HOLD-035"]
+    },
+    "M2_authorized": {
+      "operational_state_accuracy": 1.0,
+      "release_recommendation_accuracy": 1.0,
+      "false_release_rate": 0.0,
+      "false_hold_rate": 0.0,
+      "false_release_count": 0,
+      "false_hold_count": 0
+    },
+    "m2_gate_delta": {
+      "candidate_false_release_count": 2,
+      "authorized_false_release_count": 0,
+      "false_releases_prevented": 2,
+      "relative_reduction_pct": 100.0,
+      "gate_introduced_false_holds": 0
+    },
+    "m0_to_m1_delta": {
+      "release_accuracy_change_pp": 50,
+      "false_release_rate_change_pp": 12
+    },
+    "m1_to_m2_authorized_delta": {
+      "release_accuracy_change_pp": 22,
+      "false_release_rate_change_pp": -20
+    }
+  },
+  "m1_false_release_classes": {
+    "stale_after_event": 3,
+    "wrong_aircraft": 3,
+    "wrong_component": 2,
+    "mission_envelope_violation": 2,
+    "total": 10,
+    "note": "All 4 classes are metadata-verification failures: temporal event tracking and component binding are not inferable from raw sensor telemetry without structured registries."
+  },
+  "phase1_comparison_summary": {
+    "direction_confirmed": true,
+    "specific_class_regression_reproduced": false,
+    "detail": "Phase 1 simulator regressed on known_damage_limited_scope_good and record_bad_witnesses_good (GOOD sensor overriding documented defect). Real model held correctly on both. Real model instead failed on stale_after_event, wrong_aircraft, wrong_component -- structurally different mechanism: temporal event tracking and binding scope, not document-conflict override.",
+    "m2_p2_agreement": "Both Phase 1 (P2) and Phase 1.5 (M2 authorized) achieve 100% accuracy with 0 false releases. The deterministic convergence result is identical."
+  },
+  "governance_notes": {
+    "no_prompt_modification_after_m2_leak_fix": true,
+    "no_engine_modification_after_freeze": true,
+    "holdout_ground_truth_not_exposed_during_generation": true,
+    "infrastructure_stop_cases_not_declared_sufficient": true
+  },
+  "terminal_condition": "LNES-60 PHASE 1.5 REAL-MODEL VALIDATION COMPLETE"
+}

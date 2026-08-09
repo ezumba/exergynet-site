@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-030",
+  "aircraft_id": "KTX-9030",
+  "operational_state": "VERIFIED_MATCH",
+  "release_recommendation": "RELEASE_ELIGIBLE",
+  "reason_codes": [
+    "No documentary records exist to conflict with, and the single physical witness (tether.elongation = GOOD) is calibrated and current (expires 2027-01-01), sensor_health is NOMINAL, hardware_signature_valid is True, the measurement scope matches what is being checked, and the configuration_epoch is consistent (EPOCH_0). With no contradicting evidence and a trustworthy, in-scope, recent reading, the evidence is consistent and supports release."
+  ],
+  "evidence_refs": [
+    "HOLD-030-W1"
+  ]
+}

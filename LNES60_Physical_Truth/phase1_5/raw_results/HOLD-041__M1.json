@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-041",
+  "aircraft_id": "KTX-9041",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The documentary record claims SERVICEABLE, but the physical sensor witness for the same scope (tether.elongation) at the identical timestamp reports elongation_pct = 'BAD'. The sensor is trustworthy (calibration current, health nominal, valid hardware signature, low measurement uncertainty), so this is not a degraded or scope-mismatched reading -- it is a credible physical reading directly contradicting the documentary claim of serviceability. That conflict must be resolved before release."
+  ],
+  "evidence_refs": [
+    "HOLD-041-D1",
+    "HOLD-041-W1"
+  ]
+}

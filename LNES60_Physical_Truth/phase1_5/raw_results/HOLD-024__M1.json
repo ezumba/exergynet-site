@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-024",
+  "aircraft_id": "KTX-9024",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The maintenance record claims SERVICEABLE, but a trustworthy physical sensor (calibration current, sensor health nominal, valid hardware signature, low uncertainty of 0.049, matching scope pawl.geometry and epoch, and measured at the same timestamp as the document) reports geometry_mm = 'BAD', directly contradicting the document. This is a direct document-vs-physical conflict indicating a defect, so the component must be held."
+  ],
+  "evidence_refs": [
+    "HOLD-024-D1",
+    "HOLD-024-W1"
+  ]
+}

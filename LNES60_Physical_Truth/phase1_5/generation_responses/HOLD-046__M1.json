@@ -1,0 +1,5 @@
+{
+  "operational_state": "CONFIGURATION_MISMATCH",
+  "release_recommendation": "HOLD",
+  "reasoning": "The trustworthy physical sensor reading (calibration current, sensor_health=NOMINAL, hardware_signature_valid=True, low uncertainty=0.019, correct scope motor.firmware, same configuration_epoch EPOCH_0, measured at the same timestamp as the expected value was recorded) shows firmware_version='FW_1.9', which does not match the expected firmware_version='FW_2.1'. This is a direct identity/configuration field mismatch, not a sensor trust or timing issue, so the aircraft/component must be held."
+}

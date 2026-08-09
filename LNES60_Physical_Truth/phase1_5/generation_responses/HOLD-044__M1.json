@@ -1,0 +1,5 @@
+{
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reasoning": "The maintenance history claims SERVICEABLE, but a concurrent (same-timestamp) physical sensor reading of geometry_mm = 'BAD' directly contradicts that claim. The sensor witness is trustworthy (calibration current, health NOMINAL, hardware signature valid, low measurement_uncertainty=0.034) and scoped correctly to pawl.geometry at the current configuration epoch, so the BAD reading cannot be dismissed as unreliable or out of scope. This is a direct conflict between a documentary record and a credible physical reading indicating a defect, so the aircraft/component must be held pending investigation."
+}

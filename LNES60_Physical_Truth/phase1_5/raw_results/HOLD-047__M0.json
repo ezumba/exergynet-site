@@ -1,0 +1,12 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-047",
+  "aircraft_id": "KTX-9047",
+  "operational_state": "INCOMPLETE",
+  "release_recommendation": "INCOMPLETE",
+  "reason_codes": [
+    "No documentary records were provided at all, so there is nothing to evaluate against the release criteria. Without any maintenance history, configuration records, or inspection history, no determination of eligibility can be made."
+  ],
+  "evidence_refs": []
+}

@@ -1,0 +1,14 @@
+{
+  "arm": "M0",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-044",
+  "aircraft_id": "KTX-9044",
+  "operational_state": "VERIFIED_MATCH",
+  "release_recommendation": "RELEASE_ELIGIBLE",
+  "reason_codes": [
+    "The only documentary record provided (maintenance_history) explicitly states the component is SERVICEABLE, with a valid timestamp and no other record contradicting it, indicating a configuration mismatch, or placing it out of scope. Since the review is documents-only by design and this single record is internally consistent and unopposed by any conflicting record, the evidence supports the claim being checked."
+  ],
+  "evidence_refs": [
+    "HOLD-044-D1"
+  ]
+}

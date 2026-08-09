@@ -1,10 +1,8 @@
 {
-  "n_complete_cases": 29,
-  "n_incomplete_cases_skipped": 1,
-  "incomplete_case_ids_skipped": [
-    "HOLD-023"
-  ],
-  "n_total_evaluations": 87,
+  "n_complete_cases": 50,
+  "n_incomplete_cases_skipped": 0,
+  "incomplete_case_ids_skipped": [],
+  "n_total_evaluations": 150,
   "complete_case_ids": [
     "HOLD-001",
     "HOLD-002",
@@ -28,79 +26,100 @@
     "HOLD-020",
     "HOLD-021",
     "HOLD-022",
+    "HOLD-023",
+    "HOLD-024",
+    "HOLD-025",
+    "HOLD-026",
+    "HOLD-027",
+    "HOLD-028",
+    "HOLD-029",
+    "HOLD-030",
+    "HOLD-031",
     "HOLD-032",
     "HOLD-033",
     "HOLD-034",
     "HOLD-035",
     "HOLD-036",
     "HOLD-037",
-    "HOLD-039"
+    "HOLD-038",
+    "HOLD-039",
+    "HOLD-040",
+    "HOLD-041",
+    "HOLD-042",
+    "HOLD-043",
+    "HOLD-044",
+    "HOLD-045",
+    "HOLD-046",
+    "HOLD-047",
+    "HOLD-048",
+    "HOLD-049",
+    "HOLD-050"
   ],
   "per_arm": {
     "M0": {
-      "n": 29,
-      "operational_state_accuracy": 0.2413793103448276,
-      "release_recommendation_accuracy": 0.3793103448275862,
-      "false_release_rate": 0.06896551724137931,
-      "false_hold_rate": 0.034482758620689655,
-      "false_release_count": 2,
+      "n": 50,
+      "operational_state_accuracy": 0.18,
+      "release_recommendation_accuracy": 0.28,
+      "false_release_rate": 0.08,
+      "false_hold_rate": 0.02,
+      "false_release_count": 4,
       "false_hold_count": 1,
-      "correct_release_count": 2,
-      "correct_hold_count": 7,
+      "correct_release_count": 4,
+      "correct_hold_count": 8,
       "correct_incomplete_count": 2,
       "per_ktx_class": {
         "tether_condition_bad": {
-          "n": 2,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 0
         },
         "tether_condition_healthy": {
-          "n": 2,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 3,
+          "op_correct": 2,
+          "rel_correct": 2
         },
         "am_genesis_anomaly": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
-          "rel_correct": 1
+          "rel_correct": 2
         },
         "iron_web_geometry_mismatch": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 1
         },
         "propulsion_identity_mismatch": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 0
         },
         "correct_motor_wrong_firmware": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 0
         },
         "stale_after_event": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 0
         },
         "sensor_conflict": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 0
         },
         "out_of_calibration_bad_sensor": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 0
         },
         "wrong_aircraft": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 0
         },
         "wrong_component": {
-          "n": 1,
+          "n": 2,
           "op_correct": 0,
           "rel_correct": 0
         },
@@ -135,9 +154,9 @@
           "rel_correct": 2
         },
         "fully_consistent": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
         },
         "config_epoch_stale_witness": {
           "n": 2,
@@ -145,76 +164,76 @@
           "rel_correct": 0
         },
         "multi_conflict_config_and_document": {
-          "n": 1,
+          "n": 2,
           "op_correct": 0,
           "rel_correct": 1
         }
       }
     },
     "M1": {
-      "n": 29,
-      "operational_state_accuracy": 0.6896551724137931,
-      "release_recommendation_accuracy": 0.7931034482758621,
-      "false_release_rate": 0.1724137931034483,
+      "n": 50,
+      "operational_state_accuracy": 0.66,
+      "release_recommendation_accuracy": 0.78,
+      "false_release_rate": 0.2,
       "false_hold_rate": 0.0,
-      "false_release_count": 5,
+      "false_release_count": 10,
       "false_hold_count": 0,
-      "correct_release_count": 3,
-      "correct_hold_count": 19,
+      "correct_release_count": 5,
+      "correct_hold_count": 33,
       "correct_incomplete_count": 1,
       "per_ktx_class": {
         "tether_condition_bad": {
-          "n": 2,
-          "op_correct": 2,
-          "rel_correct": 2
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
         },
         "tether_condition_healthy": {
-          "n": 2,
-          "op_correct": 2,
-          "rel_correct": 2
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
         },
         "am_genesis_anomaly": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 3,
+          "op_correct": 2,
+          "rel_correct": 3
         },
         "iron_web_geometry_mismatch": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
         },
         "propulsion_identity_mismatch": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
         },
         "correct_motor_wrong_firmware": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
         },
         "stale_after_event": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 0
         },
         "sensor_conflict": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
         },
         "out_of_calibration_bad_sensor": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
-          "rel_correct": 1
+          "rel_correct": 3
         },
         "wrong_aircraft": {
-          "n": 1,
+          "n": 3,
           "op_correct": 0,
           "rel_correct": 0
         },
         "wrong_component": {
-          "n": 1,
+          "n": 2,
           "op_correct": 0,
           "rel_correct": 0
         },
@@ -249,9 +268,9 @@
           "rel_correct": 1
         },
         "fully_consistent": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
         },
         "config_epoch_stale_witness": {
           "n": 2,
@@ -259,78 +278,78 @@
           "rel_correct": 2
         },
         "multi_conflict_config_and_document": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
         }
       }
     },
     "M2": {
-      "n": 29,
+      "n": 50,
       "operational_state_accuracy": 1.0,
       "release_recommendation_accuracy": 1.0,
       "false_release_rate": 0.0,
       "false_hold_rate": 0.0,
       "false_release_count": 0,
       "false_hold_count": 0,
-      "correct_release_count": 3,
-      "correct_hold_count": 24,
+      "correct_release_count": 5,
+      "correct_hold_count": 43,
       "correct_incomplete_count": 2,
       "per_ktx_class": {
         "tether_condition_bad": {
-          "n": 2,
-          "op_correct": 2,
-          "rel_correct": 2
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
         },
         "tether_condition_healthy": {
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
+        },
+        "am_genesis_anomaly": {
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
+        },
+        "iron_web_geometry_mismatch": {
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
+        },
+        "propulsion_identity_mismatch": {
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
+        },
+        "correct_motor_wrong_firmware": {
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
+        },
+        "stale_after_event": {
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
+        },
+        "sensor_conflict": {
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
+        },
+        "out_of_calibration_bad_sensor": {
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
+        },
+        "wrong_aircraft": {
+          "n": 3,
+          "op_correct": 3,
+          "rel_correct": 3
+        },
+        "wrong_component": {
           "n": 2,
           "op_correct": 2,
           "rel_correct": 2
-        },
-        "am_genesis_anomaly": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
-        },
-        "iron_web_geometry_mismatch": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
-        },
-        "propulsion_identity_mismatch": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
-        },
-        "correct_motor_wrong_firmware": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
-        },
-        "stale_after_event": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
-        },
-        "sensor_conflict": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
-        },
-        "out_of_calibration_bad_sensor": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
-        },
-        "wrong_aircraft": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
-        },
-        "wrong_component": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
         },
         "replay_attack": {
           "n": 2,
@@ -363,9 +382,9 @@
           "rel_correct": 2
         },
         "fully_consistent": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
         },
         "config_epoch_stale_witness": {
           "n": 2,
@@ -373,15 +392,15 @@
           "rel_correct": 2
         },
         "multi_conflict_config_and_document": {
-          "n": 1,
-          "op_correct": 1,
-          "rel_correct": 1
+          "n": 2,
+          "op_correct": 2,
+          "rel_correct": 2
         }
       }
     }
   },
   "m2_candidate_vs_authorized_delta": {
-    "n_common_cases": 29,
+    "n_common_cases": 50,
     "candidate_false_release_count": 2,
     "authorized_false_release_count": 0,
     "false_releases_prevented_by_gate": [
@@ -393,11 +412,11 @@
     "gate_introduced_false_holds": []
   },
   "m0_to_m1_delta": {
-    "release_accuracy_change": 0.4137931034482759,
-    "false_release_rate_change": 0.10344827586206898
+    "release_accuracy_change": 0.5,
+    "false_release_rate_change": 0.12000000000000001
   },
   "m1_to_m2_authorized_delta": {
-    "release_accuracy_change": 0.2068965517241379,
-    "false_release_rate_change": -0.1724137931034483
+    "release_accuracy_change": 0.21999999999999997,
+    "false_release_rate_change": -0.2
   }
 }

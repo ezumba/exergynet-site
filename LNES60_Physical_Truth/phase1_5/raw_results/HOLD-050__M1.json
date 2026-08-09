@@ -1,0 +1,14 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-050",
+  "aircraft_id": "KTX-9050",
+  "operational_state": "VERIFIED_MATCH",
+  "release_recommendation": "RELEASE_ELIGIBLE",
+  "reason_codes": [
+    "No documentary records exist to conflict with the physical evidence. The single physical witness for tether.elongation reports a GOOD reading with current calibration (not expiring until 2027-01-01), nominal sensor health, a valid hardware signature, low measurement uncertainty (0.057), and a matching configuration epoch (EPOCH_0). There is no staleness, scope mismatch, or conflicting reading to raise concern, so the evidence supports release eligibility."
+  ],
+  "evidence_refs": [
+    "HOLD-050-W1"
+  ]
+}
