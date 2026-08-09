@@ -1,0 +1,2635 @@
+{
+  "cases": [
+    {
+      "case_id": "HOLD-001",
+      "ktx_class": "tether_condition_bad",
+      "aircraft_id": "KTX-9001",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-02T09:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-001-D1",
+          "aircraft_id": "KTX-9001",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-02T09:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-001-W1",
+          "aircraft_id": "KTX-9001",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-001-W1",
+            "sensor_id": "SENS-HOLD-001-W1",
+            "aircraft_id": "KTX-9001",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-02T09:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-001-W1",
+            "measurement_uncertainty": 0.058,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "trusted BAD witness vs SERVICEABLE doc"
+    },
+    {
+      "case_id": "HOLD-002",
+      "ktx_class": "tether_condition_healthy",
+      "aircraft_id": "KTX-9002",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-03T10:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-002-D1",
+          "aircraft_id": "KTX-9002",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-03T10:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-002-W1",
+          "aircraft_id": "KTX-9002",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-002-W1",
+            "sensor_id": "SENS-HOLD-002-W1",
+            "aircraft_id": "KTX-9002",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-03T10:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-002-W1",
+            "measurement_uncertainty": 0.023,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "VERIFIED_MATCH",
+      "expected_release": "",
+      "hand_trace": "trusted GOOD witness matches SERVICEABLE doc"
+    },
+    {
+      "case_id": "HOLD-003",
+      "ktx_class": "am_genesis_anomaly",
+      "aircraft_id": "KTX-9003",
+      "component_id": "HUB-1",
+      "predicate": "hub.provenance",
+      "claim_scope": "hub.manufacturing_process",
+      "as_of": "2026-08-04T11:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-003-D1",
+          "aircraft_id": "KTX-9003",
+          "component_id": "HUB-1",
+          "record_type": "part_provenance",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-04T11:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-003-W1",
+          "aircraft_id": "KTX-9003",
+          "component_id": "HUB-1",
+          "measurement_type": "process_temp_c",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-003-W1",
+            "sensor_id": "SENS-HOLD-003-W1",
+            "aircraft_id": "KTX-9003",
+            "component_id": "HUB-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-04T11:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-003-W1",
+            "measurement_uncertainty": 0.066,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "hub.manufacturing_process",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "manufacturing telemetry excursion vs valid install doc"
+    },
+    {
+      "case_id": "HOLD-004",
+      "ktx_class": "iron_web_geometry_mismatch",
+      "aircraft_id": "KTX-9004",
+      "component_id": "PAWL-1",
+      "predicate": "pawl.geometry",
+      "claim_scope": "pawl.geometry",
+      "as_of": "2026-08-05T12:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-004-D1",
+          "aircraft_id": "KTX-9004",
+          "component_id": "PAWL-1",
+          "record_type": "maintenance_history",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-05T12:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-004-W1",
+          "aircraft_id": "KTX-9004",
+          "component_id": "PAWL-1",
+          "measurement_type": "geometry_mm",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-004-W1",
+            "sensor_id": "SENS-HOLD-004-W1",
+            "aircraft_id": "KTX-9004",
+            "component_id": "PAWL-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-05T12:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-004-W1",
+            "measurement_uncertainty": 0.069,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "pawl.geometry",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "pawl geometry outside synthetic tolerance vs serviced doc"
+    },
+    {
+      "case_id": "HOLD-005",
+      "ktx_class": "propulsion_identity_mismatch",
+      "aircraft_id": "KTX-9005",
+      "component_id": "MOTOR-1",
+      "predicate": "motor.identity",
+      "claim_scope": "motor.identity",
+      "as_of": "2026-08-06T13:00:00",
+      "documentary": [],
+      "command": [
+        {
+          "record_id": "HOLD-005-C1",
+          "aircraft_id": "KTX-9005",
+          "mission_id": "M-5",
+          "field": "motor_id",
+          "value": "MOTOR_A",
+          "configuration_epoch": "EPOCH_0",
+          "event_time": "2026-08-06T13:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-005-W1",
+          "aircraft_id": "KTX-9005",
+          "component_id": "MOTOR-1",
+          "measurement_type": "hardware_id",
+          "value": "MOTOR_B",
+          "trust": {
+            "witness_id": "HOLD-005-W1",
+            "sensor_id": "SENS-HOLD-005-W1",
+            "aircraft_id": "KTX-9005",
+            "component_id": "MOTOR-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-06T13:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-005-W1",
+            "measurement_uncertainty": 0.022,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "motor.identity",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": "motor_id",
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "CONFIGURATION_MISMATCH",
+      "expected_release": "",
+      "hand_trace": "witness reports MOTOR_B, command expects MOTOR_A"
+    },
+    {
+      "case_id": "HOLD-006",
+      "ktx_class": "correct_motor_wrong_firmware",
+      "aircraft_id": "KTX-9006",
+      "component_id": "MOTOR-1",
+      "predicate": "motor.firmware",
+      "claim_scope": "motor.firmware",
+      "as_of": "2026-08-07T14:00:00",
+      "documentary": [],
+      "command": [
+        {
+          "record_id": "HOLD-006-C1",
+          "aircraft_id": "KTX-9006",
+          "mission_id": "M-6",
+          "field": "firmware_version",
+          "value": "FW_2.1",
+          "configuration_epoch": "EPOCH_0",
+          "event_time": "2026-08-07T14:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-006-W1",
+          "aircraft_id": "KTX-9006",
+          "component_id": "MOTOR-1",
+          "measurement_type": "firmware_version",
+          "value": "FW_1.9",
+          "trust": {
+            "witness_id": "HOLD-006-W1",
+            "sensor_id": "SENS-HOLD-006-W1",
+            "aircraft_id": "KTX-9006",
+            "component_id": "MOTOR-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-07T14:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-006-W1",
+            "measurement_uncertainty": 0.075,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "motor.firmware",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": "firmware_version",
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "CONFIGURATION_MISMATCH",
+      "expected_release": "",
+      "hand_trace": "firmware mismatch, hardware identity not in question"
+    },
+    {
+      "case_id": "HOLD-007",
+      "ktx_class": "stale_after_event",
+      "aircraft_id": "KTX-9007",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-08T08:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-007-W1",
+          "aircraft_id": "KTX-9007",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-007-W1",
+            "sensor_id": "SENS-HOLD-007-W1",
+            "aircraft_id": "KTX-9007",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-08T06:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-007-W1",
+            "measurement_uncertainty": 0.032,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [
+        {
+          "event_id": "HOLD-007-E1",
+          "aircraft_id": "KTX-9007",
+          "component_id": "TETHER-1",
+          "event_type": "hard_landing",
+          "event_time": "2026-08-08T07:00:00",
+          "new_configuration_epoch": null
+        }
+      ],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "STALE_WITNESS",
+      "expected_release": "",
+      "hand_trace": "GOOD reading predates a hard-landing event"
+    },
+    {
+      "case_id": "HOLD-008",
+      "ktx_class": "sensor_conflict",
+      "aircraft_id": "KTX-9008",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-09T16:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-008-W1",
+          "aircraft_id": "KTX-9008",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-008-W1",
+            "sensor_id": "SENS-HOLD-008-W1",
+            "aircraft_id": "KTX-9008",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-09T16:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-008-n1",
+            "measurement_uncertainty": 0.043,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        },
+        {
+          "reading_id": "HOLD-008-W2",
+          "aircraft_id": "KTX-9008",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-008-W2",
+            "sensor_id": "SENS-HOLD-008-W2",
+            "aircraft_id": "KTX-9008",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-09T16:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-008-n2",
+            "measurement_uncertainty": 0.065,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "SENSOR_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "two admissible witnesses disagree"
+    },
+    {
+      "case_id": "HOLD-009",
+      "ktx_class": "out_of_calibration_bad_sensor",
+      "aircraft_id": "KTX-9009",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-10T17:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-009-W1",
+          "aircraft_id": "KTX-9009",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-009-W1",
+            "sensor_id": "SENS-HOLD-009-W1",
+            "aircraft_id": "KTX-9009",
+            "component_id": "TETHER-1",
+            "calibration_current": false,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-10T17:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-009-W1",
+            "measurement_uncertainty": 0.016,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "UNVERIFIED",
+      "expected_release": "",
+      "hand_trace": "BAD reading from an out-of-calibration sensor is not auto-trusted"
+    },
+    {
+      "case_id": "HOLD-010",
+      "ktx_class": "wrong_aircraft",
+      "aircraft_id": "KTX-9010",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-11T08:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-010-W1",
+          "aircraft_id": "KTX-999",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-010-W1",
+            "sensor_id": "SENS-HOLD-010-W1",
+            "aircraft_id": "KTX-999",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-11T08:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-010-W1",
+            "measurement_uncertainty": 0.071,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "WITNESS_SCOPE_ERROR",
+      "expected_release": "",
+      "hand_trace": "signed witness bound to a different aircraft"
+    },
+    {
+      "case_id": "HOLD-011",
+      "ktx_class": "wrong_component",
+      "aircraft_id": "KTX-9011",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-12T09:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-011-W1",
+          "aircraft_id": "KTX-9011",
+          "component_id": "TETHER-2",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-011-W1",
+            "sensor_id": "SENS-HOLD-011-W1",
+            "aircraft_id": "KTX-9011",
+            "component_id": "TETHER-2",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-12T09:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-011-W1",
+            "measurement_uncertainty": 0.032,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "WITNESS_SCOPE_ERROR",
+      "expected_release": "",
+      "hand_trace": "signed witness bound to a different component serial"
+    },
+    {
+      "case_id": "HOLD-012",
+      "ktx_class": "replay_attack",
+      "aircraft_id": "KTX-9012",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-13T10:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-012-W1",
+          "aircraft_id": "KTX-9012",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-012-W1",
+            "sensor_id": "SENS-HOLD-012-W1",
+            "aircraft_id": "KTX-9012",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-13T10:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-012-replay-token",
+            "measurement_uncertainty": 0.01,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": "HOLD-012-W0-earlier"
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "STALE_WITNESS",
+      "expected_release": "",
+      "hand_trace": "witness flagged as a replay of an earlier reading"
+    },
+    {
+      "case_id": "HOLD-013",
+      "ktx_class": "detached_sensor",
+      "aircraft_id": "KTX-9013",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-14T11:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-013-W1",
+          "aircraft_id": "KTX-9013",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-013-W1",
+            "sensor_id": "SENS-HOLD-013-W1",
+            "aircraft_id": "KTX-9013",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-14T11:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-013-W1",
+            "measurement_uncertainty": 0.051,
+            "sensor_health": "FAILED",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "UNVERIFIED",
+      "expected_release": "",
+      "hand_trace": "detachment modeled as FAILED sensor health (independently-detectable sub-case)"
+    },
+    {
+      "case_id": "HOLD-014",
+      "ktx_class": "known_damage_limited_scope_good",
+      "aircraft_id": "KTX-9014",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-15T12:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-014-D1",
+          "aircraft_id": "KTX-9014",
+          "component_id": "TETHER-1",
+          "record_type": "inspection",
+          "claim": "DEFECT_CONFIRMED",
+          "event_time": "2026-08-15T12:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-014-W1",
+          "aircraft_id": "KTX-9014",
+          "component_id": "TETHER-1",
+          "measurement_type": "temp_c",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-014-W1",
+            "sensor_id": "SENS-HOLD-014-W1",
+            "aircraft_id": "KTX-9014",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-15T12:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-014-W1",
+            "measurement_uncertainty": 0.024,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.temperature",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "WITNESS_SCOPE_ERROR",
+      "expected_release": "",
+      "hand_trace": "narrow-scope GOOD reading cannot cover the elongation claim tied to known damage"
+    },
+    {
+      "case_id": "HOLD-015",
+      "ktx_class": "mission_envelope_violation",
+      "aircraft_id": "KTX-9015",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-16T13:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-015-D1",
+          "aircraft_id": "KTX-9015",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-16T13:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-015-W1",
+          "aircraft_id": "KTX-9015",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-015-W1",
+            "sensor_id": "SENS-HOLD-015-W1",
+            "aircraft_id": "KTX-9015",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-16T13:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-015-W1",
+            "measurement_uncertainty": 0.05,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": false,
+      "mission_envelope_reason": "payload exceeds synthetic authorized configuration for this mission profile",
+      "expected_operational_state": "VERIFIED_MATCH",
+      "expected_release": "",
+      "hand_trace": "hardware healthy; HOLD comes from the release-policy mission check, not the convergence state itself"
+    },
+    {
+      "case_id": "HOLD-016",
+      "ktx_class": "record_bad_witnesses_good",
+      "aircraft_id": "KTX-9016",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-17T14:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-016-D1",
+          "aircraft_id": "KTX-9016",
+          "component_id": "TETHER-1",
+          "record_type": "inspection",
+          "claim": "DEFECT_CONFIRMED",
+          "event_time": "2026-08-17T14:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-016-W1",
+          "aircraft_id": "KTX-9016",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-016-W1",
+            "sensor_id": "SENS-HOLD-016-W1",
+            "aircraft_id": "KTX-9016",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-17T14:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-016-W1",
+            "measurement_uncertainty": 0.033,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "documentary BAD preserved, not erased, despite fresh GOOD witness"
+    },
+    {
+      "case_id": "HOLD-017",
+      "ktx_class": "record_good_trust_unknown",
+      "aircraft_id": "KTX-9017",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-18T15:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-017-D1",
+          "aircraft_id": "KTX-9017",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-18T15:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "INCOMPLETE",
+      "expected_release": "",
+      "hand_trace": "no physical witness at all -- documentary claim alone never converges to a positive physical conclusion"
+    },
+    {
+      "case_id": "HOLD-018",
+      "ktx_class": "fully_consistent",
+      "aircraft_id": "KTX-9018",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-19T16:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-018-D1",
+          "aircraft_id": "KTX-9018",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-19T16:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [
+        {
+          "record_id": "HOLD-018-C1",
+          "aircraft_id": "KTX-9018",
+          "mission_id": "M-18",
+          "field": "firmware_version",
+          "value": "FW_2.1",
+          "configuration_epoch": "EPOCH_0",
+          "event_time": "2026-08-19T16:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-018-W1",
+          "aircraft_id": "KTX-9018",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-018-W1",
+            "sensor_id": "SENS-HOLD-018-W1",
+            "aircraft_id": "KTX-9018",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-19T16:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-018-n1",
+            "measurement_uncertainty": 0.015,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "VERIFIED_MATCH",
+      "expected_release": "",
+      "hand_trace": "everything agrees -- ordinary healthy control"
+    },
+    {
+      "case_id": "HOLD-019",
+      "ktx_class": "config_epoch_stale_witness",
+      "aircraft_id": "KTX-9019",
+      "component_id": "MOTOR-1",
+      "predicate": "motor.identity",
+      "claim_scope": "motor.identity",
+      "as_of": "2026-08-20T07:00:00",
+      "documentary": [],
+      "command": [
+        {
+          "record_id": "HOLD-019-C1",
+          "aircraft_id": "KTX-9019",
+          "mission_id": "M-19",
+          "field": "motor_id",
+          "value": "MOTOR_A",
+          "configuration_epoch": "EPOCH_1",
+          "event_time": "2026-08-20T07:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-019-W1",
+          "aircraft_id": "KTX-9019",
+          "component_id": "MOTOR-1",
+          "measurement_type": "hardware_id",
+          "value": "MOTOR_A",
+          "trust": {
+            "witness_id": "HOLD-019-W1",
+            "sensor_id": "SENS-HOLD-019-W1",
+            "aircraft_id": "KTX-9019",
+            "component_id": "MOTOR-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-20T05:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-019-W1",
+            "measurement_uncertainty": 0.074,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "motor.identity",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [
+        {
+          "event_id": "HOLD-019-E1",
+          "aircraft_id": "KTX-9019",
+          "component_id": "MOTOR-1",
+          "event_type": "powertrain_replacement",
+          "event_time": "2026-08-20T06:00:00",
+          "new_configuration_epoch": "EPOCH_1"
+        }
+      ],
+      "command_field": "motor_id",
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "STALE_WITNESS",
+      "expected_release": "",
+      "hand_trace": "witness value matches old expectation but was taken under EPOCH_0, before the powertrain-replacement event; per KTX test matrix class 14's established treatment this is event-based staleness (STALE_WITNESS), not CONFIGURATION_MISMATCH -- old-epoch reading does not prove current-epoch state regardless of its value"
+    },
+    {
+      "case_id": "HOLD-020",
+      "ktx_class": "multi_conflict_config_and_document",
+      "aircraft_id": "KTX-9020",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-21T08:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-020-D1",
+          "aircraft_id": "KTX-9020",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-21T08:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-020-W1",
+          "aircraft_id": "KTX-9020",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-020-W1",
+            "sensor_id": "SENS-HOLD-020-W1",
+            "aircraft_id": "KTX-9020",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-21T08:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-020-W1",
+            "measurement_uncertainty": 0.016,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "tether predicate alone: BAD witness vs SERVICEABLE doc (release-policy aggregation across predicates is exercised at the release_policy layer, not this single-predicate convergence check)"
+    },
+    {
+      "case_id": "HOLD-021",
+      "ktx_class": "tether_condition_bad",
+      "aircraft_id": "KTX-9021",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-22T09:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-021-D1",
+          "aircraft_id": "KTX-9021",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-22T09:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-021-W1",
+          "aircraft_id": "KTX-9021",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-021-W1",
+            "sensor_id": "SENS-HOLD-021-W1",
+            "aircraft_id": "KTX-9021",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-22T09:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-021-W1",
+            "measurement_uncertainty": 0.058,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "trusted BAD witness vs SERVICEABLE doc"
+    },
+    {
+      "case_id": "HOLD-022",
+      "ktx_class": "tether_condition_healthy",
+      "aircraft_id": "KTX-9022",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-23T10:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-022-D1",
+          "aircraft_id": "KTX-9022",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-23T10:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-022-W1",
+          "aircraft_id": "KTX-9022",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-022-W1",
+            "sensor_id": "SENS-HOLD-022-W1",
+            "aircraft_id": "KTX-9022",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-23T10:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-022-W1",
+            "measurement_uncertainty": 0.021,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "VERIFIED_MATCH",
+      "expected_release": "",
+      "hand_trace": "trusted GOOD witness matches SERVICEABLE doc"
+    },
+    {
+      "case_id": "HOLD-023",
+      "ktx_class": "am_genesis_anomaly",
+      "aircraft_id": "KTX-9023",
+      "component_id": "HUB-1",
+      "predicate": "hub.provenance",
+      "claim_scope": "hub.manufacturing_process",
+      "as_of": "2026-08-24T11:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-023-D1",
+          "aircraft_id": "KTX-9023",
+          "component_id": "HUB-1",
+          "record_type": "part_provenance",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-24T11:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-023-W1",
+          "aircraft_id": "KTX-9023",
+          "component_id": "HUB-1",
+          "measurement_type": "process_temp_c",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-023-W1",
+            "sensor_id": "SENS-HOLD-023-W1",
+            "aircraft_id": "KTX-9023",
+            "component_id": "HUB-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-24T11:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-023-W1",
+            "measurement_uncertainty": 0.036,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "hub.manufacturing_process",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "manufacturing telemetry excursion vs valid install doc"
+    },
+    {
+      "case_id": "HOLD-024",
+      "ktx_class": "iron_web_geometry_mismatch",
+      "aircraft_id": "KTX-9024",
+      "component_id": "PAWL-1",
+      "predicate": "pawl.geometry",
+      "claim_scope": "pawl.geometry",
+      "as_of": "2026-08-25T12:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-024-D1",
+          "aircraft_id": "KTX-9024",
+          "component_id": "PAWL-1",
+          "record_type": "maintenance_history",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-25T12:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-024-W1",
+          "aircraft_id": "KTX-9024",
+          "component_id": "PAWL-1",
+          "measurement_type": "geometry_mm",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-024-W1",
+            "sensor_id": "SENS-HOLD-024-W1",
+            "aircraft_id": "KTX-9024",
+            "component_id": "PAWL-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-25T12:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-024-W1",
+            "measurement_uncertainty": 0.049,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "pawl.geometry",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "pawl geometry outside synthetic tolerance vs serviced doc"
+    },
+    {
+      "case_id": "HOLD-025",
+      "ktx_class": "propulsion_identity_mismatch",
+      "aircraft_id": "KTX-9025",
+      "component_id": "MOTOR-1",
+      "predicate": "motor.identity",
+      "claim_scope": "motor.identity",
+      "as_of": "2026-08-26T13:00:00",
+      "documentary": [],
+      "command": [
+        {
+          "record_id": "HOLD-025-C1",
+          "aircraft_id": "KTX-9025",
+          "mission_id": "M-25",
+          "field": "motor_id",
+          "value": "MOTOR_A",
+          "configuration_epoch": "EPOCH_0",
+          "event_time": "2026-08-26T13:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-025-W1",
+          "aircraft_id": "KTX-9025",
+          "component_id": "MOTOR-1",
+          "measurement_type": "hardware_id",
+          "value": "MOTOR_B",
+          "trust": {
+            "witness_id": "HOLD-025-W1",
+            "sensor_id": "SENS-HOLD-025-W1",
+            "aircraft_id": "KTX-9025",
+            "component_id": "MOTOR-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-26T13:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-025-W1",
+            "measurement_uncertainty": 0.073,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "motor.identity",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": "motor_id",
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "CONFIGURATION_MISMATCH",
+      "expected_release": "",
+      "hand_trace": "witness reports MOTOR_B, command expects MOTOR_A"
+    },
+    {
+      "case_id": "HOLD-026",
+      "ktx_class": "correct_motor_wrong_firmware",
+      "aircraft_id": "KTX-9026",
+      "component_id": "MOTOR-1",
+      "predicate": "motor.firmware",
+      "claim_scope": "motor.firmware",
+      "as_of": "2026-08-27T14:00:00",
+      "documentary": [],
+      "command": [
+        {
+          "record_id": "HOLD-026-C1",
+          "aircraft_id": "KTX-9026",
+          "mission_id": "M-26",
+          "field": "firmware_version",
+          "value": "FW_2.1",
+          "configuration_epoch": "EPOCH_0",
+          "event_time": "2026-08-27T14:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-026-W1",
+          "aircraft_id": "KTX-9026",
+          "component_id": "MOTOR-1",
+          "measurement_type": "firmware_version",
+          "value": "FW_1.9",
+          "trust": {
+            "witness_id": "HOLD-026-W1",
+            "sensor_id": "SENS-HOLD-026-W1",
+            "aircraft_id": "KTX-9026",
+            "component_id": "MOTOR-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-27T14:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-026-W1",
+            "measurement_uncertainty": 0.015,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "motor.firmware",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": "firmware_version",
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "CONFIGURATION_MISMATCH",
+      "expected_release": "",
+      "hand_trace": "firmware mismatch, hardware identity not in question"
+    },
+    {
+      "case_id": "HOLD-027",
+      "ktx_class": "stale_after_event",
+      "aircraft_id": "KTX-9027",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-28T08:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-027-W1",
+          "aircraft_id": "KTX-9027",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-027-W1",
+            "sensor_id": "SENS-HOLD-027-W1",
+            "aircraft_id": "KTX-9027",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-28T06:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-027-W1",
+            "measurement_uncertainty": 0.016,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [
+        {
+          "event_id": "HOLD-027-E1",
+          "aircraft_id": "KTX-9027",
+          "component_id": "TETHER-1",
+          "event_type": "hard_landing",
+          "event_time": "2026-08-28T07:00:00",
+          "new_configuration_epoch": null
+        }
+      ],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "STALE_WITNESS",
+      "expected_release": "",
+      "hand_trace": "GOOD reading predates a hard-landing event"
+    },
+    {
+      "case_id": "HOLD-028",
+      "ktx_class": "sensor_conflict",
+      "aircraft_id": "KTX-9028",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-01T16:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-028-W1",
+          "aircraft_id": "KTX-9028",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-028-W1",
+            "sensor_id": "SENS-HOLD-028-W1",
+            "aircraft_id": "KTX-9028",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-01T16:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-028-n1",
+            "measurement_uncertainty": 0.025,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        },
+        {
+          "reading_id": "HOLD-028-W2",
+          "aircraft_id": "KTX-9028",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-028-W2",
+            "sensor_id": "SENS-HOLD-028-W2",
+            "aircraft_id": "KTX-9028",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-01T16:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-028-n2",
+            "measurement_uncertainty": 0.076,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "SENSOR_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "two admissible witnesses disagree"
+    },
+    {
+      "case_id": "HOLD-029",
+      "ktx_class": "out_of_calibration_bad_sensor",
+      "aircraft_id": "KTX-9029",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-02T17:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-029-W1",
+          "aircraft_id": "KTX-9029",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-029-W1",
+            "sensor_id": "SENS-HOLD-029-W1",
+            "aircraft_id": "KTX-9029",
+            "component_id": "TETHER-1",
+            "calibration_current": false,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-02T17:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-029-W1",
+            "measurement_uncertainty": 0.06,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "UNVERIFIED",
+      "expected_release": "",
+      "hand_trace": "BAD reading from an out-of-calibration sensor is not auto-trusted"
+    },
+    {
+      "case_id": "HOLD-030",
+      "ktx_class": "wrong_aircraft",
+      "aircraft_id": "KTX-9030",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-03T08:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-030-W1",
+          "aircraft_id": "KTX-999",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-030-W1",
+            "sensor_id": "SENS-HOLD-030-W1",
+            "aircraft_id": "KTX-999",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-03T08:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-030-W1",
+            "measurement_uncertainty": 0.061,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "WITNESS_SCOPE_ERROR",
+      "expected_release": "",
+      "hand_trace": "signed witness bound to a different aircraft"
+    },
+    {
+      "case_id": "HOLD-031",
+      "ktx_class": "wrong_component",
+      "aircraft_id": "KTX-9031",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-04T09:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-031-W1",
+          "aircraft_id": "KTX-9031",
+          "component_id": "TETHER-2",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-031-W1",
+            "sensor_id": "SENS-HOLD-031-W1",
+            "aircraft_id": "KTX-9031",
+            "component_id": "TETHER-2",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-04T09:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-031-W1",
+            "measurement_uncertainty": 0.075,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "WITNESS_SCOPE_ERROR",
+      "expected_release": "",
+      "hand_trace": "signed witness bound to a different component serial"
+    },
+    {
+      "case_id": "HOLD-032",
+      "ktx_class": "replay_attack",
+      "aircraft_id": "KTX-9032",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-05T10:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-032-W1",
+          "aircraft_id": "KTX-9032",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-032-W1",
+            "sensor_id": "SENS-HOLD-032-W1",
+            "aircraft_id": "KTX-9032",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-05T10:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-032-replay-token",
+            "measurement_uncertainty": 0.074,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": "HOLD-032-W0-earlier"
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "STALE_WITNESS",
+      "expected_release": "",
+      "hand_trace": "witness flagged as a replay of an earlier reading"
+    },
+    {
+      "case_id": "HOLD-033",
+      "ktx_class": "detached_sensor",
+      "aircraft_id": "KTX-9033",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-06T11:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-033-W1",
+          "aircraft_id": "KTX-9033",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-033-W1",
+            "sensor_id": "SENS-HOLD-033-W1",
+            "aircraft_id": "KTX-9033",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-06T11:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-033-W1",
+            "measurement_uncertainty": 0.067,
+            "sensor_health": "FAILED",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "UNVERIFIED",
+      "expected_release": "",
+      "hand_trace": "detachment modeled as FAILED sensor health (independently-detectable sub-case)"
+    },
+    {
+      "case_id": "HOLD-034",
+      "ktx_class": "known_damage_limited_scope_good",
+      "aircraft_id": "KTX-9034",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-07T12:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-034-D1",
+          "aircraft_id": "KTX-9034",
+          "component_id": "TETHER-1",
+          "record_type": "inspection",
+          "claim": "DEFECT_CONFIRMED",
+          "event_time": "2026-08-07T12:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-034-W1",
+          "aircraft_id": "KTX-9034",
+          "component_id": "TETHER-1",
+          "measurement_type": "temp_c",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-034-W1",
+            "sensor_id": "SENS-HOLD-034-W1",
+            "aircraft_id": "KTX-9034",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-07T12:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-034-W1",
+            "measurement_uncertainty": 0.024,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.temperature",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "WITNESS_SCOPE_ERROR",
+      "expected_release": "",
+      "hand_trace": "narrow-scope GOOD reading cannot cover the elongation claim tied to known damage"
+    },
+    {
+      "case_id": "HOLD-035",
+      "ktx_class": "mission_envelope_violation",
+      "aircraft_id": "KTX-9035",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-08T13:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-035-D1",
+          "aircraft_id": "KTX-9035",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-08T13:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-035-W1",
+          "aircraft_id": "KTX-9035",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-035-W1",
+            "sensor_id": "SENS-HOLD-035-W1",
+            "aircraft_id": "KTX-9035",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-08T13:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-035-W1",
+            "measurement_uncertainty": 0.034,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": false,
+      "mission_envelope_reason": "payload exceeds synthetic authorized configuration for this mission profile",
+      "expected_operational_state": "VERIFIED_MATCH",
+      "expected_release": "",
+      "hand_trace": "hardware healthy; HOLD comes from the release-policy mission check, not the convergence state itself"
+    },
+    {
+      "case_id": "HOLD-036",
+      "ktx_class": "record_bad_witnesses_good",
+      "aircraft_id": "KTX-9036",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-09T14:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-036-D1",
+          "aircraft_id": "KTX-9036",
+          "component_id": "TETHER-1",
+          "record_type": "inspection",
+          "claim": "DEFECT_CONFIRMED",
+          "event_time": "2026-08-09T14:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-036-W1",
+          "aircraft_id": "KTX-9036",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-036-W1",
+            "sensor_id": "SENS-HOLD-036-W1",
+            "aircraft_id": "KTX-9036",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-09T14:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-036-W1",
+            "measurement_uncertainty": 0.028,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "documentary BAD preserved, not erased, despite fresh GOOD witness"
+    },
+    {
+      "case_id": "HOLD-037",
+      "ktx_class": "record_good_trust_unknown",
+      "aircraft_id": "KTX-9037",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-10T15:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-037-D1",
+          "aircraft_id": "KTX-9037",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-10T15:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "INCOMPLETE",
+      "expected_release": "",
+      "hand_trace": "no physical witness at all -- documentary claim alone never converges to a positive physical conclusion"
+    },
+    {
+      "case_id": "HOLD-038",
+      "ktx_class": "fully_consistent",
+      "aircraft_id": "KTX-9038",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-11T16:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-038-D1",
+          "aircraft_id": "KTX-9038",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-11T16:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [
+        {
+          "record_id": "HOLD-038-C1",
+          "aircraft_id": "KTX-9038",
+          "mission_id": "M-38",
+          "field": "firmware_version",
+          "value": "FW_2.1",
+          "configuration_epoch": "EPOCH_0",
+          "event_time": "2026-08-11T16:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-038-W1",
+          "aircraft_id": "KTX-9038",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-038-W1",
+            "sensor_id": "SENS-HOLD-038-W1",
+            "aircraft_id": "KTX-9038",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-11T16:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-038-n1",
+            "measurement_uncertainty": 0.078,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "VERIFIED_MATCH",
+      "expected_release": "",
+      "hand_trace": "everything agrees -- ordinary healthy control"
+    },
+    {
+      "case_id": "HOLD-039",
+      "ktx_class": "config_epoch_stale_witness",
+      "aircraft_id": "KTX-9039",
+      "component_id": "MOTOR-1",
+      "predicate": "motor.identity",
+      "claim_scope": "motor.identity",
+      "as_of": "2026-08-12T07:00:00",
+      "documentary": [],
+      "command": [
+        {
+          "record_id": "HOLD-039-C1",
+          "aircraft_id": "KTX-9039",
+          "mission_id": "M-39",
+          "field": "motor_id",
+          "value": "MOTOR_A",
+          "configuration_epoch": "EPOCH_1",
+          "event_time": "2026-08-12T07:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-039-W1",
+          "aircraft_id": "KTX-9039",
+          "component_id": "MOTOR-1",
+          "measurement_type": "hardware_id",
+          "value": "MOTOR_A",
+          "trust": {
+            "witness_id": "HOLD-039-W1",
+            "sensor_id": "SENS-HOLD-039-W1",
+            "aircraft_id": "KTX-9039",
+            "component_id": "MOTOR-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-12T05:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-039-W1",
+            "measurement_uncertainty": 0.039,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "motor.identity",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [
+        {
+          "event_id": "HOLD-039-E1",
+          "aircraft_id": "KTX-9039",
+          "component_id": "MOTOR-1",
+          "event_type": "powertrain_replacement",
+          "event_time": "2026-08-12T06:00:00",
+          "new_configuration_epoch": "EPOCH_1"
+        }
+      ],
+      "command_field": "motor_id",
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "STALE_WITNESS",
+      "expected_release": "",
+      "hand_trace": "witness value matches old expectation but was taken under EPOCH_0, before the powertrain-replacement event; per KTX test matrix class 14's established treatment this is event-based staleness (STALE_WITNESS), not CONFIGURATION_MISMATCH -- old-epoch reading does not prove current-epoch state regardless of its value"
+    },
+    {
+      "case_id": "HOLD-040",
+      "ktx_class": "multi_conflict_config_and_document",
+      "aircraft_id": "KTX-9040",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-13T08:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-040-D1",
+          "aircraft_id": "KTX-9040",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-13T08:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-040-W1",
+          "aircraft_id": "KTX-9040",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-040-W1",
+            "sensor_id": "SENS-HOLD-040-W1",
+            "aircraft_id": "KTX-9040",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-13T08:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-040-W1",
+            "measurement_uncertainty": 0.027,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "tether predicate alone: BAD witness vs SERVICEABLE doc (release-policy aggregation across predicates is exercised at the release_policy layer, not this single-predicate convergence check)"
+    },
+    {
+      "case_id": "HOLD-041",
+      "ktx_class": "tether_condition_bad",
+      "aircraft_id": "KTX-9041",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-14T09:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-041-D1",
+          "aircraft_id": "KTX-9041",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-14T09:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-041-W1",
+          "aircraft_id": "KTX-9041",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-041-W1",
+            "sensor_id": "SENS-HOLD-041-W1",
+            "aircraft_id": "KTX-9041",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-14T09:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-041-W1",
+            "measurement_uncertainty": 0.051,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "trusted BAD witness vs SERVICEABLE doc"
+    },
+    {
+      "case_id": "HOLD-042",
+      "ktx_class": "tether_condition_healthy",
+      "aircraft_id": "KTX-9042",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-15T10:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-042-D1",
+          "aircraft_id": "KTX-9042",
+          "component_id": "TETHER-1",
+          "record_type": "service_life",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-15T10:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-042-W1",
+          "aircraft_id": "KTX-9042",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-042-W1",
+            "sensor_id": "SENS-HOLD-042-W1",
+            "aircraft_id": "KTX-9042",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-15T10:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-042-W1",
+            "measurement_uncertainty": 0.054,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "VERIFIED_MATCH",
+      "expected_release": "",
+      "hand_trace": "trusted GOOD witness matches SERVICEABLE doc"
+    },
+    {
+      "case_id": "HOLD-043",
+      "ktx_class": "am_genesis_anomaly",
+      "aircraft_id": "KTX-9043",
+      "component_id": "HUB-1",
+      "predicate": "hub.provenance",
+      "claim_scope": "hub.manufacturing_process",
+      "as_of": "2026-08-16T11:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-043-D1",
+          "aircraft_id": "KTX-9043",
+          "component_id": "HUB-1",
+          "record_type": "part_provenance",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-16T11:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-043-W1",
+          "aircraft_id": "KTX-9043",
+          "component_id": "HUB-1",
+          "measurement_type": "process_temp_c",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-043-W1",
+            "sensor_id": "SENS-HOLD-043-W1",
+            "aircraft_id": "KTX-9043",
+            "component_id": "HUB-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-16T11:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-043-W1",
+            "measurement_uncertainty": 0.04,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "hub.manufacturing_process",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "manufacturing telemetry excursion vs valid install doc"
+    },
+    {
+      "case_id": "HOLD-044",
+      "ktx_class": "iron_web_geometry_mismatch",
+      "aircraft_id": "KTX-9044",
+      "component_id": "PAWL-1",
+      "predicate": "pawl.geometry",
+      "claim_scope": "pawl.geometry",
+      "as_of": "2026-08-17T12:00:00",
+      "documentary": [
+        {
+          "record_id": "HOLD-044-D1",
+          "aircraft_id": "KTX-9044",
+          "component_id": "PAWL-1",
+          "record_type": "maintenance_history",
+          "claim": "SERVICEABLE",
+          "event_time": "2026-08-17T12:00:00",
+          "supersedes": null,
+          "effective_until": null
+        }
+      ],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-044-W1",
+          "aircraft_id": "KTX-9044",
+          "component_id": "PAWL-1",
+          "measurement_type": "geometry_mm",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-044-W1",
+            "sensor_id": "SENS-HOLD-044-W1",
+            "aircraft_id": "KTX-9044",
+            "component_id": "PAWL-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-17T12:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-044-W1",
+            "measurement_uncertainty": 0.034,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "pawl.geometry",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "pawl geometry outside synthetic tolerance vs serviced doc"
+    },
+    {
+      "case_id": "HOLD-045",
+      "ktx_class": "propulsion_identity_mismatch",
+      "aircraft_id": "KTX-9045",
+      "component_id": "MOTOR-1",
+      "predicate": "motor.identity",
+      "claim_scope": "motor.identity",
+      "as_of": "2026-08-18T13:00:00",
+      "documentary": [],
+      "command": [
+        {
+          "record_id": "HOLD-045-C1",
+          "aircraft_id": "KTX-9045",
+          "mission_id": "M-45",
+          "field": "motor_id",
+          "value": "MOTOR_A",
+          "configuration_epoch": "EPOCH_0",
+          "event_time": "2026-08-18T13:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-045-W1",
+          "aircraft_id": "KTX-9045",
+          "component_id": "MOTOR-1",
+          "measurement_type": "hardware_id",
+          "value": "MOTOR_B",
+          "trust": {
+            "witness_id": "HOLD-045-W1",
+            "sensor_id": "SENS-HOLD-045-W1",
+            "aircraft_id": "KTX-9045",
+            "component_id": "MOTOR-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-18T13:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-045-W1",
+            "measurement_uncertainty": 0.029,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "motor.identity",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": "motor_id",
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "CONFIGURATION_MISMATCH",
+      "expected_release": "",
+      "hand_trace": "witness reports MOTOR_B, command expects MOTOR_A"
+    },
+    {
+      "case_id": "HOLD-046",
+      "ktx_class": "correct_motor_wrong_firmware",
+      "aircraft_id": "KTX-9046",
+      "component_id": "MOTOR-1",
+      "predicate": "motor.firmware",
+      "claim_scope": "motor.firmware",
+      "as_of": "2026-08-19T14:00:00",
+      "documentary": [],
+      "command": [
+        {
+          "record_id": "HOLD-046-C1",
+          "aircraft_id": "KTX-9046",
+          "mission_id": "M-46",
+          "field": "firmware_version",
+          "value": "FW_2.1",
+          "configuration_epoch": "EPOCH_0",
+          "event_time": "2026-08-19T14:00:00"
+        }
+      ],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-046-W1",
+          "aircraft_id": "KTX-9046",
+          "component_id": "MOTOR-1",
+          "measurement_type": "firmware_version",
+          "value": "FW_1.9",
+          "trust": {
+            "witness_id": "HOLD-046-W1",
+            "sensor_id": "SENS-HOLD-046-W1",
+            "aircraft_id": "KTX-9046",
+            "component_id": "MOTOR-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-19T14:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-046-W1",
+            "measurement_uncertainty": 0.019,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "motor.firmware",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": "firmware_version",
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "CONFIGURATION_MISMATCH",
+      "expected_release": "",
+      "hand_trace": "firmware mismatch, hardware identity not in question"
+    },
+    {
+      "case_id": "HOLD-047",
+      "ktx_class": "stale_after_event",
+      "aircraft_id": "KTX-9047",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-20T08:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-047-W1",
+          "aircraft_id": "KTX-9047",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-047-W1",
+            "sensor_id": "SENS-HOLD-047-W1",
+            "aircraft_id": "KTX-9047",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-20T06:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-047-W1",
+            "measurement_uncertainty": 0.069,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [
+        {
+          "event_id": "HOLD-047-E1",
+          "aircraft_id": "KTX-9047",
+          "component_id": "TETHER-1",
+          "event_type": "hard_landing",
+          "event_time": "2026-08-20T07:00:00",
+          "new_configuration_epoch": null
+        }
+      ],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "STALE_WITNESS",
+      "expected_release": "",
+      "hand_trace": "GOOD reading predates a hard-landing event"
+    },
+    {
+      "case_id": "HOLD-048",
+      "ktx_class": "sensor_conflict",
+      "aircraft_id": "KTX-9048",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-21T16:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-048-W1",
+          "aircraft_id": "KTX-9048",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-048-W1",
+            "sensor_id": "SENS-HOLD-048-W1",
+            "aircraft_id": "KTX-9048",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-21T16:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-048-n1",
+            "measurement_uncertainty": 0.053,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        },
+        {
+          "reading_id": "HOLD-048-W2",
+          "aircraft_id": "KTX-9048",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-048-W2",
+            "sensor_id": "SENS-HOLD-048-W2",
+            "aircraft_id": "KTX-9048",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-21T16:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "HOLD-048-n2",
+            "measurement_uncertainty": 0.043,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "SENSOR_CONFLICT",
+      "expected_release": "",
+      "hand_trace": "two admissible witnesses disagree"
+    },
+    {
+      "case_id": "HOLD-049",
+      "ktx_class": "out_of_calibration_bad_sensor",
+      "aircraft_id": "KTX-9049",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-22T17:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-049-W1",
+          "aircraft_id": "KTX-9049",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "BAD",
+          "trust": {
+            "witness_id": "HOLD-049-W1",
+            "sensor_id": "SENS-HOLD-049-W1",
+            "aircraft_id": "KTX-9049",
+            "component_id": "TETHER-1",
+            "calibration_current": false,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-22T17:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-049-W1",
+            "measurement_uncertainty": 0.023,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "UNVERIFIED",
+      "expected_release": "",
+      "hand_trace": "BAD reading from an out-of-calibration sensor is not auto-trusted"
+    },
+    {
+      "case_id": "HOLD-050",
+      "ktx_class": "wrong_aircraft",
+      "aircraft_id": "KTX-9050",
+      "component_id": "TETHER-1",
+      "predicate": "tether.condition",
+      "claim_scope": "tether.elongation",
+      "as_of": "2026-08-23T08:00:00",
+      "documentary": [],
+      "command": [],
+      "witnesses": [
+        {
+          "reading_id": "HOLD-050-W1",
+          "aircraft_id": "KTX-999",
+          "component_id": "TETHER-1",
+          "measurement_type": "elongation_pct",
+          "value": "GOOD",
+          "trust": {
+            "witness_id": "HOLD-050-W1",
+            "sensor_id": "SENS-HOLD-050-W1",
+            "aircraft_id": "KTX-999",
+            "component_id": "TETHER-1",
+            "calibration_current": true,
+            "calibration_expiry": "2027-01-01",
+            "measurement_time": "2026-08-23T08:00:00",
+            "hardware_signature_valid": true,
+            "anti_replay_token": "nonce-HOLD-050-W1",
+            "measurement_uncertainty": 0.057,
+            "sensor_health": "NOMINAL",
+            "measurement_scope": "tether.elongation",
+            "configuration_epoch": "EPOCH_0",
+            "envelope_type": "SIMULATED_WITNESS"
+          },
+          "replayed_from": null
+        }
+      ],
+      "events": [],
+      "command_field": null,
+      "mission_within_envelope": true,
+      "mission_envelope_reason": "",
+      "expected_operational_state": "WITNESS_SCOPE_ERROR",
+      "expected_release": "",
+      "hand_trace": "signed witness bound to a different aircraft"
+    }
+  ]
+}

@@ -1,0 +1,252 @@
+{
+  "HOLD-001": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "tether_condition_bad",
+    "hand_trace": "trusted BAD witness vs SERVICEABLE doc"
+  },
+  "HOLD-002": {
+    "expected_operational_state": "VERIFIED_MATCH",
+    "ktx_class": "tether_condition_healthy",
+    "hand_trace": "trusted GOOD witness matches SERVICEABLE doc"
+  },
+  "HOLD-003": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "am_genesis_anomaly",
+    "hand_trace": "manufacturing telemetry excursion vs valid install doc"
+  },
+  "HOLD-004": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "iron_web_geometry_mismatch",
+    "hand_trace": "pawl geometry outside synthetic tolerance vs serviced doc"
+  },
+  "HOLD-005": {
+    "expected_operational_state": "CONFIGURATION_MISMATCH",
+    "ktx_class": "propulsion_identity_mismatch",
+    "hand_trace": "witness reports MOTOR_B, command expects MOTOR_A"
+  },
+  "HOLD-006": {
+    "expected_operational_state": "CONFIGURATION_MISMATCH",
+    "ktx_class": "correct_motor_wrong_firmware",
+    "hand_trace": "firmware mismatch, hardware identity not in question"
+  },
+  "HOLD-007": {
+    "expected_operational_state": "STALE_WITNESS",
+    "ktx_class": "stale_after_event",
+    "hand_trace": "GOOD reading predates a hard-landing event"
+  },
+  "HOLD-008": {
+    "expected_operational_state": "SENSOR_CONFLICT",
+    "ktx_class": "sensor_conflict",
+    "hand_trace": "two admissible witnesses disagree"
+  },
+  "HOLD-009": {
+    "expected_operational_state": "UNVERIFIED",
+    "ktx_class": "out_of_calibration_bad_sensor",
+    "hand_trace": "BAD reading from an out-of-calibration sensor is not auto-trusted"
+  },
+  "HOLD-010": {
+    "expected_operational_state": "WITNESS_SCOPE_ERROR",
+    "ktx_class": "wrong_aircraft",
+    "hand_trace": "signed witness bound to a different aircraft"
+  },
+  "HOLD-011": {
+    "expected_operational_state": "WITNESS_SCOPE_ERROR",
+    "ktx_class": "wrong_component",
+    "hand_trace": "signed witness bound to a different component serial"
+  },
+  "HOLD-012": {
+    "expected_operational_state": "STALE_WITNESS",
+    "ktx_class": "replay_attack",
+    "hand_trace": "witness flagged as a replay of an earlier reading"
+  },
+  "HOLD-013": {
+    "expected_operational_state": "UNVERIFIED",
+    "ktx_class": "detached_sensor",
+    "hand_trace": "detachment modeled as FAILED sensor health (independently-detectable sub-case)"
+  },
+  "HOLD-014": {
+    "expected_operational_state": "WITNESS_SCOPE_ERROR",
+    "ktx_class": "known_damage_limited_scope_good",
+    "hand_trace": "narrow-scope GOOD reading cannot cover the elongation claim tied to known damage"
+  },
+  "HOLD-015": {
+    "expected_operational_state": "VERIFIED_MATCH",
+    "ktx_class": "mission_envelope_violation",
+    "hand_trace": "hardware healthy; HOLD comes from the release-policy mission check, not the convergence state itself"
+  },
+  "HOLD-016": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "record_bad_witnesses_good",
+    "hand_trace": "documentary BAD preserved, not erased, despite fresh GOOD witness"
+  },
+  "HOLD-017": {
+    "expected_operational_state": "INCOMPLETE",
+    "ktx_class": "record_good_trust_unknown",
+    "hand_trace": "no physical witness at all -- documentary claim alone never converges to a positive physical conclusion"
+  },
+  "HOLD-018": {
+    "expected_operational_state": "VERIFIED_MATCH",
+    "ktx_class": "fully_consistent",
+    "hand_trace": "everything agrees -- ordinary healthy control"
+  },
+  "HOLD-019": {
+    "expected_operational_state": "STALE_WITNESS",
+    "ktx_class": "config_epoch_stale_witness",
+    "hand_trace": "witness value matches old expectation but was taken under EPOCH_0, before the powertrain-replacement event; per KTX test matrix class 14's established treatment this is event-based staleness (STALE_WITNESS), not CONFIGURATION_MISMATCH -- old-epoch reading does not prove current-epoch state regardless of its value"
+  },
+  "HOLD-020": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "multi_conflict_config_and_document",
+    "hand_trace": "tether predicate alone: BAD witness vs SERVICEABLE doc (release-policy aggregation across predicates is exercised at the release_policy layer, not this single-predicate convergence check)"
+  },
+  "HOLD-021": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "tether_condition_bad",
+    "hand_trace": "trusted BAD witness vs SERVICEABLE doc"
+  },
+  "HOLD-022": {
+    "expected_operational_state": "VERIFIED_MATCH",
+    "ktx_class": "tether_condition_healthy",
+    "hand_trace": "trusted GOOD witness matches SERVICEABLE doc"
+  },
+  "HOLD-023": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "am_genesis_anomaly",
+    "hand_trace": "manufacturing telemetry excursion vs valid install doc"
+  },
+  "HOLD-024": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "iron_web_geometry_mismatch",
+    "hand_trace": "pawl geometry outside synthetic tolerance vs serviced doc"
+  },
+  "HOLD-025": {
+    "expected_operational_state": "CONFIGURATION_MISMATCH",
+    "ktx_class": "propulsion_identity_mismatch",
+    "hand_trace": "witness reports MOTOR_B, command expects MOTOR_A"
+  },
+  "HOLD-026": {
+    "expected_operational_state": "CONFIGURATION_MISMATCH",
+    "ktx_class": "correct_motor_wrong_firmware",
+    "hand_trace": "firmware mismatch, hardware identity not in question"
+  },
+  "HOLD-027": {
+    "expected_operational_state": "STALE_WITNESS",
+    "ktx_class": "stale_after_event",
+    "hand_trace": "GOOD reading predates a hard-landing event"
+  },
+  "HOLD-028": {
+    "expected_operational_state": "SENSOR_CONFLICT",
+    "ktx_class": "sensor_conflict",
+    "hand_trace": "two admissible witnesses disagree"
+  },
+  "HOLD-029": {
+    "expected_operational_state": "UNVERIFIED",
+    "ktx_class": "out_of_calibration_bad_sensor",
+    "hand_trace": "BAD reading from an out-of-calibration sensor is not auto-trusted"
+  },
+  "HOLD-030": {
+    "expected_operational_state": "WITNESS_SCOPE_ERROR",
+    "ktx_class": "wrong_aircraft",
+    "hand_trace": "signed witness bound to a different aircraft"
+  },
+  "HOLD-031": {
+    "expected_operational_state": "WITNESS_SCOPE_ERROR",
+    "ktx_class": "wrong_component",
+    "hand_trace": "signed witness bound to a different component serial"
+  },
+  "HOLD-032": {
+    "expected_operational_state": "STALE_WITNESS",
+    "ktx_class": "replay_attack",
+    "hand_trace": "witness flagged as a replay of an earlier reading"
+  },
+  "HOLD-033": {
+    "expected_operational_state": "UNVERIFIED",
+    "ktx_class": "detached_sensor",
+    "hand_trace": "detachment modeled as FAILED sensor health (independently-detectable sub-case)"
+  },
+  "HOLD-034": {
+    "expected_operational_state": "WITNESS_SCOPE_ERROR",
+    "ktx_class": "known_damage_limited_scope_good",
+    "hand_trace": "narrow-scope GOOD reading cannot cover the elongation claim tied to known damage"
+  },
+  "HOLD-035": {
+    "expected_operational_state": "VERIFIED_MATCH",
+    "ktx_class": "mission_envelope_violation",
+    "hand_trace": "hardware healthy; HOLD comes from the release-policy mission check, not the convergence state itself"
+  },
+  "HOLD-036": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "record_bad_witnesses_good",
+    "hand_trace": "documentary BAD preserved, not erased, despite fresh GOOD witness"
+  },
+  "HOLD-037": {
+    "expected_operational_state": "INCOMPLETE",
+    "ktx_class": "record_good_trust_unknown",
+    "hand_trace": "no physical witness at all -- documentary claim alone never converges to a positive physical conclusion"
+  },
+  "HOLD-038": {
+    "expected_operational_state": "VERIFIED_MATCH",
+    "ktx_class": "fully_consistent",
+    "hand_trace": "everything agrees -- ordinary healthy control"
+  },
+  "HOLD-039": {
+    "expected_operational_state": "STALE_WITNESS",
+    "ktx_class": "config_epoch_stale_witness",
+    "hand_trace": "witness value matches old expectation but was taken under EPOCH_0, before the powertrain-replacement event; per KTX test matrix class 14's established treatment this is event-based staleness (STALE_WITNESS), not CONFIGURATION_MISMATCH -- old-epoch reading does not prove current-epoch state regardless of its value"
+  },
+  "HOLD-040": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "multi_conflict_config_and_document",
+    "hand_trace": "tether predicate alone: BAD witness vs SERVICEABLE doc (release-policy aggregation across predicates is exercised at the release_policy layer, not this single-predicate convergence check)"
+  },
+  "HOLD-041": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "tether_condition_bad",
+    "hand_trace": "trusted BAD witness vs SERVICEABLE doc"
+  },
+  "HOLD-042": {
+    "expected_operational_state": "VERIFIED_MATCH",
+    "ktx_class": "tether_condition_healthy",
+    "hand_trace": "trusted GOOD witness matches SERVICEABLE doc"
+  },
+  "HOLD-043": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "am_genesis_anomaly",
+    "hand_trace": "manufacturing telemetry excursion vs valid install doc"
+  },
+  "HOLD-044": {
+    "expected_operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+    "ktx_class": "iron_web_geometry_mismatch",
+    "hand_trace": "pawl geometry outside synthetic tolerance vs serviced doc"
+  },
+  "HOLD-045": {
+    "expected_operational_state": "CONFIGURATION_MISMATCH",
+    "ktx_class": "propulsion_identity_mismatch",
+    "hand_trace": "witness reports MOTOR_B, command expects MOTOR_A"
+  },
+  "HOLD-046": {
+    "expected_operational_state": "CONFIGURATION_MISMATCH",
+    "ktx_class": "correct_motor_wrong_firmware",
+    "hand_trace": "firmware mismatch, hardware identity not in question"
+  },
+  "HOLD-047": {
+    "expected_operational_state": "STALE_WITNESS",
+    "ktx_class": "stale_after_event",
+    "hand_trace": "GOOD reading predates a hard-landing event"
+  },
+  "HOLD-048": {
+    "expected_operational_state": "SENSOR_CONFLICT",
+    "ktx_class": "sensor_conflict",
+    "hand_trace": "two admissible witnesses disagree"
+  },
+  "HOLD-049": {
+    "expected_operational_state": "UNVERIFIED",
+    "ktx_class": "out_of_calibration_bad_sensor",
+    "hand_trace": "BAD reading from an out-of-calibration sensor is not auto-trusted"
+  },
+  "HOLD-050": {
+    "expected_operational_state": "WITNESS_SCOPE_ERROR",
+    "ktx_class": "wrong_aircraft",
+    "hand_trace": "signed witness bound to a different aircraft"
+  }
+}

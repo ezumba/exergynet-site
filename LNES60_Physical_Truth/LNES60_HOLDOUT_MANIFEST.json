@@ -1,0 +1,49 @@
+{
+  "_purpose": "LNES-60 Phase 1 holdout manifest. Sealed post-freeze, never executed against the frozen engine during authoring.",
+  "authored_date": "2026-08-08",
+  "total_holdout_cases": 50,
+  "ktx_class_distribution": {
+    "tether_condition_bad": 3,
+    "tether_condition_healthy": 3,
+    "am_genesis_anomaly": 3,
+    "iron_web_geometry_mismatch": 3,
+    "propulsion_identity_mismatch": 3,
+    "correct_motor_wrong_firmware": 3,
+    "stale_after_event": 3,
+    "sensor_conflict": 3,
+    "out_of_calibration_bad_sensor": 3,
+    "wrong_aircraft": 3,
+    "wrong_component": 2,
+    "replay_attack": 2,
+    "detached_sensor": 2,
+    "known_damage_limited_scope_good": 2,
+    "mission_envelope_violation": 2,
+    "record_bad_witnesses_good": 2,
+    "record_good_trust_unknown": 2,
+    "fully_consistent": 2,
+    "config_epoch_stale_witness": 2,
+    "multi_conflict_config_and_document": 2
+  },
+  "ktx_classes_covered": 20,
+  "all_classes_hit_at_least_twice": true,
+  "fresh_id_space": {
+    "case_id_prefix": "HOLD-",
+    "aircraft_id_offset": 9000,
+    "dev_corpus_prefix": "DEV-",
+    "dev_corpus_aircraft_offset": 100,
+    "collision_with_dev_corpus": false
+  },
+  "runner_holdout_file": "LNES60_RUNNER_HOLDOUT.json",
+  "runner_holdout_sha256": "58d0072481c1f6bb98a902f4ea3550e24a21b2f7b1fb371ed1daeb5f107ec12c",
+  "evaluator_holdout_file": "LNES60_EVALUATOR_HOLDOUT.json",
+  "evaluator_holdout_sha256": "71f38fb67d205bf306d5210513da318919b2da5647e21d5c2f3e8f1b1c321202",
+  "evaluator_only_fields": [
+    "expected_operational_state",
+    "expected_release",
+    "hand_trace",
+    "ktx_class"
+  ],
+  "ground_truth_derivation": "Hand-authored per-KTX-class expectation inside synthetic_generator.generate_case(), which contains no import of or call to any frozen decision-logic module. Ground truth was never produced by running convergence_engine.py/release_policy.py against these cases.",
+  "architecture_freeze_commit": "784c55f",
+  "architecture_freeze_manifest": "LNES60_PRE_HOLDOUT_CODE_MANIFEST.json"
+}
