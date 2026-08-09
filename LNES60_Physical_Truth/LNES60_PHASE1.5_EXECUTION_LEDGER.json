@@ -1,0 +1,68 @@
+{
+  "_purpose": "Execution ledger for LNES-60 Phase 1.5. Append-only record of how the 150 real-model evaluations were obtained. Complements the results manifest (which records what was found) with the how and when.",
+  "schema_version": "1.0",
+  "sealed_date": "2026-08-09",
+  "architecture_version": "P1-0.1.0",
+  "freeze_commit": "784c55f",
+  "completion_commit": "3b04539",
+  "checkpoint_commit": "67acd3f",
+  "generation_mechanism": "REAL_MODEL: claude-sonnet-5 subagent dispatch via Agent tool",
+  "prompt_source": "phase1_5/prompts_txt/ (150 frozen txt files, build_prompts.py --leakage-check passing)",
+  "evaluation_runs": [
+    {
+      "run_id": "P1.5-PILOT",
+      "session_type": "live-claude-code",
+      "cases_completed": 18,
+      "arms": ["M0", "M1", "M2"],
+      "notes": "Initial pilot covering cases HOLD-001 through HOLD-018. M2 mission-envelope leak identified post-pilot.",
+      "commit": "11b4c17"
+    },
+    {
+      "run_id": "P1.5-MAIN-BATCH-1",
+      "session_type": "live-claude-code",
+      "cases_completed": 11,
+      "cases_range": "HOLD-019 through HOLD-029",
+      "arms": ["M0", "M1", "M2"],
+      "notes": "M2 mission-envelope leak fixed before this run. Batched dispatch. Infrastructure stop at 29/50 due to Agent-tool API session limit.",
+      "commit": "67acd3f"
+    },
+    {
+      "run_id": "P1.5-MAIN-BATCH-2",
+      "session_type": "live-claude-code",
+      "cases_completed": 21,
+      "cases_range": "HOLD-023 (missing arms) + HOLD-030 through HOLD-050",
+      "arms": ["M0", "M1", "M2"],
+      "notes": "Resumed after Agent-tool reset. HOLD-023 M0 and M2 completed (M1 was already done). HOLD-030 through HOLD-050 dispatched. HOLD-050 M2 was the final evaluation. Infrastructure stop was declared non-scientific stopping point in @workspace.txt directive.",
+      "commit": "3b04539"
+    }
+  ],
+  "infrastructure_events": [
+    {
+      "event": "Agent-tool API session limit reached",
+      "at_case": "HOLD-029/30",
+      "declared": "Infrastructure stop only — not a scientific stopping point",
+      "recovery": "Standard Agent-tool reset; resumed in next session with identical frozen prompts"
+    }
+  ],
+  "leakage_tests": {
+    "status": "PASSING",
+    "last_verified": "2026-08-09",
+    "command": "python phase1_5/build_prompts.py --leakage-check",
+    "notes": "M2 mission-envelope leak was detected and fixed before the main batch runs. Corrected prompt family sealed at commit 67acd3f."
+  },
+  "freeze_discipline": {
+    "no_prompt_modification_after_fix": true,
+    "no_engine_modification_after_freeze": true,
+    "holdout_ground_truth_not_exposed_during_generation": true,
+    "no_retry_on_semantic_failure": true,
+    "infrastructure_retries": "max 2 per LNES-59 precedent; none required in Phase 1.5"
+  },
+  "model_label_preserved_in_every_raw_result": true,
+  "simulated_witness_discipline": "All physical witness data is SIMULATED_WITNESS. No real sensor hardware, no real aircraft, no real calibration system.",
+  "phase1_lineage": {
+    "phase1_architecture_freeze": "784c55f",
+    "phase1_holdout_manifest_sha256": "6c89c5945300d76b9c081fef7618ad791939fccd4a04be71ca8a0ec61de8f0ab",
+    "phase1_experiment_manifest_sha256": "29112054af098bed51143a97f243de114fdffe79eb337e972137eda527dc5958",
+    "p1_and_p15_use_same_holdout_and_frozen_engine": true
+  }
+}
