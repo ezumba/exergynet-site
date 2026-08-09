@@ -341,8 +341,19 @@ Exact unblock condition:  Operator adds a temporary, narrowly-scoped
                           (e.g., a session-manager-style path referenced
                           as available for one of the two hosts) is usable
                           instead of direct SSH.
+Re-check performed:       Re-tested same-session per a follow-up directive
+                          instruction not to assume the timeout permanent.
+                          Direct SSH still times out identically; a
+                          session-manager-style alternate path could not be
+                          exercised from this environment because its
+                          required client tooling is not installed here (a
+                          local-environment gap, not evidence the path
+                          itself is unavailable). Recorded as UNKNOWN, not
+                          DOWN, per that instruction — no production host
+                          confirmed offline, only unreachable from this
+                          specific session.
 Owner:                    Operator
-Last verified:            2026-08-08
+Last verified:            2026-08-08 (re-checked same day)
 Public-claim impact:      None — blocks a verification step, not a
                           deployed capability. The degraded backend
                           reasoning service noted above is not separately
@@ -361,24 +372,46 @@ Subsystem:               A locally-run deployment/diagnostic CLI tool used
                           real (non-placeholder) configuration values, not
                           a placeholder.
 Blocker class:            AUTHORIZATION_CREDENTIAL
-Status:                   OPEN — flagged to the operator directly at
-                          discovery. Operator's decision: continue current
-                          work without rotating immediately; rotation
-                          deferred to operator's own schedule.
-Current state:            The credential has not been independently
-                          re-used or re-printed since discovery. No
-                          confirmation yet that rotation has occurred.
-Exact unblock condition:  Operator rotates the credential and updates its
-                          local configuration; separately, the CLI tool's
-                          help text should be corrected to show a
-                          placeholder instead of a real value so this
-                          cannot recur on a future invocation (including by
-                          a future agent session running the same help
-                          command).
+Status:                   OPEN, ESCALATED. Root-caused to a specific commit
+                          that added the literal credential to the CLI
+                          tool's help text; that commit was found to be an
+                          ancestor of the public remote's default branch
+                          and present on multiple pushed branches — this
+                          credential has been in public, not merely
+                          locally, exposure. Flagged to the operator with
+                          the escalated severity; operator's decision:
+                          rotate through their own account/hosting flow
+                          now, outside this tool's own commands.
+Current state:            The CLI tool's help text has been corrected to
+                          placeholders (source of the exposure closed —
+                          this cannot recur on a future invocation).
+                          Rotation itself is in progress on the operator's
+                          own side; not independently verified complete as
+                          of this entry. Git history has NOT been rewritten
+                          — the exposed value remains readable in past
+                          commits/branches on the public remote unless and
+                          until the operator separately decides to pursue
+                          a history rewrite, which was raised as a distinct,
+                          more invasive follow-up option and not yet
+                          authorized.
+Exact unblock condition:  Operator confirms the credential has been
+                          rotated and the old value no longer authenticates
+                          (verification not yet performed in this pass —
+                          see Priority 1's other unblock note below).
+                          Separately, and independently of rotation: a
+                          decision on whether to pursue a git-history
+                          rewrite to remove the old value from public
+                          history, given the exposure already occurred and
+                          a rewrite requiring a force-push carries its own
+                          real risk.
 Owner:                    Operator
-Last verified:            2026-08-08
-Public-claim impact:      None — internal tooling only, not a public-facing
-                          claim.
+Last verified:            2026-08-08 (escalated same day as initial
+                          discovery, after tracing the commit history)
+Public-claim impact:      None directly public-facing, but the underlying
+                          exposure itself was public (repository history)
+                          — noted for completeness, not because any
+                          external claim about ExergyNet's security posture
+                          needs correcting as a result.
 ```
 
 ---
