@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-004",
+  "aircraft_id": "KTX-9004",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The maintenance_history document claims SERVICEABLE, but a trustworthy physical sensor reading (current calibration, nominal health, valid hardware signature, low uncertainty 0.069) taken at the same timestamp reports geometry_mm = 'BAD' for the relevant scope (pawl.geometry). This directly contradicts the documentary claim, so release must be held pending resolution."
+  ],
+  "evidence_refs": [
+    "HOLD-004-D1",
+    "HOLD-004-W1"
+  ]
+}

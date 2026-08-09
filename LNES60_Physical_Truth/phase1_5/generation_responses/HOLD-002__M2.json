@@ -1,5 +1,1 @@
-{
-  "operational_state": "VERIFIED_MATCH",
-  "release_recommendation": "RELEASE_ELIGIBLE",
-  "reasoning": "The resolved physical state for tether.condition is VERIFIED_MATCH, meaning the reconciliation across documentary, physical witness, and witness trust evidence planes found the evidence consistent with no conflict, mismatch, staleness, or scope error. The mission profile is also confirmed within the authorized engineering envelope, so there is no known defect or unresolved trust issue to warrant a hold."
-}
+{"operational_state": "VERIFIED_MATCH", "release_recommendation": "RELEASE_ELIGIBLE", "reasoning": "The resolved state for tether.condition is explicitly given as VERIFIED_MATCH, meaning the documentary, physical witness, and witness trust evidence planes were already reconciled and found consistent with no conflict, staleness, scope error, or degradation noted. With no indication of any defect or unresolved trust issue in the resolved state provided, the evidence supports release."}

@@ -1,0 +1,5 @@
+{
+  "operational_state": "SENSOR_DEGRADED",
+  "release_recommendation": "HOLD",
+  "reasoning": "There are no documentary records at all, so the sole evidence is one physical witness for tether.elongation. That reading reports a non-numeric 'BAD' value and explicitly flags calibration_current=False, meaning the sensor's calibration is not current and its source is not fully trustworthy, even though sensor_health and hardware_signature are nominal/valid. An uncalibrated sensor producing a 'BAD' reading is not reliable grounds for release, so this is SENSOR_DEGRADED and the release must be held pending a trustworthy, calibrated reading."
+}

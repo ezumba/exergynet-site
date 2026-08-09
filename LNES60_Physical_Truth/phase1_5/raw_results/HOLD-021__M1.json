@@ -1,0 +1,15 @@
+{
+  "arm": "M1",
+  "model_label": "REAL_MODEL: claude-sonnet-5 subagent dispatch (Phase 1.5 pilot, NOT the Phase 1 rule-based simulator)",
+  "case_id": "HOLD-021",
+  "aircraft_id": "KTX-9021",
+  "operational_state": "DOCUMENT_PHYSICAL_CONFLICT",
+  "release_recommendation": "HOLD",
+  "reason_codes": [
+    "The documentary record claims SERVICEABLE, but the physical sensor witness for the exact same timestamp reports elongation_pct = 'BAD' on the tether -- a trustworthy reading (calibration current, sensor health nominal, valid hardware signature, matching scope) that directly contradicts the serviceable claim. This is a direct document-vs-physical conflict indicating a known defect, so release must be held."
+  ],
+  "evidence_refs": [
+    "HOLD-021-D1",
+    "HOLD-021-W1"
+  ]
+}
