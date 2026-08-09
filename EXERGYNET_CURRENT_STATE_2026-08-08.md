@@ -11,8 +11,8 @@ source of truth for any individual claim.
 | Level | Meaning | What's currently at this level |
 |---|---|---|
 | **LIVE PRODUCTION** | Actually verified running and serving | xLMP data plane (ingest/recall/roots) — Portal app, L0 Apex Router, storage surface confirmed HEALTHY this session |
-| **VALIDATED / NOT DEPLOYED** | Real holdout/benchmark evidence exists; not in the live route surface | LNES-59 V7 deterministic state-governance gate (8%→0% false-authoritative-state, 84%=84% candidate accuracy, sealed 50-case holdout) |
-| **DESIGNED / R&D** | Architecture and protocol exist; no implementation run yet | LNES-60 Physical Truth foundation (9 artifacts, synthetic harness protocol not yet executed); the V7 production insertion plan (design only, not deployed) |
+| **VALIDATED / NOT DEPLOYED** | Real holdout/benchmark evidence exists; not in the live route surface | LNES-59 V7 deterministic state-governance gate (8%→0% false-authoritative-state, 84%=84% candidate accuracy, sealed 50-case holdout); LNES-60 Phase 1 physical-truth convergence engine (30%→34%→0% false-release rate across P0→P1→P2, sealed 50-case holdout, `MODEL_SIMULATOR: RULE_BASED_REFERENCE` not a real LLM — see `LNES60_Physical_Truth/LNES60_PHASE1_FINAL_VALIDATION_REPORT.md`) |
+| **DESIGNED / R&D** | Architecture and protocol exist; no implementation run yet | The V7 production insertion plan (design only, not deployed); LNES-60 Phase 2 (real sensor hardware, not yet built or authorized) |
 | **DEGRADED / UNKNOWN** | Live-tested this session, result was not HEALTHY, or could not be reached to test | Vanguard reasoning gateway (DEGRADED — up, backend not answering); Vanguard Proposer, `mcp.exergynet.org`'s real endpoint, `biological_proxy` legacy xLMP routes (UNKNOWN — unreachable from this session, not confirmed down) |
 
 ---
