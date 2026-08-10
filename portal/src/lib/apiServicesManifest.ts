@@ -29,6 +29,57 @@ export interface ApiService {
   curl: string;
   ts: string;
   py: string;
+
+  // ── Runtime capability model (added 2026-08-10) ───────────────────────────
+  // Added following the Vanguard mode-routing incident (general Deep Research
+  // traffic silently entering a clinical prompt/output contract meant for one
+  // integration partner — see VANGUARD_MODE_ROUTING_RECON.md). The root cause
+  // was exactly this: model identity, behavioral policy, output serialization,
+  // and live health were never distinguished, so a single keyword match could
+  // change all four at once. These fields keep them separate on purpose —
+  // populate only what's actually true and verified; leave a field undefined
+  // rather than guess.
+
+  /** Model/engine identity only — must never itself imply a runtime policy or
+   * an authorized application. Omit for non-model-backed services (Vault,
+   * AERIS, MCP, TTS/STT, capital-queue endpoints, etc). */
+  model?: string;
+
+  /** Which behavioral/prompt policy governs inference, independent of model
+   * identity. Only ever set to a profile that is genuinely implemented and
+   * reachable today — do not list an aspirational profile here even if it's
+   * on a roadmap. */
+  runtimeProfile?: 'general' | 'clinical' | 'research' | 'physics' | 'code';
+
+  /** Response serialization contract(s) this service actually supports.
+   * Independent of runtimeProfile: a clinical runtime does not imply JSON
+   * output, and JSON output does not imply a clinical runtime. */
+  responseFormats?: Array<'text' | 'json_object' | 'json_schema' | 'audio' | 'binary' | 'sse'>;
+
+  /** Who can reach this today. 'public' = any authenticated API key.
+   * 'capability_gated' = intended to require a specific authorization this
+   * platform does not yet enforce at the key/account level — if a field
+   * would be 'capability_gated', do not also publish it as a documented
+   * public service; keep it out of API_SERVICES and note it in a code
+   * comment instead (see the clinical_runtime note below this array). */
+  access?: 'public' | 'capability_gated' | 'internal';
+
+  /** Publication maturity — should external developers be building on this
+   * at all yet. Independent of operationalStatus below (a 'public' service
+   * can still be temporarily 'degraded'; that doesn't make it less public). */
+  publicationStatus?: 'public' | 'beta' | 'internal';
+
+  /** Current live health, set only from direct verification (a live test,
+   * pm2/log inspection, or a tracked-and-confirmed blocker) — never from
+   * assumption. Leave undefined rather than assert 'healthy' without having
+   * actually checked in the current session. */
+  operationalStatus?: 'healthy' | 'degraded' | 'fallback_active' | 'unavailable' | 'unknown';
+
+  /** One-line, public-safe explanation shown alongside a non-healthy
+   * operationalStatus. Must never contain an IP, hostname, credential, or
+   * internal blocker ID — those belong in this file's code comments (like
+   * this one), never in a field served by GET /api/docs/services. */
+  statusNote?: string;
 }
 
 const VAULT_URL = 'https://portal.exergynet.org';
@@ -142,9 +193,15 @@ print(journal["result"])  # ZK-sealed answer`,
     method: 'POST',
     label: 'Vanguard Standard',
     sub: 'Fast completions · Sovereign Inference Engine · Node 4',
-    desc: 'OpenAI-compatible chat completions, fast and streaming. Point any OpenAI SDK at this base URL with model: "vanguard-standard" — routes to Node 4, the quickest of the three Vanguard tiers.',
+    desc: 'OpenAI-compatible chat completions, fast and streaming. Point any OpenAI SDK at this base URL with model: "vanguard-standard" — the quickest of the three Vanguard tiers.',
     endpoint: `${API}/v1/chat/completions`,
-    routing: 'Node 4 — 74.235.106.10:50051',
+    routing: 'Primary Proposer engine',
+    model: 'vanguard-standard',
+    runtimeProfile: 'general',
+    responseFormats: ['text', 'json_object'],
+    access: 'public',
+    publicationStatus: 'public',
+    operationalStatus: 'healthy',
     headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
     curl: `curl ${API}/v1/chat/completions \\
   -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
@@ -180,10 +237,17 @@ resp = requests.post(
     id: 'pro',
     method: 'POST',
     label: 'Vanguard Pro',
-    sub: 'High-fidelity reasoning · Vanguard Pro · Node 3',
-    desc: 'OpenAI-compatible chat completions, high-fidelity and streaming. model: "vanguard-pro" routes to Node 3 for deeper reasoning than Standard, still streaming.',
+    sub: 'High-fidelity reasoning · Vanguard Pro · DEGRADED right now — see status note',
+    desc: 'OpenAI-compatible chat completions, designed for high-fidelity streaming reasoning beyond Standard. model: "vanguard-pro" routes to a dedicated reasoning node. CURRENT STATUS: the model remains available and will respond, but expected accelerator-backed performance is not currently guaranteed — requests may run significantly slower than normal while this is being resolved.',
     endpoint: `${API}/v1/chat/completions`,
-    routing: 'Node 3 — 40.124.170.30:50051',
+    routing: 'Dedicated Pro-tier node — degraded, see status note',
+    model: 'vanguard-pro',
+    runtimeProfile: 'general',
+    responseFormats: ['text', 'json_object'],
+    access: 'public',
+    publicationStatus: 'public',
+    operationalStatus: 'degraded',
+    statusNote: 'Model remains available, but expected accelerator-backed (GPU) performance is not currently guaranteed — requests may run significantly slower than normal.',
     headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
     curl: `curl ${API}/v1/chat/completions \\
   -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
@@ -219,10 +283,17 @@ resp = requests.post(
     id: 'ultra',
     method: 'POST',
     label: 'Vanguard Ultra',
-    sub: 'Consensus loop · Bilateral Proposer ↔ Auditor debate · high latency (up to 60s+), not for interactive use',
-    desc: 'OpenAI-compatible chat completions via bilateral Proposer↔Auditor consensus. model: "vanguard-ultra" runs a multi-round debate loop for higher accuracy — non-streaming, and confirmed live to take 60s+. Use for offline/batch jobs where accuracy matters more than speed, not interactive or voice flows.',
+    sub: 'Consensus loop · Designed: bilateral Proposer ↔ Auditor debate · FALLBACK ACTIVE right now — see status note',
+    desc: 'Designed capability: OpenAI-compatible chat completions via bilateral Proposer↔Auditor consensus — model: "vanguard-ultra" is built to run a multi-round debate loop for higher accuracy, non-streaming, intended for offline/batch jobs where accuracy matters more than speed rather than interactive or voice flows. CURRENT SERVICE STATE: the Auditor engine is not currently authenticating, so every request is served through Proposer-only fallback — the debate/consensus step is not happening right now. In its current state this is functionally equivalent to vanguard-standard at higher latency, with none of the accuracy benefit the design targets. No client-side change will be needed once this is resolved.',
     endpoint: `${API}/v1/chat/completions`,
-    routing: 'Proposer 74.235.106.10 ↔ Auditor 40.124.170.30',
+    routing: 'Bilateral Proposer/Auditor engine — Auditor fallback active, see status note',
+    model: 'vanguard-ultra',
+    runtimeProfile: 'general',
+    responseFormats: ['text'],
+    access: 'public',
+    publicationStatus: 'public',
+    operationalStatus: 'fallback_active',
+    statusNote: 'Auditor authentication is currently unavailable; requests are served through Proposer fallback only, so responses do not currently reflect bilateral consensus. No client-side change is needed once this is resolved.',
     headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
     curl: `curl ${API}/v1/chat/completions \\
   -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
@@ -260,7 +331,7 @@ resp = requests.post(
     sub: 'Structured REST · Schema-aware extraction · SEI',
     desc: 'Schema-aware structured extraction from free text. Pass a target schema (an object mapping field names to types — not a preset name/version string) and a domain hint; get typed fields back instead of prose.',
     endpoint: `${API}/v1/extract`,
-    routing: 'AskMo Node 1 — 20.127.220.199:3000',
+    routing: 'Sovereign Extraction Node · Structured REST backend',
     headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
     curl: `curl -X POST ${API}/v1/extract \\
   -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
@@ -297,6 +368,37 @@ resp = requests.post(
 )
 print(resp.json()["extraction"])`,
   },
+
+  // ── INTERNAL — clinical_runtime capability, NOT a public documentation
+  // entry (added 2026-08-10, following the Vanguard mode-routing incident —
+  // see VANGUARD_MODE_ROUTING_RECON.md) ──────────────────────────────────────
+  //
+  // As implemented today, POST /v1/chat/completions with { mode:
+  // "clinical_runtime" } (or "clinical") is honored for ANY authenticated API
+  // key — that's a verified implementation fact, not a policy decision this
+  // platform has made. It is deliberately NOT added to API_SERVICES above,
+  // and no developer-facing copy should ever say "any API key can invoke
+  // Clinical Runtime" — there is no per-key runtime-authorization layer yet,
+  // so publishing that contract would document an access-control gap as if
+  // it were a feature.
+  //
+  // The @mymonitor.ai email-domain check inside AskMo's detectMode() gating
+  // (biological_proxy/src/index.ts) exists SOLELY to preserve one
+  // integration partner's pre-existing client behavior through the
+  // keyword-fallback path — it is a one-off compatibility shim, not a
+  // pattern. Do not hardcode additional customer domains into it; a new
+  // integration has no legacy behavior to preserve, so it should simply use
+  // the explicit mode="clinical_runtime" signal from day one once that
+  // signal has real key-level gating in front of it.
+  //
+  // Recommended future public contract, once real authorization exists:
+  //   runtimeProfile: "clinical", access: "capability_gated"
+  // — an explicit allowlist flag on the developer/API-key record, checked
+  // server-side, not an email-domain string or raw prompt keywords.
+  //
+  // STATUS until then: internal / capability-gating pending. Tracked here,
+  // not published, not documented as an external integration path.
+
   {
     id: 'omega-carrier',
     method: 'MCP',
@@ -403,59 +505,40 @@ print(data["witness_id"], data["proof_meta"]["verified"])`,
     id: 'rho-sump',
     method: 'POST',
     label: 'RHO Reserve Queue',
-    sub: 'Capital loop · 5% task recursion tax · admin-gated market strike',
-    desc: 'Queues a reserve entry — the 5% task-recursion tax skimmed from compute job rewards — toward the $RHO buyback threshold. Pair with GET /api/rho/sump/status to check progress toward the market-strike threshold.',
-    endpoint: `${VAULT_URL}/api/rho/sump`,
-    routing: 'Next.js → biological_proxy port 5000 → rho_buyback_queue table',
+    sub: 'Capital loop · task-recursion tax sump · requires SIPHON_OPERATOR_PK configured server-side',
+    desc: 'Queues a micro-USDC sump amount — e.g. the task-recursion tax skimmed from a compute job reward — toward the $RHO on-chain mint/buyback loop. Requires SIPHON_OPERATOR_PK to be configured on the server; returns 503 with an explicit "gap" field if it is not.',
+    endpoint: `${VAULT_URL}/api/billing/rho-sump`,
+    routing: 'Next.js Edge · portal.exergynet.org → Base Sepolia RHO mint (ethers)',
     headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
-    curl: `# Queue a reserve entry (5% of task reward)
-curl -X POST https://portal.exergynet.org/api/rho/sump \\
+    curl: `curl -X POST https://portal.exergynet.org/api/billing/rho-sump \\
   -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "node_id":  "your_agent_miner_id",
-    "task_id":  "task_abc123",
-    "sump":     250,
-    "memo":     "5% recursion tax — compute job"
+    "sump_micro_usdc": 250000,
+    "miner_id": "your_agent_miner_id"
   }'
 
-# Check queue status
-curl https://portal.exergynet.org/api/rho/sump/status \\
-  -H "Authorization: Bearer $EXERGYNET_API_KEY"`,
-    ts: `// Queue a reserve entry
-const res = await fetch('https://portal.exergynet.org/api/rho/sump', {
+# If SIPHON_OPERATOR_PK isn't configured on the server, this returns:
+# { "error": "SIPHON_OPERATOR_PK not configured on server", "gap": "Set SIPHON_OPERATOR_PK in portal .env" }
+# with HTTP 503.`,
+    ts: `const res = await fetch('https://portal.exergynet.org/api/billing/rho-sump', {
   method: 'POST',
   headers: {
     'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
     'Content-Type': 'application/json',
   },
-  body: JSON.stringify({ node_id: agentId, task_id: taskId, sump: 250, memo: '5% recursion tax' }),
+  body: JSON.stringify({ sump_micro_usdc: 250000, miner_id: agentId }),
 });
-const { sump_id, pending_queue_total, market_strike } = await res.json();
-
-// Check status
-const status = await fetch('https://portal.exergynet.org/api/rho/sump/status', {
-  headers: { 'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\` },
-}).then(r => r.json());
-// status.pending_micro_usdc — total queued
-// status.threshold_pct — % toward 50,000 µUSDC strike threshold`,
+// 503 with { error, gap } if SIPHON_OPERATOR_PK isn't configured server-side`,
     py: `import requests
 
-# Queue entry
 resp = requests.post(
-    "https://portal.exergynet.org/api/rho/sump",
+    "https://portal.exergynet.org/api/billing/rho-sump",
     headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
-    json={"node_id": agent_id, "task_id": task_id, "sump": 250, "memo": "5% recursion tax"},
+    json={"sump_micro_usdc": 250000, "miner_id": agent_id},
 )
-data = resp.json()
-print(data["sump_id"], data["pending_queue_total"])
-
-# Status
-status = requests.get(
-    "https://portal.exergynet.org/api/rho/sump/status",
-    headers={"Authorization": f"Bearer {API_KEY}"},
-).json()
-print(f"Queue: {status['pending_micro_usdc']} µUSDC ({status['threshold_pct']}% to strike)")`,
+# 503 with {"error": ..., "gap": ...} if SIPHON_OPERATOR_PK isn't configured server-side
+print(resp.json())`,
   },
   {
     id: 'voice',
@@ -464,7 +547,7 @@ print(f"Queue: {status['pending_micro_usdc']} µUSDC ({status['threshold_pct']}%
     sub: 'WebSocket · G.711 µ-law · 8kHz mono · Twilio media-stream protocol — phone-call routing only, see limitation note below',
     desc: 'Bidirectional WebSocket, G.711 µ-law 8kHz mono, Twilio media-stream framing. Current limitation: this endpoint is built for real Twilio phone calls — it resolves routing/billing from a phone number in customParameters.To, not from any Authorization header or field, so there is no supported way to authenticate a non-Twilio client today. It only ever emits mark/clear control events, never transcript or extraction. Contact the platform team before integrating a direct browser/API client against this endpoint.',
     endpoint: `wss://dt.portal.exergynet.org/media-stream`,
-    routing: 'Portal (52.44.165.199) → AskMo Node 1 — 20.127.220.199:3000',
+    routing: 'Portal Edge → Sovereign Extraction Node · media relay',
     headers: `Upgrade: websocket\nConnection: Upgrade`,
     curl: `# WebSocket upgrade (use wscat or native ws client)
 # NOTE: this endpoint does not check any Authorization header or field —
@@ -497,5 +580,291 @@ async def stream():
             "mediaFormat": {"encoding": "audio/x-mulaw", "sampleRate": 8000, "channels": 1},
         }))
 asyncio.run(stream())`,
+  },
+  {
+    id: 'vision-describe',
+    method: 'POST',
+    label: 'Vision: Describe (Image → Text)',
+    sub: 'Image-to-speech prep · relevance-filtered extraction · unbilled · UNAVAILABLE right now — see status note',
+    desc: 'Reads an image and extracts only the content worth reading aloud — skips navigation chrome, decorative icons, ads, and boilerplate, returning plain text in natural reading order. Designed to feed straight into Voice: Generate for image-to-speech. Accepts base64-encoded image data (~9MB decoded cap). Unbilled — only the downstream TTS step deducts Exergy Credits. CURRENT STATUS: this endpoint shares its backing model with Vanguard Pro, which is currently degraded — a live test request did not return a response within several minutes. This endpoint enforces a 25-second timeout, so real calls are failing today, not merely running slow.',
+    endpoint: `${VAULT_URL}/api/vision/describe`,
+    routing: 'Next.js Edge · portal.exergynet.org → Vanguard vision engine',
+    model: 'vanguard-pro',
+    runtimeProfile: 'general',
+    responseFormats: ['text'],
+    access: 'public',
+    publicationStatus: 'public',
+    operationalStatus: 'unavailable',
+    statusNote: 'Shares its backing model with Vanguard Pro (currently degraded). A live test request produced no response within several minutes before the connection failed; this endpoint has a 25-second timeout, so real calls fail today rather than merely running slow.',
+    headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
+    curl: `curl -X POST https://portal.exergynet.org/api/vision/describe \\
+  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "image_b64": "<base64-encoded image bytes>",
+    "mime": "image/png"
+  }'
+
+# Response:
+# { "text": "..." }
+#
+# Pipe straight into Voice: Generate to speak it:
+# curl -X POST https://portal.exergynet.org/api/voice/generate \\
+#   -H "Authorization: Bearer $EXERGYNET_API_KEY" -H "Content-Type: application/json" \\
+#   -d '{"text": "<text from above>"}'`,
+    ts: `const imgRes = await fetch('https://portal.exergynet.org/api/vision/describe', {
+  method: 'POST',
+  headers: {
+    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ image_b64: base64Image, mime: 'image/png' }),
+});
+const { text } = await imgRes.json();
+
+// Feed straight into TTS
+const speechRes = await fetch('https://portal.exergynet.org/api/voice/generate', {
+  method: 'POST',
+  headers: {
+    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ text }),
+});
+const { audioUrl } = await speechRes.json();`,
+    py: `import requests
+
+img_resp = requests.post(
+    "https://portal.exergynet.org/api/vision/describe",
+    headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
+    json={"image_b64": base64_image, "mime": "image/png"},
+)
+text = img_resp.json()["text"]
+
+speech_resp = requests.post(
+    "https://portal.exergynet.org/api/voice/generate",
+    headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
+    json={"text": text},
+)
+print(speech_resp.json()["audioUrl"])`,
+  },
+  {
+    id: 'voice-generate',
+    method: 'POST',
+    label: 'Voice: Generate (TTS)',
+    sub: 'Standalone REST TTS · Piper · bills 1 Exergy Credit per character',
+    desc: 'Standalone text-to-speech, separate from the Acoustic Voice Stream WebSocket. Returns a URL to the generated audio. Bills 1 Exergy Credit per character of input text, deducted atomically only after generation succeeds — failed generations are never charged. 10,000 character hard cap per request.',
+    endpoint: `${VAULT_URL}/api/voice/generate`,
+    routing: 'Next.js Edge · portal.exergynet.org → Piper TTS (internal)',
+    headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
+    curl: `curl -X POST https://portal.exergynet.org/api/voice/generate \\
+  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "text": "Hello from ExergyNet.",
+    "voice_id": "sovereign-meridian"
+  }'
+
+# voice_id is optional — defaults to "sovereign-meridian". Stock IDs:
+# sovereign-meridian, sovereign-atlas, sovereign-lyra, sovereign-nova,
+# sovereign-cipher, sovereign-kael
+#
+# Response:
+# { "success": true, "audioUrl": "...", "duration": 3, "cost": 22, "credits_remaining": 9978 }
+#
+# 402 if balance < text.length: { "error": "Insufficient Exergy Credits...", "balance": 10 }`,
+    ts: `const res = await fetch('https://portal.exergynet.org/api/voice/generate', {
+  method: 'POST',
+  headers: {
+    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ text: 'Hello from ExergyNet.', voice_id: 'sovereign-meridian' }),
+});
+const { audioUrl, cost, credits_remaining } = await res.json();
+// audioUrl points to the generated file — fetch it separately to get the audio bytes`,
+    py: `import requests
+
+resp = requests.post(
+    "https://portal.exergynet.org/api/voice/generate",
+    headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
+    json={"text": "Hello from ExergyNet.", "voice_id": "sovereign-meridian"},
+)
+data = resp.json()
+print(data["audioUrl"], data["credits_remaining"])`,
+  },
+  {
+    id: 'voice-transcribe',
+    method: 'POST',
+    label: 'Voice: Transcribe (STT)',
+    sub: 'Standalone REST STT · Whisper · multipart upload · unbilled',
+    desc: 'Standalone speech-to-text. Multipart form upload — the audio file field must be named "file" (not "audio"). 25 MB hard cap. Unlike Generate, this endpoint does not deduct Exergy Credits.',
+    endpoint: `${VAULT_URL}/api/voice/transcribe`,
+    routing: 'Next.js Edge · portal.exergynet.org → Whisper STT (internal)',
+    headers: `Authorization: Bearer <key>\nContent-Type: multipart/form-data`,
+    curl: `curl -X POST https://portal.exergynet.org/api/voice/transcribe \\
+  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
+  -F "file=@./recording.wav"
+
+# The form field MUST be named "file" — other field names are ignored and
+# the request will fail with 400 "audio file required".
+#
+# Response:
+# { "text": "...", "duration": 4.2, "language": "en" }`,
+    ts: `const form = new FormData();
+form.append('file', audioBlob, 'recording.wav'); // field name must be "file"
+
+const res = await fetch('https://portal.exergynet.org/api/voice/transcribe', {
+  method: 'POST',
+  headers: { 'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\` },
+  body: form,
+});
+const { text, duration, language } = await res.json();`,
+    py: `import requests
+
+with open("recording.wav", "rb") as f:
+    resp = requests.post(
+        "https://portal.exergynet.org/api/voice/transcribe",
+        headers={"Authorization": f"Bearer {API_KEY}"},
+        files={"file": ("recording.wav", f, "audio/wav")},  # field name must be "file"
+    )
+print(resp.json()["text"])`,
+  },
+  {
+    id: 'voice-preview',
+    method: 'GET',
+    label: 'Voice: Preview',
+    sub: 'Stock voice sample phrases · server-cached · strict voiceId allowlist',
+    desc: 'Returns a short cached sample audio clip for one of the six stock voice IDs, so a client can preview a voice before committing credits to a real Generate call. voiceId is checked against a strict allowlist server-side — unrecognized IDs are rejected before reaching the TTS backend.',
+    endpoint: `${VAULT_URL}/api/voice/preview`,
+    routing: 'Next.js Edge · portal.exergynet.org → Piper TTS (internal, server-cached)',
+    headers: `Authorization: Bearer <key>`,
+    curl: `curl "https://portal.exergynet.org/api/voice/preview?voiceId=sovereign-lyra" \\
+  -H "Authorization: Bearer $EXERGYNET_API_KEY"
+
+# Allowed voiceId values: sovereign-meridian, sovereign-atlas, sovereign-lyra,
+# sovereign-nova, sovereign-cipher, sovereign-kael — anything else returns
+# 400 { "error": "Unknown voice ID" }
+#
+# Response: { "success": true, "audioUrl": "..." }`,
+    ts: `const res = await fetch('https://portal.exergynet.org/api/voice/preview?voiceId=sovereign-lyra', {
+  headers: { 'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\` },
+});
+const { audioUrl } = await res.json();`,
+    py: `import requests
+
+resp = requests.get(
+    "https://portal.exergynet.org/api/voice/preview",
+    headers={"Authorization": f"Bearer {API_KEY}"},
+    params={"voiceId": "sovereign-lyra"},
+)
+print(resp.json()["audioUrl"])`,
+  },
+  {
+    id: 'voice-forge-register',
+    method: 'POST',
+    label: 'Voice: Forge (Custom Voice)',
+    sub: 'Register a custom voice profile · pitch-shifted stock model, not ML voice cloning',
+    desc: 'Registers a custom voice profile from up to 10 WebM recordings (5 MB each). Important limitation: this is a pitch-shifted stock Piper voice keyed to a pitchRatio, not true ML voice cloning — the recordings establish a pitch target, they are not used to train a new voice model. Treat this as "pick a base model and a pitch," not "clone my voice."',
+    endpoint: `${VAULT_URL}/api/voice/forge/register`,
+    routing: 'Next.js Edge · portal.exergynet.org → sovereign-tts registration server (internal)',
+    headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
+    curl: `curl -X POST https://portal.exergynet.org/api/voice/forge/register \\
+  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "voiceId": "my-custom-voice",
+    "displayName": "My Custom Voice",
+    "pitchRatio": 1.08,
+    "baseModel": "sovereign-meridian",
+    "recordings": ["data:audio/webm;base64,GkXfo..."]
+  }'
+
+# recordings are optional but capped: max 10, 5 MB each, must be
+# "data:audio/webm;base64,..." data URIs with valid WebM magic bytes.
+# This registers a pitch-shifted stock model, not a trained clone.
+#
+# Response: { "success": true, "voiceId": "my-custom-voice", "displayName": "My Custom Voice" }`,
+    ts: `const res = await fetch('https://portal.exergynet.org/api/voice/forge/register', {
+  method: 'POST',
+  headers: {
+    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    voiceId: 'my-custom-voice',
+    displayName: 'My Custom Voice',
+    pitchRatio: 1.08,       // required — this is what actually differentiates the voice
+    baseModel: 'sovereign-meridian',
+    recordings: [],          // optional, data:audio/webm;base64,... entries, 10 max / 5MB each
+  }),
+});`,
+    py: `import requests
+
+resp = requests.post(
+    "https://portal.exergynet.org/api/voice/forge/register",
+    headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
+    json={
+        "voiceId": "my-custom-voice",
+        "displayName": "My Custom Voice",
+        "pitchRatio": 1.08,
+        "baseModel": "sovereign-meridian",
+        "recordings": [],
+    },
+)
+print(resp.json())`,
+  },
+  {
+    id: 'voice-marketplace',
+    method: 'GET',
+    label: 'Voice: Marketplace',
+    sub: 'Browse/publish community voice profiles · pricePerUse field exists, payout is not implemented',
+    desc: 'List other users\' published custom voice profiles (GET), or publish/unpublish your own with a pricePerUse (POST). Important limitation: pricePerUse and uses are tracked fields, but nothing in the current backend actually charges a listener or pays out a creator royalty — treat this as a listing/visibility mechanism only, not a working payments flow.',
+    endpoint: `${VAULT_URL}/api/voice/marketplace`,
+    routing: 'Next.js Edge · portal.exergynet.org → custom_profiles.json (file-lock serialized)',
+    headers: `Authorization: Bearer <key>\nContent-Type: application/json`,
+    curl: `# List community voices (excludes your own)
+curl https://portal.exergynet.org/api/voice/marketplace \\
+  -H "Authorization: Bearer $EXERGYNET_API_KEY"
+
+# Publish one of your own registered voices
+curl -X POST https://portal.exergynet.org/api/voice/marketplace \\
+  -H "Authorization: Bearer $EXERGYNET_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "voiceId": "my-custom-voice", "published": true, "pricePerUse": 5 }'
+
+# NOTE: pricePerUse is stored and returned, but no billing/payout logic
+# consumes it yet — a listener is never actually charged.`,
+    ts: `// List
+const res = await fetch('https://portal.exergynet.org/api/voice/marketplace', {
+  headers: { 'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\` },
+});
+const { voices } = await res.json();
+
+// Publish
+await fetch('https://portal.exergynet.org/api/voice/marketplace', {
+  method: 'POST',
+  headers: {
+    'Authorization': \`Bearer \${process.env.EXERGYNET_API_KEY}\`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ voiceId: 'my-custom-voice', published: true, pricePerUse: 5 }),
+});
+// pricePerUse is stored, not enforced — no payout mechanism exists yet`,
+    py: `import requests
+
+# List
+resp = requests.get(
+    "https://portal.exergynet.org/api/voice/marketplace",
+    headers={"Authorization": f"Bearer {API_KEY}"},
+)
+print(resp.json()["voices"])
+
+# Publish — pricePerUse is stored, not enforced (no payout mechanism yet)
+requests.post(
+    "https://portal.exergynet.org/api/voice/marketplace",
+    headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
+    json={"voiceId": "my-custom-voice", "published": True, "pricePerUse": 5},
+)`,
   },
 ];
