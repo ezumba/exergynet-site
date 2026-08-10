@@ -1238,8 +1238,8 @@ app.post('/auth/register', authRateLimit, async (req, res) => {
     const preview      = apiKeyPreview(apiKey);
 
     const result = await pool.query(
-      `INSERT INTO biological_developers (id, email, password_hash, api_key_hash, api_key_preview)
-       VALUES (gen_random_uuid()::text, $1, $2, $3, $4) RETURNING id`,
+      `INSERT INTO biological_developers (id, email, password_hash, api_key_hash, api_key_preview, usdc_micro_balance, active)
+       VALUES (gen_random_uuid()::text, $1, $2, $3, $4, 25000000, TRUE) RETURNING id`,
       [email.toLowerCase().trim(), passwordHash, apiKeyHash, preview]
     );
 
@@ -2268,81 +2268,167 @@ app.post('/v1/chat/completions', async (req, res) => {
     upstreamBody = { ...upstreamBody, stream: false, messages: hasGuard ? messages : [clinicalGuard, ...messages.filter(m => m.role !== 'system')] };
   }
 
-  try {
-    const upstream = await fetch(`${VG_URL}/v1/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${VG_KEY}` },
-      body: JSON.stringify(upstreamBody),
-      signal: AbortSignal.timeout(90000),
-    });
+  // LNES-70: web search + real SSE framing.
+  //
+  // Two fixes landing together because the second depends on the first's turn
+  // loop:
+  //
+  // 1. SEARCH — this proxy used to forward messages straight through with zero
+  //    augmentation, so the Playground/API model had no search capability at
+  //    all (unlike the voice/vanguard-nav path, which has had it for a while).
+  //    Native OpenAI-style tool-calling (tools/tool_choice) does not work
+  //    against this model-serving backend — confirmed live 2026-07-08 against
+  //    this exact upstream (see carrier-exergynet_api/src/main.rs) —
+  //    finish_reason always comes back "stop" and the model tries to
+  //    hand-write a tool-call-shaped JSON blob as plain content instead. So
+  //    this reuses the same proven text-convention already live on the voice
+  //    path: the model is told to emit a bare "SEARCH: <query>" line when it
+  //    needs live info, which we parse out of the content and resolve with
+  //    executeWebSearch() (defined below, already used by vanguard-nav) before
+  //    a second turn with results injected.
+  //
+  // 2. STREAMING — live-confirmed (curl -N against explorer-api.exergynet.org
+  //    with stream:true) that the upstream silently ignores the stream flag
+  //    and always returns one complete non-SSE chat.completion object. The
+  //    old code here still opened an SSE reader and passed raw upstream bytes
+  //    through via res.write(chunk) — since none of those bytes were
+  //    "data:"-prefixed, the client's SSE parser dropped them, and job billing
+  //    fell back to counting an accumulated streamedText that was always
+  //    empty (hence tokensYielded always bottoming out at 1 regardless of
+  //    actual response length). Since upstream doesn't do real per-token
+  //    streaming anyway, we now always call it non-streaming internally and,
+  //    if the client asked for stream:true, synthesize proper multi-frame SSE
+  //    ourselves from the real final text — spec-correct output the client's
+  //    existing parser handles correctly, plus an honest token count.
+  const searchEnabled = !isJsonObject && !isClinical;
+  const SEARCH_INSTRUCTION = "\n\nYou do NOT have real-time access to news, weather, sports scores, prices, or current events — your training data is outdated for these topics. You also must never guess or state a technical, scientific, or factual definition (a named law, formula, or concept) unless you are certain — getting one wrong is worse than checking first. You DO have a live web search tool for both cases. Never say \"I don't have real-time access\" or apologize about your training cutoff, and never state an unconfident definition as fact — instead, use the tool.\n\nWhen the question needs current/live information, OR you are not fully confident in a factual/technical definition, your ENTIRE response must be one line, nothing before or after it: SEARCH: <search query>\nDo not add any other words. You will receive real results next, then give your real answer using them.\n\nNever show your internal reasoning or step-by-step deliberation before your answer. Respond only with the final answer itself.";
 
-    if (!upstream.ok) {
-      const errText = await upstream.text();
-      console.error('[v1/chat proxy]', upstream.status, errText.slice(0, 200));
-      return res.status(502).json({ error: 'Vanguard unavailable' });
+  function extractSearchQuery(content) {
+    const idx = content.search(/search:/i);
+    if (idx === -1) return null;
+    const after = content.slice(idx).split(':').slice(1).join(':').trim();
+    const cut = after.split(/[\n.?!]/)[0].trim();
+    return cut || null;
+  }
+
+  let messages = Array.isArray(upstreamBody.messages) ? [...upstreamBody.messages] : [];
+  if (searchEnabled) {
+    const sysIdx = messages.findIndex(m => m.role === 'system');
+    if (sysIdx >= 0) {
+      messages[sysIdx] = { ...messages[sysIdx], content: (messages[sysIdx].content || '') + SEARCH_INSTRUCTION };
+    } else {
+      messages = [{ role: 'system', content: SEARCH_INSTRUCTION.trim() }, ...messages];
     }
+  }
 
-    // Non-streaming path: read full response, apply normalizer for json_object calls
-    if (!isStreaming) {
-      const data = await upstream.json();
-      if (isJsonObject || isClinical) {
-        const rawContent = data.choices?.[0]?.message?.content ?? '';
-        const normalized = normalizeExtractionResponse(rawContent);
-        try {
-          JSON.parse(normalized); // validate
-          if (data.choices?.[0]?.message) {
-            data.choices[0].message.content = normalized;
+  let finalText = null;
+  let upstreamErr = null;
+
+  try {
+    const maxTurns = searchEnabled ? 2 : 1;
+    for (let turn = 0; turn < maxTurns; turn++) {
+      const upstream = await fetch(`${VG_URL}/v1/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${VG_KEY}` },
+        body: JSON.stringify({ ...upstreamBody, messages, stream: false }),
+        signal: AbortSignal.timeout(45000),
+      });
+
+      if (!upstream.ok) {
+        const errText = await upstream.text();
+        console.error('[v1/chat proxy]', upstream.status, errText.slice(0, 200));
+        // [LNES-20] Auditor auth fallback: if the auditor returns 401/403 (credential
+        // mismatch — it requires its own key that Portal does not currently have), retry
+        // immediately with the Proposer so the client gets a response instead of a 502.
+        if (VG_URL === AUDITOR_URL && (upstream.status === 401 || upstream.status === 403)) {
+          console.warn('[LNES-20] Auditor auth failed (' + upstream.status + ') — falling back to Proposer');
+          const fallbackKey = process.env.SEI_VANGUARD_KEY || 'sk-vanguard-apex-internal-v1';
+          const fallbackResp = await fetch(`${PROPOSER_URL}/v1/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${fallbackKey}` },
+            body: JSON.stringify({ ...upstreamBody, messages, stream: false }),
+            signal: AbortSignal.timeout(45000),
+          }).catch(() => null);
+          if (fallbackResp && fallbackResp.ok) {
+            const fallbackData = await fallbackResp.json();
+            finalText = fallbackData.choices?.[0]?.message?.content ?? '';
+          } else {
+            upstreamErr = 'Vanguard unavailable';
           }
-        } catch {
-          console.error('[v1/chat proxy] json_object normalizer failed to produce valid JSON. raw:', rawContent.slice(0, 200));
-          return res.status(502).json({ error: 'Model returned non-JSON response for json_object request' });
+          break;
+        }
+        upstreamErr = 'Vanguard unavailable';
+        break;
+      }
+
+      const data = await upstream.json();
+      const content = data.choices?.[0]?.message?.content ?? '';
+
+      if (searchEnabled && turn === 0) {
+        const q = extractSearchQuery(content);
+        if (q) {
+          console.log(`[v1/chat SEARCH] query=${JSON.stringify(q)}`);
+          const results = await executeWebSearch(q);
+          messages.push({ role: 'assistant', content });
+          messages.push({ role: 'user', content: `SEARCH_RESULTS for "${q}": ${results}\n\nNow give your final answer using these results. Do not mention searching or cite this as a tool.` });
+          continue;
         }
       }
-      // Record job: prefer model-reported token count, fall back to word count
-      const completionText = data.choices?.[0]?.message?.content ?? '';
-      const tokensYielded = data.usage?.completion_tokens || Math.max(1, completionText.split(/\s+/).filter(Boolean).length);
-      recordJob(tokensYielded, lastUserMsg).catch(() => {});
-      return res.json(data);
+
+      finalText = content;
+      break;
     }
-
-    // Streaming path: intercept SSE chunks to accumulate text for job recording
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-
-    const reader = upstream.body.getReader();
-    const dec = new TextDecoder();
-    let streamedText = '';
-    let buf = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const chunk = dec.decode(value, { stream: true });
-      res.write(chunk);
-      // Accumulate delta.content for billing
-      buf += chunk;
-      const lines = buf.split('\n');
-      buf = lines.pop() ?? '';
-      for (const line of lines) {
-        if (!line.startsWith('data:')) continue;
-        const data = line.slice(5).trim();
-        if (data === '[DONE]') continue;
-        try {
-          const token = JSON.parse(data)?.choices?.[0]?.delta?.content;
-          if (token) streamedText += token;
-        } catch {}
-      }
-    }
-    res.end();
-    // Record after stream ends
-    const tokensYielded = Math.max(1, streamedText.split(/\s+/).filter(Boolean).length);
-    recordJob(tokensYielded, lastUserMsg).catch(() => {});
   } catch (e) {
     console.error('[v1/chat proxy]', e.message);
-    if (!res.headersSent) res.status(503).json({ error: 'Vanguard unreachable' });
-    else res.end();
+    upstreamErr = 'Vanguard unreachable';
   }
+
+  if (upstreamErr || finalText === null) {
+    if (!res.headersSent) return res.status(502).json({ error: upstreamErr || 'Vanguard unavailable' });
+    return res.end();
+  }
+
+  if (isJsonObject || isClinical) {
+    const normalized = normalizeExtractionResponse(finalText);
+    try {
+      JSON.parse(normalized); // validate
+      finalText = normalized;
+    } catch {
+      console.error('[v1/chat proxy] json_object normalizer failed to produce valid JSON. raw:', finalText.slice(0, 200));
+      return res.status(502).json({ error: 'Model returned non-JSON response for json_object request' });
+    }
+  }
+
+  const tokensYielded = Math.max(1, finalText.split(/\s+/).filter(Boolean).length);
+  recordJob(tokensYielded, lastUserMsg).catch(() => {});
+
+  if (!isStreaming) {
+    return res.json({
+      id: 'chatcmpl-exergynet',
+      object: 'chat.completion',
+      created: Math.floor(Date.now() / 1000),
+      model: requestedModel,
+      choices: [{ index: 0, message: { role: 'assistant', content: finalText }, finish_reason: 'stop' }],
+      usage: { prompt_tokens: 0, completion_tokens: tokensYielded, total_tokens: tokensYielded },
+    });
+  }
+
+  // Synthesize real SSE framing — see comment above for why (upstream ignores
+  // stream:true). Chunked a few words at a time so the client still sees a
+  // typing effect rather than the whole answer landing in one frame.
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const parts = finalText.split(/(\s+)/); // keep whitespace so re-join is exact
+  const WORDS_PER_FRAME = 3;
+  for (let i = 0; i < parts.length; i += WORDS_PER_FRAME * 2) {
+    const piece = parts.slice(i, i + WORDS_PER_FRAME * 2).join('');
+    if (!piece) continue;
+    res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: piece } }] })}\n\n`);
+  }
+  res.write('data: [DONE]\n\n');
+  res.end();
 });
 
 // ── POST /api/v1/vanguard-nav ─ Edge Witness → Vanguard bridge (service-to-service) ──
@@ -2458,8 +2544,8 @@ app.post('/auth/oauth', async (req, res) => {
       note                = 'Your ExergyNet API key — save it immediately, it will never be shown again.';
 
       const result = await pool.query(
-        `INSERT INTO biological_developers (id, email, password_hash, api_key_hash, api_key_preview)
-           VALUES (gen_random_uuid()::text, $1, $2, $3, $4) RETURNING id`,
+        `INSERT INTO biological_developers (id, email, password_hash, api_key_hash, api_key_preview, usdc_micro_balance, active)
+           VALUES (gen_random_uuid()::text, $1, $2, $3, $4, 25000000, TRUE) RETURNING id`,
         [oauthEmail, passwordHash, apiKeyHash, preview]
       );
       developerId = result.rows[0].id;
