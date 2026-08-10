@@ -414,12 +414,105 @@ Public-claim impact:      None directly public-facing, but the underlying
                           needs correcting as a result.
 ```
 
+## BLK-012 — "Pro" tier reasoning model — GPU capacity
+
+```
+Status:                   BLOCKED_RESOURCE_DECISION
+Subsystem:                A higher-reasoning-tier model alongside this
+                          project's existing coding-focused and auditing
+                          inference tiers, intended to run on a GPU node
+                          that already hosts one other production workload.
+Blocker class:            INFRASTRUCTURE_RESOURCE
+Current state:            Live verification (direct access to the node)
+                          confirmed the previously-deployed model for this
+                          tier was failing to allocate accelerator memory
+                          and silently falling back to CPU execution —
+                          technically running, but far too slow to be
+                          usable. Root cause: the node's accelerator memory
+                          is already split with an existing production
+                          workload, leaving materially less headroom than
+                          the accelerator's full rated capacity. Separately
+                          confirmed across the fleet: no GPU-equipped node
+                          anywhere in the current compute inventory is idle
+                          — all are already serving at least one production
+                          workload, so none can absorb this tier without
+                          contending against something already live.
+Blocked work:             Standing up a working, adequately-fast model for
+                          this reasoning tier.
+Not blocked:              The existing coding-focused and auditing tiers,
+                          which run on their own separate, uncontended
+                          accelerators and were independently confirmed
+                          healthy during this same verification pass.
+Resolution options:       (A) provision a new GPU-equipped node dedicated
+                          to this tier (operator's stated direction —
+                          real cost and lead time, not a config change);
+                          (B) reduce the co-located workload's accelerator
+                          footprint on the existing node to free enough
+                          headroom for a smaller model in this tier; (C)
+                          accept a smaller model sized to the currently
+                          free headroom on the existing shared node as an
+                          interim step.
+Exact unblock condition:  Operator provisions and confirms a new GPU node
+                          (option A, chosen); this tier's model is deployed
+                          there and passes a live load-and-inference check
+                          without falling back to CPU or contending with
+                          another workload's memory.
+Owner:                    Operator (hardware procurement)
+Last verified:            2026-08-10 — live SSH verification of the node's
+                          accelerator memory, running processes, and the
+                          previously-deployed model's own logs.
+Public-claim impact:      None — this tier is not currently claimed
+                          anywhere as deployed or production-ready.
+```
+
+## BLK-013 — Auditing-tier inference node — credential not provisioned for proxy path
+
+```
+Status:                   PARTIAL_MITIGATION
+Subsystem:                A higher-fidelity auditing-tier inference node
+                          reachable from the main inference gateway but not
+                          directly credentialed for the application-layer
+                          proxy that routes certain model-named requests.
+Blocker class:            AUTHORIZATION_CREDENTIAL
+Current state:            The auditing node requires bearer credentials. The
+                          main gateway calls it as part of a multi-engine race
+                          without a credential — calls fail 401 silently and
+                          the race is won by another engine. A separate
+                          application-layer proxy that routes external requests
+                          directly to this node also lacked a valid credential,
+                          producing 502 "Vanguard unavailable" errors to
+                          callers using the auditor-named model. A code-level
+                          fallback has been deployed (2026-08-10, OTET
+                          otet-a9be128f62ecb2a215a032c0a0d93b2f992900b55777f459)
+                          on the proxy: 401/403 from the auditor now routes
+                          transparently to the primary proposer instead of
+                          502ing the caller. The Nemotron-tier model is therefore
+                          not serving any external traffic through either path,
+                          but external callers no longer receive errors.
+Blocked work:             Actually serving the auditing-tier model to external
+                          callers via the proxy path; completing the multi-engine
+                          race in the main gateway.
+Not blocked:              All primary proposer paths; standard inference routes;
+                          the fallback now in place for the proxy path.
+Exact unblock condition:  (1) Provision the auditing node with a bearer
+                          credential. (2) Add that credential to both the main
+                          inference gateway (race path) and the application-layer
+                          proxy (new env var, e.g. NVIDIA_NIM_KEY). (3) Confirm
+                          200 responses on the auditor-routed model path.
+Owner:                    Operator
+Last verified:            2026-08-10
+Public-claim impact:      None — the auditing tier is not currently claimed
+                          anywhere as available through the external API.
+```
+
 ---
 
 ## Revision log for this register
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-08-10 | Added BLK-013 (partial mitigation, auditor credential); added BLK-012 (open, GPU capacity) | BLK-013: MYMONITOR/Vanguard production recovery — traced 502 "Vanguard unavailable" to auditor node lacking credentials in both the gateway race path and the proxy path; deployed proxy-level fallback to eliminate the 502 while auditor credential provisioning is pending (OTET otet-a9be128f62ec…). BLK-012: |
+| 2026-08-10 | Added BLK-012 (open, GPU capacity) | Live SSH verification during a "should we run a new open-weight model" investigation found the existing "Pro" tier model was OOM-falling-back to CPU on a GPU node already shared with another production workload; fleet-wide check confirmed no idle GPU node exists anywhere to absorb it. Operator chose to provision new hardware rather than share/shrink existing capacity; work paused pending that procurement. |
 | 2026-08-08 | Added BLK-010 (open, network access) and BLK-011 (open, exposed CLI credential) | Discovered during post-LNES-59 model-health consolidation pass: production-host SSH access unreachable from this session (same symptom shape as BLK-009, not yet confirmed identical root cause) prevented full model-restoration work; separately, a local CLI tool's `--help` output was found to print a real credential in plaintext, flagged to the operator, rotation deferred at operator's request |
 | 2026-08-07 | Added BLK-009 (resolved) — a one-time read-only production diagnostic was initially blocked by a stale IP-allowlist entry, then unblocked after the operator added a temporary allowlist entry for their current address. | Discovered-and-resolved blocker during LNES-58.11 production root-verification compatibility work; recorded per this register's standing update rule even though resolution happened within the same session. |
 | 2026-08-06 | Published a fully sanitized version of this register (all entries), replacing the operational version that contains infrastructure specifics. The unsanitized version remains available privately, outside this repository. | This repository is public; the register's working-detail version must never be pushed. A clean, safe-to-review version was needed so governance status can eventually be shared without exposing infrastructure topology. |
