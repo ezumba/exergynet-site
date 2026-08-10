@@ -443,6 +443,24 @@ Not blocked:              The existing coding-focused and auditing tiers,
                           which run on their own separate, uncontended
                           accelerators and were independently confirmed
                           healthy during this same verification pass.
+Update 2026-08-10 (later same day): Confirmed this same constrained
+                          tier is reached by a second, independent
+                          application (a separate chat product's
+                          "deep research" feature, via its own gateway
+                          routing) — a lightweight request to that tier
+                          succeeds, but a heavier one (larger context +
+                          larger output budget) reproduces a real,
+                          user-facing failure with the exact accelerator
+                          out-of-memory signature already found on the
+                          node directly. Confirms this isn't
+                          borderline — it fails under realistic load, not
+                          just heavy synthetic load. Interim mitigation
+                          deployed in that second application only:
+                          its heaviest call to this tier temporarily
+                          uses the healthy coding-focused tier instead,
+                          disclosed in-code as temporary and reversible.
+                          Does not change anything below — still blocked
+                          on new hardware, no capacity was added.
 Resolution options:       (A) provision a new GPU-equipped node dedicated
                           to this tier (operator's stated direction —
                           real cost and lead time, not a config change);
@@ -486,19 +504,33 @@ Current state:            The auditing node requires bearer credentials. The
                           otet-a9be128f62ecb2a215a032c0a0d93b2f992900b55777f459)
                           on the proxy: 401/403 from the auditor now routes
                           transparently to the primary proposer instead of
-                          502ing the caller. The Nemotron-tier model is therefore
-                          not serving any external traffic through either path,
-                          but external callers no longer receive errors.
+                          502ing the caller.
+                          Additional work 2026-08-10 (this session): structured
+                          telemetry added to both the race path (event:
+                          auditor_attempted, auditor_status, auditor_latency_ms,
+                          auditor_failure_class fields logged on every race call)
+                          and the proxy fallback path (event: vanguard_routing_fallback
+                          with requested_model, served_backend, fallback_used,
+                          fallback_reason). A code hook (AUDITOR_AUTH_TOKEN env
+                          var) was wired into the race path so that when the
+                          operator provisions the credential, no further code
+                          change is needed.
+                          The Nemotron-tier model is therefore not serving any
+                          external traffic through either path, but external
+                          callers no longer receive errors and all fallback events
+                          are now visible in structured logs.
 Blocked work:             Actually serving the auditing-tier model to external
                           callers via the proxy path; completing the multi-engine
                           race in the main gateway.
 Not blocked:              All primary proposer paths; standard inference routes;
-                          the fallback now in place for the proxy path.
+                          the fallback now in place for the proxy path;
+                          structured log observability for fallback events.
 Exact unblock condition:  (1) Provision the auditing node with a bearer
-                          credential. (2) Add that credential to both the main
-                          inference gateway (race path) and the application-layer
-                          proxy (new env var, e.g. NVIDIA_NIM_KEY). (3) Confirm
-                          200 responses on the auditor-routed model path.
+                          credential. (2) Set AUDITOR_AUTH_TOKEN in the main
+                          inference gateway env (race path — hook already wired).
+                          (3) Set the same credential in the proxy-layer env
+                          (NVIDIA_NIM_KEY or equivalent). (4) Confirm 200
+                          responses on the auditor-routed model path.
 Owner:                    Operator
 Last verified:            2026-08-10
 Public-claim impact:      None — the auditing tier is not currently claimed
@@ -511,6 +543,8 @@ Public-claim impact:      None — the auditing tier is not currently claimed
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-08-10 | Updated BLK-012 — confirmed a second application also fails against this same tier under realistic (not just synthetic) load, matching accelerator-OOM signature; deployed a temporary model-swap mitigation in that application only | Deep-research feature in a separate chat product was returning a user-facing synthesis failure; investigation traced it to the same constrained reasoning tier tracked in BLK-012, reproduced with the exact CUDA out-of-memory error already seen directly on the node. A lightweight probe against the tier had misleadingly succeeded earlier the same day, masking the issue until a realistically-sized request was tried. No new capacity added — this is scope confirmation and a stopgap, not a resolution. |
+| 2026-08-10 | BLK-013 updated: added structured telemetry to race path (auditor_attempted/status/latency/failure_class) and proxy fallback path (vanguard_routing_fallback); wired AUDITOR_AUTH_TOKEN env hook so operator provisioning requires no further code change | MYMONITOR/Vanguard recovery session — AskMo callAuditorHttp() telemetry patch deployed, Portal fallback observability deployed via OTET (otet-5e1c093e2086eb8b962c43577416d278d1966eb61b3a5b9b) |
 | 2026-08-10 | Added BLK-013 (partial mitigation, auditor credential); added BLK-012 (open, GPU capacity) | BLK-013: MYMONITOR/Vanguard production recovery — traced 502 "Vanguard unavailable" to auditor node lacking credentials in both the gateway race path and the proxy path; deployed proxy-level fallback to eliminate the 502 while auditor credential provisioning is pending (OTET otet-a9be128f62ec…). BLK-012: |
 | 2026-08-10 | Added BLK-012 (open, GPU capacity) | Live SSH verification during a "should we run a new open-weight model" investigation found the existing "Pro" tier model was OOM-falling-back to CPU on a GPU node already shared with another production workload; fleet-wide check confirmed no idle GPU node exists anywhere to absorb it. Operator chose to provision new hardware rather than share/shrink existing capacity; work paused pending that procurement. |
 | 2026-08-08 | Added BLK-010 (open, network access) and BLK-011 (open, exposed CLI credential) | Discovered during post-LNES-59 model-health consolidation pass: production-host SSH access unreachable from this session (same symptom shape as BLK-009, not yet confirmed identical root cause) prevented full model-restoration work; separately, a local CLI tool's `--help` output was found to print a real credential in plaintext, flagged to the operator, rotation deferred at operator's request |
