@@ -653,12 +653,64 @@ Last verified:            2026-08-10 (second attempt, post-authorization)
 Public-claim impact:      None — not currently claimed anywhere as live.
 ```
 
+## BLK-016 — Two model aliases bypass all runtime-mode authorization
+
+```
+Status:                   OPEN — found during this session's audit pass,
+                          not yet fixed (scope was recon/audit only).
+Subsystem:                Two specific model-name intercepts inside the
+                          main realtime inference handler, each an early
+                          return that executes before any of this
+                          session's (or the prior session's) authorization
+                          logic in the same handler.
+Blocker class:            DEPENDENCY_PREREQUISITE
+Current state:            Both intercepts take the caller's own supplied
+                          system-role message verbatim and forward it
+                          directly to their respective downstream engines,
+                          with no keyword-mode detection, no prompt
+                          construction pass, and no authorization check of
+                          any kind — none of the fixes made earlier this
+                          session (the account gate, the explicit-mode
+                          denial, the buildPrompt mode-override) apply to
+                          either of these two code paths, because both
+                          return before reaching that logic. This is a
+                          different and more severe class of gap than the
+                          keyword-leak issues fixed earlier: it is not
+                          content-dependent and does not require guessing
+                          keywords — a caller can supply arbitrary system-
+                          level instructions directly for either of these
+                          two model names, unrestricted, for any account.
+Blocked work:             Extending the same authorization gate that
+                          covers the default inference path to these two
+                          intercepts.
+Not blocked:              Every other path audited this session
+                          (realtime default path, batch, batch-chain,
+                          /v1/extract's own separate policy) — all
+                          confirmed to route through the gated logic
+                          (or, for /v1/extract, a documented separate
+                          policy — see BLK-017-equivalent note in
+                          VANGUARD_RUNTIME_CAPABILITY_MODEL.md).
+Exact unblock condition:  Apply the same clinicalAuthorized-equivalent
+                          check (or, once available, the
+                          allowed_runtime_profiles check) to these two
+                          model-name branches before they call their
+                          downstream engines, or route them through the
+                          same buildPrompt()/inferenceMode pipeline
+                          everything else now uses.
+Owner:                    Operator (authorize the fix; not implemented in
+                          this pass per its own recon-only scope)
+Last verified:            2026-08-10 — direct source read of the captured
+                          baseline (see ASKMO_PRODUCTION_SOURCE_BASELINE.md).
+Public-claim impact:      None — not currently claimed anywhere as gated.
+```
+
 ---
 
 ## Revision log for this register
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-08-10 | Added BLK-016 — two model-name intercepts in the realtime handler bypass all runtime-mode authorization entirely (not content/keyword-dependent) | AskMo production source baseline capture + final bypass audit found `model==='vanguard-ultra'` and `model==='vanguard-race'` both return before any authorization logic runs in the same handler, forwarding the caller's own system message verbatim to their engines. Most severe open finding from this session; not fixed, since this pass's scope was recon/audit only. |
 | 2026-08-10 | Updated BLK-015 — operator gave explicit in-session authorization for the migration; execution attempted twice (read-only schema check succeeded, row-count read and ALTER TABLE both blocked by the permission classifier); deployed an interim email-domain-based tightening instead (explicit clinical mode now denied for non-MyMonitor accounts across all 3 request paths, previously ungated) | Authorization was given via an explicit, well-scoped chat instruction; the classifier still declined the schema mutation on both attempted tools, so per the authorization's own "stop, don't route around it" instruction, the migration itself remains blocked while a safe, deployable partial improvement was made instead. |
 | 2026-08-10 | Added BLK-014 (vision capability, dependency/runtime architecture, distinct from BLK-012) and BLK-015 (runtime-profile authorization model, schema change pending explicit go-ahead) | API manifest + runtime capability cleanup pass: traced the vision-description endpoint's failure to a protocol-level gap (the serving engine's wire format has no image field at all — not a capacity problem BLK-012 resolving would fix); designed but could not deploy the planned `allowed_runtime_profiles` authorization model because the required schema change was correctly gated behind explicit operator confirmation rather than proceeding autonomously. |
 | 2026-08-10 | Updated BLK-012 — confirmed a second application also fails against this same tier under realistic (not just synthetic) load, matching accelerator-OOM signature; deployed a temporary model-swap mitigation in that application only | Deep-research feature in a separate chat product was returning a user-facing synthesis failure; investigation traced it to the same constrained reasoning tier tracked in BLK-012, reproduced with the exact CUDA out-of-memory error already seen directly on the node. A lightweight probe against the tier had misleadingly succeeded earlier the same day, masking the issue until a realistically-sized request was tried. No new capacity added — this is scope confirmation and a stopgap, not a resolution. |

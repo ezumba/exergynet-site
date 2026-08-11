@@ -171,3 +171,216 @@ nor its call site were touched); consistent with the array-content-into-
 string-typed-function bug class documented in
 `VANGUARD_VISION_RUNTIME_RECON.md`, surfacing from live non-text-content
 traffic.
+
+---
+
+## Governance closeout addendum (2026-08-10, second pass)
+
+### Critical finding: two model aliases bypass ALL runtime-mode gating
+
+`/v1/chat/completions` contains two early-return intercepts, both **before**
+any of the `inferenceMode`/`clinicalAuthorized` logic in the same handler:
+
+```ts
+if (req.body.model === 'vanguard-ultra') { ... executeBilateralConsensus(...) ... }
+if (req.body.model === 'vanguard-race')  { ... executeVanguardRace(...) ... }
+```
+
+Both take the caller's own `system`-role message verbatim
+(`messages.find(m => m.role === 'system')?.content || SEI_SYSTEM_PROMPT`)
+and forward it directly to the underlying engines. Neither calls
+`detectMode()`, neither calls `buildPrompt()`, neither is touched by
+`clinicalAuthorized` or any other authorization check — old or new. This is
+not a keyword-leak in the sense of everything else fixed this session; it's
+a complete bypass of the entire gating apparatus for these two specific
+model names. Confirmed by reading `executeBilateralConsensus()` and
+`executeVanguardRace()` (~line 1888, ~2068) — both simply pass
+`systemPromptBase` straight to `callEngine`/`callEngineTimed`/
+`callAuditorHttp` with no further processing.
+
+**Not fixed in this pass** — this session's scope was recon/audit/
+documentation, explicitly not further implementation. Tracked as `BLK-016`
+in `PROJECT_BLOCKERS.md`. This is very likely the single most important
+finding of this entire multi-session effort: every account-gating and
+`buildPrompt`-routing fix made earlier only applies to the default code
+path, not these two aliases.
+
+### Full bypass-audit sweep result
+
+Enumerated every `detectMode(`, `SEI_CLINICAL_PROMPT`, `clinical_runtime`,
+`buildPrompt(`, and route declaration in the captured baseline:
+
+- **Realtime, batch, batch-chain**: gated (fixed this session).
+- **`/v1/extract`**: does not use `detectMode()`/`inferenceMode` at all —
+  has its own separate `domain` selection, passed directly into
+  `buildPrompt()`'s `modeOverride`. Not a `detectMode`-leak, but see its own
+  policy classification below — it has no account gate of any kind.
+- **`vanguard-ultra` / `vanguard-race` model intercepts**: bypass
+  everything, per the critical finding above.
+- **`renderSpokenReply()`** (voice-pipeline confirmation-sentence
+  generator, internal-only): still calls `buildPrompt(messages, '')` with
+  no `modeOverride` — `detectMode()` still runs internally there. Low
+  severity: not exposed to differential per-caller/per-account leak (same
+  behavior for every caller), doesn't affect the actual extraction result
+  returned to the user (only the phrasing of a spoken confirmation), but is
+  technically still a raw, unguarded call site. Noted, not fixed.
+- **`/v1/models`**: the `clinical_runtime: true` fields found there are
+  static descriptive metadata in a models-capability listing, not a gating
+  mechanism — confirmed benign.
+- **Streaming vs non-streaming**: share the same gated code path (the
+  `streamNonStream` branch reuses the same `formattedPrompt`/`inferenceMode`
+  computed upstream) — no separate exposure.
+- **Tool/agent routes**: function-calling (`tools`) is handled inline within
+  `/v1/chat/completions`, not a separate route — no separate exposure.
+
+### `/v1/extract` policy classification
+
+**PUBLIC_SPECIALIZED_API.**
+
+- Any authenticated API key can call it — `authenticate` middleware only,
+  no `isMyMonitorAccount`/`clinicalAuthorized`/capability check of any kind.
+- It does invoke clinical-flavored inference: `domain` (explicit request
+  field, or `inferExtractDomain()`'s content-based guess, which itself
+  defaults to `'clinical'` for anything not biotech-flagged) selects
+  `SEI_CLINICAL_PROMPT` as part of its system prompt.
+- It uses a **separate extraction policy**, not the general chat
+  `inferenceMode` pipeline — its own `SEI_STRUCTURED_EXTRACTION_PROMPT` +
+  domain context + JSON schema + examples, with its own JSON/schema
+  enforcement (`schema_keys`, `confidence`, `validation_warnings` in the
+  response). It does not go through `detectMode()`/`inferenceMode` at all.
+  This is architecturally isolated from the mode-leak class of bug, not
+  vulnerable to it, but has its own, different gap: no account gate at all.
+- It is publicly documented already — listed in `apiServicesManifest.ts` as
+  `id: 'extract'`, `label: 'Sovereign Clinical Extractor'`, a public,
+  described product. Its own code comment explicitly ties it to MyMonitor's
+  use case (`POST /v1/extract ... (MyMonitor /v1/extract)`), but nothing in
+  the code restricts it to MyMonitor accounts.
+- **Conclusion**: this endpoint's current "any authenticated key, always
+  clinical-capable" behavior is either a deliberate, already-shipped product
+  decision (a public specialized API, open by design, distinct from the
+  general-purpose chat endpoints) or an oversight that happens to look like
+  one — this document can't tell which from the code alone. Not changed in
+  this pass, per instruction. Recommend the operator explicitly confirm one
+  way or the other, since if it's unintentional, it's a real gap (any
+  developer key can already do full clinical-domain structured extraction
+  today, regardless of the `allowed_runtime_profiles` work above).
+
+### Clinical Runtime vs. Clinical Extraction API — two distinct mechanisms
+
+- **A. Clinical Runtime** — general Vanguard inference (`/v1/chat/completions`,
+  `/v1/batch`, `/v1/batch/chain`) operating under `SEI_CLINICAL_PROMPT`
+  policy, selected via `inferenceMode === 'clinical'`. This is what
+  `allowed_runtime_profiles` (designed, migration blocked) is meant to gate.
+- **B. Clinical Extraction API** (`/v1/extract`) — a purpose-built,
+  schema-driven structured-extraction endpoint. Currently open to any
+  authenticated key regardless of runtime-profile authorization.
+
+These are independent capabilities and may reasonably have independent
+access policies. Example: Healthcare Startup A might be granted both
+(`clinical` runtime + extraction); a different developer might reasonably
+be granted extraction only, or neither. Today, (B) is unconditionally open
+to everyone, and (A) will be gated by `allowed_runtime_profiles` once the
+migration lands — these are not currently symmetric, which is the direct
+consequence of the classification above.
+
+### Runtime-profile vs. service-permission — is a second axis needed?
+
+**Not yet, and not proven necessary.** `allowed_runtime_profiles` (item 6's
+subject) answers "which *policy* may this request run under" (general vs.
+clinical vs. future specializations) — a property of *how inference
+behaves*. A hypothetical `allowed_services` would answer "which *endpoints*
+may this key call at all" — a property of *API surface access*. The
+existing `authenticate` middleware plus each route's own logic already
+functions as a coarse version of the second axis today (e.g. `/v1/extract`
+is reachable by any authenticated key; there is no per-route allowlist
+mechanism beyond that). Introducing a second, fully general `allowed_services`
+array now would be solving a problem that doesn't clearly exist yet — no
+route currently needs "authenticated but not entitled to call this specific
+endpoint" semantics beyond what runtime-profile gating inside the route
+itself already provides (once implemented). **Recommendation: implement
+`allowed_runtime_profiles` first, ship it, and revisit whether a service
+dimension is actually needed once `/v1/extract`'s policy question above is
+resolved** — if the answer there is "extraction should require its own
+grant separate from clinical runtime," that's the first real signal a
+second axis is needed, not a hypothetical one.
+
+### Future healthcare-startup onboarding — target model
+
+```
+developer/account provisioned
+        |
+clinical capability granted (allowed_runtime_profiles includes 'clinical')
+        |
+API key inherits capability (authenticate middleware reads it)
+        |
+explicit runtime_profile='clinical' request (and/or /v1/extract call,
+per whatever that endpoint's policy is decided to be)
+        |
+Vanguard
+```
+
+No email-domain code change, no new `detectMode()` keyword, no fork, no
+customer-specific model required for a second healthcare integration. The
+existing `@mymonitor.ai` check remains exactly what it's labeled:
+`LEGACY_COMPATIBILITY_SHIM` — not extended to any other domain, not the
+mechanism a new customer would be onboarded through.
+
+### Version-control target recommendation
+
+**Option B — a dedicated private AskMo repository**, not the existing
+public `exergynet` repo (option A) and not folded into an unrelated
+existing private repo (option C, and none was found that fits).
+
+Rationale: `exergynet` is confirmed **public**
+(`PROJECT_BLOCKERS.md`'s own header states this explicitly, and this
+session's docs were written sanitized specifically because of it).
+`biological_proxy`'s source contains real internal system prompts
+(`SEI_CLINICAL_PROMPT`, `SEI_BIOTECH_PROMPT`, etc.), real internal routing
+logic, and real architectural detail (engine addresses, gRPC contracts)
+that has no reason to be public — this is exactly the kind of material this
+session redacted *out* of the public manifest. Putting the AskMo source in
+`exergynet` would reintroduce, at the source level, precisely what was just
+removed at the documentation level.
+
+Proposed layout (private repo, name suggestion `exergynet-askmo` or
+similar):
+
+```
+askmo/
+  src/                  (as captured in this baseline, 1:1)
+  inference.proto       (the live one -- proto/inference.proto retired or
+                         clearly marked DEAD/UNUSED if kept for reference)
+  ecosystem.config.js
+  package.json / package-lock.json
+  tsconfig.json
+  sympy_kernel.py
+  .env.example          (template only, real .env stays out of git via
+                         .gitignore, injected at deploy time same as today)
+  ARCHIVE/               (the ~20 timestamped .bak files, as real git
+                         history going forward makes loose .bak files
+                         next to live source unnecessary)
+```
+
+Principle going forward: production source should be *reproducibly derived*
+from version-controlled source — i.e., a fresh `git clone` + `npm install`
++ `npm run build` should produce a `dist/` matching what's actually
+running, verifiable against `ASKMO_PRODUCTION_SOURCE_SHA256SUMS.txt`. Not
+done in this pass — recommendation only, per instruction not to move
+production files yet.
+
+### Precise-language note (per explicit instruction)
+
+Do not describe this session's work as "runtime capability gating
+deployed." Accurate framing:
+
+> **Interim runtime isolation deployed; durable, database-backed capability
+> authorization remains blocked pending the migration above.**
+
+The only thing genuinely live today is: (1) keyword-fallback clinical
+routing gated by email-domain signal, (2) explicit `mode='clinical_runtime'`
+now denied for non-MyMonitor accounts, (3) `buildPrompt()` honoring
+whatever gated mode its caller computed instead of silently re-deriving
+its own. None of that is "capability authorization" in the
+`allowed_runtime_profiles` sense — it's a stopgap layered on the same
+email-domain mechanism the target design explicitly says not to make
+permanent.
