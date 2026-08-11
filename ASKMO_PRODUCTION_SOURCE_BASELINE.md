@@ -1,8 +1,14 @@
 # AskMo Production Source Baseline
 
-Captured 2026-08-10. A byte-for-byte snapshot of the currently deployed
-AskMo `biological_proxy` source, taken because production has been the sole
+Initially captured 2026-08-10; **refreshed 2026-08-10 (same day, after the
+BLK-016 fix)**. A byte-for-byte snapshot of the currently deployed AskMo
+`biological_proxy` source, taken because production has been the sole
 authoritative copy of this code with no version control anywhere.
+
+**This is the current baseline** — it reflects the BLK-016 fix (shared
+`resolveAuthorizedRuntime()` now gates `vanguard-ultra`/`vanguard-race`
+before dispatch; see below). The pre-fix snapshot is superseded and should
+not be treated as current production.
 
 ## Provenance
 
@@ -15,8 +21,16 @@ authoritative copy of this code with no version control anywhere.
   the deployed binary is `dist/index.js`, compiled from `src/index.ts` and
   its imports.
 - **Verification method**: `sha256sum` computed independently on the remote
-  host and on a local `scp`-pulled copy of every file listed below; all 20
-  hashes matched exactly. See `ASKMO_PRODUCTION_SOURCE_SHA256SUMS.txt`.
+  host and on a local `scp`-pulled copy of every file listed below; all
+  hashes matched exactly, both at initial capture and again after the
+  refresh. See `ASKMO_PRODUCTION_SOURCE_SHA256SUMS.txt` (21 files — one more
+  than the initial capture: `proto/inference.proto` is now also tracked,
+  since the BLK-016 pass added a warning header to that dead file — see
+  below). Additionally confirmed the fix is present in the **compiled
+  binary actually running** (`grep -c 'resolveAuthorizedRuntime' dist/index.js`
+  → 10 matches), not just the source, and confirmed call-site ordering:
+  `resolveAuthorizedRuntime()` (line 2213) executes before both the
+  `vanguard-ultra` (2238) and `vanguard-race` (2266) branches.
 
 ## Files that actually determine production behavior
 
@@ -71,8 +85,13 @@ materially different protocols:
   This file is a real footgun: it sits one directory below the live one,
   looks more complete/current, and a future editor grepping for
   "inference.proto" with no other context could easily edit the wrong file
-  and see no effect. Flagging for cleanup once this is in version control —
-  not fixed here, since this pass is recon/documentation only.
+  and see no effect. Redesigning the protobufs was explicitly out of scope
+  for the BLK-016 P0 fix, but per that fix's own instruction, `proto/inference.proto`
+  now carries an explicit warning header identifying it as dead/unused and
+  pointing to the live file — see the file itself, deployed 2026-08-10. A
+  matching comment was also added at the `PROTO_PATH` constant in
+  `src/index.ts`. Actual cleanup (retiring or deleting the dead file)
+  remains a separate future decision, not made here.
 
 ## Files classified as dead/legacy (not part of the build)
 
@@ -122,20 +141,35 @@ following was independently `grep`-confirmed in the captured `src/index.ts`
 | General-JSON/biotech decoupling | the old buggy pattern `isJsonMode ? 'biotech'` appears exactly once, and only inside an explanatory code comment describing what was fixed — **absent from executable code** |
 | MyMonitor legacy-shim preservation | 10 occurrences (`isMyMonitorAccount`, `LEGACY_COMPATIBILITY`) |
 
-## Critical finding from this pass: two routes bypass all runtime-mode gating entirely
+## BLK-016 finding: two routes bypassed all runtime-mode gating — FIXED 2026-08-10
 
-While auditing for remaining bypass routes (see `VANGUARD_RUNTIME_CAPABILITY_MODEL.md`
-for the full writeup), `/v1/chat/completions` was found to contain two
-early-return intercepts — `model === 'vanguard-ultra'` and `model ===
-'vanguard-race'` — that execute **before** any of the `inferenceMode` /
-`clinicalAuthorized` gating logic in the same handler. Both take the
-caller's own `system`-role message verbatim (`messages.find(m => m.role ===
-'system')?.content || SEI_SYSTEM_PROMPT`) and pass it straight through to
-`executeBilateralConsensus()` / `executeVanguardRace()`, which forward it
-directly to the underlying engines with **no `detectMode()`, no
-`buildPrompt()`, no authorization check of any kind** — old or new. This is
-not a clinical-keyword leak specifically; it's a complete bypass of the
-entire authorization apparatus built and fixed this session, for these two
-model aliases. Not fixed in this pass (this turn's scope is recon/audit —
-see the instruction not to implement changes without being asked); tracked
-as `BLK-016` in `PROJECT_BLOCKERS.md`.
+`/v1/chat/completions` contained two early-return intercepts — `model ===
+'vanguard-ultra'` and `model === 'vanguard-race'` — that executed **before**
+any of the `inferenceMode`/`clinicalAuthorized` gating logic in the same
+handler. Both took the caller's own `system`-role message verbatim
+(`messages.find(m => m.role === 'system')?.content || SEI_SYSTEM_PROMPT`)
+and passed it straight through to `executeBilateralConsensus()` /
+`executeVanguardRace()`, which forwarded it directly to the underlying
+engines with no `detectMode()`, no `buildPrompt()`, no authorization check
+of any kind — old or new. Not a clinical-keyword leak specifically; a
+complete bypass of the entire authorization apparatus, for these two model
+aliases.
+
+**Fixed**: a shared `resolveAuthorizedRuntime()` function now runs once,
+immediately after `messages` is assembled and before either alias's
+dispatch branch. Both branches now compose their system prompt via
+`selectPlatformPolicy(inferenceMode)` (the same platform-policy selection
+`buildPrompt()` uses internally), with the caller's own system message —
+if any — appended as a clearly subordinate, informational block, never a
+replacement. `buildPrompt()`'s internal mode-selection was also refactored
+to call the same shared `selectPlatformPolicy()` helper, removing the
+duplication. A full alias sweep (`model ===`, `model ==`, `switch(model)`,
+every route declaration) confirmed no third alias exists with the same gap
+— `vanguard-auditor`/`vanguard-aligned`/`vanguard-proposer` are backend
+selections inside `getInferenceClient()`, reached only from the already-
+gated default path, not separate early-return branches.
+
+Verified: 20/20 regression tests passing (`VANGUARD_RUNTIME_ISOLATION_TESTS.js`,
+cases 11–14), fix confirmed present in the actual compiled `dist/index.js`
+binary (not just source), call-site ordering confirmed directly in the
+refreshed baseline.

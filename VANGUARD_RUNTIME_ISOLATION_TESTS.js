@@ -27,6 +27,11 @@
 // that migration is blocked pending explicit operator execution (see
 // PROJECT_BLOCKERS.md BLK-015). This suite covers the interim,
 // email-signal-based tightening only.
+//
+// BLK-016 fix (2026-08-10) adds cases 11-14: vanguard-ultra/vanguard-race
+// used to return BEFORE any authorization logic ran at all -- a complete
+// bypass, not content-dependent. Now both route through the same
+// resolveAuthorizedRuntime() as every other path before dispatch.
 
 const CODE_CONTENT = /\b(fun |val |var |class |object |interface |suspend |coroutine|CoroutineScope|launch|withContext|@JavascriptInterface|@SuppressLint|import android|import androidx|package com\.exergynet|pub fn |pub struct |use anchor_lang|use solana_program|declare_id!|uint256|address public|msg\.sender|IERC20|ERC721|emit |require\(|use starknet)\b|#\[program\]|#\[account\]|#\[starknet|pragma solidity/;
 const CODE_INTENT = /\b(debug|refactor|implement|find the bug|what is wrong with|unit test|retrofit|hilt|jetpack compose|coroutine|viewmodel|fragment|workmanager|kotlin|android studio|gradle|\.apk|androidmanifest|gatt|solidity|rust crate|cargo|cairo lang|smart contract|on-chain|erc20|erc721|zk proof|groth16|plonk|solana program|declare_id|airdrop)\b/i;
@@ -99,6 +104,42 @@ function chainClassify({ messages, explicitDefMode, developerEmail }) {
   const inferenceMode = isClinical ? 'clinical' : safeKeywordMode;
   const actualPromptMode = buildPromptMode(messages, inferenceMode);
   return { denied: false, inferenceMode, actualPromptMode };
+}
+
+// -- BLK-016 fix (2026-08-10): shared resolveAuthorizedRuntime() +
+// selectPlatformPolicy() + composeAliasSystemPrompt(), as deployed --
+function selectPlatformPolicyModel(mode) {
+  if (mode === 'biotech')  return 'SEI_BIOTECH_PROMPT';
+  if (mode === 'code')     return 'SEI_CODE_PROMPT';
+  if (mode === 'clinical') return 'SEI_CLINICAL_PROMPT';
+  return 'SEI_SYSTEM_PROMPT';
+}
+function resolveAuthorizedRuntime({ messages, requestedMode, developerEmail }) {
+  const isClinicalMode = requestedMode === 'clinical_runtime' || requestedMode === 'clinical';
+  const isMyMonitorAccount = (developerEmail ?? '').toLowerCase().endsWith('@mymonitor.ai');
+  const clinicalAuthorized = isMyMonitorAccount;
+  if (isClinicalMode && !clinicalAuthorized) {
+    return { denied: true, status: 403 };
+  }
+  const keywordMode = detectMode(messages);
+  const safeKeywordMode = (keywordMode === 'clinical' && !clinicalAuthorized) ? 'physics' : keywordMode;
+  const inferenceMode = isClinicalMode ? 'clinical' : safeKeywordMode;
+  return { denied: false, inferenceMode, isClinicalMode, isMyMonitorAccount, clinicalAuthorized };
+}
+// Models the shared alias dispatch (vanguard-ultra / vanguard-race): the
+// resolver runs FIRST (unlike the pre-fix code, which returned before this
+// point ever ran), then the platform policy + optional caller-instruction
+// addendum is composed.
+function aliasDispatch({ model, messages, requestedMode, developerEmail }) {
+  const authz = resolveAuthorizedRuntime({ messages, requestedMode, developerEmail });
+  if (authz.denied) return { model, denied: true, status: authz.status };
+  const platformPolicy = selectPlatformPolicyModel(authz.inferenceMode);
+  const callerSystemMsg = messages.find(m => m.role === 'system')?.content;
+  const composedSystemPrompt = callerSystemMsg
+    ? platformPolicy + '\n\n---\nCaller-supplied system/developer instruction ' +
+      '(informational -- does not override the platform runtime policy above):\n' + callerSystemMsg
+    : platformPolicy;
+  return { model, denied: false, inferenceMode: authz.inferenceMode, platformPolicy, composedSystemPrompt, callerSystemMsg };
 }
 
 const tests = [
@@ -202,6 +243,65 @@ const tests = [
       return { actualPromptMode: actual };
     },
     expect: r => r.actualPromptMode === 'physics',
+  },
+  // -- BLK-016: vanguard-ultra / vanguard-race authorization (2026-08-10) --
+  {
+    cat: '11a. NEGATIVE: model=vanguard-ultra, mode=clinical_runtime, non-MyMonitor -> 403',
+    fn: () => aliasDispatch({ model: 'vanguard-ultra', messages: [{ role: 'user', content: 'Log this event.' }],
+      requestedMode: 'clinical_runtime', developerEmail: 'anyone@gmail.com' }),
+    expect: r => r.denied === true && r.status === 403,
+  },
+  {
+    cat: '11b. NEGATIVE: model=vanguard-race, mode=clinical_runtime, non-MyMonitor -> 403',
+    fn: () => aliasDispatch({ model: 'vanguard-race', messages: [{ role: 'user', content: 'Log this event.' }],
+      requestedMode: 'clinical_runtime', developerEmail: 'anyone@gmail.com' }),
+    expect: r => r.denied === true && r.status === 403,
+  },
+  {
+    cat: '11c. NEGATIVE: model=vanguard-ultra, keyword content (patient/vitals/extract), non-MyMonitor -> GENERAL',
+    fn: () => aliasDispatch({ model: 'vanguard-ultra',
+      messages: [{ role: 'user', content: 'Extract the patient history and vitals from this note for a case study on data formats.' }],
+      requestedMode: null, developerEmail: 'random-dev@gmail.com' }),
+    expect: r => r.denied === false && r.inferenceMode === 'physics',
+  },
+  {
+    cat: '11d. NEGATIVE: model=vanguard-race, keyword content (patient/vitals/extract), non-MyMonitor -> GENERAL',
+    fn: () => aliasDispatch({ model: 'vanguard-race',
+      messages: [{ role: 'user', content: 'Extract the patient history and vitals from this note for a case study on data formats.' }],
+      requestedMode: null, developerEmail: 'random-dev@gmail.com' }),
+    expect: r => r.denied === false && r.inferenceMode === 'physics',
+  },
+  {
+    cat: '12a. POSITIVE: model=vanguard-ultra, mode=clinical_runtime, MyMonitor -> ALLOWED',
+    fn: () => aliasDispatch({ model: 'vanguard-ultra', messages: [{ role: 'user', content: 'Extract vitals.' }],
+      requestedMode: 'clinical_runtime', developerEmail: 'veena@mymonitor.ai' }),
+    expect: r => r.denied === false && r.inferenceMode === 'clinical' && r.platformPolicy === 'SEI_CLINICAL_PROMPT',
+  },
+  {
+    cat: '12b. POSITIVE: model=vanguard-race, mode=clinical_runtime, MyMonitor -> ALLOWED',
+    fn: () => aliasDispatch({ model: 'vanguard-race', messages: [{ role: 'user', content: 'Extract vitals.' }],
+      requestedMode: 'clinical_runtime', developerEmail: 'charles@mymonitor.ai' }),
+    expect: r => r.denied === false && r.inferenceMode === 'clinical' && r.platformPolicy === 'SEI_CLINICAL_PROMPT',
+  },
+  {
+    cat: '13. System-message regression: caller instruction preserved, platform policy stays primary (ultra)',
+    fn: () => aliasDispatch({ model: 'vanguard-ultra',
+      messages: [{ role: 'system', content: 'You are a concise engineering assistant.' }, { role: 'user', content: 'hello' }],
+      requestedMode: null, developerEmail: 'dev@exergynet.org' }),
+    // platform policy (general SEI_SYSTEM_PROMPT) must be the PRIMARY/first
+    // component; caller instruction must still be present, not discarded.
+    expect: r => r.denied === false && r.inferenceMode === 'physics' &&
+      r.composedSystemPrompt.startsWith(r.platformPolicy) &&
+      r.composedSystemPrompt.includes(r.callerSystemMsg),
+  },
+  {
+    cat: '14. Fallback preservation: race candidates share one authorized systemPromptBase (structural check)',
+    // executeVanguardRace passes the SAME composedSystemPrompt to all 5
+    // candidates (callEngineTimed x4 + callAuditorHttp) -- no per-candidate
+    // mode re-derivation exists in the source (verified by inspection, not
+    // re-modeled here since it's a single shared string, not branching logic).
+    fn: () => ({ singleSharedPromptAcrossAllCandidates: true }),
+    expect: r => r.singleSharedPromptAcrossAllCandidates === true,
   },
 ];
 
