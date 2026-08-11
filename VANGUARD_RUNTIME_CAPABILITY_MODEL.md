@@ -176,9 +176,9 @@ traffic.
 
 ## Governance closeout addendum (2026-08-10, second pass)
 
-### Critical finding: two model aliases bypass ALL runtime-mode gating
+### Critical finding: two model aliases bypassed ALL runtime-mode gating — FIXED 2026-08-10 (BLK-016)
 
-`/v1/chat/completions` contains two early-return intercepts, both **before**
+`/v1/chat/completions` contained two early-return intercepts, both **before**
 any of the `inferenceMode`/`clinicalAuthorized` logic in the same handler:
 
 ```ts
@@ -198,12 +198,40 @@ model names. Confirmed by reading `executeBilateralConsensus()` and
 `systemPromptBase` straight to `callEngine`/`callEngineTimed`/
 `callAuditorHttp` with no further processing.
 
-**Not fixed in this pass** — this session's scope was recon/audit/
-documentation, explicitly not further implementation. Tracked as `BLK-016`
-in `PROJECT_BLOCKERS.md`. This is very likely the single most important
-finding of this entire multi-session effort: every account-gating and
-`buildPrompt`-routing fix made earlier only applies to the default code
-path, not these two aliases.
+**Fixed 2026-08-10, same day as the finding, under explicit P0 authorization**
+(`PROJECT_BLOCKERS.md` BLK-016, now closed). A shared
+`resolveAuthorizedRuntime()` function was extracted and now runs once,
+immediately after `messages` is assembled, before either alias's dispatch
+branch:
+
+```ts
+const authz = resolveAuthorizedRuntime(req, messages);
+if (authz.denied) { res.status(authz.status).json(...); return; }
+const { inferenceMode, isClinicalMode, isMyMonitorAccount, clinicalAuthorized } = authz;
+// ...only now do the vanguard-ultra / vanguard-race branches run...
+```
+
+Both aliases now compose their system prompt via `selectPlatformPolicy(inferenceMode)`
+— a new shared helper `buildPrompt()` was also refactored to call internally,
+removing the duplicated mode→prompt selection logic that used to live in
+three places. The caller's own system message, if present, is appended as a
+clearly subordinate, informational block (`composeAliasSystemPrompt()`) —
+preserved for OpenAI-compatible semantics, but never able to replace or
+override the authorized platform policy, per the target hierarchy: trusted
+platform policy → authorized runtime policy → caller system/developer
+instructions → user content.
+
+A full alias sweep (every `model ===`, `model ==`, `switch(model)`, and
+route declaration in the file) confirmed no third bypass exists —
+`vanguard-auditor`/`vanguard-aligned`/`vanguard-proposer` are backend
+selections inside `getInferenceClient()`, reached only from within the
+already-gated default path (no separate early-return branch), so they were
+never at risk.
+
+This was very likely the single most important finding of this entire
+multi-session effort: every account-gating and `buildPrompt`-routing fix
+made earlier only applied to the default code path, not these two aliases,
+until today.
 
 ### Full bypass-audit sweep result
 
