@@ -1,17 +1,25 @@
 {
-  "protocol": "LNES-04",
   "name": "ExergyNet",
-  "description": "Zero-Knowledge thermodynamic compute settlement for autonomous agents.",
-  "substrate": "Base L2 EVM",
-  "network": "base-sepolia",
-  "coordinates": {
-    "membrane_address": "0x3241941beBE7D7f0c42097D8646DF50992B272FB",
-    "settlement_asset": "USDC",
-    "asset_address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-    "toll_amount_micro": 2000000
+  "category": "AI Memory Control Plane",
+  "canonical_terms": {
+    "xLMP": "AI Memory Control Plane",
+    "Exergy Vault": "persistent memory substrate",
+    "Vanguard": "reasoning / orchestration / execution coordination",
+    "Omega Carrier": "persistent memory transport",
+    "LNES-22": "authority / consequence control plane"
   },
-  "discovery": {
-    "mcp_npm": "exergynet-mcp-server",
-    "api_endpoint": "https://explorer-api.exergynet.org/api/v1/state"
+  "public_pages": {
+    "home": "https://exergynet.org/",
+    "benchmarks": "https://exergynet.org/benchmarks.html",
+    "whitepaper": "https://exergynet.org/whitepaper.html",
+    "developers": "https://exergynet.org/developers.html",
+    "verification": "https://exergynet.org/proof.html"
+  },
+  "claim_policy": {
+    "benchmark_scope_required": true,
+    "whitepaper_status": "COMING_SOON",
+    "production_promotion_claimed": false,
+    "universal_o1_claimed": false,
+    "compact_index_universal_default_claimed": false
   }
 }
