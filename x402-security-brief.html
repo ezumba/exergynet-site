@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>x402 Architectural Security Brief | ExergyNet</title>
+  <meta name="description" content="ExergyNet's architectural response to the x402 vulnerability matrix: deterministic settlement, proof-gated compute, and constrained asset authority for agent-native payment infrastructure.">
+  <link rel="stylesheet" href="style.css">
+  <script>
+  (function(){
+    var t = localStorage.getItem('exg-theme');
+    if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+  </script>
+  <style>
+    .brief-meta-block {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      color: var(--text-soft);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    .brief-meta-block .meta-row {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 0.25rem 1rem;
+    }
+    .brief-meta-block .meta-key {
+      color: var(--accent);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .brief-meta-block .meta-val {
+      color: var(--text);
+    }
+    .risk-matrix table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .risk-matrix thead tr {
+      background: var(--bg);
+      border-bottom: 2px solid var(--border);
+    }
+    .risk-matrix th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-family: var(--display);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
+    .risk-matrix td {
+      padding: 0.85rem 1rem;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.55;
+      color: var(--text-soft);
+    }
+    .risk-matrix tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .risk-matrix .risk-class {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .risk-matrix .claim-boundary {
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--text-soft);
+      opacity: 0.8;
+    }
+    .section-rule {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.5rem 0;
+    }
+    .principle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+    .principle-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+    }
+    .principle-card .p-num {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+    .principle-card h4 {
+      font-size: 1rem;
+      margin: 0 0 0.5rem;
+      color: var(--text);
+    }
+    .principle-card p {
+      font-size: 0.88rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+      margin: 0;
+    }
+    .section-detail {
+      max-width: 820px;
+    }
+    .section-detail h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .section-detail p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-soft);
+      margin-bottom: 1rem;
+    }
+    .citation-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .citation-list li {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.55;
+    }
+    .citation-list li:last-child {
+      border-bottom: none;
+    }
+    .citation-list li span {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-right: 0.75rem;
+    }
+    .market-stat {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--color-blue, #3b82f6);
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+    }
+    .market-stat .stat-val {
+      font-family: var(--display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .market-stat .stat-desc {
+      font-size: 0.88rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+    .audit-meta-terminal {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .audit-meta-terminal .t-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+    }
+    .audit-meta-terminal .t-bar-title {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      margin-left: 0.5rem;
+    }
+    .audit-meta-terminal .t-body {
+      padding: 1.25rem 1.5rem;
+      line-height: 2;
+      color: var(--text-soft);
+    }
+    .audit-meta-terminal .t-body .t-key {
+      color: var(--accent);
+      font-weight: 600;
+      display: inline-block;
+      min-width: 200px;
+    }
+    .audit-meta-terminal .t-body .t-val {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
+  <div id="site-header"></div>
+  <main class="page">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="glow-accent" style="top:-80px;right:-120px;width:420px;height:420px;opacity:0.13;"></div>
+      <div class="glow-blue" style="bottom:-60px;left:-80px;width:320px;height:320px;opacity:0.10;"></div>
+      <div class="container">
+        <div class="hero-eyebrow"><span class="dot"></span>Security Research &mdash; USENIX 2026</div>
+        <h1>Architectural Security Brief:<br><span class="accent">Resolving the x402 Vulnerability Matrix</span></h1>
+        <p class="hero-sub">Deterministic settlement patterns for agent-native and machine-to-machine payment infrastructure. ExergyNet's architectural response to facilitator-mediated x402 failure modes identified in peer-reviewed security research.</p>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- AUDIT METADATA (top-of-brief terminal block) -->
+      <div class="brief-meta-block" style="margin-top:2rem;">
+        <div class="meta-row"><span class="meta-key">Audit ID</span><span class="meta-val">SEI-OMEGA-DEBRIEF-RESOLUTION-0803-WHITEPAPER</span></div>
+        <div class="meta-row"><span class="meta-key">Anchor ID</span><span class="meta-val">SEI-NORTHERN-COMMAND-X402-RESPONSE</span></div>
+        <div class="meta-row"><span class="meta-key">Status</span><span class="meta-val">APPROVED — Public technical brief</span></div>
+        <div class="meta-row"><span class="meta-key">Audience</span><span class="meta-val">Public technical readers evaluating x402 payment security, agent commerce infrastructure, and proof-gated settlement patterns</span></div>
+      </div>
+
+      <!-- EXECUTIVE SUMMARY -->
+      <section>
+        <div class="section-label">Executive Summary</div>
+        <h2>Payment negotiation concentrated in the request path creates concentrated security pressure.</h2>
+
+        <div class="card" style="margin-bottom:1.5rem;">
+          <p style="line-height:1.8; margin:0; font-size:0.98rem;">
+            The emerging x402 ecosystem has moved payment negotiation into the same request-response path used by APIs and autonomous agents. That design is powerful: services can expose paid resources directly over HTTP, while clients can attach payment credentials and retry the request programmatically. It also concentrates security pressure in facilitators and resource servers that verify payment proofs, submit settlement transactions, sponsor fees, and decide when to release paid services.
+          </p>
+        </div>
+
+        <div class="card accent-border" style="margin-bottom:1.5rem;">
+          <p style="line-height:1.8; margin:0; font-size:0.98rem;">
+            Recent security research accepted for USENIX Security 2026 analyzes real-world x402 deployments and reports facilitator-mediated risks including Free Shopping, Asset Theft, Service Denial, and Gas Abuse. The paper frames these as implementation and authorization-correctness failures around verification, settlement, and execution safety &mdash; not a break of the underlying EVM or Solana cryptography.
+          </p>
+        </div>
+
+        <div class="card" style="margin-bottom:2.5rem;">
+          <p style="line-height:1.8; margin:0; font-size:0.98rem;">
+            ExergyNet&rsquo;s architectural response is to reduce the number of off-chain trust transitions between request, payment, compute, proof, and payout. Its intended security posture is deterministic: no work begins before capital is locked; no settlement transaction is submitted before proof material passes local verification; and no metadata path receives authority to redirect escrowed assets.
+          </p>
+          <div style="margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--border); font-size:0.88rem; font-style:italic; color:var(--text-soft);">
+            ExergyNet&rsquo;s position is not that cryptographic soundness removes every possible bypass, nor that every facilitator failure disappears by branding an architecture as on-chain. The stronger and publishable claim is narrower: where payment, proof verification, and payout authority are bound to finalized on-chain state and explicitly constrained contracts, the common facilitator-mediated x402 failure modes become materially harder to express and easier to audit.
+          </div>
+        </div>
+      </section>
+
+      <!-- RISK LANDSCAPE -->
+      <section>
+        <div class="section-label">x402 Risk Landscape</div>
+        <h2>What the attack taxonomy actually shows.</h2>
+        <p style="max-width:760px; margin-bottom:1.5rem; color:var(--text-soft);">
+          The public x402 model is a useful primitive, not a finished security boundary. In the standard flow, a client requests a paid resource, the server replies with payment requirements, the client submits a signed payment payload, and a facilitator verifies and settles the payment. This creates a narrow but critical question: exactly which component is trusted to say &ldquo;payment is good enough&rdquo; before the service is delivered?
+        </p>
+        <div class="card" style="margin-bottom:1.5rem;">
+          <p style="line-height:1.8; margin:0; color:var(--text-soft); font-size:0.95rem;">
+            The USENIX/arXiv paper reports a systematic study of facilitator-mediated deployments. Its attack taxonomy: <strong style="color:var(--text);">Free Shopping, Asset Theft, Service Denial, and Gas Abuse</strong>. ERC-6492 is relevant to the broader account-abstraction surface because it standardizes validation for counterfactual smart-contract accounts, but it should not be treated as a Solana construct or as an inherently broken standard.
+          </p>
+          <p style="line-height:1.8; margin:1rem 0 0; color:var(--text-soft); font-size:0.95rem;">
+            The immediate lesson is architectural. If a merchant releases compute based on off-chain intent, partial verification, mutable metadata, or a facilitator&rsquo;s optimistic decision before robust settlement constraints are satisfied, then the protocol has recreated Web2-style trust in the middle of a Web3 payment rail.
+          </p>
+        </div>
+      </section>
+
+      <!-- DESIGN PRINCIPLES -->
+      <section>
+        <div class="section-label">ExergyNet Design Principles</div>
+        <h2>Four constraints that define the security posture.</h2>
+        <div class="principle-grid">
+          <div class="principle-card">
+            <div class="p-num">Principle 01</div>
+            <h4>Finalized-Value Gate</h4>
+            <p>A compute job should be admitted only after the required toll is locked in the relevant on-chain escrow state, not merely after a client expresses intent to pay.</p>
+          </div>
+          <div class="principle-card">
+            <div class="p-num">Principle 02</div>
+            <h4>Proof-Before-Settlement</h4>
+            <p>Off-chain proof material should be locally verified before a settlement transaction is constructed or submitted, limiting gas exposure from malformed or adversarial payloads.</p>
+          </div>
+          <div class="principle-card">
+            <div class="p-num">Principle 03</div>
+            <h4>Constrained Asset Authority</h4>
+            <p>Contracts should avoid dynamic delegated approvals, arbitrary external calls, and metadata-driven payout destinations unless those surfaces are explicitly needed and independently bounded.</p>
+          </div>
+          <div class="principle-card">
+            <div class="p-num">Principle 04</div>
+            <h4>Terminology Discipline</h4>
+            <p>On Base/EVM, the relevant primitive is a contract, account, escrow mapping, or vault pattern. Program Derived Addresses are Solana-specific and should not be used to describe EVM escrow.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- RISK-TO-CONTROL MATRIX -->
+      <section>
+        <div class="section-label">Risk-to-Control Matrix</div>
+        <h2>Attack taxonomy mapped to ExergyNet control objectives.</h2>
+        <div class="card risk-matrix" style="overflow-x:auto; margin-top:1.25rem;">
+          <table>
+            <thead>
+              <tr>
+                <th>Risk Class</th>
+                <th>Failure Pattern</th>
+                <th>ExergyNet Control Objective</th>
+                <th>Claim Boundary</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="risk-class"><span class="badge badge-amber" style="font-size:0.72rem; padding:0.2rem 0.5rem;">01</span>&nbsp; Free Shopping</span></td>
+                <td>Service released before settlement constraints are final or economically binding.</td>
+                <td>Open work only after the required USDC toll is locked in EVM escrow state observable by the ExergyNet intake service.</td>
+                <td><span class="claim-boundary">Reduces intent/settlement race exposure; does not remove all risks from chain reorgs, bridge assumptions, oracle defects, or implementation bugs.</span></td>
+              </tr>
+              <tr>
+                <td><span class="risk-class"><span class="badge badge-blue" style="font-size:0.72rem; padding:0.2rem 0.5rem;">02</span>&nbsp; Gas Abuse</span></td>
+                <td>Facilitator or sponsor pays fees to submit transactions that are malformed, invalid, or predictably reverting.</td>
+                <td>Verify proof material locally before constructing settlement transactions; drop invalid payloads off-chain.</td>
+                <td><span class="claim-boundary">Contains invalid-proof gas spend if local verification is complete and faithfully mirrors on-chain verifier requirements.</span></td>
+              </tr>
+              <tr>
+                <td><span class="risk-class"><span class="badge badge-green" style="font-size:0.72rem; padding:0.2rem 0.5rem;">03</span>&nbsp; Asset Theft</span></td>
+                <td>Metadata or signature-handling path causes a facilitator or wallet to approve, transfer, or expose assets outside the intended payment.</td>
+                <td>Avoid dynamic delegated approvals and metadata-driven payout routing; use explicit user/token approvals and immutable or governance-bounded treasury destinations.</td>
+                <td><span class="claim-boundary">Constrains the exposed authority surface; does not prove safety against bugs in token contracts, upgrade logic, custody, or privileged administration.</span></td>
+              </tr>
+              <tr>
+                <td><span class="risk-class"><span class="badge" style="font-size:0.72rem; padding:0.2rem 0.5rem; background:var(--bg); color:var(--text-soft);">04</span>&nbsp; Service Denial</span></td>
+                <td>Facilitator dependency, invalid payment loops, or adversarial requests disrupt merchant payment acceptance.</td>
+                <td>Treat facilitator availability as an explicit dependency and keep admission, proof validation, and settlement observable and replayable.</td>
+                <td><span class="claim-boundary">Improves auditability and recovery; does not guarantee continuous liveness under external network, RPC, or chain congestion failures.</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="section-rule">
+
+      <!-- DETAILED SECTIONS -->
+      <section>
+        <div class="section-label">Analysis</div>
+        <h2>Four architectural controls in depth.</h2>
+
+        <div class="section-detail" style="margin-bottom:2rem;">
+          <h3>1. Free Shopping and the Finalized-Value Gate</h3>
+          <p>Free-shopping risk appears when the service path treats a payment authorization or facilitator response as economically equivalent to settled value. For compute-heavy services, that gap is especially expensive: an attacker may extract inference, data access, or job execution while the payment path later fails, reverts, or proves invalid.</p>
+          <p>ExergyNet&rsquo;s public-facing control is an EVM escrow gate. A user or agent opens a job by interacting with the LNES/Base smart contract and locking the exact toll in a contract-controlled escrow balance. The off-chain intake process observes the relevant on-chain event and reconciles it to contract state before work begins.</p>
+          <p>This is intentionally different from describing the escrow with Solana account terminology. A Program Derived Address is a Solana program-derived account concept. Base is an Ethereum Layer 2 with EVM execution semantics, so the correct public language is contract escrow, escrow balance, vault contract, or escrow mapping.</p>
+        </div>
+
+        <div class="section-detail" style="margin-bottom:2rem;">
+          <h3>2. Gas Abuse and Local Proof Validation</h3>
+          <p>Gas-abuse risk appears when a sponsor or facilitator submits transactions on behalf of untrusted clients without first proving that those transactions can satisfy the contract&rsquo;s acceptance rules. The economic harm is not only a single failed transaction; it is the creation of a cheap path for attackers to externalize their cost onto the facilitator.</p>
+          <p>ExergyNet&rsquo;s intended design makes the settlement transaction a scarce action. The Siphon or equivalent settlement service should locally verify the proof seal against the expected image identifier and public inputs before it submits <code>settleExergy</code> or any equivalent on-chain finalization call. If local verification fails, the payload is rejected before it reaches the fee-paying path.</p>
+          <p>The claim boundary matters. Local verification can prevent gas spend on classes of invalid proofs only if it is complete, uses the same verification semantics as the on-chain verifier, and binds the proof to the exact job, toll, recipient set, and image identity. It is an architectural control, not a guarantee against every implementation or dependency failure.</p>
+        </div>
+
+        <div class="section-detail" style="margin-bottom:2rem;">
+          <h3>3. Asset Exposure and the Unidirectional Membrane</h3>
+          <p>The highest-severity x402-style failures arise when a payment facilitator or merchant path can be tricked into executing asset-moving operations outside the intended payment. ERC-6492 and account-abstraction flows deserve careful treatment because counterfactual contract validation can involve deploy-time or prepare-time behavior. The standard itself is not the vulnerability; unsafe integration of signature validation and side-effectful execution is the danger.</p>
+          <p>ExergyNet&rsquo;s &ldquo;Unidirectional Membrane&rdquo; should be understood as a contract-authority discipline: value flows into escrow through explicit user-controlled token approval or transfer authorization; compute settlement consumes a verified proof; and distribution follows predefined contract rules. Metadata may describe a job, but it should not acquire authority to change token approvals, settlement destinations, or treasury routing.</p>
+          <p>This does not make cryptographic bypass categorically impossible. A more rigorous public claim is that the architecture removes or sharply narrows the specific metadata-to-asset-authority path, assuming the contracts are immutable or safely governed, the token integration is correct, and privileged keys cannot override the invariant.</p>
+        </div>
+
+        <div class="section-detail" style="margin-bottom:2rem;">
+          <h3>4. Thermodynamic ZK-Compute as a Security Model</h3>
+          <p>The ExergyNet thesis is that autonomous machine commerce should be priced and admitted as a physical exchange: scarce compute is released only against locked value, and settlement occurs only against verifiable work. In that framing, zero-knowledge proof verification is not decorative cryptography. It is the meter that connects the off-chain compute surface to the on-chain capital surface.</p>
+          <p>The publication-safe version of the thermodynamic claim is therefore precise: ExergyNet seeks to make payment, work, proof, and payout part of one auditable state machine. Where that state machine is correctly implemented, an attacker should not be able to obtain compute merely by presenting intent, should not be able to make ExergyNet pay gas for locally-invalid proofs, and should not be able to redirect escrow through arbitrary metadata.</p>
+        </div>
+      </section>
+
+      <hr class="section-rule">
+
+      <!-- MARKET CONTEXT -->
+      <section>
+        <div class="section-label">Market Context</div>
+        <h2>Why agent-native payment security is a structural requirement.</h2>
+        <div class="market-stat">
+          <div class="stat-val">$3T&ndash;$5T</div>
+          <div class="stat-desc">McKinsey estimates AI agents could mediate this share of global consumer commerce by 2030. If autonomous agents become a material interface for commerce, payment infrastructure will need to support programmatic intent without trusting arbitrary off-chain state transitions.</div>
+        </div>
+        <div class="card" style="margin-top:1rem; max-width:800px;">
+          <p style="line-height:1.8; margin:0; color:var(--text-soft); font-size:0.95rem;">ExergyNet&rsquo;s public posture is that deterministic settlement, proof-gated compute, and constrained asset authority are the right primitives for that transition. The figure should be cited as agent-mediated consumer commerce, not as a guaranteed machine-to-machine payment volume and not as a valuation of any one protocol.</p>
+        </div>
+      </section>
+
+      <hr class="section-rule">
+
+      <!-- CONCLUSION -->
+      <section>
+        <div class="section-label">Conclusion</div>
+        <h2>A narrower, stronger machine.</h2>
+        <div class="card accent-border" style="max-width:820px; margin-bottom:1.5rem;">
+          <p style="line-height:1.85; margin:0; font-size:0.98rem; color:var(--text-soft);">
+            The first generation of x402 infrastructure demonstrates both the promise and the risk of HTTP-native payment. It gives APIs and agents a common payment negotiation path, but it also asks facilitators to become shared security infrastructure for independent merchants.
+          </p>
+          <p style="line-height:1.85; margin:1rem 0 0; font-size:0.98rem; color:var(--text-soft);">
+            ExergyNet&rsquo;s answer is not more optimistic middleware. It is a narrower, stronger machine: capital locked before compute, proof verified before settlement, and asset authority constrained by contract rather than metadata. That is the publishable technical distinction.
+          </p>
+        </div>
+        <blockquote style="border-left:3px solid var(--accent); padding-left:1.25rem; margin:0 0 2rem; font-family:var(--display); font-size:1.1rem; font-weight:600; color:var(--text); font-style:italic; max-width:700px;">
+          The machine should not require trust in intent. It should require only locked value, verified work, and bounded execution authority.
+        </blockquote>
+      </section>
+
+      <hr class="section-rule">
+
+      <!-- SOURCE NOTES -->
+      <section>
+        <div class="section-label">Source Notes</div>
+        <h2>References</h2>
+        <div class="card" style="margin-top:1.25rem;">
+          <ul class="citation-list">
+            <li><span>[1]</span>Wang et al., &ldquo;When HTTP 402 Meets the Blockchain: Risks on Emerging x402 Payments.&rdquo; arXiv:2607.19545, submitted July 21, 2026; journal reference USENIX Security 2026.</li>
+            <li><span>[2]</span>Coinbase Developer Documentation, &ldquo;How x402 Works,&rdquo; describing the x402 payment flow and facilitator role.</li>
+            <li><span>[3]</span>Ethereum Improvement Proposals, ERC-6492: Signature Validation for Predeploy Contracts.</li>
+            <li><span>[4]</span>Base Documentation, protocol overview and network information for Base as an Ethereum L2 / EVM execution environment.</li>
+            <li><span>[5]</span>Solana documentation and Solana program references for Program Derived Addresses, used here only to distinguish Solana PDA terminology from EVM escrow language.</li>
+            <li><span>[6]</span>McKinsey &amp; Company, &ldquo;The agentic commerce opportunity&rdquo; and related automation-curve research estimating $3T&ndash;$5T of global consumer commerce mediated by AI agents by 2030.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- AUDIT METADATA TERMINAL -->
+      <section style="margin-top:3rem; margin-bottom:4rem;">
+        <div class="section-label">Audit Metadata</div>
+        <div class="audit-meta-terminal">
+          <div class="t-bar">
+            <span class="t-dot t-red"></span>
+            <span class="t-dot t-amber"></span>
+            <span class="t-dot t-green"></span>
+            <span class="t-bar-title">exergynet-audit-record &mdash; SEI-OMEGA-DEBRIEF-RESOLUTION-0803-WHITEPAPER</span>
+          </div>
+          <div class="t-body">
+            <div><span class="t-key">audit_id</span><span class="t-val">SEI-OMEGA-DEBRIEF-RESOLUTION-0803-WHITEPAPER</span></div>
+            <div><span class="t-key">status</span><span class="t-val">APPROVED</span></div>
+            <div><span class="t-key">logic_path</span><span class="t-val">C1, C2, C4, C20</span></div>
+            <div><span class="t-key">anchor_id</span><span class="t-val">SEI-NORTHERN-COMMAND-X402-RESPONSE</span></div>
+            <div><span class="t-key">publication_scope</span><span class="t-val">Public technical brief; internal command language and operational framing removed.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section" style="border-top:1px solid var(--border); padding:3rem 0 2rem;">
+        <div class="section-label">ExergyNet Protocol</div>
+        <h2>Explore the underlying architecture.</h2>
+        <p style="color:var(--text-soft); max-width:600px; margin-bottom:2rem;">The security posture described in this brief emerges from the LNES membrane design, proof-gated settlement logic, and constrained asset authority established across the ExergyNet protocol stack.</p>
+        <div class="btn-row">
+          <a href="security.html" class="btn btn-primary">Security Architecture</a>
+          <a href="protocol.html" class="btn btn-secondary">Protocol Overview</a>
+          <a href="docs.html" class="btn btn-ghost">Developer Docs &rarr;</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+</div>
+<script src="main.js"></script>
+</body>
+</html>

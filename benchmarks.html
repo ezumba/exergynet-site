@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benchmarks - Measured AI Memory Results | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Measured ExergyNet benchmark results for AI memory control, deterministic retrieval, adaptive routing, VMN resilience, and authority separation.">
+<meta name="keywords" content="AI memory benchmarks, persistent AI memory, AI Memory Control Plane, xLMP, ExergyNet, deterministic retrieval, evidence parity, inference efficiency">
+<link rel="canonical" href="https://exergynet.org/benchmarks.html">
+<meta property="og:title" content="Benchmarks - Measured AI Memory Results | ExergyNet">
+<meta property="og:description" content="Bounded benchmark evidence for xLMP, Compact Index retrieval, VMN resilience, adaptive deterministic routing, and authority separation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/benchmarks.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ExergyNet Benchmarks">
+<meta name="twitter:description" content="Measured systems results for the AI Memory Control Plane.">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+  .bench-hero{position:relative;overflow:hidden;padding:6rem 0 4rem;}
+  .bench-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;}
+  .result-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;border:1px solid var(--border-mid);background:var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:2rem;}
+  .result-cell{background:var(--bg-card);padding:1.35rem;}
+  .result-value{font-family:var(--display);font-size:clamp(2rem,5vw,3.2rem);line-height:.9;font-weight:900;color:var(--accent);margin-bottom:.55rem;}
+  .result-label{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);line-height:1.45;}
+  .result-scope{font-size:12px;color:var(--text-soft);line-height:1.45;margin-top:.55rem;}
+  .bench-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1.5rem;}
+  .bench-card{border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius);padding:1.25rem;}
+  .bench-card h3{margin-bottom:.4rem;}
+  .bench-card p{font-size:14px;color:var(--text-soft);line-height:1.65;}
+  .claim-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;margin-top:1rem;}
+  .claim-meta span{border:1px solid var(--border);border-radius:6px;padding:.55rem;font-family:var(--mono);font-size:10px;color:var(--text-soft);line-height:1.4;}
+  .claim-meta strong{display:block;color:var(--text);font-family:var(--display);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;}
+  .bench-svg{width:100%;height:auto;display:block;margin:1rem 0;border:1px solid var(--border);border-radius:var(--radius);background:rgba(0,0,0,.12);}
+  .status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;margin-top:1rem;}
+  .status-tile{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-card);padding:1rem;}
+  .status-tile b{display:block;color:var(--accent);font-family:var(--mono);font-size:12px;margin-bottom:.35rem;}
+  .term-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin-top:1rem;}
+  .term{border-top:1px solid var(--border);padding-top:.75rem;}
+  .term strong{display:block;color:var(--text);margin-bottom:.25rem;}
+  .term span{font-size:13px;color:var(--text-soft);line-height:1.55;}
+  .warning-card{border-color:rgba(255,184,48,.35);background:rgba(255,184,48,.06);}
+  @media(max-width:900px){.result-strip,.bench-grid,.status-grid,.term-list{grid-template-columns:1fr 1fr;}}
+  @media(max-width:640px){.result-strip,.bench-grid,.status-grid,.term-list,.claim-meta{grid-template-columns:1fr;}.bench-hero{padding:4rem 0 3rem;}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ExergyNet xLMP",
+  "applicationCategory": "AI Memory Control Plane",
+  "description": "Persistent AI memory control, bounded evidence retrieval, and authority-separated execution infrastructure with measured benchmark results.",
+  "url": "https://exergynet.org/benchmarks.html"
+}
+</script>
+</head>
+<body>
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
+<div id="site-header"></div>
+<main class="page">
+
+<section class="bench-hero">
+  <div class="glow-accent" style="width:560px;height:460px;top:-130px;left:-190px;"></div>
+  <div class="glow-blue" style="width:600px;height:420px;top:-80px;right:-220px;"></div>
+  <div class="container-wide">
+    <div class="bench-kicker">Measured Systems Results</div>
+    <h1>Memory should not scale like the problem.</h1>
+    <p class="hero-sub" style="max-width:780px;">ExergyNet measures the work required to retrieve, reason over, and act on persistent AI memory, then redesigns the control plane to reduce unnecessary computation without surrendering evidence integrity.</p>
+    <div class="btn-row" style="margin-top:1.5rem;">
+      <a href="#results" class="btn btn-primary">Explore the Results</a>
+      <a href="whitepaper.html" class="btn btn-secondary">White Paper - Coming Soon</a>
+    </div>
+
+    <div class="result-strip" aria-label="Executive benchmark results">
+      <div class="result-cell"><div class="result-value">11.3&times;</div><div class="result-label">Correct-task throughput</div><div class="result-scope">Measured H200 full-context comparison.</div></div>
+      <div class="result-cell"><div class="result-value">52,753.8&times;</div><div class="result-label">Median paired retrieval speedup</div><div class="result-scope">Tested 1GB / 100-query enterprise population.</div></div>
+      <div class="result-cell"><div class="result-value">1.886&times;</div><div class="result-label">Adaptive router vs always-legacy</div><div class="result-scope">Frozen LNES-86.2 holdout population.</div></div>
+      <div class="result-cell"><div class="result-value">C16</div><div class="result-label">Concurrency validated</div><div class="result-scope">Isolated VMN routing and evidence checks.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="container-wide">
+    <div class="section-label">Benchmark Families</div>
+    <h2>Separate experiments. Separate envelopes.</h2>
+    <p style="max-width:780px;">These results are not combined into one synthetic score. Each card states the measured result, the principle it supports, the test envelope, and the known limitation.</p>
+
+    <div class="bench-grid">
+      <article class="bench-card accent-border">
+        <h3>xLMP / Accelerator Efficiency</h3>
+        <p><strong>11.3&times; more correct-task throughput</strong> than full-context replay at each method's highest tested SLA-compliant operating point on the documented H200 workload. The same evidence package reports a bounded 660-820 active-token xLMP prompt range as stored memory grew past the model context window.</p>
+        <div class="claim-meta">
+          <span><strong>Envelope</strong>Single NVIDIA H200, Nemotron model, synthetic memory corpus.</span>
+          <span><strong>Meaning</strong>Less irrelevant memory entered active model context.</span>
+          <span><strong>Limit</strong>Proxy wall-time result, not integrated energy/GPU-seconds.</span>
+        </div>
+      </article>
+
+      <article class="bench-card blue-border">
+        <h3>Compact Deterministic Index</h3>
+        <p><strong>87% to 94% symmetric correctness</strong> and <strong>52,753.8&times; median paired speedup</strong> in the tested 1GB / 100-query enterprise population. The indexed path was faster on all 100 paired queries in that specific run, with 3.96&times; minimum observed speedup.</p>
+        <svg class="bench-svg" viewBox="0 0 760 210" role="img" aria-labelledby="funnelTitle funnelDesc">
+          <title id="funnelTitle">Memory work compression funnel</title>
+          <desc id="funnelDesc">Stored memory is reduced to posting candidates, scored candidates, and evidence.</desc>
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#00e887"/><stop offset="1" stop-color="#4e9eff"/></linearGradient>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#7896b8"/></marker>
+          </defs>
+          <rect x="30" y="35" width="155" height="90" rx="8" fill="none" stroke="#00e887"/>
+          <rect x="235" y="50" width="155" height="70" rx="8" fill="none" stroke="#4e9eff"/>
+          <rect x="440" y="65" width="115" height="52" rx="8" fill="none" stroke="#4e9eff"/>
+          <rect x="610" y="75" width="105" height="38" rx="8" fill="url(#g1)" opacity=".35" stroke="#00e887"/>
+          <text x="107" y="80" text-anchor="middle" fill="#ddeeff" font-size="16" font-family="monospace">MEMORY</text>
+          <text x="312" y="83" text-anchor="middle" fill="#ddeeff" font-size="14" font-family="monospace">SELECT</text>
+          <text x="498" y="96" text-anchor="middle" fill="#ddeeff" font-size="14" font-family="monospace">SCORE</text>
+          <text x="663" y="100" text-anchor="middle" fill="#ddeeff" font-size="13" font-family="monospace">EVIDENCE</text>
+          <path d="M190 80 L225 80 M395 85 L430 88 M560 93 L600 94" stroke="#7896b8" stroke-width="2" marker-end="url(#arrow)"/>
+          <text x="108" y="148" text-anchor="middle" fill="#7896b8" font-size="12">C</text>
+          <text x="312" y="148" text-anchor="middle" fill="#7896b8" font-size="12">P(q)</text>
+          <text x="498" y="148" text-anchor="middle" fill="#7896b8" font-size="12">S(q)</text>
+          <text x="663" y="148" text-anchor="middle" fill="#7896b8" font-size="12">E(q)</text>
+        </svg>
+        <div class="claim-meta">
+          <span><strong>Envelope</strong>1GB corpus, 100 enterprise queries.</span>
+          <span><strong>Meaning</strong>Evidence selection reduced retrieval work in this population.</span>
+          <span><strong>Limit</strong>Candidate selectivity is workload-dependent.</span>
+        </div>
+      </article>
+
+      <article class="bench-card accent-border">
+        <h3>Adaptive Deterministic Work Routing</h3>
+        <p>No single retrieval strategy won on every workload. LNES-86.2 selected among retrieval paths before expensive work and measured <strong>1.886&times;</strong> vs always-legacy, <strong>1.142&times;</strong> vs always-compact, <strong>1.150&times;</strong> vs the first-generation router, <strong>95.6%</strong> holdout route-selection accuracy, and <strong>1.023&times;</strong> oracle gap.</p>
+        <svg class="bench-svg" viewBox="0 0 760 230" role="img" aria-labelledby="routerTitle routerDesc">
+          <title id="routerTitle">Adaptive deterministic work routing</title>
+          <desc id="routerDesc">A query flows through work analysis into either direct or indexed retrieval before verified evidence.</desc>
+          <rect x="300" y="20" width="160" height="42" rx="8" fill="none" stroke="#00e887"/>
+          <text x="380" y="47" text-anchor="middle" fill="#ddeeff" font-size="13" font-family="monospace">QUERY</text>
+          <rect x="275" y="88" width="210" height="46" rx="8" fill="none" stroke="#4e9eff"/>
+          <text x="380" y="116" text-anchor="middle" fill="#ddeeff" font-size="13" font-family="monospace">WORK ANALYSIS</text>
+          <rect x="120" y="165" width="150" height="42" rx="8" fill="none" stroke="#7896b8"/>
+          <text x="195" y="191" text-anchor="middle" fill="#ddeeff" font-size="12" font-family="monospace">DIRECT</text>
+          <rect x="490" y="165" width="150" height="42" rx="8" fill="none" stroke="#7896b8"/>
+          <text x="565" y="191" text-anchor="middle" fill="#ddeeff" font-size="12" font-family="monospace">INDEXED</text>
+          <path d="M380 62 L380 86 M330 134 L235 164 M430 134 L525 164" stroke="#7896b8" stroke-width="2"/>
+        </svg>
+        <div class="claim-meta">
+          <span><strong>Envelope</strong>Frozen 231-query routing population; 45 holdout cells.</span>
+          <span><strong>Meaning</strong>Workload-aware routing approached oracle-best selection.</span>
+          <span><strong>Limit</strong>Production remains blocked pending concurrency-tail hardening.</span>
+        </div>
+      </article>
+
+      <article class="bench-card warning-card">
+        <h3>What We Learned</h3>
+        <p><strong>Indexed retrieval is not universally faster.</strong> VMN-native validation showed aggregate median speedups below 1.0&times; at both 10MB and 100MB, while larger/filler-heavy subsets improved. That negative result led directly to adaptive deterministic routing.</p>
+        <div class="claim-meta">
+          <span><strong>10MB</strong>0.72&times; aggregate; 0.69&times; small/entity subset; 2.28&times; filler/large subset.</span>
+          <span><strong>100MB</strong>0.70&times; aggregate; 0.68&times; entity subset; 2.11&times; filler/large subset.</span>
+          <span><strong>Limit</strong>Two scale points; not a complete crossover surface.</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container-wide">
+    <div class="section-label">Resilience and Authority</div>
+    <h2>A memory system must stay correct while state changes.</h2>
+    <div class="status-grid">
+      <div class="status-tile"><b>PASS</b>Mutation consistency</div>
+      <div class="status-tile"><b>PASS</b>Restart persistence</div>
+      <div class="status-tile"><b>PASS</b>Corruption recovery</div>
+      <div class="status-tile"><b>PASS</b>Deterministic rebuild</div>
+      <div class="status-tile"><b>PASS</b>Authority separation</div>
+      <div class="status-tile"><b>C16</b>Concurrency validated in isolated testing</div>
+    </div>
+    <div class="bench-grid" style="align-items:center;margin-top:1.5rem;">
+      <div>
+        <h3>Right to know is not right to act.</h3>
+        <p style="color:var(--text-soft);max-width:560px;">Retrieved memory can inform a decision. It cannot manufacture permission to execute one. Memory control, model reasoning, and execution authority remain separate planes.</p>
+      </div>
+      <svg class="bench-svg" viewBox="0 0 720 230" role="img" aria-labelledby="boundaryTitle boundaryDesc">
+        <title id="boundaryTitle">Memory and authority boundary</title>
+        <desc id="boundaryDesc">Memory/evidence produces knowledge; authority/consequence controls action.</desc>
+        <rect x="70" y="45" width="230" height="70" rx="8" fill="none" stroke="#00e887"/>
+        <text x="185" y="75" text-anchor="middle" fill="#ddeeff" font-size="13" font-family="monospace">MEMORY / EVIDENCE</text>
+        <text x="185" y="97" text-anchor="middle" fill="#7896b8" font-size="12">Knowledge</text>
+        <line x1="325" y1="30" x2="325" y2="200" stroke="#ffb830" stroke-width="2" stroke-dasharray="8 7"/>
+        <text x="360" y="111" fill="#ffb830" font-size="15" font-family="monospace">RIGHT TO KNOW != RIGHT TO ACT</text>
+        <rect x="470" y="45" width="190" height="70" rx="8" fill="none" stroke="#4e9eff"/>
+        <text x="565" y="75" text-anchor="middle" fill="#ddeeff" font-size="13" font-family="monospace">AUTHORITY</text>
+        <text x="565" y="97" text-anchor="middle" fill="#7896b8" font-size="12">Action</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container-wide">
+    <div class="section-label">Terminology</div>
+    <h2>A new system needs precise language.</h2>
+    <div class="term-list">
+      <div class="term"><strong>xLMP</strong><span>The AI Memory Control Plane.</span></div>
+      <div class="term"><strong>Work Compression</strong><span>Reducing persistent memory into the minimum evidence work required for a task.</span></div>
+      <div class="term"><strong>Correct-Task Throughput</strong><span>Rate of successfully completed tasks, not raw token generation.</span></div>
+      <div class="term"><strong>Evidence Parity</strong><span>Whether alternative retrieval paths return equivalent authoritative evidence.</span></div>
+      <div class="term"><strong>Adaptive Deterministic Work Routing</strong><span>Selecting among retrieval mechanisms using pre-execution workload state.</span></div>
+      <div class="term"><strong>Oracle Gap</strong><span>Distance between measured routing cost and an oracle that already knows the faster path.</span></div>
+      <div class="term"><strong>Authority Separation</strong><span>Memory can inform an action without granting permission to perform it.</span></div>
+      <div class="term"><strong>Persistent Memory</strong><span>Durable memory that survives inference sessions and process boundaries.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <h2>The white paper is coming. The evidence is already visible.</h2>
+    <p>These public results publish the phenomenon. The forthcoming paper explains the architecture without exposing the private operating recipe.</p>
+    <div class="btn-row" style="justify-content:center;">
+      <a href="whitepaper.html" class="btn btn-primary">White Paper - Coming Soon</a>
+      <a href="EXERGYNET_PUBLIC_BENCHMARK_CLAIM_LEDGER.md" class="btn btn-secondary">Claim Ledger</a>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+</div>
+<script src="main.js"></script>
+</body>
+</html>
