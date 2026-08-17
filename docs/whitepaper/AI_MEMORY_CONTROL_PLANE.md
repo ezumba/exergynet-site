@@ -24,7 +24,7 @@ ExergyNet
 ---
 
 August 2026
-**Version 1.8 — Internal Co-Author Review Draft**
+**Version 1.9 — Internal Co-Author Review Draft**
 Public Classification: OPEN (pending co-author confirmation and legal-entity resolution)
 Document Hash: [pending]
 
@@ -609,6 +609,62 @@ verification, or production resolver capabilities.
 - Chunk-boundary fragmentation corrected in v1.1 by record-aware boundary detection.
 - Literal-only BM25 matching corrected by morphological normalization at ingest and query time.
 - Index serialization bottleneck at large object counts; addressed in v1.2 sharded incremental index architecture (in development).
+- VMN-style BM25 indexing was evaluated locally as a candidate retrieval replacement for xLMP's current linear-scan retrieval path and did not outperform it at the tested LNES-59 procurement-corpus scale (20–164 documents; ~18×–98× slower; evidence recall not consistently better). At small-to-medium procurement corpus scale, the current linear scan is faster because VMN's indexed approach pays fixed filesystem/index overhead that dominates any theoretical lookup advantage. This remains an open large-scale/crossover research question, not a validated advancement — untested at corpus scales where an indexed lookup's theoretical advantage might begin to outweigh that fixed overhead.
+- **Current status (v2.0):** VMN is published as `@lnes/vanguard-memory-node@2.0.0` (npm, public), source-synchronized to its GitHub repository. It now provides adaptive deterministic retrieval — a workload-aware retrieval path that can change strategy when the active path's assumptions stop holding for a given query — validated with 34/34 regression tests passing (30 original plus 4 exercising the adaptive path) and zero observed regressions against the prior release. This supersedes the "v1.2 sharded incremental index architecture (in development)" line above, which is retained here as historical record of the earlier engineering finding, not as current status. The internal decision mechanics of the adaptive path are a trade-secret-controlled implementation detail and are not disclosed in this paper; see Section 20.1 below for the retrieval-benchmark family this connects to.
+
+#### 20.1 LNES-84: Compact/Deterministic Index Retrieval Benchmark
+
+A separate, sealed benchmark line (LNES-84) evaluated a compact,
+deterministic candidate-index structure as a replacement for VMN's
+linear-scan evidence retrieval, independent of the LNES-86 adaptive-routing
+work described in Section 20.2. **The verdict is workload-dependent, not
+uniformly positive, and is stated as such deliberately** — the correctness
+and robustness side of this system is validated without qualification;
+the performance side is not.
+
+**Correctness and robustness:** validated in the sealed LNES-84 test suite with zero observed
+failures across concurrent-reader tests (concurrency 1 through 16),
+mutation-generation consistency, index-corruption detection, crash/restart
+recovery, and authority-boundary negative tests.
+
+**Performance:** the effect is real but depends heavily on workload shape.
+On a narrow, single-scale 1GB / 100-query population where the linear-scan
+baseline pays a large, constant per-query cost, the indexed approach showed
+a large observed advantage — median paired speedup 52,753.8x (bootstrap 95%
+CI [42,014x, 56,537x]), faster on 100 of 100 queries, alongside a measured
+accuracy improvement from 87% to 94% under a corrected symmetric scoring
+rule (+7 percentage points, p = 0.039). On a later, more realistic 10MB
+vault built with a **mixed** document-size composition (231 real paired
+queries — 84% small/entity documents, 16% large/filler documents), the
+aggregate **median** speedup was 0.72x: the indexed approach was slower
+than the linear-scan baseline on the median query, because its fixed
+per-call construction overhead is not amortized when most queries touch
+small documents. Only the large-document slice of that realistic mix
+(16% of queries) showed the indexed approach faster (2.28x median).
+Vault-level behavior at 1GB scale has not been empirically re-measured
+under this more realistic, mixed-composition methodology.
+
+No claim of universal O(1) retrieval, or of universal speedup, is made.
+The honest summary is: correctness and robustness are validated; whether
+the indexed approach helps depends on the shape of the workload it is
+applied to, and the shape matters more than the accelerator or the raw
+corpus size.
+
+#### 20.2 LNES-86: Adaptive Workload-Aware Retrieval Routing
+
+ExergyNet's local retrieval stack (VMN v2.0, Section 20) uses workload-aware
+retrieval that can adapt when the active retrieval path loses its
+efficiency advantage for a given query, rather than committing to a single
+fixed strategy or predicting the right strategy in advance. Within the
+tested workload (the frozen LNES-86 benchmark population), this measured
+approximately 1.92x throughput versus a legacy always-full-scan baseline
+and approximately 1.13x versus a static compact-index-only baseline, with
+decision behavior validated against a sealed 6-way holdout comparison,
+concurrency testing (1 through 16), mutation/restart handling, and failure
+injection. These figures describe behavior within the tested workload only
+and are not presented as a general-purpose multiplier. The specific
+mechanism by which the system detects when to adapt is a trade-secret
+implementation detail and is not disclosed in this paper.
 
 ### 21. Omega Carrier: Cross-Agent Toolset and Cross-Device Continuity
 
@@ -998,11 +1054,11 @@ EVIDENCE_REFERENCE: EVD-001, EVD-002
 
 **SUBSYSTEM: VMN (Vanguard Memory Node)**
 ROLE: Local developer memory node; open-source xLMP implementation
-IMPLEMENTATION_STATUS: DEPLOYED
-VALIDATION_STATUS: Ingest, retrieval, root-bound recall, MCP integration tested
-DEPLOYMENT_STATUS: DEPLOYED (production local instances)
-PUBLIC_CLAIM_STATUS: Full capabilities as described in Section 20
-EVIDENCE_REFERENCE: Direct system operation
+IMPLEMENTATION_STATUS: DEPLOYED (v2.0.0, npm-published as `@lnes/vanguard-memory-node`)
+VALIDATION_STATUS: Ingest, retrieval, root-bound recall, MCP integration tested; 34/34 regression tests passing on v2.0.0 (Section 20)
+DEPLOYMENT_STATUS: DEPLOYED (production local instances; source synchronized to GitHub)
+PUBLIC_CLAIM_STATUS: Full capabilities as described in Section 20; adaptive deterministic retrieval enabled (mechanism not disclosed — trade secret)
+EVIDENCE_REFERENCE: Direct system operation; npm registry + GitHub release provenance
 
 ---
 
@@ -1245,8 +1301,9 @@ available to reviewers who verify the artifact SHA-256 hashes.
 **Scoring:** correctness scored per response; full-context rejected outright
 past 262k tokens (context window exceeded).
 
-**Baselines:** full-context injection; RAG (BM25-based, specific configuration
-in EVD-001). xLMP: root-bound recall from discovered objects.
+**Baselines:** full-context injection; RAG (dense-embedding retrieval —
+all-MiniLM-L6-v2 embeddings, cosine similarity, top-k=5, specific
+configuration in EVD-001). xLMP: root-bound recall from discovered objects.
 
 **Saturation testing (Veena):** QPS ladder test at multiple load points.
 QPS-1 and QPS-50 endpoints documented in EVD-002; intermediate QPS 10–45
@@ -1261,7 +1318,7 @@ All results from H200 environment. Evidence: EVD-001, EVD-002.
 | Method | Prompt tokens | Notes |
 |--------|--------------|-------|
 | Full-context | 11k–67k (growing); rejected past 262k | Grows with corpus |
-| RAG (BM25 baseline) | [in EVD-001] | Fixed k chunks |
+| RAG (dense-embedding baseline) | [in EVD-001] | MiniLM + cosine top-5 |
 | xLMP bounded recall | ~660–820 flat | Stable as corpus grew 8k → 285k |
 
 **Accuracy at equal evidence budget:**
@@ -1356,6 +1413,52 @@ accuracy.
 
 This is stated as a hypothesis to test, not an established result. No run
 of this benchmark has occurred.
+
+#### 35.3.1 Cross-Accelerator Scaling: A100 and TPU v6e (R6, Executed)
+
+Unlike the proposed benchmark immediately above, this benchmark has been
+executed and sealed. It measures a different question: whether xLMP's
+throughput advantage over full-context injection, established on H200 in
+Section 35, appears on other accelerator families, and how the size of that
+advantage moves with corpus scale on each.
+
+**Method:** frozen retrieval logic with runtime shim — the retrieval and
+scoring code under test was held constant across accelerators; each
+accelerator required a disclosed runtime workaround to run at all (A100:
+32,768-token context-window ceiling on the test host; TPU v6e: a required
+`v2-alpha-tpuv6e` image and a configuration-shape patch to the
+`tpu_inference`/Qwen2 loader). These are runtime-environment shims, not
+modifications to the retrieval logic itself. Model: Qwen2.5-7B-Instruct.
+Corpus scales tested: 8k / 16k / 24k tokens. Concurrency: single-stream.
+
+**A100 results** (GCP `a2-highgpu-1g`): S_NVIDIA = 1.41x / 1.92x / 2.63x at
+8k/16k/24k tokens respectively (full-context throughput 1212→902→664
+tasks/min; xLMP throughput 1704→1732→1744 tasks/min). This does not reach
+the H200 benchmark's 11.3x — a real, architectural ceiling of this run, not
+a discrepancy: the A100 host's 32,768-token context window caps how large a
+full-context baseline penalty can grow before that baseline itself becomes
+unable to run.
+
+**TPU v6e (Trillium) results**: S_TPU = 0.945x / 1.118x / 1.375x at the
+same three scales — an advantage that is smaller than A100's and grows more
+slowly. R-ratio (S_TPU / S_NVIDIA) shrinks with scale: 0.67 → 0.58 → 0.52.
+**A real caveat that matters more than the throughput numbers themselves:**
+full-context accuracy on TPU is degraded and does not move in one direction
+across scale (74% → 54% → 66%). The full-method TPU throughput figures
+above should be read with real skepticism about correctness as a result —
+they are observed in this pass, not confirmed as reproducible, and are not
+counterbalanced or replicated.
+
+**Cross-silicon statement:** the xLMP throughput advantage was observed on
+both NVIDIA A100 and Google Trillium v6e under the tested R6 methodology.
+This is not a claim that the two accelerators show identical multipliers —
+they do not — and it is not a claim that either result replicates or
+extends the separate H200 memory-efficiency benchmark (Section 35), which
+used different hardware, a different model, and a different metric. The
+three are kept as separate benchmark families: H200 memory-efficiency,
+A100/TPU cross-accelerator R6 scaling, and (below, Section 35.4 and
+Section 20) the LNES-58→LNES-59 state-governance and local-retrieval
+benchmark families.
 
 ### 35.4 From Retrieval to Authoritative State: LNES-58 → LNES-59
 
@@ -1490,6 +1593,8 @@ CPU-only test environment. Full methodology, per-case failure autopsy,
 and evidence hashes: internal engineering records (`LNES59_Procurement_Bench/`),
 not reproduced in full here per this paper's practice of citing evidence
 categories rather than internal file paths.
+
+**Procurement boundary condition (LNES-82D.3–D.5, local + cloud, 2026-08-15):** On procurement, ExergyNet found a boundary condition: naive bounded retrieval was fast but inaccurate. Deterministic graph, entity, and policy-state resolvers improved full evidence recall from 46 percent to 60 percent with zero regressions, but remained below the 85 percent cloud gate. Procurement therefore remains an active relational-state research track, not a solved benchmark. A remaining failure class involves content-equivalent policy records with distinct IDs, suggesting that future evaluation should distinguish payload-equivalent evidence from exact document-ID matching — this is a disclosed open question, not a claim that it proves benchmark failure; resolving it would require a purpose-built payload-equivalence evaluator, not yet built.
 
 ### 35.5 The Third Domain: LNES-60 Physical Truth (Phase 1 + Phase 1.5 Validated)
 
@@ -1893,11 +1998,30 @@ standardization process as the architecture matures.
 ### 50. Current Integrity Commitment Status
 
 Current xLMP deployments use SHA-256 content commitments for local integrity
-verification. The xLMP-DS ZK query (`xlmp_zk_query`) returns a SHA-256 hash
-labeled as a Groth16 receipt — this is documented in the project record
-(EVD-009) and is not claimed as genuine ZK proof verification in this paper.
-Production zero-knowledge computation verification remains under development
-and is explicitly NOT CLAIMED as deployed.
+verification on the synchronous query path. The xLMP-DS ZK query
+(`xlmp_zk_query`) returns a SHA-256 hash labeled as a Groth16 receipt on this
+hot path — this is documented in the project record (EVD-009) and is not
+claimed as genuine ZK proof verification for query-time responses.
+
+A separate, explicit, asynchronous Groth16 proof path (`/api/xlmp/prove`) has
+been directly verified: on the currently-deployed CPU infrastructure, this
+path completed a real, non-placeholder Groth16 proof for a minimal Vault
+object in approximately 13.5 minutes (EVD-011). This validates the optional
+proof path while confirming that real Groth16 remains too slow for
+synchronous query-time execution on the tested CPU deployment. The result
+reflects the currently-deployed CPU configuration only — it does not evaluate
+GPU, Bonsai, or other accelerated proving paths, and is not claimed as a
+lower bound on achievable Groth16 latency.
+
+The architecture is dual-path: the hot path (synchronous Vault queries) uses
+SHA-256 content-addressed receipts for low-latency operation; the cold path
+(asynchronous, explicit, opt-in) uses real Groth16 integrity proofs, now
+verified to complete successfully on deployed infrastructure for a single
+minimal object. Production zero-knowledge computation integrated into the
+synchronous query path remains under development and is explicitly NOT
+CLAIMED as deployed; the asynchronous proof path is CLAIMED as verified for
+one minimal test object, not as validated at production scale, under
+concurrent load, or with on-chain settlement.
 
 ### 51. Open Research Questions
 
@@ -2100,6 +2224,17 @@ Section 35.4 limitations):**
   procurement) that probabilistic interpretation and authoritative-state
   commitment are separable system functions
 
+**DEMONSTRATED (LNES-82E.1 — dual-path Vault proof architecture, EVD-011):**
+- The async Groth16 proof path (`/api/xlmp/prove`) is verified for a minimal
+  Vault object: a real, non-placeholder 256-byte Groth16 seal was produced on
+  the currently-deployed CPU infrastructure in approximately 13.5 minutes
+- The synchronous Vault query path remains SHA-256 receipt based, unchanged
+  by this result
+- This validates the architecture split between low-latency query receipts
+  (hot path) and delayed cryptographic proof generation (cold path) — it does
+  not validate production-scale reliability, concurrent-load behavior,
+  GPU/Bonsai-accelerated proving, or on-chain settlement from this run
+
 **DEPLOYED:**
 See CLAIM_LEDGER.md for full list. Key items:
 LNES-06 Edge Witness (v2.22.8); LNES-12 LiveKit/coturn; LNES-11 bilateral
@@ -2108,11 +2243,19 @@ infrastructure; Biological Proxy multi-model routing; Bolt FAA Exemption
 No. 26214.
 
 **NOT CLAIMED:**
-ZK proof verification as active production capability (xLMP-DS ZK query is
-SHA-256 labeled Groth16 — EVD-009); fully operational NEURO-LOCK cryptographic
-actuation loop in production; FAA certification of NEURO-LOCK or xLMP; FAA
-endorsement of ExergyNet; full LNES-22 authority loop closure (tunnel broken,
-policy gate not wired to execution).
+ZK proof verification integrated into the synchronous Vault query path
+(xLMP-DS ZK query still returns a SHA-256-labeled Groth16 receipt on the hot
+path, unchanged by EVD-011 — EVD-009); every Vault query being ZK-proven
+(only the separate, explicit, opt-in async path produces a real proof);
+async Groth16 proving verified at production scale, under concurrent load,
+or as a general reliability guarantee (EVD-011 is a single run against one
+minimal object); on-chain settlement verified from the EVD-011 proof run;
+~13.5 minutes as a universal or hardware-independent lower bound on Groth16
+proving time (only the currently-deployed CPU-only path was measured; GPU,
+Bonsai, and other accelerated paths were not evaluated); fully operational
+NEURO-LOCK cryptographic actuation loop in production; FAA certification of
+NEURO-LOCK or xLMP; FAA endorsement of ExergyNet; full LNES-22 authority loop
+closure (tunnel broken, policy gate not wired to execution).
 
 ---
 
@@ -2163,6 +2306,11 @@ structural addition requires a row.
 
 | Version | Date | Claim or section | Previous status | New status | Evidence reference |
 |---------|------|-----------------|-----------------|------------|--------------------|
+| 1.9 | 2026-08-17 | New Section 35.3.1 (Cross-Accelerator Scaling: A100 and TPU v6e), Section 20 (VMN v2.0 status + new 20.1 LNES-84, new 20.2 LNES-86), VMN physical-AI status-table entry | A100/TPU cross-accelerator results existed only in an unmerged external draft outside the repository; VMN status table did not reflect the v2.0.0 npm publication; canonical had zero LNES-84 or LNES-86 content | Reconciled an external v1.9 working draft (`Documents/Codex/.../AI_MEMORY_CONTROL_PLANE_v1.9_2026-08-15.md`, outside git, not merged wholesale) against sealed benchmark artifacts before any import. Added: A100 R6 scaling (1.41x/1.92x/2.63x) and TPU v6e mirror (0.945x/1.118x/1.375x, with disclosed non-monotonic accuracy caveat), both verified byte-for-byte against sealed summaries; VMN v2.0.0 npm-publication status with adaptive-retrieval capability (mechanism undisclosed, trade secret); LNES-84 workload-dependent retrieval verdict, deliberately presenting both the 1GB/100-query pass's 52,753.8x median speedup and the later, more comprehensive 10MB mixed-vault pass's 0.72x median (indexed approach slower on the realistic query mix) side by side rather than the positive figure alone, per the source artifacts' own final verdict; LNES-86 adaptive-routing headline figures (~1.92x/~1.13x within tested workload) with mechanism withheld per R6. All four kept as separate, explicitly self-distinguishing benchmark families from the existing H200 and LNES-58/59 sections. See `WHITEPAPER_V1_9_CANONICAL_RECONCILIATION_PLAN.md` for the full per-claim verification table | `LNES82C6_ASYMPTOTIC_SCALING_SUMMARY.md`, `LNES82C7B_TPU_MIRROR_SUCCESS_SUMMARY.md`, `LNES84_3_FINAL_VERDICT.md`, `LNES84_3_PHASE4_7_ANALYSIS_REPORT.md`, `LNES86_6_VALIDATION_REPORT.md`, npm registry + GitHub provenance for `@lnes/vanguard-memory-node@2.0.0` |
+| 1.9 | 2026-08-17 | Section 35 (Baselines paragraph + prompt-token-consumption table) | RAG baseline described as "BM25-based" / "RAG (BM25 baseline)" | Corrected — the real EVD-001 baseline (`xLMP_Memory_Efficiency_Benchmark_Report.md` §2, sealed package `ExergyNet_H200_Performance_Benchmarks_v2.zip`, SHA-256 `7005fa07...`) is dense-embedding retrieval: all-MiniLM-L6-v2 embeddings, cosine similarity, top-k=5 — not BM25. Triggered by Veena's co-author review of the superseded v1.1 working draft flagging the baseline as possibly TF-IDF; reconciliation against the sealed source found the current canonical text's "BM25" claim was itself the error (not TF-IDF either) | `xLMP_Memory_Efficiency_Benchmark_Report.md` §2 (EVD-001); see `VEENA_WHITEPAPER_REVIEW_RECONCILIATION_2026-08-17.md` for full audit |
+| 1.9 | 2026-08-16 | Section 50 (Current Integrity Commitment Status) + Appendix D (DEMONSTRATED, NOT CLAIMED) + Claim Ledger | Production ZK proof verification (Groth16) listed as PLANNED / NOT CLAIMED, no deployed-environment verification on record | Added — the async Groth16 proof path (`/api/xlmp/prove`) directly verified end-to-end on the deployed Portal CPU host: real, non-placeholder 256-byte Groth16 seal produced for a minimal Vault object in ~13.5 minutes. Framed as a dual-path architecture (SHA-256 hot path for synchronous queries, async Groth16 cold path now verified). Explicitly not claimed: production-scale reliability, concurrent-load behavior, GPU/Bonsai-accelerated proving, 13.5 minutes as a lower bound, or on-chain settlement from this run | LNES82E1_VAULT_ASYNC_GROTH16_PROOF_PATH_REPORT.md + _MANIFEST.json + _RAW_RESULTS.json (EVD-011) |
+| 1.8 | 2026-08-15 | Section 35.4 (procurement boundary condition, new paragraph) + Claim Ledger (STAGED) | LNES-59 procurement results ended at the X1→X2 controlled comparison, no later cloud/offline follow-up on record | Added the LNES-82D.3–D.5 procurement boundary finding: naive bounded retrieval fast but inaccurate; deterministic graph/entity/policy-state resolvers raised full evidence recall 46%→60% with zero regressions, still below the 85% cloud gate; procurement stays an active research track, not solved; disclosed the content-equivalent-policy-records-under-distinct-IDs open question without overclaiming it as proof of benchmark failure | `LNES82D3_PROCUREMENT_A100_RUN_LOG.md`, `LNES82D4_PROCUREMENT_GRAPH_ENTITY_RETRIEVAL_REPORT.md`, `LNES82D5_POLICY_AUTHORITY_STATE_RESOLVER_REPORT.md` |
+| 1.8 | 2026-08-15 | Section 20 (VMN Engineering Findings) + Claim Ledger (NOT CLAIMED) | No local A/B evaluation of BM25-indexed retrieval vs. current xLMP linear scan on record | Added — VMN-style BM25 indexing evaluated locally as a candidate xLMP retrieval replacement; did not outperform the current linear scan at 20–164 document procurement-corpus scale (~18×–98× slower); evidence recall not consistently better; not a validated advancement, remains an open large-scale/crossover research question | LNES-84.2 local A/B benchmark, 40 trial runs (4 corpus scales × 5 counterbalanced trials × 2 methods), zero errors; `LNES84_2_XLMP_VMN_CANDIDATE_REPORT.md` |
 | 1.8 | 2026-08-09 | Validation (Section 35.5 benchmark table + architectural statement) | v1.7 prose-only results | Added Phase 1 vs Phase 1.5 side-by-side metrics table; canonical finding statement; architectural statement "physical-state correctness and action authority are separate system properties"; Phase 2 maturity label "SOFTWARE READY / HARDWARE EXECUTION PENDING"; removed orphaned v1.6 status text | LNES60_PHASE1.5_FINAL_VALIDATION_REPORT.md + LNES60_PHASE1_VS_PHASE1.5_COMPARISON.md |
 | 1.7 | 2026-08-09 | Validation (Section 35.5 status upgrade) | "Architecture Defined — Not Yet Executed" | Upgraded to "Phase 1 + Phase 1.5 Validated": added Phase 1 (deterministic simulator, 0% P2 false releases on sealed 50-case holdout) and Phase 1.5 (real model claude-sonnet-5, 0% M2 false releases, 100% accuracy, 2/2 gate corrections on mission-envelope cases, 0 false holds) results; added Status block with VALIDATED label, synthetic-only caveat, no-regulatory-substitution claim; section heading updated to reflect current maturity | LNES60_PHASE1.5_FINAL_VALIDATION_REPORT.md + LNES60_PHASE1_FINAL_VALIDATION_REPORT.md; sealed evaluator outputs; independently verified by frozen scorer against sealed holdout |
 | 1.6 | 2026-08-08 | Validation (new Section 35.5) | Not present | Added — "LNES-60: The Third Domain: Physical Truth (Architecture Defined — Not Yet Executed)": four-plane truth model, governing principle, KTX domain, RELEASE_ELIGIBLE/HOLD/INCOMPLETE terminal states, explicit DESIGNED status and no-regulatory-claim scope | Operator-authorized architectural addition; no experiment executed, no benchmark result claimed; internal engineering documents LNES60_Physical_Truth/ |
@@ -2201,7 +2349,7 @@ Seven Ezumba
 Chief Architect and Corresponding Author
 ExergyNet
 
-**Version 1.8 — Internal Co-Author Review Draft**
+**Version 1.9 — Internal Co-Author Review Draft**
 August 2026
 
 Co-authors Bontu Veena and Kyaw Phone: listed as proposed co-authors pending
