@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <meta name="description" content="Vanguard coordinates reasoning, orchestration, and execution over bounded xLMP evidence while preserving the separation between memory and authority.">
 <meta property="og:title" content="Vanguard - Reasoning and Execution Coordination | ExergyNet">
-<meta property="og:description" content="Vanguard consumes bounded evidence from the AI Memory Control Plane and operates under authority constraints.">
+<meta property="og:description" content="Vanguard consumes bounded evidence from the ExergyNet state plane and coordinates model selection and execution under authority constraints — reasoning stays separate from authority.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org/vanguard.html">
 <link rel="stylesheet" href="style.css">
@@ -95,7 +95,7 @@
       <span class="vanguard-word">VANGUARD</span>
       <span style="font-size:clamp(1.1rem,2.5vw,1.8rem);font-weight:400;color:var(--text-soft);display:block;margin-top:0.4rem;">Reasoning under authority constraints.</span>
     </h1>
-    <p class="hero-sub" style="max-width:640px;">Vanguard consumes bounded evidence from the AI Memory Control Plane, coordinates model and tool execution, and keeps memory, reasoning, and consequence authority in separate lanes.</p>
+    <p class="hero-sub" style="max-width:640px;">Vanguard consumes bounded evidence from the ExergyNet state plane, coordinates model and tool execution, and keeps memory, reasoning, and consequence authority in separate lanes.</p>
     <div class="btn-row" style="margin-top:1.75rem;">
       <a href="benchmarks.html" class="btn btn-primary">Review Benchmarks &rarr;</a>
       <a href="docs.html" class="btn btn-secondary">View API Docs</a>
@@ -150,9 +150,9 @@
       <div class="depth-step bypass-step"><span>&#10007;</span>Moderation middleware</div>
       <div class="depth-step bypass-step"><span>&#10007;</span>Analytics pipeline</div>
       <div class="depth-step bypass-step"><span>&#10007;</span>Shared tenancy queue</div>
-      <div class="depth-step active-step"><span>&#9654;</span>Direct GPU kernel invocation</div>
+      <div class="depth-step active-step"><span>&#9654;</span>Model selection &rarr; execution routing</div>
       <div class="depth-step active-step"><span>&#10003;</span>First token &rarr; client</div>
-      <div class="depth-result fast">Direct kernel path &middot; overhead eliminated</div>
+      <div class="depth-result fast">Low-overhead execution path &middot; no shared-tenancy middleware</div>
     </div>
     <div class="depth-lane legacy">
       <div class="depth-lane-label">&#10007; Legacy Cloud API</div>
@@ -192,16 +192,16 @@
   <div class="card-grid" style="margin-top:1.75rem;">
 
     <div class="card accent-border pillar-card">
-      <div class="pillar-num">01 / ABSOLUTE IP SOVEREIGNTY</div>
-      <h3>Zero-Retention Session Policy</h3>
-      <p>Your proprietary data &mdash; SMILES strings, IND drafts, corporate payrolls, clinical trial data &mdash; is processed in a stateless inference session. Session data is not retained after the connection closes.</p>
+      <div class="pillar-num">01 / IP SOVEREIGNTY</div>
+      <h3>Stateless Session Policy</h3>
+      <p>Your proprietary data &mdash; SMILES strings, IND drafts, corporate payrolls, clinical trial data &mdash; is processed in a stateless inference session. Session data is not retained after the connection closes, by policy.</p>
       <ul class="spec-list" style="margin:1rem 0;">
         <li><span class="spec-key">Prompt logging</span><span class="spec-val" style="color:var(--accent);">Disabled by policy</span></li>
-        <li><span class="spec-key">Training on user data</span><span class="spec-val" style="color:var(--accent);">Never</span></li>
+        <li><span class="spec-key">Training on user data</span><span class="spec-val" style="color:var(--accent);">Not used for training</span></li>
         <li><span class="spec-key">Vector DB ingestion</span><span class="spec-val" style="color:var(--accent);">None</span></li>
         <li><span class="spec-key">Retention after close</span><span class="spec-val" style="color:var(--accent);">Not retained by policy</span></li>
       </ul>
-      <div class="pillar-stat"><span class="pillar-stat-val accent">Zero</span><span class="pillar-stat-label">data retained per session</span></div>
+      <div class="pillar-stat"><span class="pillar-stat-val accent">Stateless</span><span class="pillar-stat-label">by session policy</span></div>
     </div>
 
     <div class="card pillar-card">
@@ -213,7 +213,7 @@
       </div>
       <ul class="spec-list">
         <li><span class="spec-key">Compute footprint</span><span class="spec-val" style="color:var(--accent);">Minimized &middot; sovereign</span></li>
-        <li><span class="spec-key">Overhead eliminated</span><span class="spec-val" style="color:var(--accent);">No middleware &middot; direct kernel</span></li>
+        <li><span class="spec-key">Low overhead</span><span class="spec-val" style="color:var(--accent);">No shared-tenancy middleware in the path</span></li>
       </ul>
     </div>
 
@@ -245,26 +245,24 @@ client = OpenAI(
 
 <!-- ══ COMPARISON TABLE ══ -->
 <section>
-  <div class="section-label">Provider Comparison</div>
-  <h2>Vanguard vs. the cloud AI stack.</h2>
+  <div class="section-label">What Vanguard Provides</div>
+  <h2>Orchestration with the properties autonomous workloads need.</h2>
+  <p style="max-width:720px;margin-top:0.5rem;color:var(--text-soft);">Vanguard coordinates model selection and execution over bounded evidence. Its differentiators are architectural, stated on their own terms rather than against any specific provider.</p>
   <div class="card" style="padding:0;overflow:hidden;margin-top:1.5rem;">
     <table class="compare-table">
       <thead>
         <tr>
-          <th style="width:30%;">Capability</th>
-          <th class="vanguard-col">&#9670; Vanguard Engine</th>
-          <th>OpenAI / Anthropic</th>
-          <th>AWS Bedrock</th>
+          <th style="width:34%;">Property</th>
+          <th class="vanguard-col">&#9670; Vanguard</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Data retention after session</td><td class="good">&#9679; Zero &mdash; session policy</td><td class="bad">Varies / opaque</td><td class="bad">30&ndash;90 day logs</td></tr>
-        <tr><td>Training on your data</td><td class="good">&#9679; Never &mdash; session policy</td><td class="mid">Opt-out required</td><td class="mid">Opt-out required</td></tr>
-        <tr><td>Moderation middleware</td><td class="good">&#9679; Bypassed at kernel</td><td class="bad">Always active</td><td class="bad">Always active</td></tr>
-        <tr><td>OpenAI SDK compatible</td><td class="good">&#9679; 1:1 drop-in</td><td class="good">&#9679; Native</td><td class="mid">Partial</td></tr>
-        <tr><td>Cost per 1M tokens</td><td class="good">&#9679; Contact for pricing</td><td class="bad">$15&ndash;$60</td><td class="bad">$8&ndash;$40</td></tr>
-        <tr><td>Biomedical / IP workloads</td><td class="good">&#9679; Designed for this</td><td class="bad">Terms restrict sensitive data</td><td class="mid">BAA required</td></tr>
-        <tr><td>Analytics / prompt tracking</td><td class="good">&#9679; None</td><td class="bad">Extensive</td><td class="bad">CloudWatch logs</td></tr>
+        <tr><td>Session data handling</td><td class="good">Stateless session policy &mdash; not retained after the session closes</td></tr>
+        <tr><td>Training on your data</td><td class="good">Not used for training</td></tr>
+        <tr><td>Model independence</td><td class="good">Reasoning engine is interchangeable; state, evidence, and authority live outside the model</td></tr>
+        <tr><td>Integration surface</td><td class="good">OpenAI-compatible API &mdash; point an existing client at <code>api.exergynet.org/v1</code></td></tr>
+        <tr><td>Evidence handling</td><td class="good">Consumes bounded, provenance-aware evidence from the state plane</td></tr>
+        <tr><td>Authority</td><td class="good">Execution stays subject to the Consequence Boundary &mdash; reasoning does not self-authorize</td></tr>
       </tbody>
     </table>
   </div>
@@ -278,12 +276,12 @@ client = OpenAI(
     <div class="card accent-border">
       <div class="badge badge-green" style="margin-bottom:0.75rem;">Biomedical</div>
       <h3>Drug Discovery Pipelines</h3>
-      <p>Run SMILES analysis, compound synthesis logic, and IND document generation through Vanguard with absolute certainty your proprietary scaffolds remain stateless within the session.</p>
+      <p>Run SMILES analysis, compound synthesis logic, and IND document generation through Vanguard under a stateless session policy that keeps proprietary scaffolds out of persistent storage.</p>
     </div>
     <div class="card">
       <div class="badge badge-blue" style="margin-bottom:0.75rem;">Corporate Intelligence</div>
       <h3>Confidential Document Processing</h3>
-      <p>M&amp;A memos, payroll data, and legal briefs processed at GPU speed with zero retention. Vanguard treats your most sensitive content as if it never existed once the session ends.</p>
+      <p>M&amp;A memos, payroll data, and legal briefs processed under a stateless session policy &mdash; content is not retained after the session ends.</p>
     </div>
     <div class="card accent-border">
       <div class="badge badge-green" style="margin-bottom:0.75rem;">Autonomous Agents</div>
@@ -373,7 +371,7 @@ response = client.chat.completions.create(
         <span style="color:var(--accent);">Pay only for the compute intelligence requires.&rdquo;</span>
       </blockquote>
       <p style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-faint);text-transform:uppercase;">
-        ExergyNet &middot; Vanguard Neural Engine &middot; Sovereign AI Infrastructure
+        ExergyNet &middot; Vanguard &middot; Reasoning &amp; Execution Coordination
       </p>
     </div>
   </div>
@@ -389,7 +387,7 @@ response = client.chat.completions.create(
       Vanguard Engine &middot; Now in production
     </div>
     <h2>Your data is your moat.<br>Vanguard keeps the drawbridge up.</h2>
-    <p>Deploy enterprise-grade AI inference with absolute IP sovereignty. Free trial credits included. No enterprise sales call required.</p>
+    <p>Deploy enterprise-grade AI inference with strong IP sovereignty under a stateless session policy. Free trial credits included. No enterprise sales call required.</p>
     <div class="btn-row" style="justify-content:center;margin-top:2rem;">
       <a href="https://portal.exergynet.org/?mode=register" class="btn btn-primary" style="font-size:15px;padding:0.85rem 2rem;">Start with Vanguard &rarr;</a>
       <a href="docs.html" class="btn btn-secondary">API Documentation</a>

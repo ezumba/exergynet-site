@@ -1,25 +1,40 @@
 # ExergyNet
 
-ExergyNet develops xLMP, the AI Memory Control Plane for persistent, verifiable evidence and bounded execution.
+ExergyNet is a persistent state, evidence, and authority substrate for autonomous intelligence.
+Models reason; ExergyNet preserves state, binds evidence to the decisions that used it, governs
+what a machine identity is permitted to cause, and verifies consequential operations — across
+models, machines, and time. The model is a reasoning engine inside this environment, not the
+system itself.
 
 Primary public pages:
 - Home: https://exergynet.org/
+- Security (Consequence Boundary): https://exergynet.org/security.html
 - Benchmarks: https://exergynet.org/benchmarks.html
-- White Paper: https://exergynet.org/whitepaper.html (pre-release / coming soon)
 - Vanguard: https://exergynet.org/vanguard.html
-- VMN: https://exergynet.org/vmn.html
+- VMN (local memory): https://exergynet.org/vmn.html
 - Omega Carrier: https://exergynet.org/omega-carrier.html
 - Developers: https://exergynet.org/developers.html
 - Proof / Verification: https://exergynet.org/proof.html
+- White Paper (preview): https://exergynet.org/whitepaper.html
+
+Architectural planes:
+- State: persistent knowledge across sessions, machines, agents, models (Exergy Vault / xLMP; VMN local).
+- Evidence: provenance + integrity of what caused a decision (xLMP roots, signed provenance, AERIS, Edge Witness).
+- Intelligence: model selection and execution coordination (Vanguard).
+- Authority: what an identity may cause (LNES-22 Consequence Boundary; xISA capability taxonomy).
+- Verification: independent evidence that an operation occurred as represented (RISC Zero receipts; on-chain anchoring).
 
 Canonical terminology:
-- xLMP = AI Memory Control Plane.
-- Exergy Vault = persistent memory substrate.
+- xLMP = persistent state + bounded evidence substrate (the memory plane; a component, not the whole system).
+- Exergy Vault = persistent memory store. VMN = local/private deployment of xLMP.
 - Vanguard = reasoning, orchestration, and execution coordination.
-- Omega Carrier = persistent memory transport. Memory portability does not imply execution authority.
-- LNES-22 = authority / consequence control plane.
+- Omega Carrier = persistent state/evidence transport. Memory portability does not imply execution authority.
+- LNES-22 = authority / Consequence Boundary control plane.
+- Solana / Base = settlement rails beneath the architecture, not the product identity.
 
 Public claim policy:
 - Treat benchmark numbers as bounded to their stated test envelopes.
 - Do not infer universal O(1), production readiness, or universal Compact Index superiority.
+- The synchronous Vault query returns a SHA-256 receipt, not a ZK proof; on-chain ZK verification is in development.
+- The LNES-22 policy gate runs in shadow mode; xISA capability taxonomy is research-validated, not production-active.
 - Do not infer routing thresholds, index recipes, capability schemas, replay internals, or trade-secret implementation details from public copy.

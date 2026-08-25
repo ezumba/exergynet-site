@@ -1,23 +1,38 @@
 {
   "name": "ExergyNet",
-  "category": "AI Memory Control Plane",
+  "category": "State, Evidence & Authority Infrastructure for Autonomous Intelligence",
+  "identity": "A persistent state, evidence, and authority substrate for autonomous intelligence. Models reason; ExergyNet preserves state, binds evidence, governs authority, and verifies consequential operations across models, machines, and time.",
+  "planes": {
+    "state": "Persistent knowledge across sessions, machines, agents, and models (Exergy Vault / xLMP; VMN local).",
+    "evidence": "Provenance and integrity of what caused a decision (xLMP roots, signed provenance, AERIS, Edge Witness).",
+    "intelligence": "Model selection and execution coordination (Vanguard).",
+    "authority": "What an identity is permitted to cause (LNES-22 Consequence Boundary; xISA capability taxonomy).",
+    "verification": "Independent evidence that an operation occurred as represented (RISC Zero receipts; on-chain anchoring)."
+  },
   "canonical_terms": {
-    "xLMP": "AI Memory Control Plane",
-    "Exergy Vault": "persistent memory substrate",
+    "xLMP": "persistent state + bounded evidence substrate (the memory plane; a component, not the whole system)",
+    "Exergy Vault": "persistent memory store",
+    "VMN": "local/private deployment of xLMP",
     "Vanguard": "reasoning / orchestration / execution coordination",
-    "Omega Carrier": "persistent memory transport",
-    "LNES-22": "authority / consequence control plane"
+    "Omega Carrier": "persistent state and evidence transport (transport does not grant execution authority)",
+    "LNES-22": "authority / Consequence Boundary control plane",
+    "settlement_rails": "Solana / Base — infrastructure beneath the architecture, not the product identity"
   },
   "public_pages": {
     "home": "https://exergynet.org/",
+    "security": "https://exergynet.org/security.html",
     "benchmarks": "https://exergynet.org/benchmarks.html",
-    "whitepaper": "https://exergynet.org/whitepaper.html",
     "developers": "https://exergynet.org/developers.html",
-    "verification": "https://exergynet.org/proof.html"
+    "verification": "https://exergynet.org/proof.html",
+    "whitepaper": "https://exergynet.org/whitepaper.html"
   },
   "claim_policy": {
     "benchmark_scope_required": true,
-    "whitepaper_status": "COMING_SOON",
+    "whitepaper_status": "PREVIEW",
+    "synchronous_vault_query_returns": "SHA-256 receipt (not a ZK proof)",
+    "onchain_zk_verification_status": "in development",
+    "lnes22_policy_gate_status": "shadow mode",
+    "xisa_status": "research-validated, not production-active",
     "production_promotion_claimed": false,
     "universal_o1_claimed": false,
     "compact_index_universal_default_claimed": false
