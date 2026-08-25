@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="ExergyNet SDK — TypeScript interface to the LNES-03 Unidirectional Membrane on Solana Mainnet-Beta. Full API reference and complete integration example.">
+<meta name="description" content="ExergyNet SDK reference — current integration surfaces for developers: persistent memory (VMN), MCP tooling, Vanguard's OpenAI-compatible API, and the ElizaOS plugin. The Solana Unidirectional Membrane SDK is retained as legacy.">
 <link rel="stylesheet" href="style.css">
 <script>
 // Inline theme init to prevent flash
@@ -38,18 +38,52 @@
     <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-150px;"></div>
     
     <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>TypeScript SDK</div>
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Developer SDKs</div>
       <h1>ExergyNet<br><span class="accent">SDK Reference</span></h1>
-      <p class="hero-sub">The official <code>exergynet-agent-sdk</code> package. Full TypeScript interface to the LNES-03 Unidirectional Membrane on Solana Mainnet-Beta.</p>
+      <p class="hero-sub">Integrate the ExergyNet substrate by capability — persistent state, evidence, orchestration, and authority — not by chain. Start with the surfaces below; the original Solana membrane SDK is retained as legacy.</p>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- PACKAGE INFO -->
+    <!-- CURRENT INTEGRATION SURFACES -->
     <section>
-      <div class="section-label">Package</div>
-      <h2>Installation</h2>
+      <div class="section-label">Start Here — Current Surfaces</div>
+      <h2>What to integrate now</h2>
+      <p style="max-width:720px; margin-bottom:1.5rem;">These are the current, supported ways to build on ExergyNet, ordered by developer job: persistent state &rarr; evidence &rarr; orchestration &rarr; authority.</p>
+      <div class="card-grid">
+        <div class="card accent-border">
+          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;"><h3 style="margin:0;">Persistent State &mdash; VMN</h3><span class="badge badge-green">Live</span></div>
+          <p>Local, deterministic xLMP memory over MCP. Deterministic retrieval, content-addressed, no cloud required.</p>
+          <pre style="margin-top:0.75rem;"><code>npm install @lnes/vanguard-memory-node</code></pre>
+          <div style="margin-top:0.75rem;"><a href="vmn.html" class="btn btn-ghost" style="font-size:12px;">VMN &rarr;</a></div>
+        </div>
+        <div class="card blue-border">
+          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;"><h3 style="margin:0;">Tooling &mdash; MCP Gateway</h3><span class="badge badge-green">Live</span></div>
+          <p>Connect compatible agents to ExergyNet memory, evidence, and authority-scoped tools via Model Context Protocol.</p>
+          <pre style="margin-top:0.75rem;"><code>https://exergynet.org/mcp</code></pre>
+          <div style="margin-top:0.75rem;"><a href="mcp.html" class="btn btn-ghost" style="font-size:12px;">MCP &rarr;</a></div>
+        </div>
+        <div class="card accent-border">
+          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;"><h3 style="margin:0;">Orchestration &mdash; Vanguard</h3><span class="badge badge-green">Live</span></div>
+          <p>OpenAI-compatible API for reasoning and execution coordination over bounded evidence. Point an existing client at the endpoint and swap the key.</p>
+          <pre style="margin-top:0.75rem;"><code>https://api.exergynet.org/v1</code></pre>
+          <div style="margin-top:0.75rem;"><a href="vanguard.html" class="btn btn-ghost" style="font-size:12px;">Vanguard &rarr;</a></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;"><h3 style="margin:0;">Agents &mdash; ElizaOS Plugin</h3><span class="badge badge-green">Recommended</span></div>
+          <p>Zero-boilerplate integration for ElizaOS agents.</p>
+          <pre style="margin-top:0.75rem;"><code>npm install @elizaos/plugin-exergynet</code></pre>
+          <div style="margin-top:0.75rem;"><a href="docs.html" class="btn btn-ghost" style="font-size:12px;">Docs &rarr;</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PACKAGE INFO (LEGACY) -->
+    <section>
+      <div class="section-label">Legacy</div>
+      <h2>Solana Unidirectional Membrane SDK <span class="badge badge-amber" style="font-size:0.7rem;vertical-align:middle;">Legacy</span></h2>
+      <p style="max-width:720px; margin-bottom:1.25rem; color:var(--text-soft);">The original <code>exergynet-agent-sdk</code> targets the LNES-03 Solana membrane. It remains available for existing integrations; new projects should use the current surfaces above. Solana settlement liveness is under investigation &mdash; see <a href="proof.html">verification status</a>.</p>
       
       <div class="card accent-border" style="margin-bottom:1.5rem;">
         <ul class="spec-list">
