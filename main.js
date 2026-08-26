@@ -98,9 +98,10 @@
       var fElem = document.getElementById("site-footer");
       if (fElem) fElem.innerHTML = '<footer id="main-footer"><div class="footer-inner">' +
         '<div class="footer-brand"><div class="footer-logo"><span class="footer-pulse"></span>ExergyNet</div>' +
-        '<p class="footer-tagline">Thermodynamic ZK-Compute<br>for Autonomous Agents</p></div>' +
+        '<p class="footer-tagline">Verifiable Compute &amp; Physical-World Proof<br>for Autonomous Agents</p></div>' +
         '<div class="footer-meta">' +
-        '<div class="footer-status"><span class="footer-status-dot"></span>LNES-03 &middot; Solana &middot; Live</div>' +
+        '<div class="footer-status"><span class="footer-status-dot"></span>LNES-03 &middot; Solana Mainnet &middot; Investigating</div>' +
+        '<div class="footer-status" style="margin-top:0.3rem;"><span class="footer-status-dot" style="background:#4e9eff;box-shadow:0 0 8px rgba(78,158,255,0.4);"></span>LNES-04 &middot; Base L2 &middot; Live</div>' +
         '<div class="footer-copy">&copy; ' + new Date().getFullYear() + ' ExergyNet.</div>' +
         '<div class="footer-program">Program: <code>7BCPpUMB&hellip;4CcCL</code></div>' +
         '</div></div></footer>';

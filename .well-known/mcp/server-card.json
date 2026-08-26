@@ -1,10 +1,10 @@
 {
-  "name": "ExergyNet MCP Neural Gateway",
-  "description": "Thermodynamic ZK-Compute for Autonomous M2M Agents — Solana/Base blockchain compute settlement with LNES-01",
+  "name": "ExergyNet MCP Gateway",
+  "description": "Model Context Protocol gateway at exergynet.org/mcp for submitting verifiable compute jobs and retrieving their content-addressed (SHA-256) receipts. Ed25519-authenticated. A returned receipt is a SHA-256 content hash, not a Groth16 or ZK-STARK proof, and does not by itself prove execution; on-chain ZK verification is in development and not yet enforcing. For persistent local agent memory use VMN (npm @lnes/vanguard-memory-node); this endpoint does not itself expose memory or authority tools.",
   "version": "0.1.x",
   "url": "https://exergynet.org/mcp",
   "iconUrl": "https://exergynet.org/logo.png",
-  "documentationUrl": "https://exergynet.org",
-  "capabilities": ["compute_jobs", "zk_proofs", "onchain_settlement"],
-  "auth": ["ed25519_solana"]
+  "documentationUrl": "https://exergynet.org/mcp.html",
+  "capabilities": ["compute_jobs", "job_status", "content_addressed_receipts"],
+  "auth": ["ed25519"]
 }
