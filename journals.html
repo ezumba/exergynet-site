@@ -358,6 +358,14 @@ function fmtDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
+function coverSrc(url) {
+  // cover_url is stored relative (e.g. /downloads/covers/x.png), meant to
+  // resolve against the portal where it was uploaded — this page is served
+  // from a different origin (GitHub Pages), so a bare relative src 404s here.
+  if (!url) return '';
+  return /^https?:///i.test(url) ? url : 'https://portal.exergynet.org' + url;
+}
+
 function tagChips(tags, max) {
   return (tags || []).slice(0, max || 2).map(function(t) {
     return '<span class="journal-tag-chip">' + t + '</span>';
@@ -367,7 +375,7 @@ function tagChips(tags, max) {
 function featuredCard(a) {
   var hasCover = !!a.cover_url;
   return '<a href="https://portal.exergynet.org/blog/' + a.slug + '" class="journal-featured-card' + (hasCover ? '' : ' no-cover') + '" target="_blank" rel="noopener">' +
-    (hasCover ? '<div class="journal-featured-img"><img src="' + a.cover_url + '" alt="' + esc(a.title) + '" loading="lazy"></div>' : '') +
+    (hasCover ? '<div class="journal-featured-img"><img src="' + coverSrc(a.cover_url) + '" alt="' + esc(a.title) + '" loading="lazy"></div>' : '') +
     '<div class="journal-featured-body">' +
       '<div class="journal-tag-chips">' + tagChips(a.tags, 3) + '</div>' +
       '<h2 class="journal-featured-title">' + esc(a.title) + '</h2>' +
@@ -388,7 +396,7 @@ function articleCard(a) {
   var hasCover = !!a.cover_url;
   return '<a href="https://portal.exergynet.org/blog/' + a.slug + '" class="journal-card" target="_blank" rel="noopener">' +
     (hasCover
-      ? '<div class="journal-card-img"><img src="' + a.cover_url + '" alt="' + esc(a.title) + '" loading="lazy"></div>'
+      ? '<div class="journal-card-img"><img src="' + coverSrc(a.cover_url) + '" alt="' + esc(a.title) + '" loading="lazy"></div>'
       : '<div class="journal-card-placeholder"><div class="journal-card-placeholder-icon">◈</div></div>'
     ) +
     '<div class="journal-card-body">' +
