@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <meta name="description" content="ExergyNet provides state, evidence, and authority infrastructure for autonomous machines — air, ground, and edge. Verifiable receipts and independent authority control, applied to machine autonomy.">
 <meta property="og:title" content="Autonomous Machine Network — ExergyNet">
-<meta property="og:description" content="Every autonomous action verified. Every machine transaction trustless. ExergyNet is the sovereign infrastructure layer for machines that move, lift, sense, and settle.">
+<meta property="og:description" content="ExergyNet provides state, evidence, and settlement infrastructure for autonomous machines that move, lift, sense, and settle — evidence-backed, not authority-owning.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org/machines.html">
 <link rel="stylesheet" href="style.css">
@@ -99,7 +99,7 @@
           Autonomous Machine Network
         </div>
         <h1 class="mach-h1">The Physical<br>Machine Economy</h1>
-        <p class="mach-sub">Every autonomous action &mdash; verified. Every machine transaction &mdash; trustless. ExergyNet is the sovereign infrastructure layer for machines that move, lift, sense, and settle without human intermediaries.</p>
+        <p class="mach-sub">Every autonomous action &mdash; backed by an evidence receipt. Every machine transaction &mdash; independently checkable. ExergyNet provides state, evidence, and settlement infrastructure for machines that move, lift, sense, and settle, operating under the same authority-constrained principles described elsewhere on this site &mdash; not as an independent authority itself.</p>
         <div class="mach-stat-bar">
           <span class="mach-stat-pill">Air</span>
           <span class="mach-stat-pill">Ground</span>
@@ -114,7 +114,7 @@
     <section class="section" style="padding-top:0;">
       <div class="container">
         <div class="section-label">The Stack</div>
-        <h2>Three Layers.<br>One Sovereign Network.</h2>
+        <h2>Three Layers.<br>One Evidence Chain.</h2>
         <div class="mach-layer-grid">
 
           <div class="mach-layer-card layer-physical">
@@ -134,7 +134,7 @@
           <div class="mach-layer-card layer-settlement">
             <div class="mach-layer-num">03</div>
             <div class="mach-layer-title">The Trust Membrane</div>
-            <p class="mach-layer-body">ExergyNet&rsquo;s Proof&#x2011;of&#x2011;Exergy membrane settles machine&#x2011;to&#x2011;machine transactions autonomously. No human approval. No centralized authority. Physical work generates cryptographic receipts that unlock payment.</p>
+            <p class="mach-layer-body">ExergyNet&rsquo;s Proof&#x2011;of&#x2011;Exergy membrane settles machine&#x2011;to&#x2011;machine transactions under policy set by the operating institution, not by ExergyNet. Physical work generates cryptographic receipts that support settlement; consequential authorization remains external to this substrate, per the same authority-boundary principles applied across ExergyNet&rsquo;s architecture.</p>
             <span class="mach-layer-tag">LNES-04 &middot; Proof&#x2011;of&#x2011;Exergy</span>
           </div>
 
@@ -146,7 +146,8 @@
     <section class="section">
       <div class="container">
         <div class="section-label">Applications</div>
-        <h2>What Machines Can Do<br>When Trust Is Physics</h2>
+        <h2>What This Architecture Is Built<br>to Make Possible</h2>
+        <p class="mach-sub" style="max-width:720px;">These are illustrative scenarios, not a claim that each is deployed at the scale described. Maturity is labeled per scenario &mdash; <strong>engineered</strong> means the underlying mechanism exists and has been tested in a bounded environment; <strong>proposed</strong> means it is an architectural target with no implementation yet.</p>
         <div class="mach-scenario-grid">
 
           <div class="mach-scenario-card">
@@ -159,7 +160,8 @@
               </svg>
             </span>
             <div class="mach-scenario-title">Verified Lift Operations</div>
-            <p class="mach-scenario-body">An autonomous VTOL aircraft completes a lift operation. The flight path, payload weight, duration, and environmental conditions are sealed into an ExergyNet proof. The client receives a cryptographic receipt &mdash; not a log file, not a report. Proof.</p>
+            <span class="mach-layer-tag" style="background:rgba(255,184,48,0.1);color:var(--amber);border:1px solid rgba(255,184,48,0.2);margin-bottom:0.75rem;display:inline-block;">Proposed</span>
+            <p class="mach-scenario-body">An autonomous VTOL aircraft completes a lift operation. The flight path, payload weight, duration, and environmental conditions are sealed into an ExergyNet proof. The client receives a cryptographic receipt. The underlying pre-flight authorization gate has been validated against a sealed synthetic holdout (0/50 false release across two independent runs) &mdash; full end-to-end proof sealing on a real lift operation is not yet demonstrated.</p>
           </div>
 
           <div class="mach-scenario-card">
@@ -177,7 +179,8 @@
               </svg>
             </span>
             <div class="mach-scenario-title">Swarm Intelligence</div>
-            <p class="mach-scenario-body">Dozens of Edge Witness nodes triangulate an event in real time. Each node contributes a hardware-signed attestation. The ExergyNet mesh aggregates them into a single consensus proof. No central coordinator required.</p>
+            <span class="mach-layer-tag" style="background:rgba(255,184,48,0.1);color:var(--amber);border:1px solid rgba(255,184,48,0.2);margin-bottom:0.75rem;display:inline-block;">Proposed</span>
+            <p class="mach-scenario-body">Dozens of Edge Witness nodes triangulate an event in real time. Each node contributes a hardware-signed attestation. The ExergyNet mesh aggregates them into a consensus record. Individual hardware-signed attestation is a production Edge Witness capability; multi-node real-time aggregation at this scale has not yet been demonstrated.</p>
           </div>
 
           <div class="mach-scenario-card">
@@ -189,7 +192,8 @@
               </svg>
             </span>
             <div class="mach-scenario-title">Autonomous Settlement</div>
-            <p class="mach-scenario-body">One machine requests compute from another. The requesting machine locks a toll on the ExergyNet membrane. The providing machine delivers verified work. Settlement is automatic, atomic, and irreversible. Humans are not in the loop.</p>
+            <span class="mach-layer-tag" style="background:rgba(0,232,135,0.1);color:var(--accent);border:1px solid rgba(0,232,135,0.2);margin-bottom:0.75rem;display:inline-block;">Engineered &middot; testnet</span>
+            <p class="mach-scenario-body">One machine requests compute from another. The requesting machine locks a toll on the ExergyNet membrane. The providing machine delivers verified work, and settlement executes under the policy the operating institution configured for that workflow &mdash; without requiring a human to manually approve each individual transaction.</p>
           </div>
 
           <div class="mach-scenario-card">
@@ -201,8 +205,9 @@
                 <path d="M14 13 L16 15 L20 11" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </span>
-            <div class="mach-scenario-title">Immutable Operations Record</div>
-            <p class="mach-scenario-body">Every flight, every sensor reading, every payload handoff becomes an entry in the ExergyNet ledger. Regulators, insurers, and counterparties receive cryptographic proof of compliance &mdash; not trust, not documentation. Math.</p>
+            <div class="mach-scenario-title">Recorded Operations History</div>
+            <span class="mach-layer-tag" style="background:rgba(78,158,255,0.1);color:var(--blue);border:1px solid rgba(78,158,255,0.2);margin-bottom:0.75rem;display:inline-block;">Engineered</span>
+            <p class="mach-scenario-body">Every flight, every sensor reading, every payload handoff can become a hardware-signed entry in the ExergyNet ledger. Regulators, insurers, and counterparties can independently check that record. Edge Witness attests the device's signature on an observation — it does not itself certify that the observed event was true, and no specific regulator or insurer acceptance of this record format is represented here.</p>
           </div>
 
         </div>
@@ -213,9 +218,9 @@
     <section class="section" style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
       <div class="container">
         <div class="section-label" style="text-align:center;">Governance</div>
-        <h2 style="text-align:center;margin-bottom:0;">One Trust.<br>Three Entities. One Physics.</h2>
+        <h2 style="text-align:center;margin-bottom:0;">One Trust.<br>Three Entities. Common Provenance.</h2>
         <div class="mach-trust-block">
-          KTX, ExergyNet, and the Edge Witness Network operate under unified Trust governance. No entity acts in isolation. Every machine action, every network settlement, every sensor attestation flows through the same cryptographic framework &mdash; governed not by policy, but by physics.
+          KTX (Kunfirm Innovative Services) and ExergyNet are separate legal entities that share a common IP and governance lineage through Ezumba Dynasty Trust / EDT Inc. Common ownership does not mean common regulatory status: KTX&rsquo;s own aviation authorizations are a fact about KTX&rsquo;s aircraft program, not an endorsement or validation of ExergyNet&rsquo;s software architecture by any regulator. Every machine action, network settlement, and sensor attestation on this page flows through the cryptographic framework described above, evaluated against the operating institution&rsquo;s own policy.
         </div>
         <div class="mach-entity-row">
           <span class="mach-entity-name">Kunfirm Innovative Services</span>
@@ -231,8 +236,8 @@
     <section class="mach-horizon">
       <div class="container">
         <div class="mach-horizon-label">The Horizon</div>
-        <h2 class="mach-horizon-h2">A World Where Machines<br>Are Sovereign Agents</h2>
-        <p class="mach-horizon-body">The autonomous machine economy does not require permission. It requires proof. ExergyNet provides the substrate &mdash; the membrane between physical action and economic settlement &mdash; so that machines can operate, compensate, and verify one another without human intermediaries. This is not automation. This is sovereignty.</p>
+        <h2 class="mach-horizon-h2">A World Where Machines<br>Carry Their Own Proof</h2>
+        <p class="mach-horizon-body">The autonomous machine economy runs on proof, not on manual documentation. ExergyNet provides the substrate &mdash; the membrane between physical action and economic settlement &mdash; so that machines can operate, compensate, and verify one another under policy the operating institution sets, without requiring a human to review every individual transaction.</p>
       </div>
     </section>
 
@@ -241,7 +246,7 @@
       <div class="container" style="text-align:center;">
         <div class="hero-eyebrow" style="display:inline-flex;justify-content:center;margin-bottom:1.25rem;">
           <span class="dot"></span>
-          ExergyNet &middot; Sovereign Infrastructure
+          ExergyNet &middot; Machine Infrastructure
         </div>
         <h2>Explore the Network</h2>
         <div class="btn-row" style="justify-content:center;margin-top:1.5rem;">

@@ -25,7 +25,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://exergynet.org/voice" />
   <meta property="og:title" content="Sovereign Voice Stack — On-Premise GPU Voice AI | ExergyNet" />
-  <meta property="og:description" content="Localized GPU-accelerated voice AI for clinical and enterprise. Whisper STT → Vanguard LLM → Piper TTS. 1.24s round-trip. HIPAA compliant. No external API calls." />
+  <meta property="og:description" content="Localized GPU-accelerated voice AI for clinical and enterprise. Whisper STT → Vanguard LLM → Piper TTS. HIPAA-aligned deployments. No external API calls." />
   <meta property="og:image" content="https://exergynet.org/assets/og-voice.png" />
   <meta property="og:site_name" content="ExergyNet" />
   <meta property="og:locale" content="en_US" />
@@ -34,7 +34,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@ExergyNet" />
   <meta name="twitter:title" content="Sovereign Voice Stack — On-Premise GPU Voice AI" />
-  <meta name="twitter:description" content="HIPAA-compliant, fully local voice AI pipeline. 1.24s end-to-end latency. Whisper + Vanguard + Piper. No third-party data egress." />
+  <meta name="twitter:description" content="HIPAA-aligned, fully local voice AI pipeline. Whisper + Vanguard + Piper. No third-party data egress." />
   <meta name="twitter:image" content="https://exergynet.org/assets/og-voice.png" />
 
   <!-- ── JSON-LD Structured Data ───────────────────────────────────────────── -->
@@ -46,7 +46,7 @@
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Linux",
     "url": "https://exergynet.org/voice",
-    "description": "A fully localized, GPU-accelerated acoustic voice pipeline for clinical and enterprise workloads. Integrates Whisper.cpp STT, Vanguard LLM inference, and Piper TTS. HIPAA compliant, zero external API leakage.",
+    "description": "A fully localized, GPU-accelerated acoustic voice pipeline for clinical and enterprise workloads. Integrates Whisper.cpp STT, Vanguard LLM inference, and Piper TTS. HIPAA-aligned, zero external API leakage.",
     "offers": [
       {
         "@type": "Offer",
@@ -76,10 +76,8 @@
       "url": "https://exergynet.org"
     },
     "featureList": [
-      "1.24s average end-to-end round-trip",
-      "98% ASR accuracy under telephone-band noise",
       "100% on-premise execution",
-      "HIPAA compliant",
+      "HIPAA-aligned deployment",
       "WebSocket Twilio Connect Stream support",
       "G.711 µ-law 8kHz mono audio frames",
       "Barge-in interruption handling",
@@ -313,9 +311,6 @@
     }
     .logo-mark:hover { opacity: 1; color: var(--text); filter: grayscale(0); }
     .logo-mark .glyph { width: 9px; height: 9px; border-radius: 2px; background: currentColor; opacity: .9; }
-    .logo-mark.nvidia { font-weight: 700; letter-spacing: .03em; }
-    .logo-mark.nvidia .glyph { border-radius: 50%; background: #76B900; }
-    .logo-mark.nvidia:hover { color: #9ad13a; }
     .logo-mark.twilio { font-family: var(--f-body); font-weight: 700; text-transform: lowercase; }
     .logo-mark.twilio .glyph { border-radius: 50%; background: #F22F46; }
     .logo-mark.twilio:hover { color: #F22F46; }
@@ -468,7 +463,7 @@
       <path d="M0,30 L20,30 L28,12 L36,48 L44,18 L52,42 L60,30 L80,30 L88,8 L96,52 L104,22 L112,38 L120,30 L300,30" />
       <path class="front" d="M0,30 L20,30 L28,12 L36,48 L44,18 L52,42 L60,30 L80,30 L88,8 L96,52 L104,22 L112,38 L120,30 L300,30" />
     </svg>
-    <div class="tag bl">RTT <b>1.24s</b> · 8kHz µ-law</div>
+    <div class="tag bl">8kHz µ-law · on-node</div>
   </div>
 </div>
 
@@ -479,7 +474,6 @@
     <div class="logo-row">
       <span class="logo-mark metaldrug"><span class="glyph"></span>metaldrug.com</span>
       <span class="logo-mark mymonitor"><span class="glyph"></span>MyMonitor.ai</span>
-      <span class="logo-mark nvidia"><span class="glyph"></span>NVIDIA</span>
       <span class="logo-mark twilio"><span class="glyph"></span>twilio</span>
     </div>
   </div>
@@ -488,20 +482,10 @@
 <!-- ── METRICS ─────────────────────────────────────────────────────────────── -->
 <section class="block">
   <div class="block-head">
-    <div class="eyebrow">VERIFIED PERFORMANCE</div>
-    <h2>Read straight off the node.</h2>
+    <div class="eyebrow">DEPLOYMENT MODEL</div>
+    <h2>Processing stays on the node.</h2>
   </div>
   <div class="instrument-strip">
-    <div class="instrument">
-      <div class="instrument-val">1.24s</div>
-      <div class="instrument-label">End-to-end latency</div>
-      <div class="instrument-sub">Whisper STT → extraction → Piper TTS</div>
-    </div>
-    <div class="instrument">
-      <div class="instrument-val">98%</div>
-      <div class="instrument-label">ASR transcription accuracy</div>
-      <div class="instrument-sub">Under telephone-band noise (G.711 µ-law, 8kHz)</div>
-    </div>
     <div class="instrument">
       <div class="instrument-val">100%</div>
       <div class="instrument-label">Data privacy</div>
@@ -588,7 +572,7 @@
       <p class="api-desc">
         Establish a bidirectional Twilio <code style="color:var(--signal)">&lt;Connect&gt;&lt;Stream&gt;</code>
         over WebSocket. The server ingests mulaw audio frames, transcribes via CUDA-Whisper,
-        extracts structured intent, synthesizes TTS, and streams mulaw frames back — all within 1.24s average.
+        extracts structured intent, synthesizes TTS, and streams mulaw frames back to the caller.
       </p>
       <div class="headers-label">REQUIRED HEADERS</div>
       <pre class="headers">Authorization: Bearer &lt;key&gt;
@@ -746,7 +730,7 @@ data = resp.json()
     <a href="/token.html">Token</a>
     <a href="/legal.html">Legal</a>
   </p>
-  <p class="foot-meta">© 2026 ExergyNet · Sovereign Voice Stack v2.1.2 · HIPAA Compliant · Zero Data Egress</p>
+  <p class="foot-meta">© 2026 ExergyNet · Sovereign Voice Stack v2.1.2 · HIPAA-Aligned · Zero Data Egress</p>
 </footer>
 
 <script>
