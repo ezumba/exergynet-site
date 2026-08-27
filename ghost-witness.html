@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="The first cryptographic truth layer for AI agent conversations. Detect logical contradictions. Generate blockchain-anchored Certificates of Logical Consistency.">
+<meta name="description" content="Ghost-Witness (LNES-05): a research-stage consistency-checking layer for AI agent conversations. Flags logical contradictions and generates blockchain-anchored Certificates of Logical Consistency. Detects internal contradictions; it does not establish external factual truth.">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -841,7 +841,7 @@ footer {
         <span class="grad">allowed to lie.</span>
       </h1>
       <p class="hero-sub">
-        Ghost-Witness detects logical contradictions in any AI agent conversation and generates a cryptographic Certificate of Logical Consistency — anchored permanently on Base L2.
+        Ghost-Witness flags logical contradictions within an AI agent conversation and generates a cryptographic Certificate of Logical Consistency, anchored on Base L2. It checks internal consistency — not external factual truth.
       </p>
       <div class="hero-cta">
         <a href="mailto:intel@exergynet.org?subject=Ghost-Witness API Access" class="btn btn-primary">Get API access →</a>
@@ -937,7 +937,7 @@ footer {
       <div class="step">
         <div class="step-num">03</div>
         <div class="step-title">Vanguard checks consistency</div>
-        <div class="step-body">SEI Vanguard — running inside an Intel SGX enclave with zero data retention — analyzes the extracted claims for internal contradictions, implausibility, and hallucination risk.</div>
+        <div class="step-body">Vanguard analyzes the extracted claims for internal contradictions, implausibility, and hallucination risk, under a stateless session policy (no persistent retention of session content).</div>
         <span class="step-badge">SGX sealed</span>
       </div>
       <div class="step">
@@ -1176,7 +1176,7 @@ footer {
         <div class="verify-card">
           <div class="verify-card-label">What a verified CLC means</div>
           <div class="verify-card-body">
-            A <strong style="color:var(--accent);">green CLC</strong> means the agent conversation was analyzed by SEI Vanguard and no logical contradictions were detected. The verdict is permanent and tamper-proof on Base L2.
+            A <strong style="color:var(--accent);">green CLC</strong> means the agent conversation was analyzed by Vanguard and no <em>internal</em> logical contradictions were detected — it does not certify external factual truth. The verdict is anchored on Base L2, where it is tamper-evident.
             <br><br>
             A <strong style="color:var(--red);">red CLC</strong> means contradictions were detected — the specific flags and severity levels are recorded on-chain for permanent reference.
           </div>
@@ -1202,7 +1202,7 @@ footer {
     <a href="mailto:intel@exergynet.org" class="footer-link">Contact</a>
     <a href="https://exergynet.org" class="footer-link">ExergyNet</a>
   </div>
-  <div class="footer-legal">© 2026 ExergyNet Corp · LNES-05 · Base L2</div>
+  <div class="footer-legal">© 2026 ExergyNet · LNES-05 · Base L2</div>
 </footer>
 
 <script>

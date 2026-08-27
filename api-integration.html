@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Complete B2B integration reference for the ExergyNet decentralized compute network. Connect your biotech SaaS to ZK-verified pharmaceutical simulation in four steps.">
+<meta name="description" content="B2B integration reference for the ExergyNet substrate. Connect a biotech SaaS to verifiable computation with content-addressed receipts in four steps. Settlement and on-chain ZK verification run on testnet — see status notes.">
 <link rel="stylesheet" href="style.css">
 <script>
 (function(){
@@ -407,7 +407,7 @@
           <div class="flow-step-content">
             <div class="flow-step-label">// Retrieve</div>
             <div class="flow-step-title">Poll for the ZK Receipt</div>
-            <p class="flow-step-body">Poll <code>/api/l0/transactions?job_id={hex}</code> until <code>status: "ZK-STARK VERIFIED"</code>. The response contains <code>proof_hash</code> (the on-chain cryptographic proof) and <code>result_s3_url</code> (the docking pose output). Store the <code>proof_hash</code> as your FDA-compliant audit trail. The proof is immutable on Base L2.</p>
+            <p class="flow-step-body">Poll <code>/api/l0/transactions?job_id={hex}</code> until <code>status: "ZK-STARK VERIFIED"</code>. The response contains <code>proof_hash</code> (the on-chain cryptographic proof) and <code>result_s3_url</code> (the docking pose output). Store the <code>proof_hash</code> as part of your audit trail. Receipts are recorded on Base L2 (testnet); on-chain ZK proof verification is in development (see status note below).</p>
           </div>
         </div>
       </div>
@@ -799,7 +799,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
         <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">08</span>
         Prover Network
       </h2>
-      <p class="docs-body">ExergyNet is a permissionless DePIN. Any machine globally running <code>moleculogic_prover.py</code> can join the swarm, claim jobs, compute ZK-STARK proofs, and earn 30% USDC yield per verified computation.</p>
+      <p class="docs-body">The prover network is designed to be openly joinable: a machine running <code>moleculogic_prover.py</code> can claim jobs and compute proofs. Operator yield and settlement run on testnet today — see the status note below for exactly what is live versus in development.</p>
 
       <div class="identity-grid">
         <div class="identity-card wrong">
