@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="ExergyNet LNES-06 Protocol — Dual-network Unidirectional Sump, Proof-of-Exergy consensus, x402/Base primary settlement, and ZK-STARK mechanics on Solana. Sovereign, deterministic, hardware-bound compute verification.">
+<meta name="description" content="ExergyNet Protocol (LNES-06) — the interfaces and rules connecting ExergyNet's planes: state, evidence, orchestration, authority, and verification. Base and Solana are settlement rails beneath the architecture, not the product identity.">
 <link rel="stylesheet" href="style.css">
 <style>
   /* ── Protocol-page local enhancements ── */
@@ -193,7 +193,7 @@
     <div class="container">
       <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>LNES-06 v1.2 · Protocol Reference</div>
       <h1>Protocol<br><span class="accent">Reference</span></h1>
-      <p class="hero-sub">Complete technical specification for the LNES-06 multi-network architecture. Dual-settlement via x402/Base (primary) and Solana Unidirectional Sump. Proof-of-Exergy consensus. RISC Zero ZK-STARK settlement mechanics. Hardware-bound, deterministic compute verification.</p>
+      <p class="hero-sub">The interfaces and rules that connect ExergyNet's planes — state, evidence, orchestration, authority, and verification. Settlement runs on Base (primary) and a Solana Unidirectional Sump as rails beneath the architecture, with RISC Zero compute verification. These are the coordination mechanics, not the definition of ExergyNet.</p>
 
       <!-- Live network status bar -->
       <div style="display:flex; gap:1rem; margin-top:2rem; flex-wrap:wrap;">
@@ -201,10 +201,10 @@
           <span class="pill-dot"></span>Base Mainnet · eip155:8453 · Primary
         </div>
         <div class="network-pill pill-active">
-          <span class="pill-dot"></span>Solana Mainnet-Beta · Active
+          <span class="pill-dot"></span>Solana Mainnet · Settlement Investigating
         </div>
         <div class="network-pill pill-active">
-          <span class="pill-dot" style="background:var(--blue);"></span>L0 Sequencer · 18.209.174.113 · Online
+          <span class="pill-dot" style="background:var(--blue);"></span>L0 Sequencer · Online
         </div>
       </div>
     </div>
@@ -244,7 +244,7 @@
               <li><span class="spec-key">Sensor Toll</span>    <span class="spec-val">3000 µUSDC (0.003 USDC) per x402 call</span></li>
               <li><span class="spec-key">Yield Split</span>    <span class="spec-val">30% Node · 70% Protocol Treasury</span></li>
               <li><span class="spec-key">Auth</span>           <span class="spec-val">x402 USDC EIP-3009 authorization</span></li>
-              <li><span class="spec-key">Proof System</span>   <span class="spec-val">RISC Zero ZK-STARK · recursive O(1) master proof</span></li>
+              <li><span class="spec-key">Proof System</span>   <span class="spec-val">RISC Zero ZK-STARK · recursive proof aggregation (in development)</span></li>
               <li><span class="spec-key">Explorer API</span>   <span class="spec-val"><code>https://explorer-api.exergynet.org</code></span></li>
             </ul>
           </div>
@@ -266,7 +266,7 @@
               <li><span class="spec-key">Yield Split</span>    <span class="spec-val">30% Node · 70% Protocol Cold Treasury</span></li>
               <li><span class="spec-key">Auth</span>           <span class="spec-val">Ed25519 Mesh — zero-trust cryptographic identity</span></li>
               <li><span class="spec-key">MCP Endpoint</span>   <span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
-              <li><span class="spec-key">Proof System</span>   <span class="spec-val">RISC Zero ZK-STARK · recursive O(1) master proof</span></li>
+              <li><span class="spec-key">Proof System</span>   <span class="spec-val">RISC Zero ZK-STARK · recursive proof aggregation (in development)</span></li>
               <li><span class="spec-key">Finality</span>       <span class="spec-val">&lt; 400ms · lamport-level atomic settlement</span></li>
             </ul>
           </div>
@@ -285,7 +285,7 @@
 
       <div class="card accent-border" style="margin-bottom:1.5rem;">
         <ul class="spec-list">
-          <li><span class="spec-key">Host</span>          <span class="spec-val"><code>18.209.174.113</code> (AWS EC2 — Alpha)</span></li>
+          <li><span class="spec-key">Public API</span>    <span class="spec-val"><code>https://explorer-api.exergynet.org</code> (host coordinates provisioned via the Portal)</span></li>
           <li><span class="spec-key">Runtime</span>       <span class="spec-val">Ubuntu 24.04.4 LTS · PM2 process manager</span></li>
           <li><span class="spec-key">Stack</span>         <span class="spec-val">Rust 1.x · Axum · ethers-rs · RISC Zero SDK</span></li>
           <li><span class="spec-key">HTTP Port</span>     <span class="spec-val">8080 (public API + relay)</span></li>
@@ -348,7 +348,7 @@
           <div class="arch-label">L1</div>
           <div class="arch-content">
             <h5>Routing Layer — L0 Sequencer &amp; Omega Relay</h5>
-            <p>L0 Sequencer (<code>18.209.174.113:8080</code>) receives validated payment, routes job via <code>POST /api/relay/payload</code> to the nearest available LNES03 Desktop Prover or entropy-k-core node. Assigns <code>routed_to</code> node ID. Caddy proxies all inbound traffic with CORS enforcement.</p>
+            <p>The L0 Sequencer (public API at <code>explorer-api.exergynet.org</code>) receives validated payment, routes job via <code>POST /api/relay/payload</code> to the nearest available LNES03 Desktop Prover or entropy-k-core node. Assigns <code>routed_to</code> node ID. Caddy proxies all inbound traffic with CORS enforcement.</p>
           </div>
         </div>
         <div class="arch-row">
@@ -430,7 +430,7 @@
           <div class="flow-arrow-down">↓</div>
           <div class="flow-node">
             <span class="badge badge-gray" style="min-width:32px; text-align:center;">04</span>
-            <span><strong>STARK Compression</strong> — Sovereign Siphon compresses proofs into O(1) ZK-STARK Master Proof.</span>
+            <span><strong>STARK Compression</strong> — the design aggregates individual proofs into a single recursive master proof; recursive aggregation at production scale is in development.</span>
           </div>
           <div class="flow-arrow-down">↓</div>
           <div class="flow-node">

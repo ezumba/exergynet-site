@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Join the ExergyNet decentralized swarm. Run the LNES-03 Desktop Prover or entropy-k-core daemon, process ZK-STARK proofs, earn USDC on Base and Native SOL yields.">
+<meta name="description" content="Run an ExergyNet node. Contribute compute, verification, or witness capacity to the network under explicit protocol roles, and settle rewards on Base. Operator onboarding for the ExergyNet substrate.">
 <link rel="stylesheet" href="style.css">
 <script>
 (function(){
@@ -37,7 +37,7 @@
     <div class="container">
       <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Node Operator Guide · LNES-06 v1.2</div>
       <h1>Turn Your Hardware into a<br><span class="accent">Sovereign Integrity Node</span></h1>
-      <p class="hero-sub">The ExergyNet physical mesh is powered by independent hardware operators worldwide. Run the LNES-03 Desktop Prover or entropy-k-core daemon, verify computational weight for autonomous AI agents, earn USDC on Base and Native SOL yields.</p>
+      <p class="hero-sub">ExergyNet's verification and compute capacity is contributed by independent hardware operators worldwide. Run the LNES-03 Desktop Prover or entropy-k-core daemon, verify computational work for autonomous AI agents, and settle rewards on Base. (Settlement liveness: see the status note below.)</p>
     </div>
   </div>
 
@@ -169,7 +169,7 @@
           <h4>Step 03 — Ignite</h4>
           <p>The Desktop Prover connects to the global Apex Router automatically.</p>
           <ul class="spec-list" style="margin:1rem 0;">
-            <li><span class="spec-key">Apex Router</span><span class="spec-val"><code>18.209.174.113:8001</code></span></li>
+            <li><span class="spec-key">Apex Router</span><span class="spec-val">Coordinates provisioned via the <a href="https://portal.exergynet.org/">Portal</a> node dashboard</span></li>
             <li><span class="spec-key">Prover Port</span><span class="spec-val">TCP 8003 (local listen)</span></li>
             <li><span class="spec-key">ZK Backend</span><span class="spec-val">RISC Zero STARK</span></li>
           </ul>
@@ -247,8 +247,10 @@ cargo build --release</code></pre>
           <h4>Step 03 — Ignite</h4>
           <p>Connect to the global Apex Router and inject your payout address.</p>
           <pre><code>cargo run --release -- \
-  --apex 18.209.174.113:8001 \
-  --payout &lt;YOUR_BASE_EVM_ADDRESS&gt;</code></pre>
+  --apex $APEX_ROUTER \
+  --payout &lt;YOUR_BASE_EVM_ADDRESS&gt;
+
+# $APEX_ROUTER: current Apex Router coordinates from your Portal node dashboard</code></pre>
           <p style="margin-top:0.75rem; font-size:13px;">Your node joins the mesh and begins condensing proofs for the M2M economy.</p>
         </div>
 
