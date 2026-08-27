@@ -375,7 +375,7 @@
         The Sovereign Compute Pipeline
       </h2>
       <p class="docs-body">ExergyNet operates on one physical axiom: <strong>electricity cost is the only irreducible cost of computation.</strong> All other cloud pricing — corporate margins, hardware depreciation, profit extraction — is eliminated by routing work to a global swarm of prover nodes that compete on electricity price alone.</p>
-      <p class="docs-body">The network enforces a strict separation: heavy data (SDF/PDB files, docking pose outputs) lives in AWS S3. The mathematical proof that the computation was executed correctly is settled on Base L2 as a ZK-STARK receipt. Your FDA submission references the proof hash — not the raw data.</p>
+      <p class="docs-body">The network enforces a strict separation: heavy data (SDF/PDB files, docking pose outputs) lives in AWS S3. A content-addressed receipt of the computation is settled on Base L2. Your own records can reference the proof hash rather than duplicating the raw data — the hash and the underlying LNES-04 contract are independently checkable by any technically capable third party, though ExergyNet makes no representation about acceptance by any specific regulatory body.</p>
 
       <div class="flow-steps">
         <div class="flow-step">
@@ -730,8 +730,8 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 }</pre></div>
           </div>
           <div class="info-box info-note" style="margin-top:16px">
-            <span class="info-box-label">// FDA Compliance</span>
-            Store <code>proof_hash</code> in your database alongside the simulation result. This is your immutable on-chain attestation. It can be verified by any party — including an FDA reviewer — by querying the LNES-04 Base L2 contract.
+            <span class="info-box-label">// Independent verification</span>
+            Store <code>proof_hash</code> in your database alongside the simulation result. This is your on-chain content-addressed attestation. It can be independently checked by any technically capable party by querying the LNES-04 Base L2 contract. ExergyNet does not represent that any specific regulatory body — including the FDA — has reviewed or accepted this mechanism; verify your own compliance requirements separately.
           </div>
         </div>
       </div>

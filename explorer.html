@@ -142,6 +142,7 @@ body.light-mode .warn{border-left-color:rgba(0,127,159,.32)}
       <div><div class="panel-title">Exergonic Waveform</div><div class="panel-sub" id="ledger-sub">Polling every 3 seconds. Click a TX / Job ID for full details.</div></div>
       <div class="mono panel-sub" id="last-updated">last update: pending</div>
     </div>
+    <div id="demo-banner" style="display:none;margin:0 16px 14px;padding:10px 14px;border:1.5px solid #e0a800;border-radius:8px;background:rgba(224,168,0,.12);color:#e0a800;font-weight:800;font-size:12.5px;letter-spacing:.03em;">⚠ DEMO DATA — synthetic sample rows, not live verified evidence. Enabled only via ?demo=1.</div>
     <div class="table-wrap">
       <table aria-label="L0 transaction ledger">
         <thead><tr><th>Age</th><th>TX / Job ID</th><th>Miner / Witness</th><th>Payment Address</th><th>Status</th><th>Action</th></tr></thead>
@@ -191,11 +192,15 @@ let ledger = [];
 let previousKeys = new Set();
 let pollTimer = null;
 
+// DEMO_ONLY: synthetic sample rows. Never rendered unless ?demo=1 is explicitly present in the
+// URL (see fetchLedger). Status strings are deliberately kept free of VERIFIED/SETTLED/CONFIRMED
+// language so a demo row can never be mistaken for real evidence even out of context.
+const DEMO_MODE = new URLSearchParams(location.search).get('demo') === '1';
 const fallback = {
   testnet: [
-    {job_id_hex:'0x0101010101010101010101010101010101010101010101010101010101010101',timestamp:Math.floor(Date.now()/1000)-4,status:'ZK-STARK VERIFIED',miner_id:'witness_testnet_4471',payment_address:'0x39aE1C502fcd658D9419d75E32dD7ff74',reward_micro_usdc:1200000,vector:'OPTICAL',proof_hash:'0x9fc2b5a40b7a7c1e5f3d0a8e2c4b9a1f7d6e8c3b2a190f4e6d7c8b9a0f1e2d3c',aggregator_id:'lnes-beta-01',settlement_network:'Base Sepolia'},
-    {job_id_hex:'0x0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a',timestamp:Math.floor(Date.now()/1000)-22,status:'ZK-STARK VERIFIED',miner_id:'witness_testnet_1190',payment_address:'0x6Bf1C7aE98E5c2b8A9d1307CbE2A99b404910Af1',reward_micro_usdc:5200000,vector:'ASYNC_COMPUTE',proof_hash:'0xacff82d411a12c3fb908abb6314bd87b2991c9f21ee2a8f008910ddba65a2c11',aggregator_id:'lnes-beta-01',settlement_network:'Base Sepolia'},
-    {job_id_hex:'0x0808080808080808080808080808080808080808080808080808080808080808',timestamp:Math.floor(Date.now()/1000)-91,status:'PENDING SETTLEMENT',miner_id:'witness_testnet_2208',payment_address:'0xE4A2a1d1e808a67B1c14e1E9BC1cE3AFcF64A920',reward_micro_usdc:480000,vector:'NETWORK_DENSITY',proof_hash:'0xd4e6f2c9a0b18c77e241d990ff83a21910b7ccc7012209faccb17b87209d4abe',aggregator_id:'lnes-beta-02',settlement_network:'Base Sepolia'}
+    {job_id_hex:'0x0101010101010101010101010101010101010101010101010101010101010101',timestamp:Math.floor(Date.now()/1000)-4,status:'DEMO DATA — SAMPLE ONLY',miner_id:'demo_sample_4471',payment_address:'0x39aE1C502fcd658D9419d75E32dD7ff74',reward_micro_usdc:1200000,vector:'OPTICAL',proof_hash:'DEMO — not a real proof hash',aggregator_id:'demo-sample',settlement_network:'Base Sepolia (demo)'},
+    {job_id_hex:'0x0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a',timestamp:Math.floor(Date.now()/1000)-22,status:'DEMO DATA — SAMPLE ONLY',miner_id:'demo_sample_1190',payment_address:'0x6Bf1C7aE98E5c2b8A9d1307CbE2A99b404910Af1',reward_micro_usdc:5200000,vector:'ASYNC_COMPUTE',proof_hash:'DEMO — not a real proof hash',aggregator_id:'demo-sample',settlement_network:'Base Sepolia (demo)'},
+    {job_id_hex:'0x0808080808080808080808080808080808080808080808080808080808080808',timestamp:Math.floor(Date.now()/1000)-91,status:'DEMO DATA — SAMPLE ONLY',miner_id:'demo_sample_2208',payment_address:'0xE4A2a1d1e808a67B1c14e1E9BC1cE3AFcF64A920',reward_micro_usdc:480000,vector:'NETWORK_DENSITY',proof_hash:'DEMO — not a real proof hash',aggregator_id:'demo-sample',settlement_network:'Base Sepolia (demo)'}
   ],
   mainnet: []
 };
@@ -222,23 +227,37 @@ function inferVector(job){ const c=String(job).toLowerCase(); if(c.includes('0a'
 function truncateHash(h){ const s=String(h); return s.length > 18 ? `${s.slice(0,10)}...${s.slice(-8)}` : s; }
 function age(ts){ const diff=Math.max(0,Math.floor(Date.now()/1000)-Number(ts)); if(diff<60)return `${diff}s ago`; if(diff<3600)return `${Math.floor(diff/60)}m ago`; if(diff<86400)return `${Math.floor(diff/3600)}h ago`; return `${Math.floor(diff/86400)}d ago`; }
 function usdc(micro){ return '$' + (Number(micro || 0)/1_000_000).toFixed(2); }
-function badgeClass(status){ const s=String(status).toUpperCase(); if(s.includes('VERIFIED')||s.includes('SETTLED')||s.includes('ONLINE'))return'ok'; if(s.includes('PENDING')||s.includes('ARMED')||s.includes('NOT YET'))return'pending'; return'fail'; }
+function badgeClass(status){ const s=String(status).toUpperCase(); if(s.includes('DEMO'))return'pending'; if(s.includes('VERIFIED')||s.includes('SETTLED')||s.includes('ONLINE'))return'ok'; if(s.includes('PENDING')||s.includes('ARMED')||s.includes('NOT YET'))return'pending'; return'fail'; }
+
+function setDemoBanner(visible){
+  const el = document.getElementById('demo-banner');
+  if (el) el.style.display = visible ? 'block' : 'none';
+}
 
 async function fetchLedger(){
   const cfg = NETWORKS[activeNetwork];
+  let usedDemo = false;
   try{
     const res = await fetch(cfg.apiUrl, {cache:'no-store'});
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const arr = Array.isArray(data) ? data : (data.transactions || data.data || []);
     ledger = arr.map(normalizeTx).sort((a,b)=>b.timestamp-a.timestamp);
-    if(!ledger.length) ledger = fallback[activeNetwork].map(normalizeTx);
-    document.getElementById('last-updated').textContent = 'last update: ' + new Date().toLocaleTimeString();
-    updateAdvancedVitals();
+    if(!ledger.length){
+      // Production default: zero real records means we show zero records. Synthetic demo rows
+      // are never substituted automatically — only when ?demo=1 is explicitly present.
+      if (DEMO_MODE) { ledger = fallback[activeNetwork].map(normalizeTx).sort((a,b)=>b.timestamp-a.timestamp); usedDemo = true; }
+      else ledger = [];
+    }
   }catch(err){
-    ledger = fallback[activeNetwork].map(normalizeTx).sort((a,b)=>b.timestamp-a.timestamp);
-    document.getElementById('last-updated').textContent = 'fallback: ' + new Date().toLocaleTimeString();
+    if (DEMO_MODE) { ledger = fallback[activeNetwork].map(normalizeTx).sort((a,b)=>b.timestamp-a.timestamp); usedDemo = true; }
+    else ledger = [];
   }
+  setDemoBanner(usedDemo);
+  document.getElementById('last-updated').textContent = usedDemo
+    ? 'DEMO DATA (?demo=1) — ' + new Date().toLocaleTimeString()
+    : 'last update: ' + new Date().toLocaleTimeString();
+  if (ledger.length) updateAdvancedVitals();
   renderLedger();
 }
 function updateAdvancedVitals() {
@@ -287,6 +306,9 @@ function renderLedger(){
   const body = document.getElementById('ledger-body');
   const rows = ledger.filter(tx => [tx.job_id_hex, tx.miner_id, tx.payment_address, tx.proof_hash, tx.status, tx.vector].join(' ').toLowerCase().includes(q));
   document.getElementById('ledger-sub').textContent = `${rows.length} visible ${activeNetwork} transaction${rows.length===1?'':'s'}. Click a TX / Job ID for full details.`;
+  if(!ledger.length && !q){ body.innerHTML = '<tr><td colspan="6" class="empty">No verified transactions are currently available.</td></tr>';
+    document.getElementById('pg-label').textContent = 'Page 0 / 0';
+    return; }
   if(!rows.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No transaction matches this search.</td></tr>';
     document.getElementById('pg-label').textContent = 'Page 0 / 0';
     return; }
