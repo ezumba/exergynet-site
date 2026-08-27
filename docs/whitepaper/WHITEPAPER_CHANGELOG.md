@@ -1,0 +1,201 @@
+# WHITEPAPER CHANGELOG (VNext-Final, Phase-3 Publication Pass)
+
+Append-only. Ground source of truth for what changed in `EXERGYNET_WHITEPAPER_VNEXT.md` relative to
+`docs/whitepaper_vnext_recon/EXERGYNET_VNEXT_DRAFT_v2.md`, why, and on what evidence. Prior-phase history
+(D1→D2 restructure, evidence closure, red-team passes) is recorded in
+`docs/whitepaper_vnext_recon/WHITEPAPER_REBASE_DECISION_LOG.md` D-01–D-65 and is not repeated here.
+
+---
+
+## 2026-08-27 — Phase-3 publication pass
+
+| Timestamp | File | Section changed | Reason | Evidence source | Claim-strength change |
+|---|---|---|---|---|---|
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_VNEXT.md` | New §1.1 "The industry signal: from model scaling to infrastructure scaling" | Publication-closure directive §2 requires a current-industry-context section; D-05/D-64/D-65's pre-earnings exclusion superseded per D-66–D-68 (post-earnings, bounded, non-commercial) | `[NVIDIA-Q2FY27]`, `[NVIDIA-Q2FY27-CALL]` — independently web-verified, see `WHITEPAPER_SOURCE_REGISTRY.md` §B | N/A — new external citation, not an ExergyNet claim; explicitly disclaimed as non-validating |
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_VNEXT.md` | §2.5 extended (new paragraphs after the existing "Persistent Memory → ... → Machine Economy" progression) | Directive §3/§4/§6 (memory-supply signal, Hot Chips/Micron context, NVIDIA "compute is revenue" bridge to RHO/Omega/MMS); replaces the D2 sentence "(the market evidence... is kept in the separate strategy record, not asserted here as ExergyNet evidence)" | `[NVIDIA-Q2FY27-CFO]`, `[NVIDIA-LPS]`, `[MICRON-HC2026]` — independently web-verified | N/A — external citation; RHO/Omega/MMS connection reuses already-evidenced WP-C011/C012, no strength change to those claims |
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_VNEXT.md` | New §3.4 "When software becomes structural" | Directive §8 — requested as one of the paper's strongest conceptual sections, with the formal `∀t ∈ ActiveConsequenceState` expression | Derived from A3 (§2.1, pre-existing) and the existing Part IV/V/VI component descriptions (Temporal Authority, xISA, LNES-22, AERIS) — no new empirical claim | N/A — framing/motivation only; explicitly defers current-state status to Part V/VI, no boundary altered |
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_VNEXT.md` | New §5.9, restructured Part VIII (Tensile-Lift now leads, ahead of MyMonitor) | Directive §11 — "Do not lead with MyMonitor... Tensile Lift is the best first consequence-active example"; promotes an existing, already-vetted but unintegrated result | `docs/whitepaper/AI_MEMORY_CONTROL_PLANE.md:1664–1689` (frozen v1.9 baseline — verbatim benchmark table, arithmetic spot-checked) | **New claim WP-C024, T2.** Not a strengthening of any prior claim — this result was entirely absent from D2; its addition is bounded immediately by the `SIMULATED_WITNESS`/synthetic-holdout caveat in the same sentence |
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_VNEXT.md` | Part VIII — removed standalone "Regulatory fact" paragraph, folded into the new Tensile-Lift paragraph; reordered "Other domains" list | Avoids duplicating the FAA/KTX regulatory-fact statement now that it is contextually attached to the Tensile-Lift discussion it actually describes; directive §11's suggested vertical order (robotics, scientific agents, industrial automation, enterprise, financial, secure comms) applied to the existing bounded sentence | WP-C021 (unchanged); no new fact | EQUIVALENT — same fact, relocated for clarity, no wording change to the prohibition language |
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_VNEXT.md` | Part IX — one clause added naming "the infrastructure pressure hypothesis" explicitly | Directive §13 requests this be presented as a named architecture hypothesis; substance was already present in §2.4/A4 (O(N²) framing) but not labeled | §2.4 (unchanged) | EQUIVALENT — labeling only, no new claim |
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_VNEXT.md` | Part X — vehicles/roads framing and the more-technical closing sentence added before the existing conclusion paragraph | Directive §19's exact target text ("The AI industry is building the vehicles...", "ExergyNet's objective is a common machine infrastructure...") | Directive text used near-verbatim as instructed ("improve this, but preserve the architecture" — §18 applies the same instruction to the abstract, extended here to the conclusion since §19 supplies exact target sentences) | N/A — thesis-level framing, no factual claim |
+| 2026-08-27 | `docs/whitepaper/WHITEPAPER_CLAIM_LEDGER.md` | New file (finalizes recon `CLAIM_LEDGER.md`) | Directive §20 deliverable 3 | Carries WP-C001–C023 forward unchanged; adds WP-C024 and WP-X05 (NVIDIA/Micron discipline) | New: WP-C024 (T2), WP-X05 (new prohibition) |
+| 2026-08-27 | `docs/whitepaper/WHITEPAPER_POSTURE_AUDIT.md` | New file (finalizes recon `WHITEPAPER_POSTURE_AUDIT.md`) | Directive §20 deliverable 4 | Self-audits P-10–P-14 against the achievement-first rule | 4 STRENGTHENED_TO_EVIDENCE, 1 EQUIVALENT, 0 WEAKENED |
+| 2026-08-27 | `docs/whitepaper/WHITEPAPER_SOURCE_REGISTRY.md` | New file | Directive §20 deliverable 5; directive §21 source-priority rule | — | — |
+| 2026-08-27 | `docs/whitepaper_vnext_recon/WHITEPAPER_REBASE_DECISION_LOG.md` | D-66–D-69 appended | Records the NVIDIA-content supersession reasoning and Phase-3 authorization, append-only per project convention | This changelog; `NVIDIA_RELEVANCE_NOT_FOR_WHITEPAPER.md` | — |
+
+## Final quality pass (directive §22/§23), run against `EXERGYNET_WHITEPAPER_VNEXT.md`
+
+Grep results for the directive's banned-term list:
+
+```
+necessarily requires   0
+proves universal       0
+guarantees              0   (as an unbounded claim; the word "guarantee" appears only negated: 
+                              "not a physical-truth guarantee", "does not... guarantee")
+sovereign               0
+stablecoin              0   (RHO section explicitly negates this — 0 assertions, as required)
+USD redeemable          0
+market price            1   (used only in negation: "independently of market price" — correct per D-62)
+hardware independent    0
+cross-model validated   0
+cross-node validated    0
+thermodynamic            0
+60,000x                 0
+11.3x (unbounded)        0   ("~11.3×" appears only with its envelope stated in the same sentence, WP-C003a)
+NVIDIA                  13   (all reviewed manually — see WHITEPAPER_POSTURE_AUDIT.md verification section; 
+                              all bounded/cited/non-validating)
+Micron                   3   (all reviewed manually — same verification)
+MyMonitor                 —   (present as an illustrative case study, second per directive §11; matches 
+                              existing D2 disposition, unchanged)
+Tensile                   —   (present as the new primary case study; see WP-C024)
+TODO / TBD / VERIFY      0
+placeholder / draft note / agent note   0
+```
+
+**"PENDING" retained (8 occurrences) — deliberate, not an oversight.** Each instance marks a specific,
+claim-ledger-tracked, honestly-disclosed evidence boundary (EVD-002 re-hash, TransitionWitness defining
+artifact, OTET-gated dataset hash, patent formal-receipt status) rather than an unresolved draft
+placeholder. Removing them would violate directive §14's own instruction not to hide material boundaries,
+and D-62's permanent editorial principle. See `WHITEPAPER_REBASE_DECISION_LOG.md` D-69 for the explicit
+reasoning.
+
+**Overclaim grep (D-61/D-65 pattern):** universal portability, exabyte, production market active,
+mainnet-settlement-live, proven-at-scale, "state is portable" — **0** matches.
+
+**Placeholders remaining: 0.**
+
+---
+
+## 2026-08-27 (later) — Public presentation redesign
+
+Operator review of the rendered PDF (not just extracted text) found the previous pass's own
+`EXERGYNET_WHITEPAPER_VNEXT.md`/`.pdf` unfit for external distribution: internal process material
+(`Phase-3`, `D-66–D-69`, local file paths, `WP-C###` IDs, `pending re-hash`, `UNVERIFIED_OTET_GATED`)
+was visible directly on the page, the document was continuous text with almost no visualization of its
+own quantitative results, and pagination had at least one accidental near-empty page.
+
+| Timestamp | File | Change | Reason | Evidence source |
+|---|---|---|---|---|
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_PUBLIC.md` (new) | Full public-facing rewrite of `EXERGYNET_WHITEPAPER_VNEXT.md`: 9-section structure, achievement-first prose, zero internal process/filename/ID references, all measured results restated with identical values/tiers/envelopes | Public-presentation redesign; internal governance material must not appear in the external document | Content sourced from `EXERGYNET_WHITEPAPER_VNEXT.md` and `WHITEPAPER_CLAIM_LEDGER.md` — no new claims |
+| 2026-08-27 | `docs/whitepaper/figures/fig01–fig12*.png` (new, 13 files) | 12 original figures built (thesis diagram, three-plane architecture, N² vs. substrate, xLMP context-scaling, memory dashboard, state-governance bars, authority pipeline, aviation-gate bars, NVIDIA/Micron industry charts, state-mobility pipeline, Omega lifecycle, Tensile-Lift flow) | Directive requirement: every major measured result gets a chart/diagram, not buried in prose | Built from the same WP-C### values as the text; verified by direct visual inspection, not assumed correct after generation |
+| 2026-08-27 | `fig04_context_scaling.png` | Corrected a real data-scaling bug found during visual QA: the full-context line had been divided by 1,000 twice, making it appear (incorrectly) that xLMP used *more* tokens than full-context — the opposite of the actual finding | Visual QA caught this before publication; not caught by the earlier text-only verification pass | Recomputed directly from WP-C001's corpus/token pairs |
+| 2026-08-27 | `fig06_state_governance.png` | Removed a baked-in `(LNES-59)` internal test-campaign label from the chart title (the prose already correctly omitted it — the image was the one place it leaked) | Internal identifier leak found during visual QA | — |
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_PUBLIC.pdf`, `.docx` (new) | Built with page numbers, running footer, embedded figures, proper bullet/numbered-list rendering (an earlier PDF build silently flattened both into run-on paragraphs — found and fixed during visual QA), and natural page flow instead of a forced page-break before every section (which had produced five-plus pages that were 50–70% blank) | Directive requirement: professional visual system, no orphan/near-empty pages | Every one of the 14 final PDF pages was rendered to an image and individually inspected before this pass was called complete |
+
+**On the claim that Section 5.7 / WP-C014's medium/long fresh-process result is superseded by newer "A5.3"
+evidence:** searched the full repository for an A5.3 LNES-119 evidence artifact. Found only two
+unrelated hits — this session's own prior decision-log entry (which had itself copied the "A5.3" label
+from directive text without independently verifying an artifact existed) and an unrelated production-patch
+blocker in `PROJECT_BLOCKERS.md` about a different system. **No LNES-119 A5.3 evidence artifact was
+located.** WP-C014's value (fresh-process MEDIUM 0/10, LONG 0/10) is therefore **carried forward
+unchanged** in the public document — not because the claim of newer evidence is necessarily false, but
+because it could not be independently verified, and this project's standing rule is that no claim-ledger
+value changes without a locatable source artifact. If genuine A5.3 evidence exists in a location this
+session could not reach, it should be supplied directly so WP-C014 can be re-audited on its merits.
+
+**Public-document internal-leakage grep (final, post-fix):** `WHITEPAPER_`, `SEI_`, `D-6\d`, `WP-C\d`,
+`Phase-`, `VNext`, `.md`, `UNVERIFIED_OTET`, `LNES-59` — **0** occurrences in the extracted PDF and DOCX
+text. `LNES-22` retained (1 body occurrence, 3 figure-label occurrences) as a public component identifier,
+consistent with the existing exergynet.org site's own public use of `LNES-03`/`LNES-04` status labels.
+
+**Visual QA record:** all 14 PDF pages rendered via PyMuPDF and inspected individually (not assumed
+correct from a successful build). Issues found and fixed before this changelog entry was written:
+one data-scaling bug (fig04), one baked-in internal label (fig06), two markdown-list rendering failures
+(bullets and numbered references), and five-plus pages of forced-pagebreak-induced blank space. Final
+pass: 0 remaining near-empty pages, 0 clipped/overlapping elements, 0 internal-file references, 0 raw
+internal status variables, 0 placeholders.
+
+---
+
+## 2026-08-27 (later still) — VP Sales Directive 002: commercial rebase to V2
+
+**Scope:** Reorder and reframe `EXERGYNET_WHITEPAPER_PUBLIC.md`/`.pdf` for commercial sequencing per
+`WHITEPAPER_VP_SALES_REBASE_2026-08-27.md`. **Not a re-verification pass** — `WHITEPAPER_CLAIM_LEDGER.md`,
+`WHITEPAPER_SOURCE_REGISTRY.md`, and this changelog's own prior entries are treated as authoritative and
+unaltered; this entry only appends. V1 (`EXERGYNET_WHITEPAPER_PUBLIC.md`/`.pdf`) is preserved unmodified
+alongside the new V2 files, per the governing directive's explicit "do not replace or delete V1 yet."
+
+| Timestamp | File | Change | Reason | Evidence source |
+|---|---|---|---|---|
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_PUBLIC_V2.md` (new) | Full manuscript reorder: title/subtitle changed (Candidate A of 5 — "Infrastructure for Useful Machine Work"); Abstract rebuilt to 5-paragraph economic-first order; headline-results table reordered (efficiency &rarr; state-governance &rarr; authority &rarr; physical-consequence); 4 new sections added (Useful-Work measurement layer, Context/Memory/Authoritative-State box, Model-Substitution Principle, Administrative Boundaries and Interoperability) and 1 new front-matter box ("What ExergyNet Does Not Require"); Authority section moved from position 4 to position 8; State Mobility relocated adjacent to Persistent State; a Proposed Comparative Evaluation Program (B&#8320;&ndash;B&#8325;) subsection added to the Research Frontier section; commercial CTA added to the Conclusion | VP Sales Directive 002 &sect;&sect;1, 4&ndash;23 | No new empirical claim introduced &mdash; every WP-C### value, tier, and envelope from `WHITEPAPER_CLAIM_LEDGER.md` carried forward unchanged; see `WHITEPAPER_V2_CLAIM_CROSSWALK.md` |
+| 2026-08-27 | `docs/whitepaper/figures/fig01alt_candidateA_customer_state.png` (new) | New Figure 1: models connect through ExergyNet protocol components to customer-owned state, inside a customer-controlled boundary | Directive &sect;10 &mdash; original Figure 1 topology (Model &rarr; [ExergyNet] &rarr; World) read as an unavoidable central chokepoint | Diagram only; no empirical claim |
+| 2026-08-27 | `docs/whitepaper/figures/fig01alt_candidateB_sovereignty_bridge.png` (new) | New Figure 3B: two organizations retain their own internal systems; ExergyNet coordinates only the boundary interaction | Directive &sect;10, used in the new Administrative Boundaries section (&sect;7 of V2) | Diagram only; no empirical claim |
+| 2026-08-27 | `WHITEPAPER_VP_SALES_REBASE_2026-08-27.md` (new, repo root) | Diagnosis, 5 title/subtitle candidates, full section-hierarchy KEEP/MOVE/REFRAME/ADD table, diagram recommendations, benchmark recommendations, exact claims requiring no change, commercial CTA, unresolved questions | Directive &sect;25 deliverable 1 | &mdash; |
+| 2026-08-27 | `WHITEPAPER_POSTURE_AUDIT.md` | New items appended (this pass) auditing V2 for claim strengthening/weakening, sales language exceeding evidence, authority centralization, unsupported portability/hardware independence, self-referential sovereignty | Directive &sect;25 deliverable 5 | See posture audit's new section below |
+| 2026-08-27 | `WHITEPAPER_V2_CLAIM_CROSSWALK.md` (new) | Maps every WP-C### claim ledger entry to its V2 section number | Directive &sect;25 deliverable 6 | &mdash; |
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_PUBLIC_V2.pdf` (new) | Built via a dedicated reportlab script (no reused build tooling was found in the repo from the prior PUBLIC.pdf pass); 21 pages | Directive &sect;25 deliverable 3 | &mdash; |
+
+**Sovereignty grep (directive &sect;9), run against V1 before starting this pass:** `sovereign` &mdash; **0**
+occurrences in `EXERGYNET_WHITEPAPER_PUBLIC.md` and in `EXERGYNET_WHITEPAPER_VNEXT.md`. This item required
+no corrective action; confirmed clean rather than assumed clean, and re-confirmed zero occurrences in the
+final V2 PDF text extraction below.
+
+**Final overclaim/leakage grep (directive &sect;26), run against extracted V2 PDF text (all 21 pages):**
+```
+sovereign               0
+WHITEPAPER_ / WP-C\d / Phase-\d / VNext / D-6\d / UNVERIFIED_OTET / SEI- / LNES-59   0  (no internal IDs leaked)
+necessarily requires    0
+proves universal        0
+hardware independent    0
+cross-model validated   0
+cross-node validated    0
+thermodynamic           0
+60,000x                 0
+stablecoin              0
+Groth16 / ZK-STARK      0  (V2 does not discuss on-chain proof mechanics; out of scope for a reordering pass)
+market price            3  (all three in negation — "not by market price," "independently of any market
+                            price" — matches the V1 posture audit's own precedent exactly)
+TODO / TBD / placeholder / draft note / agent note   0
+```
+
+**Visual QA record (this pass):** all 21 PDF pages rendered via PyMuPDF and inspected individually.
+One defect found and fixed before this changelog entry was written: an orphan heading ("What ExergyNet
+Does Not Require") separated from its own boxed content across a page break on the first build attempt
+&mdash; fixed by explicitly grouping the heading with its box in a single non-splitting block. Final pass:
+0 remaining orphan headings, 0 near-empty pages, 0 clipped/overlapping elements, 0 flattened lists (bullets
+and the B&#8320;&ndash;B&#8325; list render correctly), 0 table overflow, 0 internal file references, 0
+internal codenames, 0 placeholders.
+
+**Page count:** V1 = 14 pages. V2 = 21 pages (+7, from 4 new sections, 1 new front-matter box, and one
+relocated section's expanded framing table — not from padding; each new page carries either a new
+architectural-framework section explicitly required by the directive or a diagram).
+
+**Not done in this pass, per directive &sect;27:** `EXERGYNET_WHITEPAPER_PUBLIC.pdf` (V1) was not replaced
+or deleted. `whitepaper.html` (the separate Living White Paper artifact governed by
+`LWP_MAINTENANCE_POLICY.md`) was not touched — that artifact has its own, different publication gate and
+is out of scope for this directive. Nothing was deployed or pushed.
+
+---
+
+## 2026-08-27 (final) — VP Sales operator approval: V2 title/subtitle frozen
+
+**Decision:** VP Sales reviewed `WHITEPAPER_VP_SALES_REBASE_2026-08-27.md` and approved the Directive-002
+rebase in full ("the rebase did the correct thing: it changed sequencing without changing evidence"),
+with one amendment before freezing V2.
+
+| Timestamp | File | Change | Reason | Evidence source |
+|---|---|---|---|---|
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_PUBLIC_V2.md` (cover only) | Sub-subtitle changed from "Model-independent persistent state and accountable authority for autonomous systems that must remember, prove, and act across models and machines" to "Model-independent state and measured efficiency for AI systems that must persist across models, sessions, and organizations" | VP Sales: the original wording put "accountable authority" on the cover, partially reintroducing the Layer-4-too-early problem Directive 002 exists to fix. Title itself ("Infrastructure for Useful Machine Work," Candidate A) was approved unchanged. | Operator decision, recorded verbatim in `WHITEPAPER_VP_SALES_REBASE_2026-08-27.md`'s new addendum |
+| 2026-08-27 | `EXERGYNET_WHITEPAPER_PUBLIC_V2.pdf` | Rebuilt with the new cover subtitle; cover meta line changed from "Version 2.0 — VP Sales Commercial Rebase" to "Version 2.0 — Frozen, VP Sales Approved" | Same as above | &mdash; |
+
+**Scope of this change:** cover only. No section, figure, table, or claim in the manuscript body was
+touched. Re-ran the full visual QA pass on the rebuilt PDF (21 pages, unchanged page count) and the
+overclaim/leakage grep against the newly extracted PDF text &mdash; both **unchanged from the prior
+pass's clean result** (0 leakage terms, "sovereign" 0 occurrences, "market price" 3 occurrences, all in
+negation).
+
+**Status: V2 is now FROZEN pending Directive 003 (P0 Trust Integrity Remediation + Repository
+Reconciliation) and Directive 004 (Commercial Website Rebuild).** No further edits to
+`EXERGYNET_WHITEPAPER_PUBLIC_V2.md`/`.pdf` should be made outside a new numbered directive or an explicit
+operator instruction, per the same discipline `LWP_MAINTENANCE_POLICY.md` applies to the separate Living
+White Paper artifact.
+
+**Whitepaper ground truth committed to git this pass** (VP Sales-directed, sequencing step 2 of 4): see
+`git log` for the commit covering `docs/whitepaper/**` and `WHITEPAPER_VP_SALES_REBASE_2026-08-27.md`.
+**Explicitly excluded from that commit:** `docs/whitepaper/AI_MEMORY_CONTROL_PLANE.md` and
+`docs/whitepaper/CLAIM_LEDGER.md` — both show large pre-existing uncommitted modifications (921 and 4
+changed lines respectively) that predate this session's work and were not authored or reviewed as part
+of the VP Sales whitepaper pipeline. Committing them alongside this pass's output would have attributed
+unreviewed, unrelated prior-session changes to this commit. They remain uncommitted and are flagged to
+the operator as a separate, pre-existing decision pending its own review — not lost, not part of this
+pass's scope.
