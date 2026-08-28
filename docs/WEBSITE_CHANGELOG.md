@@ -553,3 +553,22 @@ All three corrected to `0x27cC42ee80CA945F96b93999CCdb02520618578B` (`wallet_1`)
 **Revised hold determination:** user-protection hold remains closed. MCP promotional/analyst hold remains partially open — narrower than before, since every task not requiring the operator's own credentials (npm publish, GitHub OAuth, GitHub-identity listing claims, a Snyk account) is now done. See `MCP_INCIDENT_CLOSURE_2026-08-28.md` for the full determination.
 
 **Visual QA:** partially done for the first time (structural/functional, not screenshot-based) — five directives in a row without full visual QA, but this is the first pass with any real, verified QA findings rather than a pure blocker note.
+
+## 2026-08-28 (final) — Directive 009: credentialed-action prep, first-party fixes shipped (VP Sales Directive 009)
+
+**Agent/session:** Claude Code session (interactive), operator Seven Ezumba / ExergyNet.
+
+**Context:** the operator accepted the language correction (see the separate commit `be1bcfd`) and issued a narrowly-scoped Directive 009, limited to four authenticated actions this session still cannot perform (npm 0.2.5 publish, official registry, Glama/MCP.so, an independent security scan) plus explicit authorization to fix the three first-party findings from the prior pass immediately, since they don't need to wait on third-party propagation.
+
+**Genuinely new work this pass:**
+- **Source state re-verified from two independent fresh clones** (not the development checkouts used to build the fixes): `exergynet-mcp-server` confirmed at `45f5e29`, `exergynet-site` confirmed at `be1bcfd`. The 0.2.5 pre-publish sequence was rerun end-to-end and produced identical results to the first pass, including an identical local-build hash from a separate clone — a genuine reproducibility signal, not just a repeated assertion.
+- **Screenshot availability re-tested, not assumed unchanged**: still blocked, recorded using the directive's own required label, `BLOCKED BY INTERACTIVE RENDERING ENVIRONMENT`.
+- **All three first-party findings fixed and confirmed live on production** (not just committed to GitHub — this project's static site has an observed ~30-40 second deploy lag from push to `main`, confirmed by direct polling rather than assumed):
+  - `mcp.html` now carries an explicit "WRITE SETTLEMENT: TEMPORARILY DISABLED" notice, relabels the Ed25519 handshake and its "success response" as target design rather than live behavior, changes the method table's `exergynet_open_job` cost badge from "0.002 SOL" to "Disabled," and cross-links the actual working `exergynet-mcp-server` npm package and its security advisory. No architecture was removed — only labeled, per the operator's own instruction.
+  - `docs.html`'s dead "Omega Command Center" link (confirmed 404 on the specific path and the domain root, with no real destination establishable) now reads "Not yet public — request access," matching this repo's own established pattern for the same situation.
+  - The site-wide Discord link — a membership-only channel permalink used in 7 separate locations (`header.html`, `footer.html`, `index.html`, `security.html`, `orderbook.html`, and both `main.js` fallback copies) — is now the verified public invite link, matching what `connect.html` already used correctly.
+- Commit `0fae2fa` on `exergynet-site` `main`; no changes were needed to `exergynet-mcp-server` this pass (re-verification only).
+
+**Still blocked on operator credentials, unchanged:** npm publish for 0.2.5, official MCP registry (GitHub OAuth), Glama and MCP.so (GitHub-identity claims), Snyk Agent Scan (Snyk account/token) — all fully prepared, none executed, consistent with this session's standing rule never to create accounts or handle credentials on the operator's behalf.
+
+**Visual QA:** still not complete — `security.html`'s possible decorative-element overflow remains the one open, unconfirmed item pending real screenshot access.

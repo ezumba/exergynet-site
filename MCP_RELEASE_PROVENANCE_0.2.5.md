@@ -97,3 +97,21 @@ npm list exergynet-mcp-server
 ```
 
 **Do not deprecate 0.2.4.** It remains a safe, historical, fully-fixed release for the P0 write-path defect; 0.2.5 is additive hardening, not a replacement for a defective release. See Directive 008 §3.
+
+## Independent re-verification, 2026-08-28 (Directive 009 §0–§1)
+
+Per Directive 009's instruction to "independently rerun" the pre-publish sequence rather than trust the prior pass's result, this was repeated from a **second, completely fresh clone** (not the worktree used to develop the fix, and not the clone used for the first verification pass):
+
+| Check | Result |
+|---|---|
+| Source commit | `45f5e29` (confirmed via `git log -1` on the fresh clone — matches expected) |
+| `npm ci` | 150 packages installed, 0 vulnerabilities at install time |
+| `npm test` | 9/9 passing |
+| `npm run build` | succeeds |
+| `npm audit` | 0 vulnerabilities |
+| `git status --short` after build | shows a `dist/` diff — re-confirmed as the same benign Windows-CRLF-vs-committed-LF artifact via `diff` after stripping `\r` (byte-identical content) |
+| `npm pack --dry-run` shasum | `321b09c22ffb7abbd83d745ae3824df0c11fbb44` — **identical to the first verification pass's local-build hash**, run from a separate clone. This is a positive reproducibility signal: two independent clones of the same commit produce byte-identical (modulo line endings) local builds. |
+| `npm pack --dry-run` integrity | `sha512-3VGj5KQA+IiUUjcRpC9P7Yr63+oBUqQByQNCxIq91XnqR7CyTnY7JYnV7oOfLxEkv9ppIitvW1KlSIDlVMudjA==` — identical to the first pass |
+| Package version | `0.2.5`, confirmed |
+
+**Publication status: unchanged — still not published to npm.** This session does not have and will not request the operator's npm account credentials. This re-verification exists so that when the operator does run `npm publish`, they're publishing a version whose local build has now been independently reproduced twice, not once.

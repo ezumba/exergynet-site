@@ -191,3 +191,18 @@ Adopting the operator's own two-hold framing:
 
 - **User-protection hold: remains closed.** Nothing found this pass changes that — the npm-published software is safe, and the new first-party `mcp.html` finding describes a non-functional endpoint, not a live risk.
 - **MCP promotional/analyst hold: still partially open, narrower than before.** What's now blocking it is exclusively operator-authenticated actions (npm publish for 0.2.5, GitHub OAuth for the registry, GitHub-identity claims for Glama/MCP.so, a Snyk account for a fresh independent scan) — every research, verification, and preparation task that doesn't require the operator's own credentials has been completed. Safe to say publicly now, unchanged from Directive 007: *"The current npm release disables write settlement pending verified contract migration."* Still not safe to say: *"MCP ecosystem surfaces are fully current and security-remediated"* — the registry and two directories still aren't, as of this writing.
+
+---
+
+## Directive 009 update — 2026-08-28 (later)
+
+**Source state independently re-verified from scratch, in two fresh clones**, per Directive 009's instruction not to trust the prior pass's result: `exergynet-mcp-server` main at `45f5e29`, `exergynet-site` main at `be1bcfd` (both confirmed via `git log -1` on new clones). The 0.2.5 pre-publish sequence (`npm ci`/`test`/`build`/`audit`/`pack --dry-run`) was rerun end to end and produced identical results to the first pass — same test pass count, same 0-vulnerability audit result, same local-build hash — a positive reproducibility signal across independent runs. Full detail in `MCP_RELEASE_PROVENANCE_0.2.5.md`. **npm publication remains blocked on the operator's own npm account** (named in Directive 009 as the `lnes` account) — not requested or handled this session.
+
+**All three first-party findings from the prior pass are now fixed and confirmed live on production** (`exergynet.org`), not just committed to GitHub:
+- `mcp.html` now clearly labels the HTTP/Ed25519 write-settlement gateway, its handshake, and its "success response" as target architecture that is not currently operational, and cross-links to the actually-working `exergynet-mcp-server` npm package and its security advisory. No architecture was deleted — it's labeled, per instruction.
+- `docs.html`'s dead "Omega Command Center" link (`explorer-api.exergynet.org/command.html`, confirmed 404, with no real destination establishable — the domain's actual JSON API endpoints are live, only this specific path is missing) now reads "Not yet public — request access at operators@exergynet.org," matching this repo's own established pattern for the same class of problem.
+- The site-wide Discord link (`header.html`, `footer.html`, `index.html`, `security.html`, `orderbook.html`, and both `main.js` fallback copies) is corrected from a membership-only channel permalink to the verified public invite link, `discord.gg/EXERGYNET` — the same link `connect.html` already used correctly.
+
+All three were verified live on the actual production domain (not just pushed to the repo) via direct HTTP fetch after allowing for propagation lag — this project's static site deploys from `origin/main` with roughly a 30–40 second delay, not instantly.
+
+**No change to the hold determination above** — these were first-party fixes explicitly authorized and specified by Directive 009 §15; they don't touch any of the operator-credentialed blockers (npm, registry, Glama, MCP.so, Snyk) that are the actual remaining gate.
