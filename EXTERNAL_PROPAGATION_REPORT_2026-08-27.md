@@ -4,7 +4,7 @@
 
 ## Headline findings, most important first
 
-1. **The `exergynet-mcp-server` npm package, as actually published (0.2.2), directs users to send a real on-chain transaction to a Base Mainnet contract this site's own `proof.html` calls retired**, with unknown/possibly-compromised access control. This is a live financial-risk defect, not a narrative issue, and was not fixed by this pass — it requires the operator's engineering judgment. See `MCP_EXTERNAL_SECURITY_REMEDIATION_2026-08-27.md` §0.
+1. **The `exergynet-mcp-server` npm package, as actually published (0.2.2), directs users to send a real on-chain transaction to a Base Mainnet contract this site's own `proof.html` calls retired**, with access control that cannot be independently verified. This is a live financial-risk defect, not a narrative issue, and was not fixed by this pass — it requires the operator's engineering judgment. See `MCP_EXTERNAL_SECURITY_REMEDIATION_2026-08-27.md` §0.
 2. **exergynet.org has zero search-engine visibility.** Across all 10 required footprint queries, the site itself never appeared. The only indexed ExergyNet-controlled surface anywhere is a stale third-party MCP directory listing (Glama). The Gen 2 canon has nothing to propagate *to* on search yet — this is a discoverability problem, not (only) a staleness problem.
 3. **The site links to a GitHub organization that does not exist** (`github.com/exergynet`, confirmed 404), including a code sample instructing developers to `git clone` a nonexistent repo. Fixed this pass.
 4. **ExergyNet genuinely is listed in the official MCP registry** (`registry.modelcontextprotocol.io`, `io.github.ezumba/exergynet`, status active) — this can now be stated with confidence, using bounded language only.

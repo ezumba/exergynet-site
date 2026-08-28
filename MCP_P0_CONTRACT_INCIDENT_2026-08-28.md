@@ -19,9 +19,10 @@ Verified live via public RPC and Blockscout on 2026-08-28 (full detail in `PUBLI
 - **Bytecode:** present, real contract, unverified source on Blockscout.
 - **Function selectors:** the on-chain dispatcher's 7 real selectors do **not** include `openJob(bytes32)` (`0x59bac6aa`) or `settleExergy(bytes32,bytes,bytes,address)` (`0x42bfb804`) — the ABI the npm package hardcoded does not match this contract at all.
 - **Access control:** `owner()` and `paused()` both revert — cannot be independently verified.
-- **State:** holds a static 700,000 micro-USDC ($0.70), unchanged since first documented internally. All 6 transactions ever sent to it (confirmed via Blockscout transaction and token-transfer history) came from `0xbd1e790f6040FA62797671B84a50025a0133109C` on 2026-05-11/12 — a wallet independently documented elsewhere as compromised. **No transaction from any other address was found.** A committed log from a separate Rust gateway component corroborates these same six calls from one agent identity.
+- **State:** holds a static 700,000 micro-USDC ($0.70), unchanged since first documented internally. All 6 transactions ever sent to it (confirmed via Blockscout transaction and token-transfer history) came from `0xbd1e790f6040FA62797671B84a50025a0133109C` on 2026-05-11/12. **No transaction from any other address was found.** A committed log from a separate Rust gateway component corroborates these same six calls from one agent identity. A live, near-unlimited USDC allowance from that same wallet to this contract is still outstanding (`allowance(...) ≈ type(uint256).max`, confirmed via `eth_call`) — the operator has been notified directly, since revoking it requires that wallet's own key, not an action available to this session.
 - **Embedded addresses inside the bytecode** (`0x39ae1c50...`, `0x5b39e59e...`, `0x26bd71c6...`) match the previously-documented `vaultAlpha`/`vaultBeta`-equivalent/`vaultGamma` addresses of a known, already-classified pre-V5 LNES04Membrane deployment.
-- **Retirement classification: access-control concern.** Not "confirmed compromise" of the contract itself (that status is not directly observable on-chain), but its deployer wallet is independently documented as compromised, its access-control getters are unverifiable, and it does not match the current architecture. This is the strongest classification the actual evidence supports, per the directive's own instruction not to overstate.
+- **Deployer wallet status:** `0xbd1e790f6040FA62797671B84a50025a0133109C` had its key exposed in an agent/session environment (already flagged for rotation in `CLAUDE.md`'s Pending Credential Rotation list). The operator has directly confirmed they retain full access to this wallet and no third-party compromise is established — an earlier draft of this report used "compromised," which `VAULT_LEDGER.md` itself already corrects (see its 2026-07-31 and 2026-08-28 entries); that language is corrected here to match.
+- **Retirement classification: access-control concern.** Not "confirmed compromise" of the contract or its deployer wallet — neither is established. The contract's own access-control getters (`owner()`/`paused()`) are unverifiable regardless of who holds the deployer key, and it does not match the current V5 architecture. This is the strongest classification the actual evidence supports, per the directive's own instruction not to overstate.
 
 ## 3. The current (V5) contract — checked, not assumed safe
 
@@ -41,7 +42,7 @@ Not because compatibility couldn't be established (it was) — because the opera
 
 No evidence of any independent (non-developer) wallet ever invoking the affected flow. All six real transactions to the retired contract came from the same wallet, in a ~24-hour window in May 2026, consistent with internal testing rather than organic npm-package adoption. No funds are known to be trapped, exposed, or awaiting recovery from a third party's wallet. **No fund recovery action is required or was performed.**
 
-A separate, related finding surfaced during this investigation: the same compromised wallet was live on three `exergynet-site` pages as the current "Operator Wallet" (`docs.html`, `protocol.html`) and as the direct target of `explorer.html`'s donation button. This is corrected in this pass — see §7 below and `EXTERNAL_PROPAGATION_CHANGELOG.md`.
+A separate, related finding surfaced during this investigation: the same exposed wallet was live on three `exergynet-site` pages as the current "Operator Wallet" (`docs.html`, `protocol.html`) and as the direct target of `explorer.html`'s donation button. The operator has confirmed they retain full access to this wallet; it was replaced on these public surfaces because it is already flagged for rotation, not because of confirmed third-party control. This is corrected in this pass — see §7 below and `EXTERNAL_PROPAGATION_CHANGELOG.md`.
 
 ## 6. Fix delivered
 
@@ -55,9 +56,9 @@ A separate, related finding surfaced during this investigation: the same comprom
 
 ## 7. First-party website corrections (small, per §28)
 
-- `docs.html`, `protocol.html`: the "Operator Wallet" field showed the compromised wallet; corrected to `wallet_1` (`0x27cC42ee80CA945F96b93999CCdb02520618578B`), independently confirmed on-chain as V5's actual `owner()`.
-- `docs.html`: the x402 payment-manifest example's `"payTo"` field showed the same compromised wallet; corrected likewise. (The live `explorer-api.exergynet.org/x402/sensor/magnetometer` endpoint currently returns 404, so this was not being actively paid into by real traffic at time of check — but the documentation itself was wrong and is now fixed.)
-- `explorer.html`: the "♥ Support ExergyNet" donation button linked directly to the compromised wallet on BaseScan; corrected to `wallet_1`.
+- `docs.html`, `protocol.html`: the "Operator Wallet" field showed the exposed wallet; corrected to `wallet_1` (`0x27cC42ee80CA945F96b93999CCdb02520618578B`), independently confirmed on-chain as V5's actual `owner()`.
+- `docs.html`: the x402 payment-manifest example's `"payTo"` field showed the same exposed wallet; corrected likewise. (The live `explorer-api.exergynet.org/x402/sensor/magnetometer` endpoint currently returns 404, so this was not being actively paid into by real traffic at time of check — but the documentation itself was wrong and is now fixed.)
+- `explorer.html`: the "♥ Support ExergyNet" donation button linked directly to the exposed wallet on BaseScan; corrected to `wallet_1`.
 - No page directs users to install the affected npm package by name — `mcp.html` documents a separate, unrelated HTTP gateway mechanism. **No §15 write-tool safety notice was required or added**, since no first-party surface points at the affected package.
 
 ## 8. Incident classification

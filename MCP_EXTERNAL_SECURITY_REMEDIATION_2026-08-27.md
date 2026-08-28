@@ -19,7 +19,7 @@
 0x5cfE075149776f4b3cca07a27D4fd85A60BA5e3f
 ```
 
-**This is the exact contract `proof.html` — this site's own canonical verification page — labels retired**, stating explicitly: *"The former contract beginning `0x5CFE…` is retired and is not part of the current verification infrastructure."* Per `VAULT_LEDGER.md`, this contract was deployed by a wallet later found to be compromised, and its `owner()`/`architectTreasury()`/`paused()` getters all revert — meaning its access-control state is unknown and it cannot be confirmed whether the compromised key retains control of it.
+**This is the exact contract `proof.html` — this site's own canonical verification page — labels retired**, stating explicitly: *"The former contract beginning `0x5CFE…` is retired and is not part of the current verification infrastructure."* Per `VAULT_LEDGER.md`, this contract was deployed by a wallet whose key was exposed in an agent/session environment (the operator has since confirmed they retain full access — no third-party compromise is established); its `owner()`/`architectTreasury()`/`paused()` getters all revert — meaning its access-control state cannot be independently verified regardless.
 
 **Practical consequence:** anyone who installs `exergynet-mcp-server` via `npx -y exergynet-mcp-server` and follows its own README to configure a funded wallet is directed by the tool itself to approve USDC spend and send a transaction to a contract this same company's own status page says should not be used. The current V5 contract (`0xbb14956a88BaD822Ef38e96fF337a088b41c72be`) is not referenced anywhere in the package.
 
