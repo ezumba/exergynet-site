@@ -238,3 +238,198 @@ only — their P0 claim risks are now closed), consider commissioning real voice
 benchmarks before `voice.html` republishes any performance number, and the site-wide "sovereign"
 vocabulary purge inventoried in `WEBSITE_COMMERCIAL_RECON_2026-08-27.md` §D.1 remains entirely
 open for Directive 004.
+
+---
+
+## 2026-08-27 — Full Commercial Website Rebuild + Canonical Machine Narrative (VP Sales Directive 004)
+
+**Agent/session:** Claude Code session (interactive), operator Seven Ezumba / ExergyNet.
+
+**Exact strategic directive invoked:** `C:\Users\ezumb\Downloads\VP SALES DIRECTIVE 004.txt`,
+executed in an isolated worktree at branch `vp-sales-commercial-rebuild-2026-08-27`, based on
+`origin/main` at `74b798068acba047dc85c9e76eb656c5bde0e02f` (the Directive 003 production
+commit). This entry covers the full directive; QA and deployment steps are recorded separately
+below once complete (see status note at the end of this entry if still in progress).
+
+**New canonical reference:** `docs/PUBLIC_NARRATIVE_CANON_2026-08-27.md` — the master document
+every other page in this pass derives from: the frozen four-layer hierarchy (Useful Work →
+Authoritative State → Interoperability → Authority, Authority never the opening pitch or
+homepage primary CTA), the loaded-term governance rules, the sovereignty-language rule (KEEP
+only for customer/entity self-control, REWRITE where ExergyNet self-describes as sovereign,
+RENAME internal brand names built on "sovereign," never touch API/protocol code identifiers),
+the KTX/Kunfirm dual-boundary framing carried forward from Directive 003's addendum, and the
+two held external claims (Anthropic MCP Registry affiliation, MCP Vouch score) with their
+required non-advertisement treatment.
+
+**Full page rewrites:** `index.html` (new hero, four-layer proof block, "Does Not Require"
+compatibility box with an `id="does-not-require"` anchor added this pass for `faq.html` to link
+to, Context≠Memory≠State box, fixed dead Agent Manifest link, removed an internal audit-ID leak
+line), `enterprise.html`, `machines.html` (KTX dual-boundary framing preserved), `vanguard.html`,
+`whitepaper.html` (rewritten as a prose-only "commercial bridge" mirroring V2's structure, with
+an explicit STATUS NOTICE that no downloadable PDF is offered pending separate publication
+approval), `faq.html` (restructured into Enterprise/Technical/Security/Network-Economic
+sections per §17, leading with the seven specified buyer questions, crypto-native questions
+moved to the bottom section), `header.html`, `footer.html` (7-column reorganization).
+
+**New pages:** `design-partner.html` (evaluation funnel, six-step process, cost-terms chip
+list), `connect.html` (rebuilt from Directive 003's minimal holding page into a full
+compute/operator page per §16: GPU/cloud/research/node-operator targeting, source-visible
+installation, checksums/signatures, security expectations, no guaranteed-earnings language),
+`lnes06-release-notes.html` (the consumer changelog surgically extracted out of `lnes06.html`,
+`noindex, follow`).
+
+**Targeted edits (not full rewrites):** `security.html` (new "Whose Authority This Is /
+Customer Sovereignty" section inserted before Verifiable Security), `benchmarks.html` (light
+kicker/CTA touch), `lnes06.html` (split its consumer-changelog and enterprise-evidence
+identities per §15; hero/CTA reframed toward "Request an Enterprise Pilot"), `vmn.html`
+(reframed per §18: "Sovereign" tier renamed to "Verified," hero and closing CTA rewritten to
+explicitly distinguish the local VMN vault from ExergyNet's model-independent state
+architecture, preserving all installable-product evidence unchanged), `journals.html` (title/
+meta/hero reframed away from "Sovereign Compute" toward "Verified Compute" / useful-work
+framing), `ghost-witness.html` (see Trust Integrity Fixes below), `mcp.html`,
+`docs.html`, `protocol.html`, `nodes.html`, `api-integration.html` (see Developer Surface
+Consistency Audit below).
+
+**Site-wide sovereignty vocabulary purge (§29, completing what Directive 003 deliberately
+deferred):** grepped the full site for case-insensitive "sovereign" before starting; fixed every
+instance outside the four deliberately-preserved exceptions across `space-listen.html`
+(including the **live runtime LLM system prompt** — highest-priority item, previously
+`"You are Vanguard, the ExergyNet sovereign AI assistant..."`), `space.html`/`space/index.html`
+(also removed the factually-false "no middleman" claim), `api-integration.html`, `docs.html`,
+`explorer-solana.html`, `explorer.html`, `legal.html`/`legal/index.html` (self-description
+"sovereign mathematical physics engine" rewritten; "ARTICLE V. REGULATORY SOVEREIGNTY..."
+retitled to "ASSET CLASSIFICATION AND REGULATORY POSTURE"), `nodes.html`, `omega-carrier.html`
+(prose only — the `initialize_sovereign_identity` code/API identifier correctly preserved
+unchanged, per the never-rename-code-identifiers rule), `orderbook.html` (prose only — the
+`sovereignVaultMicroUsdc` JS variable correctly preserved unchanged), `proof.html`,
+`protocol.html`, `roadmap.html` ("Treasury Sovereignty"→"Treasury Custody", "Sovereign Memory"→
+"Verified Memory"), `sdk.html`, `token.html`, `vmn.html`, `voice.html` (full brand rename,
+10+ instances: "Sovereign Voice Stack"→"On-Premise Voice Stack" across title/meta/OG/Twitter/
+JSON-LD/body, "Sovereign Inference/Reasoning Engine"→"Local Inference/Reasoning Engine",
+"SOVEREIGN CLINICAL EXTRACTOR"→"ON-PREMISE CLINICAL EXTRACTOR"). Also renamed the "Sovereign
+Siphon" settlement-routing brand name (a marketing name, not a code identifier) to "Settlement
+Router" consistently across `nodes.html`, `protocol.html`, `sdk.html`, `token.html`. Final grep
+confirms zero remaining "sovereign" occurrences site-wide outside the four preserved exceptions
+(`vmn.html`'s two unused/dead CSS class selectors, `security.html`'s "CUSTOMER SOVEREIGNTY"
+HTML comment describing customer control — correct per the governance rule, and the two code
+identifiers named above).
+
+**Developer surface consistency audit (§19):** a dedicated research pass read `docs.html`,
+`sdk.html`, `api-integration.html`, `mcp.html`, `developers.html`, `.well-known/ai-plugin.json`,
+and `openapi.yaml` in full and cross-referenced them against `proof.html` (the site's canonical
+settlement/verification status page). Findings and fixes:
+- **Critical — wrong/stale LNES-04 contract addresses in `api-integration.html`:** the page
+  cited a retired Base Mainnet contract (`0x5cfE075149776f4b3cca07a27D4fd85A60BA5e3f`, labeled
+  merely "not yet the recommended default" when `proof.html` actually says it is **retired** and
+  its access-control status is unknown) and a wrong/deprecated Sepolia address
+  (`0x3241941beBE7D7f0c42097D8646DF50992B272FB`, a pre-V5 deployment). Both corrected to the
+  current V5 addresses (`0xbb14956a88BaD822Ef38e96fF337a088b41c72be` mainnet,
+  `0x831606e0312B518737D2c497469243297cFdAe2B` Sepolia) in all four occurrences (inline JS
+  example, Solidity comment, and the contracts reference table).
+- **Base Mainnet overstated as live/production** in `docs.html` (overview prose, Desktop Prover
+  spec table, Network Addresses table, ElizaOS/Solana sections), `protocol.html` ("Primary"
+  network pill and status notice), `nodes.html` (operator-payout language — the highest-stakes
+  instance, since this page recruits people to spend money on hardware), `connect.html`
+  (economics section), and this session's own newly-written `faq.html` (a regression introduced
+  earlier in this same pass, caught and fixed before deployment) — all corrected to state
+  plainly that the Base Mainnet LNES-04 contract is deployed and recommended but **currently
+  operating in mock-only mode; do not route real capital**, with Base Sepolia named as the
+  currently-testable path. `nodes.html` and `connect.html` specifically now warn against
+  acquiring hardware or applying on an expectation of real income today.
+- **Solana investigation status inconsistently disclosed** — `docs.html`'s ElizaOS and Native-
+  SOL-Escrow sections, and its Network Addresses table, previously omitted the investigation
+  caveat that `sdk.html` already carried correctly; caveat added in both places and the address-
+  table badge changed from "Active" to "Deployed · Under Investigation."
+- **Receipt-vs-ZK-proof conflation:** `mcp.html`'s `exergynet_get_proof` tool description
+  ("Retrieve ZK-STARK proof for a completed job") and `docs.html`'s settlement-flow language
+  ("ZK-STARK VERIFIED") asserted a proof where the site's own `ai-plugin.json`/`openapi.yaml`
+  correctly disclose a SHA-256 receipt; both reworded to be internally consistent, and
+  `api-integration.html`'s `/jobs/{id}/proof` endpoint description (previously conflating
+  Groth16 and STARK — two different proof systems — and calling the same value both a "receipt"
+  and "raw proof bytes" in one sentence) corrected to describe a settlement receipt honestly.
+- **Machine-readable manifest vs. human docs:** confirmed `ai-plugin.json` and `openapi.yaml`
+  did **not** overclaim relative to human docs (the specific prohibition Directive §19 checks
+  for was already satisfied) — if anything they were the more conservative documents. A separate
+  completeness problem was found and fixed instead: `openapi.yaml`'s only operation
+  (`getNetworkState`) didn't match any endpoint documented on `docs.html`/`sdk.html`/`mcp.html`/
+  `api-integration.html`, and `ai-plugin.json`'s name (`"ExergyNet Compute"`) contradicted its
+  own description ("AI memory"). Both files' descriptions rewritten to accurately describe what
+  each actually exposes (network/settlement state), pointing readers to `mcp.html`/`vmn.html`
+  for the separate memory/evidence surfaces, with stale "thermodynamic state and latest strikes"
+  wording also replaced.
+- `developers.html`'s meta description (previously describing a state/evidence/Vanguard product
+  that doesn't match the page's actual App Store-publishing content) corrected to match the
+  rendered page.
+- No violations found for model-compatibility claims, memory/state overclaims, or missing
+  benchmark-envelope caveats in the five audited developer-surface pages.
+
+**Ghost-Witness trust-integrity fix (found via the original Directive 001 recon registry,
+missed by Directive 003):** `ghost-witness.html` carried an unsourced "99.9% Contradiction
+detection accuracy" headline stat with no evidence record, and three inconsistent audit-time
+figures on one page (`<8s`, `<10s`, and a `28ms` demo figure for what were three different
+things being described as the same metric). Removed the unsourced percentage in favor of a
+qualitative "Deterministic Logic Check — not a probabilistic score" framing, and reconciled the
+two end-to-end timing figures to one number (`<10s`) explicitly distinguished from the 28ms
+compute-only demo figure.
+
+**Machine-readable narrative sync (§20, §21, §22):** confirmed `llms.txt` already exists (an
+established convention — no new pseudo-standard created per §21) but opened with the old
+"persistent state, evidence, and authority substrate" framing; rewrote its lead paragraph and
+page list to open with Useful Work / model-independent state, added Benchmarks/Design-
+Partnership/Enterprise/Machines links, kept every existing bounded-claim policy line unchanged
+(SHA-256-receipt-not-ZK-proof, shadow-mode gate, xISA research-only status, etc.) since those
+were already accurate. Applied the same category/identity rewrite to
+`.well-known/exergynet.json` and added `design-partner.html`/`enterprise.html` to its
+`public_pages` map. Added `design-partner.html` to `sitemap.xml` (33→34 entries);
+`lnes06-release-notes.html` correctly excluded, consistent with its own `noindex` meta tag.
+`robots.txt` required no change (no narrative content). `.well-known/mcp/server-card.json` was
+read and found already accurate — no change needed there.
+
+**Aug 24 migration disposition (§45's classification requirement):** investigated the
+previously-flagged "unmerged Aug 24 migration." Found two distinct things: (1) branch
+`release/narrative-migration` at commit `dedc9a7`, which is fully **SUPERSEDED** — it is an
+ancestor of `origin/main` and its content is already incorporated (Directive 003 built directly
+on top of it); no action needed. (2) A separate, larger, genuinely unmerged effort: commit
+`251e297` ("site: migrate ExergyNet narrative to state evidence authority substrate," 2026-08-24)
+sitting only on the dirty local `main` branch (and the pushed `vp-sales-whitepaper-v2-2026-08-27`
+preservation branch), confirmed via `git merge-base --is-ancestor` to **not** be an ancestor of
+`origin/main` — it was staged and documented (`docs/SITE_MIGRATION_HANDOFF_2026-08-24.md` and
+three companion docs) but deliberately never committed-and-pushed by the session that produced
+it. Classification: **CONFLICT** — its target narrative ("persistent state, evidence, and
+authority substrate," Authority-forward framing) is the same framing Directive 001's recon
+diagnosed as the core problem and that this directive's canon deliberately supersedes; it must
+not be merged as-is if ever revived. **SALVAGE:** the one concrete factual fix documented in its
+own handoff (`"ExergyNet Corp"` → `"ExergyNet"` in `index.html` JSON-LD and `ghost-witness.html`
+footer, an unsupported-entity-name correction) was independently verified already correct in the
+current `origin/main` lineage — nothing to pull forward. Its five remaining open factual
+questions (§H of the handoff doc: verified legal entity name, `legal.html` vs `legal/index.html`
+canonical status, `voice.html`'s unsourced "1.24s round-trip" figure, and two others already
+resolved by Directive 003/004) are carried into this directive's own open items rather than
+resolved unilaterally. The branch and its worktree were not merged, rebased, deleted, or
+force-cleaned — left exactly as found, consistent with the directive's explicit prohibition.
+
+**New required deliverables produced this pass:** `docs/PUBLIC_CLAIM_SURFACE_CROSSWALK_2026-08-27.md`
+(claim / evidence source / website ledger ID / white-paper ledger ID / current public pages /
+tested envelope / safe wording / prohibited wording / status — mapping the core benchmark
+claims, the two settlement-chain status claims, the LNES-04 contract-address correction, the
+receipt-vs-proof correction, and the two open items — Ghost-Witness's now-qualitative claim and
+`voice.html`'s still-unsourced performance figures — onto current page wording without
+duplicating the existing benchmark/whitepaper ledgers) and
+`EXTERNAL_NARRATIVE_PROPAGATION_QUEUE_2026-08-27.md` (Crunchbase, npm, Glama, CrossAI Tools,
+MCP.so, Metatext, MCP Vouch, Libraries.io, F6S, Smithery, Paragraph, affiliated-entity pages, and
+the Optimism governance record as diligence-only — no third-party surface edited this pass, per
+§25's explicit scope limit).
+
+**Held claims, not published (per §23/§24, unchanged from the canon doc):** the MCP Vouch
+71/100 Grade C score (real, but evaluated an older package version — not advertised, not hidden
+if asked, queued for remediate-then-rescan) and the "Official Anthropic MCP Registry" affiliation
+claim (classified `HOLD_FOR_EXTERNAL_VERIFICATION`, confirmed absent from every first-party
+surface this pass touched or searched).
+
+**Status at the time of this entry:** the content, sovereignty-purge, developer-surface, and
+machine-readable-sync workstreams above are complete. QA (visual, navigation, link, evidence-
+crosswalk, risk-grep, runtime, regression against Directive 003's P0 invariants), the
+implementation report (`WEBSITE_COMMERCIAL_REBUILD_2026-08-27.md`), the deployment diff gate,
+and the fast-forward push to `origin/main` had not yet run as of this entry — see the session's
+final terminal report for their outcome, or a follow-up changelog entry if this work continued
+in a later session before those steps completed.

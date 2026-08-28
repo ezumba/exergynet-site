@@ -1,21 +1,27 @@
 # ExergyNet
 
-ExergyNet is a persistent state, evidence, and authority substrate for autonomous intelligence.
-Models reason; ExergyNet preserves state, binds evidence to the decisions that used it, governs
-what a machine identity is permitted to cause, and verifies consequential operations — across
-models, machines, and time. The model is a reasoning engine inside this environment, not the
-system itself.
+ExergyNet is infrastructure for useful machine work. It gives AI systems a model-independent
+way to hold authoritative state, measure the resource cost of a validated task against a
+workload's own optimized baseline, and interoperate across administrative boundaries — so an
+agent's institutional record survives a model swap, a session restart, or a change of vendor.
+Models reason; ExergyNet preserves the state, binds evidence to the decisions that used it, and
+verifies consequential operations across models, machines, and time. The model is a reasoning
+engine inside this environment, not the system itself. Authority coordination exists but is not
+the entry point — see the Security page for that boundary specifically.
 
 Primary public pages:
 - Home: https://exergynet.org/
+- Benchmarks (measured results): https://exergynet.org/benchmarks.html
+- White Paper (preview): https://exergynet.org/whitepaper.html
+- Design Partnership (evaluation): https://exergynet.org/design-partner.html
+- Enterprise: https://exergynet.org/enterprise.html
 - Security (Consequence Boundary): https://exergynet.org/security.html
-- Benchmarks: https://exergynet.org/benchmarks.html
 - Vanguard: https://exergynet.org/vanguard.html
 - VMN (local memory): https://exergynet.org/vmn.html
 - Omega Carrier: https://exergynet.org/omega-carrier.html
+- Machine Infrastructure: https://exergynet.org/machines.html
 - Developers: https://exergynet.org/developers.html
 - Proof / Verification: https://exergynet.org/proof.html
-- White Paper (preview): https://exergynet.org/whitepaper.html
 
 Architectural planes:
 - State: persistent knowledge across sessions, machines, agents, models (Exergy Vault / xLMP; VMN local).

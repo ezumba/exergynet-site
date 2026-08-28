@@ -1,7 +1,7 @@
 {
   "name": "ExergyNet",
-  "category": "State, Evidence & Authority Infrastructure for Autonomous Intelligence",
-  "identity": "A persistent state, evidence, and authority substrate for autonomous intelligence. Models reason; ExergyNet preserves state, binds evidence, governs authority, and verifies consequential operations across models, machines, and time.",
+  "category": "Infrastructure for Useful Machine Work — Model-Independent State, Interoperability, and Verification",
+  "identity": "Infrastructure that gives AI systems a model-independent way to hold authoritative state, measure the resource cost of a validated task against a workload's own optimized baseline, and interoperate across administrative boundaries. Models reason; ExergyNet preserves the state, binds evidence to the decisions that used it, and verifies consequential operations across models, machines, and time. Authority coordination exists but is not the entry point.",
   "planes": {
     "state": "Persistent knowledge across sessions, machines, agents, and models (Exergy Vault / xLMP; VMN local).",
     "evidence": "Provenance and integrity of what caused a decision (xLMP roots, signed provenance, AERIS, Edge Witness).",
@@ -20,11 +20,13 @@
   },
   "public_pages": {
     "home": "https://exergynet.org/",
-    "security": "https://exergynet.org/security.html",
     "benchmarks": "https://exergynet.org/benchmarks.html",
+    "whitepaper": "https://exergynet.org/whitepaper.html",
+    "design_partnership": "https://exergynet.org/design-partner.html",
+    "enterprise": "https://exergynet.org/enterprise.html",
+    "security": "https://exergynet.org/security.html",
     "developers": "https://exergynet.org/developers.html",
-    "verification": "https://exergynet.org/proof.html",
-    "whitepaper": "https://exergynet.org/whitepaper.html"
+    "verification": "https://exergynet.org/proof.html"
   },
   "claim_policy": {
     "benchmark_scope_required": true,
