@@ -67,8 +67,23 @@ Named explicitly, not hidden: production-wide authority enforcement across every
 
 ## A note on independent validation status, for transparency
 
-- ExergyNet's MCP server is genuinely listed in the official Model Context Protocol registry (`registry.modelcontextprotocol.io`, namespace `io.github.ezumba/exergynet`, status active) — this reflects namespace ownership, not an Anthropic endorsement or security certification; the registry's own documentation is explicit that it performs no editorial review.
-- An independent MCP security scanner (MCP Vouch) previously scored an ExergyNet MCP package 71/100 (Grade C) against an older build. That scan and its current-code implications are documented separately in `MCP_EXTERNAL_SECURITY_REMEDIATION_2026-08-27.md` and are not minimized here.
+- ExergyNet's MCP server is genuinely listed in the official Model Context Protocol registry (`registry.modelcontextprotocol.io`, namespace `io.github.ezumba/exergynet`, status active) — this reflects namespace ownership, not an Anthropic endorsement or security certification; the registry's own documentation is explicit that it performs no editorial review. As of 2026-08-28 this registry entry's own metadata is stale (an older package version) and is being corrected — see the security/release-history section below.
+- An independent MCP security scanner previously scored an ExergyNet MCP package 71/100 (Grade C) against an older build (0.1.10, scanned 2026-07-09). That scanning service's own tooling could not be independently confirmed as still operable as of 2026-08-28; the 71/100 figure should be read as a historical result against a superseded release, not a current score. See the section below for what has changed since.
 - An ExergyNet grant request appears in Optimism's Season 9 governance record and was declined by the Grants Council; no specific reason is given in the public record. This is disclosed here rather than omitted.
+
+## Security and release-history note (added 2026-08-28)
+
+Bounded to what is independently verifiable; not a narrative about the company's overall security posture.
+
+- An independent security scan of an earlier MCP package build (0.1.10) identified weaknesses in input validation, audit logging, rate limiting, and supply-chain hygiene.
+- A subsequent internal review, prompted by that scan, discovered a separate and more serious issue in a later build: a write-transaction tool that referenced a Base L2 contract ExergyNet's own status page identifies as retired.
+- The affected write path was disabled — it now returns a fixed, non-functional response under every configuration and carries no transaction-signing capability at all.
+- The affected package releases (0.2.0 through 0.2.2) have been marked deprecated on npm, pointing installers to the fixed release.
+- Release provenance for the fixed version was independently reconstructed and verified end to end, from source commit through the exact artifact a real install receives from npm — not assumed from a successful publish alone.
+- The dependency vulnerabilities flagged by the original scan have been remediated in a follow-up release (0.2.5), using a targeted fix that does not require downgrading a core dependency.
+- No evidence was found of any independent (non-developer) user ever using the affected path; on-chain records show only internal testing activity against the retired contract.
+- The V5 write-settlement path referenced elsewhere in ExergyNet's architecture remains disabled pending its own independent verification — this is a separate, deliberate decision, not an emergency measure.
+
+This is not characterized as a breach, and no wallet or account involved is characterized as compromised — neither is established by the evidence found. Nor is this presented as a claim of zero risk: some MCP ecosystem surfaces that describe ExergyNet's software (a directory listing, a registry entry) still reflect older, pre-fix information as of this writing and are in the process of being corrected; an evaluator should check the actual installed package version and its behavior directly rather than relying solely on a third-party listing's description.
 
 This packet is meant to be handed to someone who will check it, not someone being asked to trust it.
