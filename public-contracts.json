@@ -1,7 +1,7 @@
 {
   "$schema": "n/a — first version, no external schema yet",
   "lastVerified": "2026-08-28",
-  "note": "Canonical machine-readable companion to PUBLIC_CONTRACT_ADDRESS_REGISTRY_2026-08-28.md. Statuses: ACTIVE, DEPLOYED_LIMITED, MOCK, TESTNET, LEGACY, RETIRED, INVESTIGATING, UNKNOWN.",
+  "note": "Canonical machine-readable companion to PUBLIC_CONTRACT_ADDRESS_REGISTRY_2026-08-28.md. Statuses: ACTIVE, DEPLOYED_LIMITED, MOCK, TESTNET, LEGACY, RETIRED, INVESTIGATING, UNKNOWN. Directive 007 (2026-08-28) re-audited two additional gateway surfaces (exergynet-mcp-server's Rust src/main.rs, and the live omega_carrier_mcp.py at mcp.exergynet.org/sse) for address literals; both checked clean, no rows added.",
   "addresses": [
     {
       "component": "LNES-04 Membrane V5",

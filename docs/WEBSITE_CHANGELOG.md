@@ -484,3 +484,24 @@ All three corrected to `0x27cC42ee80CA945F96b93999CCdb02520618578B` (`wallet_1`)
 **Visual QA:** still blocked, same as the prior two entries — Browser pane not displayed on the user's side this session either.
 
 **Mainnet actions performed this incident: zero. Funds moved: zero.** All forensics used read-only RPC calls (`eth_getCode`, `eth_call`, `eth_chainId`, `eth_getBalance`) and public block-explorer APIs — no transaction was signed or broadcast at any point.
+
+---
+
+## 2026-08-28 — MCP Incident Closure, Safe Release Publication Prep, and Propagation Resume Gate (VP Sales Directive 007)
+
+**Agent/session:** Claude Code session (interactive), operator Seven Ezumba / ExergyNet.
+
+**Context:** the operator corrected the previous entry's wallet-compromise characterization in chat before Directive 007 was issued; that correction was already applied (commit `404413b`) prior to this directive starting. This session independently re-verified that correction was still live (fresh repository-wide grep, not assumed) rather than re-doing work already done — Directive 007's own premise §1 described a pre-correction snapshot.
+
+**Genuinely new work this pass:**
+- **MCP Vouch remediation**, on top of the P0 fail-closed fix: input validation, audit logging, and rate limiting added to `exergynet-mcp-server`; `npm audit fix` applied (non-breaking) for a set of transitive vulnerabilities. Published as version 0.2.4 (source only — npm publication remains blocked on credentials), since 0.2.3 was never actually published and the directive's own instruction is not to conflate fix generations under one version number.
+- **Rust gateway audit** (previously deferred): the separate `src/main.rs` HTTP gateway has zero blockchain-interaction capability of any kind — confirmed via full source read and dependency-manifest review, not assumed. Separately, this pass discovered the actual live MCP gateway is a different, Python (`omega_carrier_mcp.py`) service at `https://mcp.exergynet.org/sse` — also checked clean of the retired address (an initial regex hit was a false positive on unrelated 32-byte hash values, corrected before reporting).
+- **Outstanding USDC allowance documented** (`RETIRED_CONTRACT_ALLOWANCE_ACTION_2026-08-28.md`): a near-unlimited allowance from the exposed wallet to the retired contract remains live on-chain. Exact revocation transaction semantics prepared; **no revocation was broadcast** — that requires the wallet's own key and the operator's explicit action.
+- **Release provenance formalized** (`MCP_RELEASE_PROVENANCE_0.2.4.md`): full chain from source commit through tarball hash, plus the exact npm publish/verify/deprecate command sequence prepared for whoever holds npm credentials — none of which exist in this environment, and none of which were requested in chat.
+- **Incident reclassified** per the directive's precise established/not-established framing: "unsafe legacy integration / contract-target configuration drift," explicitly not "confirmed compromise," "malicious takeover," or "third-party user loss" — none of those is established by any evidence found.
+
+**No first-party website change this pass** beyond the documents above — the operator's wallet decision (keep `wallet_1` on public surfaces) was already made and was not revisited or reverted, per the directive's own instruction not to undo a correct decision just because the label that originally prompted it turned out to be wrong.
+
+**Directive 005 resume gate: not yet met.** npm publication of the safe release is the only remaining blocker; the exact command sequence is prepared and waiting on the operator (or whoever holds `npm login` access), not on further agent work.
+
+**Visual QA:** still blocked — three directives in a row now.
