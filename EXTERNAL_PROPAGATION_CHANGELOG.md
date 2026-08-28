@@ -35,6 +35,14 @@ No external (third-party-hosted) surface was actually mutated this pass. All cor
 | 2026-08-28 | `exergynet-site` — `explorer.html` ("♥ Support ExergyNet" donation button) | Linked to the exposed wallet on BaseScan | Linked to the corrected wallet on BaseScan | Yes | git | Same as above | **Applied** | No | Immediate on push | Pending push |
 | 2026-08-28 | `exergynet-site` — `lnes06.html` (`0xwork.org/agents/...` external profile link) | References the exposed wallet as a third-party agent-marketplace identifier | Not corrected | Unknown whether changing the URL would even point to a valid alternative profile | n/a | Same forensics | **FLAGGED, not corrected** — this is an identifier on a third party's own record, not a payment target; changing it doesn't fix anything without confirming the third party's record | No | N/A | N/A |
 
+## 2026-08-28 — Directive 007 closure mutations
+
+| Timestamp | Surface | Old wording | New wording | Controls surface? | Login/account used | Supporting source | Update status | Moderation pending? | Expected propagation | Live verification |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2026-08-28 | `github.com/ezumba/exergynet-mcp-server` (`main`) | 0.2.3 (fail-closed only, no Vouch remediation) | 0.2.4 (adds input validation, audit logging, rate limiting, partial supply-chain fix) | Yes — git push confirmed | git | `MCP_INCIDENT_CLOSURE_2026-08-28.md` | **Applied** — commit `7064acc`, verified live | No | Immediate | Confirmed live via raw GitHub fetch |
+| 2026-08-28 | npm `exergynet-mcp-server` | Latest published 0.2.2 (affected) | 0.2.4 tarball built, hashed, not yet published | Publish credentials not available | n/a | `MCP_RELEASE_PROVENANCE_0.2.4.md` | **BLOCKED (no credentials)** — exact publish command sequence prepared for the operator in `MCP_INCIDENT_CLOSURE_2026-08-28.md` | No | N/A until published | N/A |
+| 2026-08-28 | Official MCP registry `io.github.ezumba/exergynet` | Points to 0.1.10 | Should point to 0.2.4 once published | Publish credentials not available | n/a | Registry API | **BLOCKED (no credentials)** | No | N/A | N/A |
+
 ## Credentials note
 
 No credential values, tokens, or secrets are recorded anywhere in this file or any other deliverable. Where a credential's *existence* was confirmed (e.g. git's credential manager resolving a request for `github.com`), only that fact is noted — never the value.

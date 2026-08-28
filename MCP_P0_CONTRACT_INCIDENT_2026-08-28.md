@@ -1,9 +1,9 @@
 # MCP P0 Contract Incident — Master Report
 
-**Directive:** VP Sales Directive 006 — Emergency MCP Package Containment, Contract Forensics, and Safe Migration
-**Status: CLOSED for the containment phase.** Fix is written, tested, and pushed to the source repository. npm publication is pending credentials (see status notes throughout). No on-chain or fund-moving action was taken or is required.
+**Directive:** VP Sales Directive 006 (Emergency MCP Package Containment, Contract Forensics, and Safe Migration), closed out by Directive 007 (MCP Incident Closure, Safe Release Publication, and External Propagation Resume Gate)
+**Status: source-side containment and remediation CLOSED. Commercial closure (npm publication) is OPEN**, blocked only on npm credentials this environment does not have. No on-chain or fund-moving action was taken or is required from this session.
 
-See also: `MCP_PUBLISHED_ARTIFACT_PROVENANCE_2026-08-28.md`, `PUBLIC_CONTRACT_ADDRESS_REGISTRY_2026-08-28.md` (+ `public-contracts.json`), `MCP_SECURITY_ADVISORY_2026-08-28.md`, updated `MCP_EXTERNAL_SECURITY_REMEDIATION_2026-08-27.md`, updated `EXTERNAL_PROPAGATION_CHANGELOG.md`, updated `docs/WEBSITE_CHANGELOG.md`.
+See also: `MCP_PUBLISHED_ARTIFACT_PROVENANCE_2026-08-28.md`, `MCP_RELEASE_PROVENANCE_0.2.4.md`, `RETIRED_CONTRACT_ALLOWANCE_ACTION_2026-08-28.md`, `RUST_GATEWAY_CONTRACT_AUDIT_2026-08-28.md`, `PUBLIC_CONTRACT_ADDRESS_REGISTRY_2026-08-28.md` (+ `public-contracts.json`), `MCP_SECURITY_ADVISORY_2026-08-28.md`, `MCP_INCIDENT_CLOSURE_2026-08-28.md` (the closure summary and the npm publish command sequence prepared for the operator), updated `MCP_EXTERNAL_SECURITY_REMEDIATION_2026-08-27.md`, updated `EXTERNAL_PROPAGATION_CHANGELOG.md`, updated `docs/WEBSITE_CHANGELOG.md`.
 
 ---
 
@@ -46,13 +46,13 @@ A separate, related finding surfaced during this investigation: the same exposed
 
 ## 6. Fix delivered
 
-- **Source repository:** `github.com/ezumba/exergynet-mcp-server`, `main` branch, commit `f3f4edc` (pushed, fast-forward, verified live via raw GitHub content fetch).
-- **Version:** 0.2.3.
-- **Tarball (built, not yet published):** `exergynet-mcp-server-0.2.3.tgz`, sha512 integrity `sha512-YAPWP8Y8663zn[...]9p5PI6V12Jr6w==`, shasum `11449ee9391ce3ac8effbb97b80376e8444e606d`.
-- **Tests:** 5/5 pass — a static check that the retired address, any hardcoded EVM address, any `*PRIVATE_KEY` env var, and `ethers`/`viem` can never reappear in a build, and a behavioral test that spawns the real built server and confirms `exergynet_open_job` fails closed.
-- **Active runtime references to the retired address: 0** (confirmed by repo-wide grep — the only two remaining mentions are the security advisory's own remediation instructions and the regression test that guards against reintroduction, both correctly classified as documentation/test, not runtime).
-- **npm publication: not performed** — `npm whoami` returns `ENEEDAUTH` in this environment. The package is publish-ready; see `MCP_SECURITY_ADVISORY_2026-08-28.md` for the exact state and instructions for whoever holds npm credentials.
-- **MCP registry update: not performed** — no registry publish credentials available. `io.github.ezumba/exergynet`'s registry entry still points to the old 0.1.10 metadata; this should be updated once 0.2.3 is on npm.
+- **Source repository:** `github.com/ezumba/exergynet-mcp-server`, `main` branch. Fail-closed fix at commit `f3f4edc` (version 0.2.3); MCP Vouch remediation (§9 below) on top of it at commit `7064acc` (version 0.2.4). Both pushed, fast-forward, verified live via raw GitHub content fetch.
+- **Version to actually publish: 0.2.4** — 0.2.3 was superseded before it was ever published once the Vouch remediation was ready in the same sitting; see `MCP_RELEASE_PROVENANCE_0.2.4.md` for the full chain and the naming rationale.
+- **Tarball (built, not yet published):** `exergynet-mcp-server-0.2.4.tgz`, sha512 integrity `sha512-5roYoat/XW8Uj[...]epRxzXeWFpb5Q==`, shasum `e79d885ce3aae34e9e588c45f9e71a7a63ea4998`.
+- **Tests:** 9/9 pass — the original 5 (retired address, `*PRIVATE_KEY`, `ethers`/`viem`, bare-address-literal, fail-closed behavior) plus 4 new from the Vouch remediation (input-validation rejection ×2, malformed-URL rejection, audit-log presence).
+- **Active runtime references to the retired address: 0** (confirmed by repo-wide grep — the only remaining mentions are the security advisory's own remediation instructions and the regression test that guards against reintroduction, both correctly classified as documentation/test, not runtime).
+- **npm publication: not performed** — `npm whoami` returns `ENEEDAUTH` in this environment. The package is publish-ready; see `MCP_INCIDENT_CLOSURE_2026-08-28.md` for the exact command sequence prepared for whoever holds npm credentials.
+- **MCP registry update: not performed** — no registry publish credentials available. `io.github.ezumba/exergynet`'s registry entry still points to the old 0.1.10 metadata; this should be updated once 0.2.4 is on npm.
 
 ## 7. First-party website corrections (small, per §28)
 
@@ -63,12 +63,38 @@ A separate, related finding surfaced during this investigation: the same exposed
 
 ## 8. Incident classification
 
-**Unsafe legacy integration.** The published write path targeted a retired deployment that should no longer receive transactions. This is not classified as "confirmed compromise" of the package or the contract itself — no evidence of unauthorized modification of the npm package or malicious intent was found; the defect is best explained by configuration/address drift compounded by a broken source-to-build pipeline (see provenance report), not an attack on ExergyNet's infrastructure.
+**Unsafe legacy integration / contract-target configuration drift.**
 
-## 9. MCP Vouch (deferred, not mixed with this incident per §18)
+Established by direct evidence this pass:
+- The contract is retired.
+- npm 0.2.0–0.2.2's write path targets it.
+- The ABI the package assumes does not reflect this contract's actual deployed interface (selector mismatch, confirmed via keccak256 computation against the live bytecode dispatcher).
+- Six historical transactions, all from one wallet, in one ~24-hour window.
+- A live USDC allowance exists from that same operator-controlled wallet (see `RETIRED_CONTRACT_ALLOWANCE_ACTION_2026-08-28.md`).
+- The current V5 contract is ABI-compatible with the expected `openJob`/`settleExergy` interface.
+- V5 remains mock-only per `proof.html` and is therefore not an authorized production write target regardless of ABI compatibility.
 
-Not addressed in this pass. The four previously-reproduced warnings (input validation, audit/telemetry, rate limiting, supply chain) remain open and are correctly treated as a separate workstream from this P0 contract-address defect, to be picked up once this incident's npm publication completes.
+Not established — no evidence found for any of the following, and none is claimed:
+- Loss of wallet control.
+- Malicious contract takeover.
+- Unauthorized withdrawal.
+- Third-party user loss.
+- A confirmed exploit.
+
+The defect is best explained by configuration/address drift compounded by a broken source-to-build pipeline (see `MCP_RELEASE_PROVENANCE_0.2.4.md`), not an attack on ExergyNet's infrastructure and not a loss of key control.
+
+## 9. MCP Vouch remediation (Directive 007 §10 — kept conceptually separate from the contract-address defect)
+
+Addressed in commit `7064acc` (version 0.2.4), after the contract-target incident above was contained: input validation (reject non-finite/negative/malformed input instead of silent coercion), audit logging (every tool call logged to stderr), rate limiting (20 calls/10s on the one network-calling tool), and supply-chain (`npm audit fix` applied non-breaking; 3 remaining moderate transitive advisories documented rather than force-fixed into a breaking `@solana/web3.js` downgrade). A fresh independent rescan will be requested only after 0.2.4 is actually published, per Directive 007 §11 — the 71/100 score is not claimed as current, and will not be deleted once a new score exists.
 
 ## 10. Marketing hold status
 
-In effect for the remainder of this incident per §24: no pitching MCP transaction functionality, no driving traffic to `exergynet_open_job`, no advertising the MCP registry listing as a security signal. Can be lifted once npm 0.2.3 is published and verified.
+In effect for the remainder of this incident per §24: no pitching MCP transaction functionality, no driving traffic to `exergynet_open_job`, no advertising the MCP registry listing as a security signal. Can be lifted once npm 0.2.4 is published and independently verified as what a normal install actually returns.
+
+## 11. Rust gateway and public contract registry audits (Directive 007 §16/§17)
+
+See `RUST_GATEWAY_CONTRACT_AUDIT_2026-08-28.md` — the separate Rust HTTP gateway component (`src/main.rs`) has zero blockchain-interaction capability of any kind (no signing library, no wallet, no RPC client), so it cannot reach any contract regardless of deployment status; it is not the live gateway in any case (see below). The actually-live gateway, `https://mcp.exergynet.org/sse` (confirmed via `Server: uvicorn`, matching `omega_carrier/omega_carrier_mcp.py` in the main `exergynet` repository), was checked for the retired address and any real contract addresses — none found (two regex hits were false positives on 32-byte hashes, not 20-byte addresses). That service's fund-adjacent tools (`strike_rho_recursion`, `execute_rho_strike`) were not otherwise audited and are flagged as a separate follow-up, not resolved here.
+
+## 12. Outstanding allowance decision
+
+See `RETIRED_CONTRACT_ALLOWANCE_ACTION_2026-08-28.md` for the full facts and recommended revocation transaction. No on-chain action was taken from this session — that document exists so the operator can approve or reject the recommendation knowingly.
