@@ -1,0 +1,87 @@
+{
+  "$schema": "n/a — first version, no external schema yet",
+  "lastVerified": "2026-08-28",
+  "note": "Canonical machine-readable companion to PUBLIC_CONTRACT_ADDRESS_REGISTRY_2026-08-28.md. Statuses: ACTIVE, DEPLOYED_LIMITED, MOCK, TESTNET, LEGACY, RETIRED, INVESTIGATING, UNKNOWN.",
+  "addresses": [
+    {
+      "component": "LNES-04 Membrane V5",
+      "chain": "base-mainnet",
+      "chainId": 8453,
+      "address": "0xbb14956a88BaD822Ef38e96fF337a088b41c72be",
+      "status": "MOCK",
+      "notes": "owner() and paused() verified on-chain 2026-08-28; ABI matches openJob(bytes32)/settleExergy(bytes32,bytes,bytes,address); operator has declared mock-only, do not route real capital"
+    },
+    {
+      "component": "LNES-04 Membrane V5",
+      "chain": "base-sepolia",
+      "chainId": 84532,
+      "address": "0x831606e0312B518737D2c497469243297cFdAe2B",
+      "status": "TESTNET",
+      "notes": "Available for test and demonstration use"
+    },
+    {
+      "component": "LNES-04 Membrane (pre-V5)",
+      "chain": "base-mainnet",
+      "chainId": 8453,
+      "address": "0x5cfE075149776f4b3cca07a27D4fd85A60BA5e3f",
+      "status": "RETIRED",
+      "notes": "P0 incident 2026-08-28: hardcoded in exergynet-mcp-server <=0.2.2; ABI mismatch confirmed; access-control getters revert; deployer wallet independently documented as compromised"
+    },
+    {
+      "component": "LNES04MembraneV2 (FFLONK mock wrapper)",
+      "chain": "base-mainnet",
+      "chainId": 8453,
+      "address": "0xB13D4377aB45437b266d9E5D10c46B198aCAF344",
+      "status": "MOCK",
+      "notes": "Not independently re-verified this pass; carried from VAULT_LEDGER.md 2026-08-02"
+    },
+    {
+      "component": "SovereignVerifier (FflonkVerifier)",
+      "chain": "base-mainnet",
+      "chainId": 8453,
+      "address": "0x7A25671c4E3772D49111975FBd5f9d5901048C9e",
+      "status": "MOCK",
+      "notes": "Not independently re-verified this pass; carried from VAULT_LEDGER.md 2026-08-02"
+    },
+    {
+      "component": "Canonical USDC (Circle, third-party)",
+      "chain": "base-mainnet",
+      "chainId": 8453,
+      "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "status": "ACTIVE",
+      "notes": "Third-party contract, not operated by ExergyNet"
+    },
+    {
+      "component": "Test USDC",
+      "chain": "base-sepolia",
+      "chainId": 84532,
+      "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "status": "TESTNET",
+      "notes": null
+    },
+    {
+      "component": "LNES-03 Membrane",
+      "chain": "solana-mainnet-beta",
+      "chainId": null,
+      "address": "7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL",
+      "status": "INVESTIGATING",
+      "notes": "Deployed, has settled successfully before, currently under active investigation for transaction failures"
+    },
+    {
+      "component": "Operator Wallet (current)",
+      "chain": "base",
+      "chainId": null,
+      "address": "0x27cC42ee80CA945F96b93999CCdb02520618578B",
+      "status": "ACTIVE",
+      "notes": "wallet_1; confirmed via on-chain owner() call against LNES-04 V5, 2026-08-28"
+    },
+    {
+      "component": "Operator Wallet (retired/compromised)",
+      "chain": "base",
+      "chainId": null,
+      "address": "0xbd1e790f6040FA62797671B84a50025a0133109C",
+      "status": "RETIRED",
+      "notes": "Deployer of the retired LNES-04 pre-V5 contract; independently documented elsewhere as compromised; was live on docs.html/protocol.html/explorer.html until corrected 2026-08-28"
+    }
+  ]
+}
