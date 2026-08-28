@@ -149,3 +149,15 @@ uvx snyk-agent-scan@latest mcp-scan-target.json
 | Smithery | Empty stub, platform mid-acquisition | N/A — recommend leaving alone | — | Low, deliberate |
 | MCP Vouch | Stale 71/100; rescan tool non-functional | Closed as `INDEPENDENT_RESCAN_UNAVAILABLE` | — | Closed |
 | Snyk Agent Scan (replacement) | Not yet run | Exact command prepared | Operator Snyk account/token | P1, new |
+
+---
+
+## Directive 009 additions — 2026-08-28 (later)
+
+**Registry claim scope, bounded explicitly (Directive 009 §6):** once the official registry is corrected, the only permitted public claim is *"Listed in the official MCP registry."* Do not say Anthropic partner, certified, approved, endorsed, or that the registry validates security — a registry listing establishes listing, nothing more.
+
+**Independent scanner, scope correction:** Directive 009 §11 specifies scanning the **publicly installed 0.2.5 package**, not unpublished source — meaning the Snyk Agent Scan run described above cannot happen until 0.2.5 is actually on npm, not just source-ready on `main`. This makes the npm publish step (§1 above) a hard prerequisite for the scan step, not just the highest-priority item for its own sake.
+
+**Snyk credential handling, explicit constraint (Directive 009 §11):** "the agent may guide the process, but must not request the token in chat or print it into logs." If a future session assists with running the scan, `SNYK_TOKEN` must be set directly in the operator's own shell environment, never typed into or echoed within any chat interface or logged output.
+
+**If a real Snyk finding requires a code change:** per Directive 009 §12, do not patch 0.2.5 retroactively — any real fix ships as 0.2.6 following the same patch-release discipline already used for 0.2.5, and a scanner heuristic should not be called a vulnerability until its actual semantics are examined (not every automated finding is a real issue).
