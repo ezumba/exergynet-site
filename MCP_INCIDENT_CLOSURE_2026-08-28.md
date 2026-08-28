@@ -206,3 +206,13 @@ Adopting the operator's own two-hold framing:
 All three were verified live on the actual production domain (not just pushed to the repo) via direct HTTP fetch after allowing for propagation lag — this project's static site deploys from `origin/main` with roughly a 30–40 second delay, not instantly.
 
 **No change to the hold determination above** — these were first-party fixes explicitly authorized and specified by Directive 009 §15; they don't touch any of the operator-credentialed blockers (npm, registry, Glama, MCP.so, Snyk) that are the actual remaining gate.
+
+---
+
+## Post-Directive-009 update — 2026-08-28 (final): 0.2.5 publish and registry fix confirmed; a real consumer-facing gap found and fixed as 0.2.6
+
+Two of the four credentialed blockers listed above are now independently confirmed done, not just reported: **npm `latest` is genuinely `0.2.5`**, and **the official MCP registry now serves a corrected `0.2.5` entry** (`isLatest: true`, no `BASE_PRIVATE_KEY` requirement), verified directly against both live endpoints.
+
+Testing that publication as an ordinary consumer would (exactly the discipline this document has insisted on throughout) surfaced a real gap: 0.2.5's dependency-hardening `overrides` entry only takes effect when `exergynet-mcp-server` is the install root, which almost no real user's install is. Every ordinary `npm install exergynet-mcp-server@0.2.5` still saw 4 moderate `npm audit` findings that this repository's own audit did not show. This was reproduced independently before any change was made, root-caused, and fixed as **0.2.6** by removing `@solana/web3.js` entirely (its only use was a single read-only JSON-RPC call, replaced with a small native `fetch()` implementation, behavior-verified against live Solana Mainnet-Beta) rather than attempting another override-based patch. Full detail in `MCP_RELEASE_PROVENANCE_0.2.6.md`. **0.2.6 is committed and pushed to `main`, not yet published** — same operator-credential handoff as every prior release.
+
+**This does not reopen or change the security posture established for 0.2.4.** It is a dependency-hygiene correction, and specifically a *distribution-testing methodology* correction: a repo-root `npm audit` is no longer treated as sufficient evidence that a release is clean for real consumers. A permanent automated gate (`npm run test:consumer-install`) now checks this before every future publish.

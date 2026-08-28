@@ -161,3 +161,19 @@ uvx snyk-agent-scan@latest mcp-scan-target.json
 **Snyk credential handling, explicit constraint (Directive 009 §11):** "the agent may guide the process, but must not request the token in chat or print it into logs." If a future session assists with running the scan, `SNYK_TOKEN` must be set directly in the operator's own shell environment, never typed into or echoed within any chat interface or logged output.
 
 **If a real Snyk finding requires a code change:** per Directive 009 §12, do not patch 0.2.5 retroactively — any real fix ships as 0.2.6 following the same patch-release discipline already used for 0.2.5, and a scanner heuristic should not be called a vulnerability until its actual semantics are examined (not every automated finding is a real issue).
+
+---
+
+## Update, 2026-08-28 (later): npm publish and registry fix confirmed; a new 0.2.6 shipped for a real consumer-audit gap
+
+**Independently re-verified, not taken on report:**
+- `npm view exergynet-mcp-server version` → **`0.2.5`**, confirmed as `dist-tags.latest`. The operator completed the npm publish step from §1.
+- `curl https://registry.modelcontextprotocol.io/v0/servers?search=exergynet` → now returns **two** entries: the original `0.1.10` (correctly marked `isLatest: false`) and a new `0.2.5` entry (`isLatest: true`, published 2026-08-28T18:38:53Z), with the corrected description and no `BASE_PRIVATE_KEY` requirement. The operator completed the registry-fix step from §5.
+
+**New finding, discovered by the operator's own consumer-side testing and independently reproduced before any code was touched:** 0.2.5's `package.json` `overrides` entry (`jayson` → `uuid@^11.1.1`) only takes effect when `exergynet-mcp-server` is itself the install root — npm does not honor `overrides` declared by an installed dependency. This repo's own `npm audit` genuinely showed 0 findings; a fresh `npm install exergynet-mcp-server@0.2.5` in an unrelated directory showed 4 moderate findings. Both trees were captured before any change was made. Full detail, root-cause explanation, the `@solana/web3.js` usage map, the fix (full removal in favor of a ~20-line native `fetch()` call), and the reachability analysis are in `MCP_RELEASE_PROVENANCE_0.2.6.md`.
+
+**Fixed in 0.2.6** (commit `2188b27` on `exergynet-mcp-server` `main`, not yet published to npm): `@solana/web3.js` — and therefore `jayson`, `rpc-websockets`, and `uuid` — removed entirely from the dependency tree. Nothing is left to override. A new permanent release gate, `npm run test:consumer-install`, packs the real tarball and audits a genuinely fresh install of it before every future publish, so this specific class of gap (repo-clean but consumer-dirty) cannot recur silently.
+
+**0.2.4 and 0.2.5 are unchanged and not deprecated.** See the corrected version framing at the top of `MCP_RELEASE_PROVENANCE_0.2.6.md`.
+
+**Sequencing note for the Snyk scan:** since it must target the actually-published package (per §11), it now waits on 0.2.6's publication rather than 0.2.5's — no point scanning a version already known to have an unresolved consumer-facing dependency finding.
