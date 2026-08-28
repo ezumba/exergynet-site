@@ -3,7 +3,7 @@
 **Directive:** VP Sales Directive 008 §4–§8, §18
 **Purpose:** one place recording exactly what's wrong with each surface that describes ExergyNet's MCP software, exactly what fixes it, and exactly which fixes require the operator's own authentication versus which are already fully prepared and just waiting on that authentication.
 
-**Governing fact:** the software itself is safe. `exergynet-mcp-server@0.2.4` is published, `latest`, and independently verified (see `MCP_INCIDENT_CLOSURE_2026-08-28.md`). Every item below is about surfaces that *describe* that software still teaching an older, more dangerous version of it — not about any remaining defect in the software.
+**Governing fact:** the software itself is safe. `exergynet-mcp-server@0.2.4` is published, `latest`, and independently verified (see `MCP_INCIDENT_CLOSURE_2026-08-28.md`). Every item below is about surfaces that describe that software still presenting an older, retired write-enabled version rather than the current fail-closed release — not about any remaining defect in the software.
 
 ---
 
@@ -46,7 +46,7 @@ curl "https://registry.modelcontextprotocol.io/v0/servers?search=exergynet"
 
 **Current live state:** last meaningfully crawled 2026-05-12 — before this incident existed. Instructs setting `BASE_PRIVATE_KEY` as a "hot wallet private key," and describes `exergynet_open_job` as autonomously handling "USDC approvals and on-chain escrow... without requiring human confirmation at each step," framed as an intended feature. Zero mention of the security advisory. Its "Schema" sub-tab is *even more* stale than its main listing — it references "LNES-01," an older internal name than the "LNES-03" wording on the overview tab, confirming this is a patchwork of multiple old crawls, not one coherent snapshot.
 
-**Why this matters more than it looks like it should:** a same-day search-footprint check (queries: "ExergyNet", "ExergyNet AI", "ExergyNet MCP", "ExergyNet Seven Ezumba") found Glama as the **#1 organic result every time**, and search engines' AI-generated summaries repeated its stale, dangerous framing nearly verbatim in every case. This is not a low-traffic listing nobody sees — it is currently the dominant external description of what ExergyNet is.
+**Why this matters more than a typical stale listing:** a same-day search-footprint check (queries: "ExergyNet", "ExergyNet AI", "ExergyNet MCP", "ExergyNet Seven Ezumba") found Glama as the **#1 organic result every time**, and search engines' AI-generated summaries repeated its retired-write-path framing nearly verbatim in every case. This is not a low-traffic listing — it is currently the dominant external description of what ExergyNet is, which is exactly why bringing it current is worth prioritizing.
 
 **Correction path:** a "Claim" button exists on the listing, gated behind sign-in (the author namespace `ezumba` matches the GitHub username, strongly suggesting GitHub-identity-based claiming). No public "request recrawl without claiming" mechanism was found. **This requires the operator's own account.**
 

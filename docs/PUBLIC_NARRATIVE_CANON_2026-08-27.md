@@ -143,6 +143,31 @@ Watch list: control plane, operating system/OS, universal, trust, authoritative,
 
 ---
 
+## Security-Language Discipline — Canon Rule (added 2026-08-28, VP Sales Correction 008-A)
+
+ExergyNet-owned content — the public website, GitHub documents, READMEs, incident reports, changelogs, analyst packets, press materials, package descriptions, security advisories, internal reports, machine-readable metadata, and comments intended to become durable project documentation — must not characterize ExergyNet itself, its software, architecture, releases, components, or historical implementations with a generalized threat adjective ("dangerous," "unsafe," "insecure," "compromised," "breached," "malicious," "toxic," "catastrophic," or their equivalents) when the actual fact can be stated precisely instead. This applies even where the underlying finding is real and should be stated at full strength — the correction is to imprecise characterization, not to the evidence itself.
+
+**Retired or unsupported ≠ dangerous. Stale third-party metadata ≠ dangerous ExergyNet.** A write path that has been disabled, a release that has been deprecated, or a third-party directory that hasn't recrawled recent changes are all precisely describable without reaching for fear language.
+
+Preferred structure:
+
+$$
+\text{What existed} \rightarrow \text{Which version} \rightarrow \text{What was observed} \rightarrow \text{What changed} \rightarrow \text{Current state}
+$$
+
+Example: *"Versions 0.2.0–0.2.2 contained a write path referencing a retired contract. The path was removed, affected releases were deprecated, and current releases fail closed pending production settlement migration."* No drama is necessary — this is both more precise and reads better.
+
+| Instead of | Write |
+|---|---|
+| "dangerous version" | "earlier release containing the retired write integration" |
+| "unsafe ExergyNet MCP package" | "affected releases 0.2.0–0.2.2 referenced a retired contract in the write path" |
+| "actively dangerous [directory] listing" | "[directory] currently describes retired write behavior that is no longer present in the current npm release" |
+| "insecure architecture" | the actual finding, named precisely |
+
+**Preserve rigor — this is not permission to conceal findings.** Continue to state, at full defensible strength: retired contract references, stale metadata, deprecated releases, dependency findings, configuration drift, unsupported write behavior, incorrect contract addresses, missing validation, security-scanner findings, and production/test boundaries. The rule removes imprecise characterization of ExergyNet, not evidence about what happened.
+
+**Third-party quotations and independent findings are not rewritten.** If an external scanner, standard, or publication uses its own formal terminology (an OWASP category name, a CVE description, a scanner's own risk label), preserve and attribute that terminology exactly — e.g. *"Snyk Agent Scan reported X risk indicators against version Y"* — rather than either adopting it as ExergyNet's own self-description or softening a genuine third-party finding. Do not silently rewrite an old external record; disclose it with clear attribution instead ("the external scanner reported...").
+
 ## Sovereignty Vocabulary — Canon Rule
 
 ExergyNet does not describe **itself** as sovereign, anywhere. "Sovereign" may only appear where it accurately describes a **customer or participating institution** retaining control — never ExergyNet's own infrastructure, products, tiers, or runtime behavior. Internal product/tier names that create unnecessary domination framing (e.g., a "Sovereign" pricing tier, a "Sovereign Siphon" component name) should be renamed for their public-facing label even if a stable internal identifier is preserved in code for compatibility. Full occurrence-by-occurrence disposition is tracked in `WEBSITE_COMMERCIAL_REBUILD_2026-08-27.md`'s sovereignty-rebase section, not repeated here.
@@ -175,3 +200,5 @@ Do not expose the internal Ezumba Dynasty Trust / EDT Inc. assignment chain in p
 ## Change Control
 
 This document is canon as of 2026-08-27. Any future change to identity language, the CTA hierarchy, or the four-layer hierarchy itself must be recorded as a dated revision here, following the same discipline `LWP_MAINTENANCE_POLICY.md` applies to the whitepaper — this is not a place for silent drift.
+
+**2026-08-28 revision:** added the "Security-Language Discipline" canon rule above, per VP Sales Correction 008-A. Trigger: durable MCP-incident documentation had drifted into generalized threat-adjective characterizations of ExergyNet itself (e.g. "actively dangerous," "dangerous framing") when the underlying facts were precisely statable without them. Corrected across `MCP_DISTRIBUTION_PROPAGATION_2026-08-28.md`, `MCP_INCIDENT_CLOSURE_2026-08-28.md`, `EXTERNAL_PROPAGATION_CHANGELOG.md`, `EXTERNAL_NARRATIVE_PROPAGATION_QUEUE_2026-08-27.md`, and `docs/WEBSITE_CHANGELOG.md` — see those files' own history for the corrected passages. No evidence, finding, or security fact was removed or weakened in that pass; only characterization.
