@@ -13,13 +13,42 @@
 - **Release provenance:** documented — see `MCP_RELEASE_PROVENANCE_0.2.4.md`.
 - **Operator wallet decision:** the question the directive poses ("which wallet is operationally canonical now?") was already put to the operator directly and answered: keep `wallet_1` on the public-facing surfaces. Not reverted. See "Operator wallet audit" below.
 
+## Update — 2026-08-28, post-publication pass
+
+The operator published 0.2.4 to npm and reported "OPERATOR GATE 007-A COMPLETE." Per standing instruction, that report was **not** taken on trust — every claim in it was independently re-verified against the live registry and a fresh clean install. Results:
+
+- **npm 0.2.4 is genuinely published and is `latest`.** Confirmed via `npm view exergynet-mcp-server version` and `dist-tags`.
+- **The downloaded artifact matches the claim.** A fresh `npm pack exergynet-mcp-server@0.2.4` in a clean directory, unpacked and inspected directly: retired contract address absent from `dist/index.js` (present only in the intentional README advisory); `exergynet_open_job` fails closed on a live stdio JSON-RPC call, with zero signing/transaction capability under any input.
+- **Ordinary unpinned install resolves to 0.2.4.** Confirmed via a clean `npm init && npm install exergynet-mcp-server` with no version pin.
+- **Deprecation is correctly scoped.** 0.2.0/0.2.1/0.2.2 carry the exact required non-inflammatory wording; 0.1.x is untouched, correctly.
+- **One apparent discrepancy, investigated and resolved as benign:** the locally-built tarball hash recorded in `MCP_RELEASE_PROVENANCE_0.2.4.md` did not match the npm-published hash. Diagnosed as a Windows CRLF vs. published-build LF line-ending artifact (`diff --strip-trailing-cr` shows zero content difference) — not a provenance failure. The document has been corrected to record the npm-published hash as authoritative.
+- **A new, separate finding: four moderate `npm audit` vulnerabilities** (transitive `uuid@8.3.2` via `@solana/web3.js` → `jayson`) were assessed without using `npm audit fix --force` (which would have forced a non-functional `@solana/web3.js` downgrade). A targeted `overrides` fix was found, verified (0 vulnerabilities, 9/9 tests, live Mainnet-Beta smoke test), and shipped as source-only **0.2.5** (commit `45f5e29` on `main`) — **not yet published to npm**, same credential gap as 0.2.4. This is a hygiene follow-up, not a reopening of the incident; 0.2.4 remains the safe published release. See `MCP_RELEASE_PROVENANCE_0.2.4.md` for full detail.
+
+### Official MCP registry — checked, confirmed still stale, root cause identified
+
+`registry.modelcontextprotocol.io` still serves the `io.github.ezumba/exergynet` entry at **version 0.1.10**, published 2026-05-07 — and its installation instructions are actively dangerous, not merely outdated: they list `BASE_PRIVATE_KEY` as a **required** environment variable, described as "Agent's Base L2 Hot Wallet Private Key (Hex)." The real publisher tool is `mcp-publisher`, a binary distributed via GitHub Releases from `modelcontextprotocol/registry` (confirmed current release: v1.8.1), which authenticates via a GitHub OAuth device-flow tied to the operator's own `io.github.ezumba` GitHub identity. That authentication step belongs to the operator, the same way npm credentials do — this session did not attempt it and is documenting it as an operator action, not treating it as done.
+
+### MCP directory recheck — two directories found actively misleading, not just stale
+
+- **Glama** (`glama.ai/mcp/servers/ezumba/exergynet-mcp-server`): last crawled 2026-05-12 (pre-incident). The cached page instructs new users to configure `BASE_PRIVATE_KEY` as a "hot wallet private key" and describes `exergynet_open_job` as autonomously handling "USDC approvals and on-chain escrow... without requiring human confirmation at each step" — presented as an intended feature, with zero mention of the security advisory. Correcting this requires claiming the listing, which is gated behind the operator's own GitHub identity (a "Claim" flow) — operator action required.
+- **MCP.so** (`mcp.so/servers/exergynet-mcp-server`): same vintage (added ~4 months ago), and if anything more explicit — its public FAQ literally states "Does Exergynet handle on-chain transactions autonomously? Yes... without requiring human confirmation at each step," again with no advisory reference. Same "Claim"-gated correction path.
+- **Smithery**: confirmed still an empty stub (no description, no capabilities, no deployments) — not dangerous, just unpopulated. No action needed.
+- **Libraries.io**: confirmed **live-synced** directly from the npm registry — already correctly shows version 0.2.4 with the full security advisory text mirrored verbatim from the current README. No action needed; this one self-corrects because it doesn't independently cache content.
+- **CrossAI Tools, Metatext**: could not locate confirmed listings at the URLs tried in this session. Not asserting either way rather than guessing — flagged as unconfirmed, low priority pending a known-correct URL.
+
+**Important risk-scoping note:** despite Glama's and MCP.so's dangerous-sounding instructions, a user who follows them exactly (`npx -y exergynet-mcp-server`, unpinned) still receives the current npm `latest` — 0.2.4 today — whose `exergynet_open_job` fails closed **unconditionally**, regardless of whether `BASE_PRIVATE_KEY` is set. The live exploitable path that existed in 0.2.0–0.2.2 is closed at the npm layer regardless of what these stale third-party pages say. The residual risk from these listings is reputational and trust-accuracy, not a live fund-loss path — unless someone deliberately pins to a deprecated 0.2.0–0.2.2 version, which neither page instructs.
+
+### MCP Vouch rescan — attempted, tooling itself could not be verified as functional
+
+The registry entry for `io.github.ezumba/exergynet` at the site formerly reached via `mcpvouch.com` (now redirecting to `mcp-registry-dh5.pages.dev`) still shows the original **71/100, grade C** result from the 2026-07-09 scan of 0.1.10. Its own page instructs "re-run it yourself with `npx mcpr scan`" — but the `mcpr` package returns a 404 on the public npm registry, and the GitHub repository linked from that site (`Incultnitollc/mcp-registry`) also returns 404. **No rescan was executed.** Rather than assume the previously-cited scanning service still functions as before, or execute an unverified/nonexistent tool, this is being flagged as a genuine open question for the operator: confirm whether MCP Vouch has moved, rebranded, or whether this service should no longer be treated as the authoritative source for the 71/100 figure going forward.
+
 ## What remains open
 
-- **npm publication of 0.2.4.** This is the actual blocker on lifting the marketing hold. See the exact command sequence below — this session has no npm credentials and will not acquire or request them in chat.
-- **Official MCP registry update.** Blocked on the same credential gap (registry publish typically also requires an authenticated flow).
-- **MCP directory re-propagation check** (Glama, MCP.so, Smithery, etc.) — deferred until after npm publication, since most of these crawl from npm/GitHub and checking now would just confirm they're still showing pre-fix data.
-- **Fresh independent MCP Vouch rescan** — deferred until 0.2.4 is actually on npm, per Directive 007 §11's explicit sequencing (do not rescan unpublished code and market that as current).
-- **Directive 005 external propagation** — stays paused. The required gate (npm safe release published, ordinary install verified, affected releases deprecated, registry updated or documented, incident docs corrected, zero active retired-address runtime references) is only partially met — see the checklist below.
+- **npm publication of 0.2.5** (the uuid-override hygiene fix) — blocked on the same credential gap as every npm-publish step in this incident; source is ready on `main` at commit `45f5e29`.
+- **Official MCP registry update to 0.2.4/0.2.5** — blocked on GitHub OAuth device-flow authentication that belongs to the operator, not this session.
+- **Glama and MCP.so listing corrections** — blocked on claiming each listing under the operator's own identity; until claimed, both continue to actively describe the pre-fix dangerous behavior as a feature.
+- **MCP Vouch rescan** — blocked on a scanning tool this session could not confirm is currently functional; needs operator confirmation of the service's current state before relying on it further.
+- **Directive 005 external propagation** — see the updated gate checklist below for the current determination.
 - **Visual QA** — still blocked, same as the last three directives. The Browser pane was not displayed on the user's side this session either.
 
 ---
@@ -115,16 +144,21 @@ Once npm 0.2.4 is verified live, update `io.github.ezumba/exergynet`'s `server.j
 - It does not describe `exergynet_open_job` as active/functional.
 - The public claim remains exactly **"Listed in the official MCP registry"** — never "partner," "approved," "certified," or "endorsed."
 
-## Directive 005 resume-gate checklist (Directive 007 §19)
+## Directive 005 resume-gate checklist (Directive 007 §19) — re-evaluated 2026-08-28
 
 | Required item | Status |
 |---|---|
-| npm safe release published | ❌ Not yet — blocked on credentials |
-| Ordinary install returns safe release | ❌ Cannot verify until published |
-| Downloaded artifact independently verified | ❌ Cannot verify until published |
-| Affected releases deprecated where possible | ❌ Blocked on credentials |
-| Official registry updated or stale state clearly documented | ✅ Documented as stale (this doc + `MCP_P0_CONTRACT_INCIDENT_2026-08-28.md`) |
-| Incident docs corrected | ✅ Done |
-| Active retired-address runtime references = 0 | ✅ Confirmed |
+| npm safe release published | ✅ **0.2.4 confirmed live and `latest`**, independently verified from a clean install, not from the operator's report |
+| Ordinary install returns safe release | ✅ Confirmed — unpinned `npm install` resolves to 0.2.4 |
+| Downloaded artifact independently verified | ✅ Confirmed — retired address absent, fail-closed behavior confirmed on the actual downloaded tarball |
+| Affected releases deprecated where possible | ✅ Confirmed — 0.2.0/0.2.1/0.2.2 deprecated with required wording; 0.1.x correctly untouched |
+| Official registry updated or stale state clearly documented | ✅ Documented as stale, with root cause (operator GitHub OAuth device-flow required) and the specific dangerous content it still serves |
+| Incident docs corrected | ✅ Done, including this pass's hash correction and 0.2.5 addendum |
+| Active retired-address runtime references = 0 | ✅ Confirmed — zero in currently-published npm code; only remaining occurrences anywhere are the intentional README/advisory text and third-party directory caches (Glama, MCP.so) that are documented as stale, not runtime code |
 
-**Conclusion: the gate is not yet met.** Directive 005 external propagation stays paused. The items that "may remain pending" per §19 (MCP Vouch rescan, search-engine propagation, directory crawler refresh, analyst outreach, white paper publication, visual QA) correctly remain pending and are not blocking anything else.
+**Conclusion: the gate is now met.** Every item that was blocking Directive 005 is either done or reduced to a clearly-documented, non-blocking residual (registry/directory staleness on services this session cannot authenticate to). npm — the channel through which every real user actually receives code — serves only the safe release. The MCP marketing hold tied specifically to "npm still serves an unsafe release" **can be lifted**.
+
+**This is not an unconditional green light for Directive 008.** Two items should be carried forward as known, disclosed limitations rather than silently dropped:
+
+1. The official MCP registry and two directory listings (Glama, MCP.so) still describe pre-fix behavior and, in the registry's case, actively request a private key. Any external communication (press, analyst outreach, marketing copy) should not claim "the MCP registry reflects the current safe release" — that claim is false today. It's accurate to say "the npm package — the actual install path for essentially all users — is fixed and verified independently," which is a narrower but true and still strong claim.
+2. The MCP Vouch 71/100 grade C figure currently displayed publicly is stale (scored against 0.1.10) and this session could not get a fresh rescan running due to the scanning tool's own tooling not resolving. Any outreach that cites "we fixed the issues an independent scanner found" should not claim a new score has been obtained — only that the previously-found issues have been remediated in the current release, which is independently verifiable by re-reading the code, even without a fresh automated score.
