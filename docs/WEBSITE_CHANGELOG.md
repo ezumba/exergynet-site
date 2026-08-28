@@ -572,3 +572,19 @@ All three corrected to `0x27cC42ee80CA945F96b93999CCdb02520618578B` (`wallet_1`)
 **Still blocked on operator credentials, unchanged:** npm publish for 0.2.5, official MCP registry (GitHub OAuth), Glama and MCP.so (GitHub-identity claims), Snyk Agent Scan (Snyk account/token) — all fully prepared, none executed, consistent with this session's standing rule never to create accounts or handle credentials on the operator's behalf.
 
 **Visual QA:** still not complete — `security.html`'s possible decorative-element overflow remains the one open, unconfirmed item pending real screenshot access.
+
+## 2026-08-28 (final) — 0.2.6: a real consumer-audit gap in 0.2.5, found and fixed
+
+**Agent/session:** Claude Code session (interactive), operator Seven Ezumba / ExergyNet.
+
+**Context:** the operator published 0.2.5 and the official MCP registry fix (both independently reconfirmed this pass — `npm view` shows `0.2.5` as `latest`; the registry now serves a corrected `0.2.5` entry). Testing the published package the way an ordinary consumer would — exactly the discipline this whole incident chain has insisted on — the operator found that 0.2.5's dependency-hardening `overrides` entry does not reach real consumer installs, and asked for it to be reproduced, root-caused, and fixed properly rather than patched again with the same mechanism.
+
+**What happened:** npm's `overrides` field is only honored when the declaring `package.json` is the install root. `exergynet-mcp-server`'s own `npm audit` genuinely showed 0 findings; every ordinary `npm install exergynet-mcp-server@0.2.5` still showed 4 moderate findings, because the override simply never reaches a consumer's resolver. This was independently reproduced (both dependency trees frozen as evidence) before any code was touched.
+
+**Fix:** `@solana/web3.js` was removed entirely from the package. It was used for exactly one operation — a single read-only Solana JSON-RPC call (`getAccountInfo`) against a hardcoded program ID — enumerated precisely before choosing a fix. That call is now a ~20-line native `fetch()` implementation, verified byte-for-byte behaviorally identical via a live smoke test against real Solana Mainnet-Beta both before and after the change. Removing the dependency also removes `jayson`, `rpc-websockets`, and `uuid` from the tree entirely (150 packages down to 97), so there is nothing left needing an override.
+
+**Reachability, for the record:** the specific `uuid` advisory concerns `v3`/`v5`/`v6` called with an explicit buffer argument; `jayson` (the sole consumer of `uuid` in the old chain) only ever calls `v4()` with zero arguments, confirmed by reading the installed package's source directly. The finding was real but never reachable through this package's actual runtime — fixed anyway, since it could be cleanly removed.
+
+**New permanent release gate:** `npm run test:consumer-install` now packs the real tarball and audits a genuinely fresh install of it, so a repo-clean-but-consumer-dirty release cannot ship silently again. 0.2.4 and 0.2.5 are unchanged and not deprecated — see `MCP_RELEASE_PROVENANCE_0.2.6.md` for the corrected version-status framing.
+
+**Status:** 0.2.6 committed and pushed to `exergynet-mcp-server` `main` (commit `2188b27`), **not yet published to npm** — same operator-credential handoff as every prior release.
