@@ -25,7 +25,7 @@
       "chainId": 8453,
       "address": "0x5cfE075149776f4b3cca07a27D4fd85A60BA5e3f",
       "status": "RETIRED",
-      "notes": "P0 incident 2026-08-28: hardcoded in exergynet-mcp-server <=0.2.2; ABI mismatch confirmed; access-control getters revert; deployer wallet independently documented as compromised"
+      "notes": "P0 incident 2026-08-28: hardcoded in exergynet-mcp-server <=0.2.2; ABI mismatch confirmed; access-control getters revert; deployer wallet key was exposed in an agent/session environment, operator confirms full access retained, no third-party compromise established; live near-unlimited USDC allowance from that wallet still outstanding"
     },
     {
       "component": "LNES04MembraneV2 (FFLONK mock wrapper)",
@@ -76,12 +76,12 @@
       "notes": "wallet_1; confirmed via on-chain owner() call against LNES-04 V5, 2026-08-28"
     },
     {
-      "component": "Operator Wallet (retired/compromised)",
+      "component": "Operator Wallet (retired/exposed)",
       "chain": "base",
       "chainId": null,
       "address": "0xbd1e790f6040FA62797671B84a50025a0133109C",
       "status": "RETIRED",
-      "notes": "Deployer of the retired LNES-04 pre-V5 contract; independently documented elsewhere as compromised; was live on docs.html/protocol.html/explorer.html until corrected 2026-08-28"
+      "notes": "Deployer of the retired LNES-04 pre-V5 contract; key exposed in an agent/session environment, operator confirms full access retained, no third-party compromise established; already flagged for rotation in CLAUDE.md; was live on docs.html/protocol.html/explorer.html until corrected 2026-08-28"
     }
   ]
 }
