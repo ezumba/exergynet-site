@@ -8,15 +8,17 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Compute partner access at ExergyNet is currently being revised. Contact ExergyNet for current operator requirements.">
+<meta name="description" content="Apply as a technical compute or verification-node operator for the ExergyNet network. Current requirements, architecture, and security expectations — no blind installer, no guaranteed earnings.">
+<meta property="og:title" content="Compute Partner Access | ExergyNet">
+<meta property="og:description" content="Technical requirements and evaluation process for GPU infrastructure operators, cloud providers, and qualified node operators.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/connect.html">
+<link rel="canonical" href="https://exergynet.org/connect.html">
 <link rel="stylesheet" href="style.css">
 <script>
-// Inline theme init to prevent flash
 (function(){
   var t = localStorage.getItem('exg-theme');
-  if (!t) {
-    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
+  if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
   document.documentElement.setAttribute('data-theme', t);
 })();
 </script>
@@ -26,8 +28,6 @@
 <canvas id="circuit-canvas"></canvas>
 
 <div class="site-wrap">
-
-  <!-- Header will be injected here -->
   <div id="site-header"></div>
 
 <main class="page">
@@ -39,25 +39,75 @@
 
     <div class="container">
       <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Compute Partner Access</div>
-      <h1>Compute Partner<br><span class="accent">Access</span></h1>
-      <p class="hero-sub">Operator onboarding is currently being revised. Technical operators interested in participating can contact ExergyNet for current requirements.</p>
+      <h1>Contribute Verification<br><span class="accent">Capacity to the Network.</span></h1>
+      <p class="hero-sub" style="max-width:700px;">For GPU infrastructure operators, cloud infrastructure providers, research operators, and qualified technical node operators. This is an application process, not a one-click install.</p>
+      <div class="btn-row">
+        <a href="mailto:operators@exergynet.org?subject=Compute%20Partner%20Application" class="btn btn-primary">Apply as a Compute Partner</a>
+        <a href="nodes.html" class="btn btn-secondary">Node Operations Overview</a>
+      </div>
     </div>
   </div>
 
   <div class="container">
 
-    <p style="text-align:center; color:var(--text-faint); max-width:640px; margin:2rem auto 3rem;">
-      This page previously offered a direct installer download and onboarding flow. That flow is
-      being revised and is temporarily unavailable while requirements are updated. No installer is
-      distributed from this page at this time.
-    </p>
+    <!-- WHO THIS IS FOR -->
+    <section style="margin:3rem 0;">
+      <div class="section-label">Who This Is For</div>
+      <h2>Technical operators, not retail participants.</h2>
+      <div class="card-grid">
+        <div class="card"><h4>GPU Infrastructure Operators</h4><p>Existing GPU capacity you want to allocate to verification/proving workloads.</p></div>
+        <div class="card"><h4>Cloud Infrastructure Providers</h4><p>Data-center or colocation operators evaluating a compute-partner integration.</p></div>
+        <div class="card"><h4>Research Operators</h4><p>Academic or research infrastructure with spare verified compute capacity.</p></div>
+        <div class="card"><h4>Qualified Technical Node Operators</h4><p>Individuals or teams able to run and maintain a production verification node.</p></div>
+      </div>
+    </section>
 
-    <section class="cta-section" style="border-top:1px solid var(--border); margin-top:1rem;">
-      <div class="container">
-        <div class="btn-row" style="justify-content:center;">
-          <a href="https://discord.gg/EXERGYNET" target="_blank" class="btn btn-secondary">Contact via Discord</a>
-          <a href="nodes.html" class="btn btn-ghost">Node Operations Overview</a>
+    <!-- ARCHITECTURE -->
+    <section style="margin-bottom:3rem;">
+      <div class="section-label">Architecture</div>
+      <h2>What a compute partner actually runs.</h2>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">A compute partner node listens for assigned verification/proving jobs, executes them (RISC Zero STARK proving on the LNES-03 Desktop Prover path, or equivalent for other job classes), and submits a proof-of-completion for settlement. Full technical detail — protocol, transport, and job-format specification — is documented on the <a href="protocol.html" style="color:var(--accent);">Protocol</a> and <a href="nodes.html" style="color:var(--accent);">Node Operations</a> pages.</p>
+    </section>
+
+    <!-- SECURITY EXPECTATIONS -->
+    <section style="margin-bottom:3rem;">
+      <div class="section-label">Security Expectations</div>
+      <h2>What we require, and what we don't ask you to do.</h2>
+      <div class="card-grid">
+        <div class="card accent-border">
+          <h4>Source-visible installation</h4>
+          <p>Installer source and build instructions are published, not distributed as an unreviewable binary you're asked to trust on our word alone.</p>
         </div>
+        <div class="card accent-border">
+          <h4>Checksums and signatures</h4>
+          <p>Published release checksums and signatures are provided for every distributed build — verify before you run anything.</p>
+        </div>
+        <div class="card">
+          <h4>Your key, your control</h4>
+          <p>You hold your own payout keypair. ExergyNet never asks for or holds your private key.</p>
+        </div>
+        <div class="card">
+          <h4>No blind execution</h4>
+          <p>We will never ask you to download and run a script without explaining exactly what it does first.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ECONOMICS -->
+    <section style="margin-bottom:3rem;">
+      <div class="section-label">Operator Economics</div>
+      <h2>Only what's verifiably defined.</h2>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">Settlement mechanics, current settlement rails, and job pricing are documented on <a href="nodes.html" style="color:var(--accent);">Node Operations</a> and <a href="protocol.html" style="color:var(--accent);">Protocol</a>. <strong>The Base Mainnet contract is currently operating in mock-only mode and does not yet route real capital; Solana LNES-03 is deployed but under active investigation for transaction failures.</strong> Do not apply, or acquire hardware, on an expectation of real income today — see <a href="proof.html" style="color:var(--accent);">On-Chain Proof</a> for current status. <strong>We do not publish or imply a guaranteed earnings figure</strong> once settlement is live — actual rewards will depend on network conditions, job availability, and your own hardware, and are not a return on investment claim.</p>
+    </section>
+
+    <!-- APPLICATION PROCESS -->
+    <section class="cta-section" style="border-top:1px solid var(--border); padding-top:2.5rem;">
+      <h2>Apply as a Compute Partner</h2>
+      <p>Tell us your infrastructure (GPU class, capacity, uptime expectations) and we'll respond with current technical requirements.</p>
+      <div class="btn-row" style="justify-content:center;">
+        <a href="mailto:operators@exergynet.org?subject=Compute%20Partner%20Application" class="btn btn-primary">Apply as a Compute Partner</a>
+        <a href="https://discord.gg/EXERGYNET" target="_blank" class="btn btn-secondary">Ask Questions on Discord</a>
+        <a href="nodes.html" class="btn btn-ghost">Full Technical Guide</a>
       </div>
     </section>
 
@@ -67,7 +117,6 @@
 
   <!-- Footer will be injected here -->
   <div id="site-footer"></div>
-
 </div>
 
 <script src="main.js"></script>

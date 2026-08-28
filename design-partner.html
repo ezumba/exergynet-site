@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Partnership | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Benchmark your own workload against your existing optimized baseline before you adopt ExergyNet. A defined evaluation methodology for CTOs, CIOs, and enterprise architects.">
+<meta property="og:title" content="Design Partnership | ExergyNet">
+<meta property="og:description" content="Give us one bounded workload. Measure your current optimized system. Add ExergyNet. Measure again. Report both positive and negative outcomes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/design-partner.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Design Partnership | ExergyNet">
+<meta name="twitter:description" content="Benchmark your own workload against your existing optimized baseline before you adopt ExergyNet.">
+<link rel="canonical" href="https://exergynet.org/design-partner.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+  .dp-step-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:0.9rem; margin-top:2rem; }
+  .dp-step { padding:1.25rem 1.1rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); }
+  .dp-step-num { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:0.08em; margin-bottom:0.6rem; }
+  .dp-step h4 { font-size:0.95rem; margin-bottom:0.4rem; }
+  .dp-step p { font-size:12.5px; color:var(--text-soft); line-height:1.55; }
+  .dp-cost-terms { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1rem; }
+  .dp-cost-term { font-family:var(--mono); font-size:11.5px; padding:0.4rem 0.8rem; border-radius:20px; border:1px solid var(--border-mid); color:var(--text-soft); background:var(--bg-card); }
+  .dp-cost-term.measured { border-color:rgba(0,232,135,0.35); color:var(--accent); }
+  @media (max-width:1023px){ .dp-step-grid{ grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:640px){ .dp-step-grid{ grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
+  <div id="site-header"></div>
+
+  <main class="page">
+
+    <!-- HERO -->
+    <div class="page-header">
+      <div class="container">
+        <div class="hero-eyebrow"><span class="dot"></span>Design Partnership</div>
+        <h1>Give Us One Bounded Workload.<br><span class="accent">Measure. Add ExergyNet. Measure Again.</span></h1>
+        <p class="hero-sub" style="max-width:700px;">This is an evaluation methodology, not a sales pitch. We measure your current, already-optimized architecture first — then integrate only the ExergyNet layer relevant to your workload, and measure again. Both positive and negative outcomes are reported.</p>
+        <div class="btn-row">
+          <a href="mailto:partnerships@exergynet.org?subject=Design%20Partnership%20Inquiry" class="btn btn-primary">Request a Design Partnership</a>
+          <a href="benchmarks.html" class="btn btn-secondary">Review the Evidence First</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- WHY THIS EXISTS -->
+      <section style="margin-bottom:3rem;">
+        <div class="section-label">Why This Page Exists</div>
+        <h2>Benchmark the workload. Don't believe the claim.</h2>
+        <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">Every public number on this site is bounded to the envelope it was tested in — a specific hardware target, a specific corpus, a specific baseline. That discipline is exactly why those numbers cannot tell you what ExergyNet will do for <em>your</em> workload, on <em>your</em> infrastructure, against <em>your</em> already-optimized system. The only way to know that is to measure it. This page is the process for doing that.</p>
+      </section>
+
+      <!-- EVALUATION PROCESS -->
+      <section style="margin-bottom:3.5rem;">
+        <div class="section-label">The Evaluation Process</div>
+        <h2>Six steps. Nothing assumed.</h2>
+        <div class="dp-step-grid">
+          <div class="dp-step"><div class="dp-step-num">01</div><h4>Define workload</h4><p>Name a specific, bounded, state-heavy or multi-step task your organization actually runs today.</p></div>
+          <div class="dp-step"><div class="dp-step-num">02</div><h4>Freeze success criteria</h4><p>Agree in advance what counts as a qualified successful task — before any number is measured.</p></div>
+          <div class="dp-step"><div class="dp-step-num">03</div><h4>Measure current architecture</h4><p>Baseline your existing, already-optimized system on the frozen criteria. No ExergyNet involved yet.</p></div>
+          <div class="dp-step"><div class="dp-step-num">04</div><h4>Integrate only what's needed</h4><p>Add the specific ExergyNet layer relevant to the workload — not the whole architecture by default.</p></div>
+          <div class="dp-step"><div class="dp-step-num">05</div><h4>Measure again</h4><p>Re-run the same frozen criteria against the same workload with ExergyNet integrated.</p></div>
+          <div class="dp-step"><div class="dp-step-num">06</div><h4>Report both outcomes</h4><p>Positive and negative results are both reported. A workload where ExergyNet doesn't help is a valid, useful outcome.</p></div>
+        </div>
+      </section>
+
+      <!-- COST TERMS -->
+      <section style="margin-bottom:3.5rem;">
+        <div class="section-label">What Gets Measured</div>
+        <h2>Cost per qualified successful task, itemized where possible.</h2>
+        <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">Where relevant to the workload, the evaluation can account for:</p>
+        <div class="dp-cost-terms">
+          <span class="dp-cost-term measured">inference</span>
+          <span class="dp-cost-term measured">retrieval</span>
+          <span class="dp-cost-term measured">state</span>
+          <span class="dp-cost-term">verification</span>
+          <span class="dp-cost-term">retries</span>
+          <span class="dp-cost-term">orchestration</span>
+          <span class="dp-cost-term">network</span>
+          <span class="dp-cost-term">storage</span>
+        </div>
+        <p style="max-width:800px; color:var(--text-faint); font-size:13px; line-height:1.6; margin-top:1rem;">Not every term is instrumented for every workload today — inference and state overhead are the terms ExergyNet's own published benchmarks currently measure directly (highlighted above). Verification, retries, orchestration, network, and storage costs are accounted for where the specific workload and design partner's own measurement setup make them measurable; this evaluation does not assume they are already solved.</p>
+      </section>
+
+      <!-- WHO THIS IS FOR -->
+      <section style="margin-bottom:3.5rem;">
+        <div class="section-label">Who This Is For</div>
+        <h2>Built to be sent directly to the person who has to sign off.</h2>
+        <div class="card-grid">
+          <div class="card"><h4>CTO</h4><p>Technical ownership of the workload and the decision to integrate.</p></div>
+          <div class="card"><h4>CIO</h4><p>Infrastructure and vendor-risk ownership.</p></div>
+          <div class="card"><h4>Chief AI Officer</h4><p>Ownership of AI-specific efficiency and governance decisions.</p></div>
+          <div class="card"><h4>AI Infrastructure Lead</h4><p>Direct operational ownership of the systems being measured.</p></div>
+          <div class="card"><h4>Enterprise Architect</h4><p>Ownership of how the integration fits the broader system landscape.</p></div>
+        </div>
+      </section>
+
+      <!-- WHAT THIS DOES NOT REQUIRE -->
+      <section style="margin-bottom:3.5rem;">
+        <div class="section-label">Compatibility</div>
+        <h2>Keep your models. Keep your cloud.</h2>
+        <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">A design partnership evaluates a bounded workload — it does not require migrating your stack, replacing your model vendor, or transferring institutional authority to ExergyNet. See the full <a href="index.html#state" style="color:var(--accent);">compatibility statement</a> on the homepage for what ExergyNet does and does not require, including the one disclosed exception (Vanguard's optional inference API).</p>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section" style="border-top:1px solid var(--border); padding-top:2.5rem;">
+        <h2>Ready to measure your own workload?</h2>
+        <p>Tell us the workload. We'll scope the evaluation together before anything is integrated.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="mailto:partnerships@exergynet.org?subject=Design%20Partnership%20Inquiry" class="btn btn-primary">Request a Design Partnership</a>
+          <a href="benchmarks.html" class="btn btn-secondary">Review the Evidence</a>
+          <a href="docs.html" class="btn btn-ghost">Build with ExergyNet</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+</div>
+<script src="main.js"></script>
+</body>
+</html>

@@ -8,15 +8,17 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="ExergyNet Enterprise — persistent state, checkable evidence, and independent authority control for institutional AI. Verifiable execution receipts and bounded evidence for autonomous workflows.">
+<meta name="description" content="ExergyNet for enterprise: measured useful-work efficiency and persistent, model-independent authoritative state for AI workflows that span multiple models, sessions, and applications. No required model or cloud replacement.">
+<meta property="og:title" content="Enterprise | ExergyNet">
+<meta property="og:description" content="AI workflows now span multiple models, sessions, and applications. ExergyNet measures useful-work efficiency and preserves the state your models can't own.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/enterprise.html">
+<link rel="canonical" href="https://exergynet.org/enterprise.html">
 <link rel="stylesheet" href="style.css">
 <script>
-// Inline theme init to prevent flash
 (function(){
   var t = localStorage.getItem('exg-theme');
-  if (!t) {
-    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
+  if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
   document.documentElement.setAttribute('data-theme', t);
 })();
 </script>
@@ -26,8 +28,6 @@
 <canvas id="circuit-canvas"></canvas>
 
 <div class="site-wrap">
-
-  <!-- Header will be injected here -->
   <div id="site-header"></div>
 
 <main class="page">
@@ -36,168 +36,89 @@
   <div class="page-header" style="position:relative; overflow:hidden;">
     <div class="glow-accent" style="width:500px;height:400px;top:-100px;right:-200px;"></div>
     <div class="glow-blue"   style="width:600px;height:350px;bottom:-150px;left:-150px;"></div>
-    
+
     <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Enterprise Grade</div>
-      <h1>Verifiable Execution for<br>the <span class="accent">Autonomous</span><br><span class="blue">Enterprise</span></h1>
-      <p class="hero-sub">Persistent state, independently checkable evidence, and authority control placed outside the model — for institutional AI and high-stakes machine-to-machine (M2M) workflows.</p>
-      
+      <div class="hero-eyebrow"><span class="dot"></span>Enterprise</div>
+      <h1>Your AI Workflows Now Span<br><span class="accent">Multiple Models and Sessions.</span></h1>
+      <p class="hero-sub" style="max-width:720px;">Your state shouldn't have to be reconstructed every time one of them changes.</p>
       <div class="btn-row">
-        <a href="mailto:systems@exergynet.org" class="btn btn-primary">Contact Enterprise Integrations</a>
-        <a href="whitepaper.html" class="btn btn-secondary">View Technical Whitepaper</a>
+        <a href="design-partner.html" class="btn btn-primary">Benchmark Your Workload</a>
+        <a href="benchmarks.html" class="btn btn-secondary">Review the Evidence</a>
       </div>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- STATUS NOTICE: ZK Compute Settlement -->
-    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — ZK Compute Settlement</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">ZK-STARK compute settlement is operating in testnet mode. Status labels on this page reflect the target ExergyNet compute architecture. On-chain ZK proof verification for the compute grid is in development. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract and verification status.</p>
-    </div>
+    <!-- PROBLEM -->
+    <section style="margin-bottom:3rem;">
+      <div class="section-label">The Problem</div>
+      <h2>Increasingly autonomous agents, increasingly fragmented state.</h2>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">Enterprise AI workflows increasingly span multiple models, multiple sessions, multiple applications, and — increasingly — autonomous agents acting with some degree of independence. Every hand-off between them re-fetches evidence, re-establishes identity, and re-derives what should already be known. None of that cost disappears because the model improved.</p>
+    </section>
 
-    <!-- THE ENTERPRISE DILEMMA -->
-    <section>
-      <div class="section-label">The Enterprise Dilemma</div>
-      <h2>The Trust Boundary Problem</h2>
-      <p style="max-width:680px; margin-bottom:1.75rem;">As enterprise operations transition from human oversight to autonomous AI execution, the single greatest risk is logic failure. When AI agents control financial capital, grid infrastructure, or supply chain logistics, "trusting the output" is a catastrophic liability.</p>
+    <!-- COST -->
+    <section style="margin-bottom:3rem;">
+      <div class="section-label">Cost</div>
+      <h2>State reconstruction and repeated inference consume resources you're already paying for.</h2>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">ExergyNet's entry question is economic, not architectural: on a workload you already run, can the resource cost of completing a validated task go down, measured against your own existing baseline — without replacing your model or your cloud? On a tested H200 workload, ExergyNet's xLMP layer held staged prompt cost roughly flat as the underlying corpus scaled from 8,000 to 285,000 tokens, and delivered approximately 11.3&times; the correct-task throughput of full-context replay at each method's best compliant load. Those numbers are bounded to that specific test — <a href="design-partner.html" style="color:var(--accent);">a design partnership measures what it means for your own workload.</a></p>
+    </section>
 
-      <div class="card-grid">
-        <div class="card">
-          <div class="badge badge-red" style="margin-bottom:0.75rem;">Legacy Cloud</div>
-          <h3>Opaque Black Box</h3>
-          <p>A conventional cloud endpoint returns a result with no independent evidence that the committed computation is what actually ran. Correctness rests on trust in the operator, not on a checkable receipt.</p>
-        </div>
-        <div class="card">
-          <div class="badge badge-red" style="margin-bottom:0.75rem;">On-Chain Compute</div>
-          <h3>Prohibitive Scale</h3>
-          <p>Base-layer on-chain compute is prohibitively expensive and cannot scale to meet enterprise data demands.</p>
-        </div>
-        <div class="card">
-          <div class="badge badge-red" style="margin-bottom:0.75rem;">LLM Inference</div>
-          <h3>Hallucination Risk</h3>
-          <p>Probabilistic outputs are structurally incompatible with capital-controlling autonomous systems.</p>
-        </div>
+    <!-- CONTINUITY -->
+    <section style="margin-bottom:3rem;">
+      <div class="section-label">Continuity</div>
+      <h2>Models may change. Your enterprise state cannot disappear.</h2>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">Model choice is increasingly a commodity decision — pricing, capability, and vendor relationships change, sometimes quarterly. ExergyNet's deeper product is customer-controlled, model-independent authoritative state: the externally maintained record of what your organization currently treats as canonical, including provenance, version, authority, permissions, and transition history. That record is defined independently of any one model's internal representation, so a model swap doesn't mean rebuilding what your organization already knows.</p>
+    </section>
+
+    <!-- CONTROL -->
+    <section style="margin-bottom:3rem;">
+      <div class="section-label">Control</div>
+      <h2>Institutional authority remains institutional.</h2>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">ExergyNet does not decide your organization's policy and does not originate institutional authority. AI can propose consequences; it should not authorize its own. The Consequence Boundary places an independent identity, capability, freshness, and integrity check between a model's reasoning and any system that reasoning can affect — constrained only where the applicable enforcement boundary is actually present and active for your deployment, not as a universal guarantee.</p>
+      <div class="btn-row" style="margin-top:1rem;">
+        <a href="security.html" class="btn btn-ghost">The Consequence Boundary &rarr;</a>
       </div>
     </section>
 
-    <!-- THE EXERGYNET SOLUTION -->
-    <section>
-      <div class="section-label">The ExergyNet Solution</div>
-      <h2>Truth-as-a-Service</h2>
-      <p style="max-width:680px; margin-bottom:1.75rem;">ExergyNet provides a decentralized computation layer that bridges physical reality with cryptographic evidence. We process your heaviest algorithmic workloads off-chain and return a content-addressed receipt today, with a full on-chain Groth16/ZK-STARK proof circuit in development — see <a href="proof.html">verification status</a> for the current state of each settlement rail.</p>
-
-      <div class="card accent-border" style="margin-bottom:2rem;">
-        <p style="font-family:var(--mono); font-size:14px; color:var(--accent);">We do not ask you to trust our network. We force our network to prove its work through deterministic, hardware-bound cryptographic verification.</p>
-      </div>
-    </section>
-
-    <!-- ENTERPRISE INFRASTRUCTURE -->
-    <section>
-      <div class="section-label">Enterprise Infrastructure</div>
-      <h2>Enterprise-Grade Capabilities</h2>
-
+    <!-- EVIDENCE -->
+    <section style="margin-bottom:3rem;">
+      <div class="section-label">Evidence</div>
+      <h2>Every claim on this page is measured somewhere you can check.</h2>
       <div class="card-grid">
         <div class="card accent-border">
-          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
-            <span class="badge badge-green">01</span>
-            <h3 style="margin:0;">Zero Market Volatility</h3>
-          </div>
-          <h4 style="color:var(--text-faint);">The Unidirectional Sump</h4>
-          <p>Corporate balance sheets cannot be exposed to token volatility. Base Mainnet USDC is ExergyNet's primary and recommended settlement layer; a Native SOL path (0.002 SOL per job, LNES-03) remains available for legacy integrations and is currently under active investigation for transaction failures. The internal $EXG asset is transient and never touches your books.</p>
+          <h4>Useful-work efficiency</h4>
+          <p>~11.3&times; correct-task throughput vs. full-context replay, tested H200 workload.</p>
         </div>
-
+        <div class="card blue-border">
+          <h4>State governance</h4>
+          <p>False authoritative commitments fell 8%&rarr;0% while model accuracy held at 84%, 100 real procurement cases.</p>
+        </div>
         <div class="card">
-          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
-            <span class="badge badge-blue">02</span>
-            <h3 style="margin:0;">Cryptographic M2M Identity</h3>
-          </div>
-          <h4 style="color:var(--text-faint);">Ed25519 Neural Gateway</h4>
-          <p style="margin-bottom:1rem;">Enterprise agents use the MCP Neural Gateway with pure cryptographic identity — no API keys.</p>
-          <ul class="spec-list">
-            <li><span class="spec-key">Signature</span><span class="spec-val">Ed25519 Authentication</span></li>
-            <li><span class="spec-key">Nonce</span><span class="spec-val">Strict Replay Protection</span></li>
-            <li><span class="spec-key">Window</span><span class="spec-val">60-second temporal lock</span></li>
-          </ul>
+          <h4>Authority separation</h4>
+          <p>A live prompt-injection attack was rejected by the deterministic boundary after the reasoning model itself complied. Reproduced twice.</p>
         </div>
-
-        <div class="card accent-border">
-          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
-            <span class="badge badge-green">03</span>
-            <h3 style="margin:0;">Asymptotic Cost Compression</h3>
-          </div>
-          <h4 style="color:var(--text-faint);">ZK-Recursive Batching</h4>
-          <p>Advanced recursion aggregates hundreds of physical proofs into a single O(1) Master Proof — driving settlement costs toward zero at scale.</p>
-        </div>
+      </div>
+      <div class="btn-row" style="margin-top:1.5rem;">
+        <a href="benchmarks.html" class="btn btn-primary">Review All Benchmarks &rarr;</a>
       </div>
     </section>
 
-    <!-- USE CASES -->
-    <section>
-      <div class="section-label">Enterprise Use Cases</div>
-      <h2>Targeted Deployment Scenarios</h2>
-
-      <div class="card-grid">
-        <div class="card">
-          <h4>Institutional DeFi</h4>
-          <h3>HFT Agent Swarms</h3>
-          <p>Verify complex trading logic in ZK before execution while keeping proprietary strategies private.</p>
-        </div>
-        <div class="card">
-          <h4>Logistics</h4>
-          <h3>Autonomous Drone Swarms</h3>
-          <p>Verifiable evidence receipts for route negotiation, fuel allocation, and physical state records — decision authority remains with the operating institution's own policy layer, not with ExergyNet.</p>
-        </div>
-        <div class="card">
-          <h4>Healthcare & Legal</h4>
-          <h3>Secure AI Inference</h3>
-          <p>Process sensitive data on hardware you control, with a verifiable receipt that the committed computation is the one that ran. A receipt proves execution integrity, not that the model's conclusion is correct.</p>
-        </div>
-        <div class="card accent-border">
-          <h4>Infrastructure</h4>
-          <h3>Grid & Supply Chain Control</h3>
-          <p>Cryptographically verifiable state transitions for machine-controlled critical infrastructure.</p>
-        </div>
-      </div>
+    <!-- COMPATIBILITY -->
+    <section style="margin-bottom:3rem;">
+      <div class="section-label">Compatibility</div>
+      <h2>Keep your models. Keep your cloud.</h2>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">ExergyNet does not inherently require your organization to replace its preferred model, standardize on one vendor, abandon its existing cloud, transfer policy authority to ExergyNet, or route every internal model operation through one central ExergyNet-controlled service. The one disclosed exception: Vanguard's OpenAI-compatible API is itself an optional, alternative inference endpoint — it can run alongside your existing provider and is never a requirement of adopting ExergyNet's state or authority layers.</p>
     </section>
 
-    <!-- DEDICATED PIPELINE -->
-    <section>
-      <div class="section-label">Enterprise Pipeline</div>
-      <h2>Dedicated Enterprise Integration</h2>
-      <p style="max-width:640px; margin-bottom:1.75rem;">White-glove integration for institutional autonomous fleets.</p>
-
-      <div class="card-grid">
-        <div class="card">
-          <h4>Custom SDK</h4>
-          <h3>Tailored Agent Integration</h3>
-          <p>Seamless support for ElizaOS, custom TypeScript/Rust frameworks, and proprietary systems.</p>
-        </div>
-        <div class="card">
-          <h4>Priority Access</h4>
-          <h3>Dedicated Compute Bandwidth</h3>
-          <p>Private M2M Neural Gateways with guaranteed bandwidth and no public swarm contention.</p>
-        </div>
-        <div class="card accent-border">
-          <h4>SLA-Backed Settlement</h4>
-          <h3>Guaranteed Execution Times</h3>
-          <p>Contractually guaranteed settlement times, backed by the physical mesh.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section" style="border-top:1px solid var(--border);">
-      <div class="glow-accent" style="width:500px;height:300px;bottom:-100px;left:50%;transform:translateX(-50%);"></div>
-      <div class="container">
-        <h2>Add Verifiable Evidence to Your AI Workforce</h2>
-        <p>Request enterprise gateway access. Our integration team responds within 24 hours.</p>
-        <div class="btn-row" style="justify-content:center;">
-          <a href="mailto:systems@exergynet.org" class="btn btn-primary">Request Enterprise Gateway Access &rarr;</a>
-          <a href="whitepaper.html" class="btn btn-secondary">Architecture Whitepaper</a>
-          <a href="security.html" class="btn btn-ghost">Security Architecture &rarr;</a>
-        </div>
+    <!-- EVALUATION -->
+    <section class="cta-section" style="border-top:1px solid var(--border); padding-top:2.5rem;">
+      <h2>Evaluate it against your own workload, not our numbers.</h2>
+      <p>A design partnership measures your current architecture first, integrates only the relevant layer, then measures again.</p>
+      <div class="btn-row" style="justify-content:center;">
+        <a href="design-partner.html" class="btn btn-primary">Request a Design Partnership</a>
+        <a href="whitepaper.html" class="btn btn-secondary">Architecture Whitepaper</a>
+        <a href="security.html" class="btn btn-ghost">Security Architecture &rarr;</a>
       </div>
     </section>
 
@@ -207,7 +128,6 @@
 
   <!-- Footer will be injected here -->
   <div id="site-footer"></div>
-
 </div>
 
 <script src="main.js"></script>

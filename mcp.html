@@ -132,11 +132,12 @@ const nonce = crypto.randomBytes(8).toString('hex');</code></pre>
             </tr>
             <tr>
               <td>exergynet_get_proof</td>
-              <td>Retrieve ZK-STARK proof for a completed job</td>
+              <td>Retrieve the on-chain settlement record for a completed job</td>
               <td><span class="badge badge-gray">Read-only</span></td>
             </tr>
           </tbody>
         </table>
+        <p style="margin-top:1rem;font-size:12px;color:var(--text-faint);">LNES-03 compute-job settlement is designed around a RISC Zero-produced ZK-STARK proof; see <a href="proof.html" style="color:var(--accent);">On-Chain Proof</a> for which contracts currently enforce on-chain verification versus recording a receipt pending it. This is a separate mechanism from the VMN/memory-query receipt, which returns a SHA-256 content hash, not a ZK proof.</p>
       </div>
     </section>
 
