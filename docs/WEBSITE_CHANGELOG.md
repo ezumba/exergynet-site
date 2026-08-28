@@ -457,3 +457,30 @@ in a later session before those steps completed.
 **Visual QA status:** the Directive 004 visual-QA gap (screenshots/interactive click-through) remained blocked this pass — the Browser pane was not displayed on the user's side, and both `computer` (click) and `screenshot` actions timed out with "the Browser pane is not displayed." Non-visual verification (console, network, content, structural) was used as before.
 
 **Deployment status at the time of this entry:** the three first-party link/reference fixes above are staged for commit in the `vp-sales-external-propagation-2026-08-27` worktree; see the session's final terminal report for the deployment diff gate outcome and push status.
+
+---
+
+## 2026-08-28 — Emergency MCP Package Containment (VP Sales Directive 006, P0 incident)
+
+**Agent/session:** Claude Code session (interactive), operator Seven Ezumba / ExergyNet.
+
+**Trigger:** the Directive 005 finding that `exergynet-mcp-server` (a separate npm-published repository, not this one) shipped an `exergynet_open_job` tool referencing a retired Base Mainnet contract. Directive 006 escalated this to a formal P0 incident and paused all external-narrative-propagation work until it closed.
+
+**Primary fix (separate repository, not this one):** `github.com/ezumba/exergynet-mcp-server` was patched, tested (5/5 regression tests), and pushed to its own `main` branch at commit `f3f4edc` (version 0.2.3) — `exergynet_open_job` now fails closed under all configurations and has no signing dependency at all. Full record in that repository and in this repository's `MCP_P0_CONTRACT_INCIDENT_2026-08-28.md`. npm publication is pending (no registry credentials available in this environment).
+
+**First-party fixes applied to this repository (`exergynet-site`), discovered as a direct consequence of the same forensics:** the wallet `0xbd1e790f6040FA62797671B84a50025a0133109C` — the same wallet independently documented as compromised and confirmed by this incident's own on-chain checks to have deployed the retired contract above — was live on three pages as the current, trusted "Operator Wallet":
+- `docs.html`: the x402 payment-manifest example's `"payTo"` field, and the "Operator Wallet" spec-list entry.
+- `protocol.html`: the "Operator Wallet" spec-list entry.
+- `explorer.html`: the "♥ Support ExergyNet" donation button linked directly to this wallet on BaseScan.
+
+All three corrected to `0x27cC42ee80CA945F96b93999CCdb02520618578B` (`wallet_1`), independently confirmed via a live on-chain `owner()` call against the current LNES-04 V5 contract during this incident (not copied from any prior document without re-verification). The live `explorer-api.exergynet.org/x402/sensor/magnetometer` endpoint referenced by the docs.html example currently returns 404, so this was not being actively paid into by real traffic at time of check — but the documentation was wrong regardless and is now fixed. One remaining reference to the compromised wallet, in `lnes06.html`'s link to a third-party agent-marketplace profile (`0xwork.org/agents/0x...`), was deliberately left unchanged — it identifies a record on a system ExergyNet doesn't control, and changing the URL wouldn't correct anything without first confirming what the correct replacement profile actually is. Flagged for a follow-up directive.
+
+**No first-party page was found to reference the affected npm package by name.** `mcp.html` documents an entirely separate HTTP gateway mechanism (Ed25519-signed requests to `https://exergynet.org/mcp`, SOL-denominated). Per Directive 006 §15, no website safety notice was required or added, since the condition that triggers one (a page directing users toward the affected package) was not met.
+
+**New required deliverables:** `MCP_P0_CONTRACT_INCIDENT_2026-08-28.md` (master report), `MCP_PUBLISHED_ARTIFACT_PROVENANCE_2026-08-28.md`, `PUBLIC_CONTRACT_ADDRESS_REGISTRY_2026-08-28.md` + `public-contracts.json`, `MCP_SECURITY_ADVISORY_2026-08-28.md`. Updated: `MCP_EXTERNAL_SECURITY_REMEDIATION_2026-08-27.md`, `EXTERNAL_PROPAGATION_CHANGELOG.md`.
+
+**Marketing hold:** in effect per Directive §24 until npm 0.2.3 is published and verified — no MCP-transaction-functionality pitching, no traffic driven toward `exergynet_open_job`, no citing the official MCP registry listing as a security signal.
+
+**Visual QA:** still blocked, same as the prior two entries — Browser pane not displayed on the user's side this session either.
+
+**Mainnet actions performed this incident: zero. Funds moved: zero.** All forensics used read-only RPC calls (`eth_getCode`, `eth_call`, `eth_chainId`, `eth_getBalance`) and public block-explorer APIs — no transaction was signed or broadcast at any point.

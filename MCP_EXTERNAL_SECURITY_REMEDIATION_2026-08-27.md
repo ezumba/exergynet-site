@@ -3,6 +3,8 @@
 **Directive:** VP Sales Directive 005, §9
 **Scope:** the independent MCP Vouch security scan of `exergynet-mcp-server`, whether its findings still reproduce, and remediation.
 
+> **UPDATE — 2026-08-28 (VP Sales Directive 006):** the §0 critical finding below was escalated to a formal P0 incident and has been fixed. `exergynet_open_job` is disabled as of commit `f3f4edc` on the `exergynet-mcp-server` repository's `main` branch (version 0.2.3) — it now performs no network call, signing, or calldata construction under any configuration, and the package's `ethers`/`viem` signing dependencies have been removed entirely. npm publication remains pending (no registry credentials available in this environment). Full incident record: `MCP_P0_CONTRACT_INCIDENT_2026-08-28.md`, `MCP_PUBLISHED_ARTIFACT_PROVENANCE_2026-08-28.md`, `PUBLIC_CONTRACT_ADDRESS_REGISTRY_2026-08-28.md`, `MCP_SECURITY_ADVISORY_2026-08-28.md`. The MCP Vouch category remediation (§18 onward, below) remains open and deliberately deferred until after npm publication, per Directive 006 §18/§19.
+
 **Critical scope note before the findings below:** while investigating this package for narrative and security remediation, direct inspection of the actually-published npm tarball (`exergynet-mcp-server@0.2.2`, fetched read-only via `npm pack` — not assumed from the GitHub repo) surfaced a defect materially more serious than stale marketing language. That finding is reported first, separately from the MCP Vouch category-by-category remediation, because it changes the risk calculus for the whole package.
 
 ---
