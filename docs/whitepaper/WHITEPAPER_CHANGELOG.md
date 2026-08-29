@@ -199,3 +199,37 @@ of the VP Sales whitepaper pipeline. Committing them alongside this pass's outpu
 unreviewed, unrelated prior-session changes to this commit. They remain uncommitted and are flagged to
 the operator as a separate, pre-existing decision pending its own review — not lost, not part of this
 pass's scope.
+
+---
+
+## 2026-08-28 — V3 evidence rebase: execution-state mobility, Portable Intelligence Packaging
+
+**Why V2 §5 was superseded, and why the prior pass was not wrong.** V2's Section 5 correctly reported,
+as of 2026-08-27, that fresh-process execution-state restoration was validated for short contexts (10/10)
+and not yet achieved for medium or long contexts (0/10 each), with cross-node portability not yet
+reported. **That prior publication pass was the right call at the time it was made** — the corrected
+evidence this pass relies on (the LNES-119A5.2 checkpoint-contamination audit, the F1–F6D cross-host
+causal-isolation campaign) did not exist yet when V2 was frozen, and no earlier source artifact was being
+overlooked. This pass does not treat the earlier 0/10 report as an error; it treats it as an accurate
+report of the state of the evidence on 2026-08-27, now superseded because new, independently-verifiable
+evidence became available on 2026-08-28. `WHITEPAPER_CLAIM_LEDGER_V3.md` marks WP-C014/WP-C015 SUPERSEDED
+rather than deleting or silently rewriting them, for exactly this reason.
+
+| Timestamp | File | Section changed | Reason | Evidence source | Claim-strength change |
+|---|---|---|---|---|---|
+| 2026-08-28 | `EXERGYNET_WHITEPAPER_PUBLIC_V3.md` (new) | Full manuscript; substantively rewritten: Abstract, Executive Summary, §5 (State Mobility → Execution-State Mobility, full rewrite), §6 (Model-Substitution, updated), new §7 (Portable Intelligence Packaging), §13 maturity table and research frontier, title/subtitle. §1–§4, §8–§12 (old §7–§11) carried forward from V2 unchanged except renumbering and cross-references. | This directive's evidence-rebase mandate; the underlying LNES-119B experimental program (Entries 001–024) completed its causal-isolation campaign (F1 through F6D) between 2026-08-26 and 2026-08-28, after V2 was frozen | `LNES119B_EVIDENCE_LEDGER.md` (append-only, SHA-256-hashed per artifact, protocol-manifest version-controlled, adversarial-mutation-tested harness) — independently read and spot-verified entry-by-entry before any claim was copied into the manuscript, not taken from directive text | New claims WP-C025–WP-C032 (all T1, bounded); WP-C014/WP-C015 superseded (not deleted, not silently edited) |
+| 2026-08-28 | `EXERGYNET_WHITEPAPER_PUBLIC_V3.md` | §12 Applications, new MCP paragraph | This paper had never mentioned ExergyNet's MCP interface; a security incident affecting an earlier version of the published package is a matter of public record, and the interface itself is now a real, currently-safe, independently-auditable artifact worth naming accurately rather than continuing to omit | Independently verified against live npm/registry state at time of writing (not copied from any directive's assumed version number — a factual discrepancy was found and corrected: the currently published version is 0.2.5, not 0.2.6, which exists only as unpublished source) | New — no prior WP-C### entry covered this; see `WHITEPAPER_CLAIM_LEDGER_V3.md`'s operational note |
+| 2026-08-28 | `docs/whitepaper/WHITEPAPER_CLAIM_LEDGER_V3.md` (new) | New file (finalizes `WHITEPAPER_CLAIM_LEDGER.md`) | This directive's deliverable | Carries WP-C001–C013, WP-C016–C024 forward unchanged; marks WP-C014/C015 superseded with pointers; adds WP-C025–C032; adds WP-X06 (cross-architecture prohibition) and WP-X07 (vulnerability-free prohibition) | New: WP-C025–C032 (8 new, all T1 bounded); 2 superseded |
+| 2026-08-28 | `docs/whitepaper/WHITEPAPER_V3_CLAIM_CROSSWALK.md` (new) | New file (finalizes `WHITEPAPER_V2_CLAIM_CROSSWALK.md`) | This directive's deliverable | Maps every WP-C### ID to its V3 section; confirms WP-C014/C015 appear nowhere as a current-state conclusion in the V3 body | — |
+| 2026-08-28 | `docs/whitepaper/WHITEPAPER_POSTURE_AUDIT_V3.md` (new) | New file (finalizes `WHITEPAPER_POSTURE_AUDIT.md`) | This directive's deliverable | Self-audits P-15–P-22 against the achievement-first rule; runs the full nine-category prohibited-pattern search against the actual V3 manuscript text | 5 STRENGTHENED_TO_EVIDENCE, 3 EQUIVALENT, 0 WEAKENED; 0 unbounded occurrences across all 9 required prohibited-pattern categories |
+
+## PDF/DOCX generation and rendered visual QA — BLOCKED, not attempted
+
+No PDF/DOCX build tooling (pandoc, a LaTeX toolchain, or an equivalent) was found available in this
+session's environment, and no build script for the existing `EXERGYNET_WHITEPAPER_PUBLIC_V2.pdf`/`.docx`
+artifacts was located to reuse. Per this directive's own instruction ("pause only the affected stream if
+a source cannot be resolved"), PDF and DOCX generation for V3 were not attempted rather than faked or
+produced with a different, unreviewed tool. `EXERGYNET_WHITEPAPER_PUBLIC_V3.md` is the complete,
+publication-ready manuscript; rendering it to PDF/DOCX and the page-by-page rendered visual QA that
+depends on having that PDF are both flagged as pending an operator-available build environment, not
+claimed as done.
