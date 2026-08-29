@@ -77,9 +77,7 @@ Before describing the architecture, this paper defines the commercial measuremen
 
 Define the cost per qualified successful task as:
 
-$$
-C_Q = \frac{C_{\text{total}}}{N_{\text{qualified successful tasks}}}
-$$
+![](figures/eq_cq.png)
 
 where total cost includes, where measurable:
 
@@ -89,9 +87,7 @@ $$
 
 and, symmetrically, define useful-work efficiency as the inverse ratio against total energy consumed:
 
-$$
-E_Q = \frac{N_{\text{qualified successful tasks}}}{E_{\text{total}}}
-$$
+![](figures/eq_eq.png)
 
 alongside the completion-time distributions $T_{p50}$ and $T_{p95}$, since a workload's tail latency is often as commercially relevant as its mean cost.
 
@@ -136,9 +132,7 @@ Efficiency mechanisms — caching, compression, retrieval — reduce what a mode
 - **Memory.** Information retained because it may be useful in later reasoning. Improves recall; does not, by itself, establish what is canonical.
 - **Authoritative State.** The externally maintained representation of what the system currently treats as canonical, including, where applicable: version, source, provenance, authority, evidence, permissions, and transition history.
 
-$$
-\boxed{\text{Context} \neq \text{Memory} \neq \text{Authoritative State}}
-$$
+![](figures/eq_ctx.png)
 
 This distinction is commercially load-bearing, not academic: provider-native prompt caching and memory systems are rapidly commoditizing the first two categories. A vendor that reduces token cost or improves recall has not, by that fact alone, produced a system that knows what is currently true, who said so, and under what permission it may be acted on. Section 5 introduces a fourth, distinct concept this paper does not conflate with any of the three above: a model's own **live execution state** — the runtime-resident representation a reasoning engine is actively using mid-computation, as opposed to anything retrieved into context or persisted as memory or authoritative state. This paper does not make claims here about any specific competing system's architecture; the distinctions are stated on their own terms, and the reader can apply them to whatever alternative is under evaluation.
 
@@ -227,9 +221,7 @@ Sections 4 and 5 establish two different kinds of state with two different porta
 
 The governing invariant is the same one this paper already applies to memory and to money, extended to execution state itself:
 
-$$
-\boxed{\text{STATE\_REALIZED} \neq \text{AUTHORIZED}}
-$$
+![](figures/eq_state.png)
 
 Execution state may move, and Section 5 reports a tested case where a specific slice of it did. Authority — economic or consequential — does not move with it, and must be re-established at the destination under that destination's own authority mechanisms (Sections 8–9 for the general case; LNES-22's Consequence Boundary for the enforcement mechanism). Portable Intelligence Packaging is the architectural name for keeping these properties separate as this paper's execution-state, memory, and authority work continue to develop together; it is a specification this paper is stating precisely so that future implementation work can be checked against it, not a system that exists today.
 
