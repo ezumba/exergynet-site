@@ -298,7 +298,7 @@ Every component below is reported at its actual, current maturity stage: **Defin
 | xLMP / Exergy Vault | Production | Published local node (VMN); integrity is distinct from correctness |
 | Compact Index / Adaptive Routing | Validated -> Partial production | Performance is workload-dependent |
 | Vanguard (model routing) | Production | Proposes actions; does not self-authorize |
-| Authority validator (identity/capability/freshness/integrity) | Production | Live-validated against a real adversarial run |
+| Authority validator (identity, capability, freshness, integrity) | Production | Live-validated against a real adversarial run |
 | Policy / capability gate | Pilot | Evaluates and logs every real decision; not yet the sole execution authority |
 | xISA capability taxonomy | Validated | Isolated research environment; not yet production-active |
 | Temporal Authority | Implemented, tested | Not yet production-activated |

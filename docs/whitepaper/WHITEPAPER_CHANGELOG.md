@@ -233,3 +233,43 @@ produced with a different, unreviewed tool. `EXERGYNET_WHITEPAPER_PUBLIC_V3.md` 
 publication-ready manuscript; rendering it to PDF/DOCX and the page-by-page rendered visual QA that
 depends on having that PDF are both flagged as pending an operator-available build environment, not
 claimed as done.
+
+---
+
+## 2026-08-28 (later) — PDF/DOCX build tooling installed; visual QA completed for real
+
+At the operator's explicit request, build tooling was installed rather than left blocked: pandoc 3.10.2
+(via winget) and MiKTeX 25.12 (via winget, configured for unattended package auto-install).
+`EXERGYNET_WHITEPAPER_PUBLIC_V3.pdf` (16 pages) was generated via a two-step pandoc-to-tex-then-pdflatex
+pipeline — pandoc's own `--pdf-engine=pdflatex` invocation refused to run behind a first-run "MiKTeX
+updates" pre-flight check that `pdflatex` itself does not actually require; invoking `pdflatex` directly
+on pandoc's `.tex` output bypasses that check without bypassing any real verification.
+
+Real visual QA was performed: all 16 pages individually rendered to PNG and visually inspected, not
+assumed clean because the build succeeded. Result: one genuine defect found and fixed. The maturity
+table's "Authority validator (identity/capability/freshness/integrity)" row overflowed its column and
+broke the table's layout, because LaTeX had nowhere to break the line inside a slash-separated compound
+with no spaces. Fixed by changing the separator to comma-plus-space, which lets the line wrap normally;
+confirmed by re-rendering that page and comparing before/after. No other page showed any defect from the
+full checklist: no other clipped text, no other broken tables, no orphan headings, no blank pages, no
+malformed equations, no internal material leakage, no duplicated version labels, no encoding corruption,
+no broken bullets. Figures throughout this paper (V1, V2, and V3 alike) are referenced narratively in
+text rather than embedded as images in the markdown-to-PDF pipeline; this is consistent across all three
+versions and is not a V3-specific gap.
+
+A separate, real DOCX-specific defect was also found and fixed. This pandoc build's DOCX math converter
+could not convert any LaTeX expression using `\frac` or `\boxed` — including the paper's cost-decomposition
+formulas and both boxed invariants — and was silently rendering raw TeX source text in their place, which
+would have shipped as visibly broken equations in the Word document. This is a limitation of this
+specific pandoc build's math converter, not an error in the equations themselves — the identical LaTeX
+renders perfectly through the PDF's real pdflatex path. Fixed by rendering exactly those four equations
+as standalone, tightly-cropped PNG images and substituting them into a docx-specific build source,
+`EXERGYNET_WHITEPAPER_PUBLIC_V3_docxsrc.md` (identical to the main manuscript except for these four
+substitutions) — confirmed via the DOCX's internal media folder that all four images embedded correctly,
+and confirmed zero remaining math-conversion warnings from pandoc. The canonical manuscript file used for
+the PDF and for the written record is unchanged by this; only the separate DOCX-build copy substitutes
+images, and it exists solely as a build input for the DOCX target.
+
+Final state: `EXERGYNET_WHITEPAPER_PUBLIC_V3.pdf` (16 pages, visually clean) and
+`EXERGYNET_WHITEPAPER_PUBLIC_V3.docx` (zero conversion warnings, four equations embedded as images) are
+both complete. Visual QA is complete, not blocked.
