@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Benchmarks - Measured AI Memory Results | ExergyNet</title>
+<title>Benchmarks — Corpus Scaling and Memory Evidence | ExergyNet</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Measured ExergyNet benchmark results for AI memory control, deterministic retrieval, adaptive routing, VMN resilience, and authority separation.">
+<meta name="description" content="Measured ExergyNet benchmark results: A100 corpus scaling 32K–4M (125× growth, no detected material positive global scaling), H200 memory control, deterministic retrieval, adaptive routing, and authority separation.">
 <meta name="keywords" content="AI memory benchmarks, persistent AI memory, AI Memory Control Plane, xLMP, ExergyNet, deterministic retrieval, evidence parity, inference efficiency">
 <link rel="canonical" href="https://exergynet.org/benchmarks.html">
-<meta property="og:title" content="Benchmarks - Measured AI Memory Results | ExergyNet">
-<meta property="og:description" content="Bounded benchmark evidence for xLMP, Compact Index retrieval, VMN resilience, adaptive deterministic routing, and authority separation.">
+<meta property="og:title" content="Benchmarks — Corpus Scaling and Memory Evidence | ExergyNet">
+<meta property="og:description" content="A100 4M corpus scaling campaign + H200 memory control benchmarks. 125× corpus growth tested. No detected material positive global scaling of mean active model-facing context through 4M tokens.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org/benchmarks.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ExergyNet Benchmarks">
-<meta name="twitter:description" content="Measured systems results for xLMP, the persistent-memory plane of the ExergyNet substrate — bounded to their tested envelopes.">
+<meta name="twitter:description" content="A100 corpus scaling 32K–4M (125× growth, no detected material positive global scaling) + H200 memory control benchmarks. All results bounded to tested envelopes.">
 <link rel="stylesheet" href="style.css">
 <script>
 (function(){
@@ -29,7 +29,7 @@
 <style>
   .bench-hero{position:relative;overflow:hidden;padding:6rem 0 4rem;}
   .bench-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;}
-  .result-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;border:1px solid var(--border-mid);background:var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:2rem;}
+  .result-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;border:1px solid var(--border-mid);background:var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:2rem;}
   .result-cell{background:var(--bg-card);padding:1.35rem;}
   .result-value{font-family:var(--display);font-size:clamp(2rem,5vw,3.2rem);line-height:.9;font-weight:900;color:var(--accent);margin-bottom:.55rem;}
   .result-label{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);line-height:1.45;}
@@ -66,6 +66,7 @@
   .term strong{display:block;color:var(--text);margin-bottom:.25rem;}
   .term span{font-size:13px;color:var(--text-soft);line-height:1.55;}
   .warning-card{border-color:rgba(255,184,48,.35);background:rgba(255,184,48,.06);}
+  .quiet-callout{border-left:3px solid var(--accent);background:var(--accent-dim);padding:1.25rem 1.35rem;border-radius:0 var(--radius) var(--radius) 0;color:var(--text-soft);line-height:1.7;}
   @media(max-width:900px){.result-strip,.bench-grid,.status-grid,.term-list,.chart-grid{grid-template-columns:1fr 1fr;}}
   @media(max-width:640px){.result-strip,.bench-grid,.status-grid,.term-list,.claim-meta,.chart-grid{grid-template-columns:1fr;}.bench-hero{padding:4rem 0 3rem;}.visual-modal{padding:.75rem;}.visual-modal-panel{max-height:94vh;}}
 </style>
@@ -104,13 +105,200 @@
       <div class="result-cell"><div class="result-value">52,753.8&times;</div><div class="result-label">Median paired retrieval speedup</div><div class="result-scope">Tested 1GB / 100-query enterprise population.</div></div>
       <div class="result-cell"><div class="result-value">1.886&times;</div><div class="result-label">Adaptive router vs always-legacy</div><div class="result-scope">Frozen LNES-86.2 holdout population.</div></div>
       <div class="result-cell"><div class="result-value">C16</div><div class="result-label">Concurrency validated</div><div class="result-scope">Isolated VMN routing and evidence checks.</div></div>
+      <div class="result-cell"><div class="result-value">125&times;</div><div class="result-label">Corpus growth tested (32K&rarr;4M A100 campaign)</div><div class="result-scope">Mean K held within historical envelope. No detected material positive global scaling.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="corpus-scaling" style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container-wide">
+    <div class="section-label">A100 Corpus Scaling Campaign</div>
+    <h2>Corpus Scaling Campaign: 32K &rarr; 4M</h2>
+    <p style="max-width:820px; margin-bottom:1.5rem;">This campaign measured mean active model-facing context (K) across a 125&times; corpus size increase. All results are bounded to the tested envelope and hardware configuration below.</p>
+
+    <div class="bench-card accent-border" style="margin-bottom:1.5rem;">
+      <div style="font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:.6rem;">Hardware Disclosure</div>
+      <p style="font-size:14px; color:var(--text-soft); line-height:1.6; margin:0;">4&times; NVIDIA A100-SXM4-40GB, Tensor Parallelism = 4, NVIDIA NIM. Adversarial synthetic corpus. Nine development points, plus a sealed 5-rep holdout at 4M. This campaign is separate from and must not be merged with the H200 campaign below.</p>
+    </div>
+
+    <div style="overflow-x:auto; margin-bottom:1.5rem;">
+      <table style="width:100%; border-collapse:collapse; font-size:14px;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border-mid);">
+            <th style="text-align:left; padding:.75rem 1rem; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint);">N (Corpus Size)</th>
+            <th style="text-align:right; padding:.75rem 1rem; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint);">Mean K (Active Tokens)</th>
+            <th style="text-align:right; padding:.75rem 1rem; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint);">Accuracy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.65rem 1rem; color:var(--text);">32K</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--accent);">907.95</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">45.3%</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.65rem 1rem; color:var(--text);">64K</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--accent);">876.91</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">40.0%</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.65rem 1rem; color:var(--text);">128K</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--accent);">817.27</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">45.8%</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.65rem 1rem; color:var(--text);">285K</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--accent);">878.81</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">40.5%</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.65rem 1rem; color:var(--text);">384K</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--accent);">897.91</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">41.6%</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.65rem 1rem; color:var(--text);">500K</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--accent);">877.66</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">40.0%</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.65rem 1rem; color:var(--text);">1M</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--accent);">763.86</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">42.6%</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.65rem 1rem; color:var(--text);">2M</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--accent);">816.47</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">45.3%</td></tr>
+          <tr><td style="padding:.65rem 1rem; color:var(--text); font-weight:700;">4M</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--accent); font-weight:700;">901.65</td><td style="padding:.65rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft); font-weight:700;">46.3%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Inline SVG scatter: K vs N -->
+    <div class="visual-frame wide" style="margin-bottom:1.5rem;">
+      <svg class="bench-svg" viewBox="0 0 760 280" role="img" aria-labelledby="kn-title kn-desc">
+        <title id="kn-title">Mean K vs Corpus Size (A100 Campaign)</title>
+        <desc id="kn-desc">Scatter plot of mean active tokens (K) against corpus size (N) for nine development points. K oscillates in a band roughly 764–908 with no strong global trend.</desc>
+        <rect x="0" y="0" width="760" height="280" fill="rgba(0,0,0,.08)" rx="8"/>
+        <text x="380" y="26" text-anchor="middle" fill="#ddeeff" font-size="14" font-family="Arial,sans-serif" font-weight="700">Mean Active Context K vs Corpus Size N — A100 Campaign</text>
+        <text x="380" y="44" text-anchor="middle" fill="#7896b8" font-size="11" font-family="monospace">Nine development points, 4× A100-SXM4-40GB, TP=4, NVIDIA NIM</text>
+        <!-- Axes -->
+        <line x1="70" y1="220" x2="720" y2="220" stroke="#7896b8" stroke-width="1"/>
+        <line x1="70" y1="60" x2="70" y2="220" stroke="#7896b8" stroke-width="1"/>
+        <!-- Y-axis labels: K range 700–950 -->
+        <text x="62" y="224" text-anchor="end" fill="#7896b8" font-size="10" font-family="monospace">700</text>
+        <text x="62" y="187" text-anchor="end" fill="#7896b8" font-size="10" font-family="monospace">775</text>
+        <text x="62" y="150" text-anchor="end" fill="#7896b8" font-size="10" font-family="monospace">850</text>
+        <text x="62" y="113" text-anchor="end" fill="#7896b8" font-size="10" font-family="monospace">925</text>
+        <text x="62" y="76" text-anchor="end" fill="#7896b8" font-size="10" font-family="monospace">950</text>
+        <!-- Y gridlines -->
+        <line x1="70" y1="187" x2="720" y2="187" stroke="#7896b8" stroke-width="0.4" stroke-dasharray="4 4"/>
+        <line x1="70" y1="150" x2="720" y2="150" stroke="#7896b8" stroke-width="0.4" stroke-dasharray="4 4"/>
+        <line x1="70" y1="113" x2="720" y2="113" stroke="#7896b8" stroke-width="0.4" stroke-dasharray="4 4"/>
+        <!-- Near-flat trendline: K~859 at N=0, +tiny slope -->
+        <line x1="70" y1="138" x2="720" y2="137" stroke="#ffb830" stroke-width="1.5" stroke-dasharray="7 5" opacity=".6"/>
+        <text x="724" y="141" fill="#ffb830" font-size="10" font-family="monospace">trend</text>
+        <!-- X positions for 9 points spread across 70–720 -->
+        <!-- N=32K x=80, 64K x=148, 128K x=215, 285K x=310, 384K x=370, 500K x=440, 1M x=550, 2M x=635, 4M x=710 -->
+        <!-- Y = 220 - ((K - 700) / 250 * 160) -->
+        <!-- K=908 -> y=161, K=877 -> y=181, K=817 -> y=220-73=147... recalculate: range 700-950=250 units over 160px -->
+        <!-- y = 220 - ((K-700)/250)*160 -->
+        <!-- 32K K=908: y=220-((208/250)*160)=220-133=87 -->
+        <!-- 64K K=877: y=220-((177/250)*160)=220-113=107 -->
+        <!-- 128K K=817: y=220-((117/250)*160)=220-75=145 -->
+        <!-- 285K K=879: y=220-((179/250)*160)=220-114=106 -->
+        <!-- 384K K=898: y=220-((198/250)*160)=220-127=93 -->
+        <!-- 500K K=878: y=220-((178/250)*160)=220-114=106 -->
+        <!-- 1M K=764: y=220-((64/250)*160)=220-41=179 -->
+        <!-- 2M K=816: y=220-((116/250)*160)=220-74=146 -->
+        <!-- 4M K=902: y=220-((202/250)*160)=220-129=91 -->
+        <circle cx="80" cy="87" r="5" fill="#00e887"/>
+        <text x="80" y="80" text-anchor="middle" fill="#7896b8" font-size="9" font-family="monospace">32K</text>
+        <circle cx="148" cy="107" r="5" fill="#00e887"/>
+        <text x="148" y="100" text-anchor="middle" fill="#7896b8" font-size="9" font-family="monospace">64K</text>
+        <circle cx="215" cy="145" r="5" fill="#00e887"/>
+        <text x="215" y="138" text-anchor="middle" fill="#7896b8" font-size="9" font-family="monospace">128K</text>
+        <circle cx="310" cy="106" r="5" fill="#00e887"/>
+        <text x="310" y="99" text-anchor="middle" fill="#7896b8" font-size="9" font-family="monospace">285K</text>
+        <circle cx="370" cy="93" r="5" fill="#00e887"/>
+        <text x="370" y="86" text-anchor="middle" fill="#7896b8" font-size="9" font-family="monospace">384K</text>
+        <circle cx="440" cy="106" r="5" fill="#00e887"/>
+        <text x="440" y="99" text-anchor="middle" fill="#7896b8" font-size="9" font-family="monospace">500K</text>
+        <circle cx="550" cy="179" r="5" fill="#4e9eff"/>
+        <text x="550" y="172" text-anchor="middle" fill="#7896b8" font-size="9" font-family="monospace">1M</text>
+        <circle cx="635" cy="146" r="5" fill="#4e9eff"/>
+        <text x="635" y="139" text-anchor="middle" fill="#7896b8" font-size="9" font-family="monospace">2M</text>
+        <circle cx="710" cy="91" r="5" fill="#00e887"/>
+        <text x="710" y="84" text-anchor="middle" fill="#7896b8" font-size="9" font-family="monospace">4M</text>
+        <!-- Local upturn arrow annotation -->
+        <path d="M550,179 Q590,200 635,146" stroke="#ffb830" stroke-width="1.2" fill="none" stroke-dasharray="3 3"/>
+        <path d="M635,146 Q672,115 710,91" stroke="#ffb830" stroke-width="1.2" fill="none" stroke-dasharray="3 3"/>
+        <text x="590" y="215" text-anchor="middle" fill="#ffb830" font-size="9" font-family="monospace">local upturn 1M&rarr;4M</text>
+        <!-- X axis label -->
+        <text x="395" y="250" text-anchor="middle" fill="#7896b8" font-size="11" font-family="monospace">Corpus Size N (log-compressed display)</text>
+        <text x="20" y="145" text-anchor="middle" fill="#7896b8" font-size="11" font-family="monospace" transform="rotate(-90,20,145)">Mean K</text>
+      </svg>
+      <p class="visual-caption">K oscillates within the historical 32K&ndash;4M envelope. The near-flat orange dashed trendline represents the nine-point regression (R&sup2;=0.0004; slope 95% CI includes zero). Blue points mark the 1M trough and 2M local recovery; the 4M mean returned near the 32K level. The local K upturn from 1M through 4M is annotated.</p>
+    </div>
+
+    <!-- Sealed holdout -->
+    <div class="bench-card" style="margin-bottom:1.5rem; border-color:rgba(0,232,135,0.3);">
+      <div style="font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:.6rem;">Sealed 4M Holdout — Five Replications</div>
+      <div class="claim-meta">
+        <span><strong>Mean K</strong>902.81</span>
+        <span><strong>Median K</strong>925</span>
+        <span><strong>P95 K</strong>972</span>
+        <span><strong>Accuracy</strong>45.3%</span>
+        <span><strong>Per-query mismatches</strong>0 / 190</span>
+      </div>
+    </div>
+
+    <!-- Regression -->
+    <div class="bench-card" style="margin-bottom:1.5rem;">
+      <div style="font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:.6rem;">Nine-Point Regression</div>
+      <p style="font-size:14px; color:var(--text-soft); line-height:1.6; margin:0;">K = 859.10 + (7.83&times;10<sup>&minus;7</sup>)N &nbsp;&mdash;&nbsp; R<sup>2</sup> = 0.0004 &nbsp;&mdash;&nbsp; Slope 95% CI includes zero. There is no statistically detected global linear relationship between corpus size and mean K across the nine tested points.</p>
+    </div>
+
+    <!-- Canonical statement -->
+    <div class="quiet-callout" style="max-width:820px; margin-bottom:1.5rem;">
+      <strong>Canonical statement:</strong> Across the tested nominal 32K&ndash;4M adversarial synthetic corpus envelope, a 125&times; increase in corpus size produced no detected material positive global scaling of mean active model-facing context.
+    </div>
+
+    <!-- Local K upturn disclosure -->
+    <div class="bench-card warning-card" style="margin-bottom:1.5rem;">
+      <div style="font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--amber,#ffb830); margin-bottom:.6rem;">K_LOCAL_UPTURN_CONTINUES — Disclosed, Not Hidden</div>
+      <p style="font-size:14px; color:var(--text-soft); line-height:1.6; margin:0 0 .75rem;">Active context increased locally from the 1M trough through 2M and 4M, but the 4M mean remained inside the historical 32K&ndash;4M observed context envelope and near the original 32K level.</p>
+      <div class="claim-meta">
+        <span><strong>1M &rarr; 2M</strong>&Delta;K = +52.61</span>
+        <span><strong>2M &rarr; 4M</strong>&Delta;K = +85.18</span>
+        <span><strong>Bootstrap 95% CI</strong>[+74.91, +95.08]</span>
+        <span><strong>Matched queries increased</strong>176 / 190</span>
+        <span><strong>Classification</strong>K_LOCAL_UPTURN_CONTINUES</span>
+      </div>
+    </div>
+
+    <!-- Retrieval work -->
+    <h3 style="margin-bottom:.75rem;">Retrieval Work (C<sub>R</sub>) — Wall Time</h3>
+    <p style="font-size:14px; color:var(--text-soft); margin-bottom:1rem;">The frozen resolver's retrieval work increased approximately linearly with corpus size, identifying state resolution rather than model-facing context as the dominant scaling pressure at 4M.</p>
+    <div style="overflow-x:auto; margin-bottom:1.5rem;">
+      <table style="width:100%; border-collapse:collapse; font-size:14px; max-width:520px;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border-mid);">
+            <th style="text-align:left; padding:.65rem 1rem; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint);">N</th>
+            <th style="text-align:right; padding:.65rem 1rem; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint);">Retrieval Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">500K</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">2.861s</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">1M</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">5.683s</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">2M</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">11.283s</td></tr>
+          <tr><td style="padding:.55rem 1rem;">4M</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">19.772s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quiet-callout" style="margin-bottom:1.5rem;">Classification: APPROX_LINEAR. The frozen CPU-side resolver dominated surrounding wall-clock workload, exposing state resolution as a major infrastructure optimization target.</div>
+
+    <!-- GPU utilization -->
+    <div class="bench-card" style="margin-bottom:1.5rem;">
+      <div style="font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:.6rem;">GPU Utilization at 4M</div>
+      <div class="claim-meta">
+        <span><strong>Mean (full run)</strong>2.0%</span>
+        <span><strong>Median</strong>0%</span>
+        <span><strong>Peak</strong>100%</span>
+        <span><strong>Mean power</strong>62.7W</span>
+      </div>
+      <p style="font-size:13px; color:var(--text-soft); margin-top:.75rem; line-height:1.6;">Interpretation: accelerator execution occurred in bursts while the frozen CPU-side resolver dominated the surrounding wall-clock workload. Retrieval-dominated wall time.</p>
+    </div>
+
+    <!-- Three-axis summary -->
+    <div class="bench-card" style="margin-bottom:2rem;">
+      <div style="font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:.75rem;">Three-Axis K / Q / C<sub>R</sub> Summary</div>
+      <div class="claim-meta">
+        <span><strong>K (active context)</strong>No detected material positive global scaling across 32K&ndash;4M. Local upturn 1M&rarr;4M present and disclosed.</span>
+        <span><strong>Q (accuracy)</strong>Oscillates 40.0%&ndash;46.3% across nine development points. No global monotonic trend detected.</span>
+        <span><strong>C<sub>R</sub> (retrieval work)</strong>Approximately linear. 2.861s at 500K &rarr; 19.772s at 4M. State resolution is the dominant scaling pressure.</span>
+      </div>
+    </div>
+
+    <div style="border-top:2px solid var(--border-mid); margin:2rem 0; padding-top:1rem;">
+      <div style="font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); text-align:center; padding:.75rem; background:var(--bg-card); border-radius:var(--radius);">The following section is the H200 historical campaign — a separate experiment on separate hardware with a separate model</div>
     </div>
   </div>
 </section>
 
 <section id="results">
   <div class="container-wide">
-    <div class="section-label">Benchmark Families</div>
+    <div class="section-label">H200 Benchmark Families</div>
     <h2>Separate experiments. Separate envelopes.</h2>
     <p style="max-width:780px;">These results are not combined into one synthetic score. Each card states the measured result, the principle it supports, the test envelope, and the known limitation.</p>
 

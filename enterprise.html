@@ -61,7 +61,20 @@
     <section style="margin-bottom:3rem;">
       <div class="section-label">Cost</div>
       <h2>State reconstruction and repeated inference consume resources you're already paying for.</h2>
-      <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">ExergyNet's entry question is economic, not architectural: on a workload you already run, can the resource cost of completing a validated task go down, measured against your own existing baseline — without replacing your model or your cloud? On a tested H200 workload, ExergyNet's xLMP layer held staged prompt cost roughly flat as the underlying corpus scaled from 8,000 to 285,000 tokens, and delivered approximately 11.3&times; the correct-task throughput of full-context replay at each method's best compliant load. Those numbers are bounded to that specific test — <a href="design-partner.html" style="color:var(--accent);">a design partnership measures what it means for your own workload.</a></p>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7;">ExergyNet's entry question is economic, not architectural: on a workload you already run, can the resource cost of completing a validated task go down, measured against your own existing baseline — without replacing your model or your cloud? On a tested H200 workload (single NVIDIA H200, Nemotron model, corpus 8,000&ndash;285,000 tokens), ExergyNet's xLMP layer held staged prompt cost roughly flat as the underlying corpus scaled, and delivered approximately 11.3&times; the correct-task throughput of full-context replay at each method's best compliant load. Those numbers are bounded to that specific test — <a href="design-partner.html" style="color:var(--accent);">a design partnership measures what it means for your own workload.</a></p>
+    </section>
+
+    <!-- CAPITAL EFFICIENCY -->
+    <section style="margin-bottom:3rem; padding:2rem; border:1px solid var(--border-mid); border-radius:var(--radius-lg); background:var(--bg-card);">
+      <div class="section-label">Capital Efficiency Thesis</div>
+      <h2>Separating persistent-state growth from model-facing context growth.</h2>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7; margin-bottom:1.25rem;">ExergyNet separates persistent-state growth from model-facing context growth. This creates the possibility of reducing unnecessary repeated inference work and improving accelerator utilization, subject to workload-specific measurement. Capital efficiency is not a fixed number — it is a hypothesis that must be tested against each organization's actual workload.</p>
+      <p style="max-width:800px; color:var(--text-soft); line-height:1.7; margin-bottom:1.25rem;">Institutional knowledge should not have to be replayed through the model every time the organization asks a question. Measuring whether it does — and by how much — is the right starting point.</p>
+      <div class="card" style="margin-bottom:1rem;">
+        <strong style="font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent);">A100 Evidence: 125&times; corpus growth, no detected material positive global scaling of mean K</strong>
+        <p style="font-size:13px; color:var(--text-soft); margin:.5rem 0 0; line-height:1.6;">Across 32K&ndash;4M nominal stored tokens on 4&times; A100-SXM4-40GB (TP=4, NVIDIA NIM), a 125&times; increase in corpus size produced no detected material positive global scaling of mean active model-facing context. Local K upturn from 1M trough through 4M is disclosed and measured. Retrieval work scaled approximately linearly. Any dollar savings implications are to be measured per enterprise workload — no universal cost-reduction figure is offered.</p>
+      </div>
+      <p style="font-size:12px; color:var(--text-faint); font-style:italic;">Dollar savings: TO BE MEASURED PER ENTERPRISE WORKLOAD. Results vary by workload, infrastructure, and model. ExergyNet does not make universal dollar-savings claims.</p>
     </section>
 
     <!-- CONTINUITY -->
@@ -87,8 +100,8 @@
       <h2>Every claim on this page is measured somewhere you can check.</h2>
       <div class="card-grid">
         <div class="card accent-border">
-          <h4>Useful-work efficiency</h4>
-          <p>~11.3&times; correct-task throughput vs. full-context replay, tested H200 workload.</p>
+          <h4>Useful-work efficiency (H200)</h4>
+          <p>~11.3&times; correct-task throughput vs. full-context replay, single NVIDIA H200, Nemotron model, corpus 8K&ndash;285K.</p>
         </div>
         <div class="card blue-border">
           <h4>State governance</h4>
@@ -97,6 +110,10 @@
         <div class="card">
           <h4>Authority separation</h4>
           <p>A live prompt-injection attack was rejected by the deterministic boundary after the reasoning model itself complied. Reproduced twice.</p>
+        </div>
+        <div class="card accent-border">
+          <h4>Corpus scaling (A100)</h4>
+          <p>125&times; corpus growth (32K&ndash;4M) on 4&times; A100-SXM4-40GB, TP=4, NVIDIA NIM. No detected material positive global scaling of mean active model-facing context. <a href="benchmarks.html#corpus-scaling" style="color:var(--accent);">Evidence &rarr;</a></p>
         </div>
       </div>
       <div class="btn-row" style="margin-top:1.5rem;">
@@ -114,10 +131,11 @@
     <!-- EVALUATION -->
     <section class="cta-section" style="border-top:1px solid var(--border); padding-top:2.5rem;">
       <h2>Evaluate it against your own workload, not our numbers.</h2>
-      <p>A design partnership measures your current architecture first, integrates only the relevant layer, then measures again.</p>
+      <p>A design partnership measures your current architecture first, integrates only the relevant layer, then measures again. Benchmark your AI workload or request a capital efficiency assessment against your own infrastructure.</p>
       <div class="btn-row" style="justify-content:center;">
-        <a href="design-partner.html" class="btn btn-primary">Request a Design Partnership</a>
-        <a href="whitepaper.html" class="btn btn-secondary">Architecture Whitepaper</a>
+        <a href="design-partner.html" class="btn btn-primary">Benchmark Your AI Workload</a>
+        <a href="design-partner.html" class="btn btn-secondary">Run a Capital Efficiency Assessment</a>
+        <a href="whitepaper.html" class="btn btn-ghost">Architecture Research &rarr;</a>
         <a href="security.html" class="btn btn-ghost">Security Architecture &rarr;</a>
       </div>
     </section>
