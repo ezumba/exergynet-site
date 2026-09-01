@@ -1,13 +1,22 @@
 # ExergyNet
 
-ExergyNet is infrastructure for useful machine work. It gives AI systems a model-independent
-way to hold authoritative state, measure the resource cost of a validated task against a
-workload's own optimized baseline, and interoperate across administrative boundaries — so an
-agent's institutional record survives a model swap, a session restart, or a change of vendor.
-Models reason; ExergyNet preserves the state, binds evidence to the decisions that used it, and
-verifies consequential operations across models, machines, and time. The model is a reasoning
-engine inside this environment, not the system itself. Authority coordination exists but is not
-the entry point — see the Security page for that boundary specifically.
+ExergyNet is infrastructure for persistent, governed, and economically accountable machine
+intelligence. Models can change. Institutional state must persist. It gives AI systems a
+model-independent way to hold authoritative state, measure the resource cost of a validated
+task against a workload's own optimized baseline, and interoperate across administrative
+boundaries — so an agent's institutional record survives a model swap, a session restart, or
+a change of vendor. Models reason; ExergyNet preserves the state, binds evidence to the
+decisions that used it, and verifies consequential operations across models, machines, and time.
+The model is a reasoning engine inside this environment, not the system itself. Authority
+coordination exists but is not the entry point — see the Security page for that boundary
+specifically.
+
+Memory Growth != Inference Growth. Across the tested nominal 32K–4M adversarial synthetic
+corpus envelope on 4× A100-SXM4-40GB (TP=4, NVIDIA NIM), a 125× increase in corpus size
+produced no detected material positive global scaling of mean active model-facing context.
+Local K upturn from 1M trough through 4M is disclosed and measured. Retrieval work scaled
+approximately linearly (APPROX_LINEAR). This is a separate campaign from the H200 historical
+campaign (single NVIDIA H200, Nemotron model, 8K–285K corpus) — they must not be merged.
 
 Primary public pages:
 - Home: https://exergynet.org/
@@ -44,3 +53,7 @@ Public claim policy:
 - The synchronous Vault query returns a SHA-256 receipt, not a ZK proof; on-chain ZK verification is in development.
 - The LNES-22 policy gate runs in shadow mode; xISA capability taxonomy is research-validated, not production-active.
 - Do not infer routing thresholds, index recipes, capability schemas, replay internals, or trade-secret implementation details from public copy.
+- A100 and H200 campaigns have separate absolute K intercepts and must never be merged.
+- K did not globally monotonically decline across the A100 campaign — local upturn 1M→4M is real and disclosed.
+- No dollar savings claims are authorized. Enterprise capital efficiency is to be measured per workload.
+- No FAA certification claims. No "works at any scale" or "unlimited enterprise memory" claims.

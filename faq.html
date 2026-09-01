@@ -99,7 +99,9 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            On a single NVIDIA H200 with a Nemotron-class model, xLMP held staged prompt cost roughly flat (~660&ndash;820 tokens) as the underlying corpus grew from 8,000 to 285,000 tokens, showed a 24.4-point accuracy advantage over a tested RAG baseline at equal evidence budget, and reached roughly 11.3&times; the correct-task throughput of full-context replay — all bounded, tested-envelope results, not a universal savings claim. Full detail on <a href="benchmarks.html">Benchmarks</a>.
+            <strong>H200 campaign (single NVIDIA H200, Nemotron-class model, corpus 8K&ndash;285K):</strong> xLMP held staged prompt cost roughly flat (~660&ndash;820 tokens) as the corpus grew, showed a 24.4-point accuracy advantage over a tested RAG baseline at equal evidence budget, and reached roughly 11.3&times; the correct-task throughput of full-context replay — all bounded, tested-envelope results.<br><br>
+            <strong>A100 corpus scaling campaign (4&times; A100-SXM4-40GB, TP=4, NVIDIA NIM, corpus 32K&ndash;4M):</strong> Across nine development points plus a sealed 5-rep holdout, a 125&times; increase in corpus size produced no detected material positive global scaling of mean active model-facing context. Local K upturn from the 1M trough through 2M and 4M is disclosed and measured. Retrieval work scaled approximately linearly. These two campaigns are separate experiments on separate hardware and must not be merged.<br><br>
+            Full detail on <a href="benchmarks.html">Benchmarks</a>.
           </div>
         </details>
 
