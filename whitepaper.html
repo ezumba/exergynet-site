@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>White Paper (Preview) — Infrastructure for Useful Machine Work | ExergyNet</title>
+<title>Bounded Inference Context — ExergyNet Research</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="ExergyNet: Infrastructure for Useful Machine Work. Model-independent state and measured efficiency for AI systems that must persist across models, sessions, and organizations. Preview of the full architecture paper.">
-<meta property="og:title" content="White Paper (Preview) — ExergyNet: Infrastructure for Useful Machine Work">
-<meta property="og:description" content="Model-independent state and measured efficiency for AI systems that must persist across models, sessions, and organizations.">
+<meta name="description" content="ExergyNet research: bounded inference context across two campaigns — H200 (8K–285K corpus, 11.3× throughput, 660–820 active tokens) and A100 (32K–4M, 125× corpus growth, no detected material positive global scaling of mean K). Models can change. Institutional state must persist.">
+<meta property="og:title" content="Bounded Inference Context — ExergyNet Research">
+<meta property="og:description" content="H200 and A100 corpus scaling campaigns. 125× corpus growth tested on A100. No detected material positive global scaling of mean active model-facing context through 4M tokens. Memory Growth does not equal Inference Growth.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org/whitepaper.html">
 <link rel="canonical" href="https://exergynet.org/whitepaper.html">
@@ -22,6 +22,13 @@
   document.documentElement.setAttribute('data-theme', t);
 })();
 </script>
+<style>
+  .quiet-callout{border-left:3px solid var(--accent);background:var(--accent-dim);padding:1.25rem 1.35rem;border-radius:0 var(--radius) var(--radius) 0;color:var(--text-soft);line-height:1.7;}
+  .claim-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;margin-top:1rem;}
+  .claim-meta span{border:1px solid var(--border);border-radius:6px;padding:.55rem;font-family:var(--mono);font-size:10px;color:var(--text-soft);line-height:1.4;}
+  .claim-meta strong{display:block;color:var(--text);font-family:var(--display);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;}
+  .warning-card{border-color:rgba(255,184,48,.35)!important;background:rgba(255,184,48,.06)!important;}
+</style>
 </head>
 <body>
 <canvas id="circuit-canvas"></canvas>
@@ -54,11 +61,97 @@
       <p style="max-width:820px; color:var(--text-soft); line-height:1.8;">AI models are becoming more capable and more substitutable at the same time — new models arrive quarterly, and the cost of a single inference call keeps falling. What has not fallen at the same rate is the cost of everything a persistent, multi-step, multi-agent system must do around that call: reconstructing state, re-fetching evidence, coordinating across models and organizations. ExergyNet's first question is economic, not architectural — can a system reduce the resource cost of a validated useful task, measured against a workload's own optimized baseline, without requiring a different model or cloud? Efficiency alone is not the product: <strong>models can change, but institutional state must persist.</strong> ExergyNet is model-independent infrastructure built to hold that requirement, reporting its architecture, its measured results within their tested envelopes, and the research frontier that remains open.</p>
     </section>
 
-    <!-- USEFUL WORK -->
+    <!-- USEFUL WORK: H200 Campaign -->
     <section style="margin-bottom:3rem;">
-      <div class="section-label">1 &middot; Useful Work</div>
+      <div class="section-label">1 &middot; Useful Work — H200 Campaign</div>
       <h2>A measurement layer, before the architecture.</h2>
-      <p style="max-width:820px; color:var(--text-soft); line-height:1.7;">The correct denominator for efficiency is the resource cost of a qualified successful task, not raw tokens. On a single NVIDIA H200 with a Nemotron-class model, xLMP held staged prompt cost roughly flat at ~660&ndash;820 tokens as the underlying corpus grew from 8,000 to 285,000 tokens, delivered a 24.4-point accuracy advantage over a tested RAG baseline at equal evidence budget, and reached roughly 11.3&times; the correct-task throughput of full-context replay at each method's best compliant load. These are bounded, tested-envelope results reported as such — not a universal savings claim.</p>
+      <p style="max-width:820px; color:var(--text-soft); line-height:1.7;"><strong>Hardware: single NVIDIA H200, Nemotron-class model.</strong> On this hardware, xLMP held staged prompt cost roughly flat at ~660&ndash;820 tokens as the underlying corpus grew from 8,000 to 285,000 tokens, delivered a 24.4-point accuracy advantage over a tested RAG baseline at equal evidence budget, and reached roughly 11.3&times; the correct-task throughput of full-context replay at each method's best compliant load. These are bounded, tested-envelope results reported as such — not a universal savings claim. This campaign is distinct from the A100 campaign below; absolute K intercepts differ by hardware and must not be merged.</p>
+    </section>
+
+    <!-- A100 CORPUS SCALING -->
+    <section style="margin-bottom:3rem; padding:2rem; border:1px solid var(--border-mid); border-radius:var(--radius-lg); background:var(--bg-card);">
+      <div class="section-label">1b &middot; A100 Corpus Scaling Campaign: 32K &rarr; 4M</div>
+      <h2>Memory Growth &ne; Inference Growth</h2>
+      <p style="max-width:820px; color:var(--text-soft); line-height:1.7; margin-bottom:1.5rem;"><strong>Hardware: 4&times; NVIDIA A100-SXM4-40GB, TP=4, NVIDIA NIM.</strong> This campaign measured mean active model-facing context (K) across a 125&times; corpus size increase using adversarial synthetic corpora. It is a separate experiment from the H200 campaign and must not be merged with it.</p>
+
+      <div class="quiet-callout" style="margin-bottom:1.5rem;">
+        <strong>Canonical statement:</strong> Across the tested nominal 32K&ndash;4M adversarial synthetic corpus envelope, a 125&times; increase in corpus size produced no detected material positive global scaling of mean active model-facing context.
+      </div>
+
+      <h3 style="margin-bottom:.75rem;">Nine Development Points</h3>
+      <div style="overflow-x:auto; margin-bottom:1.5rem;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px; max-width:520px;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border-mid);">
+              <th style="text-align:left; padding:.65rem 1rem; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint);">N</th>
+              <th style="text-align:right; padding:.65rem 1rem; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint);">Mean K</th>
+              <th style="text-align:right; padding:.65rem 1rem; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint);">Accuracy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">32K</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono);">907.95</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">45.3%</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">64K</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono);">876.91</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">40.0%</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">128K</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono);">817.27</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">45.8%</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">285K</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono);">878.81</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">40.5%</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">384K</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono);">897.91</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">41.6%</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">500K</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono);">877.66</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">40.0%</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">1M</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono);">763.86</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">42.6%</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:.55rem 1rem;">2M</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono);">816.47</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft);">45.3%</td></tr>
+            <tr><td style="padding:.55rem 1rem; font-weight:700;">4M</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); font-weight:700;">901.65</td><td style="padding:.55rem 1rem; text-align:right; font-family:var(--mono); color:var(--text-soft); font-weight:700;">46.3%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-bottom:.75rem;">Sealed 4M Holdout — Five Replications</h3>
+      <div class="claim-meta" style="margin-bottom:1.5rem;">
+        <span><strong>Mean K</strong>902.81</span>
+        <span><strong>Median K</strong>925</span>
+        <span><strong>P95 K</strong>972</span>
+        <span><strong>Accuracy</strong>45.3%</span>
+        <span><strong>Mismatches</strong>0 / 190</span>
+      </div>
+
+      <h3 style="margin-bottom:.75rem;">Nine-Point Regression</h3>
+      <p style="font-size:14px; color:var(--text-soft); margin-bottom:1.5rem;">K = 859.10 + (7.83&times;10<sup>&minus;7</sup>)N &nbsp;&mdash;&nbsp; R<sup>2</sup> = 0.0004 &nbsp;&mdash;&nbsp; Slope 95% CI includes zero. No statistically detected global linear relationship between corpus size and mean K.</p>
+
+      <div class="card warning-card" style="margin-bottom:1.5rem;">
+        <div style="font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--amber,#ffb830); margin-bottom:.6rem;">K_LOCAL_UPTURN_CONTINUES — Disclosed</div>
+        <p style="font-size:14px; color:var(--text-soft); margin:0 0 .75rem;">Active context increased locally from the 1M trough through 2M and 4M, but the 4M mean remained inside the historical 32K&ndash;4M observed context envelope and near the original 32K level. This is a real measured phenomenon, disclosed not hidden.</p>
+        <div class="claim-meta">
+          <span><strong>1M &rarr; 2M</strong>&Delta;K = +52.61</span>
+          <span><strong>2M &rarr; 4M</strong>&Delta;K = +85.18; bootstrap 95% CI [+74.91, +95.08]</span>
+          <span><strong>Matched queries increased</strong>176 / 190</span>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom:.75rem;">Retrieval Work (C<sub>R</sub>) and GPU Utilization</h3>
+      <div class="claim-meta" style="margin-bottom:.75rem;">
+        <span><strong>500K</strong>C<sub>R</sub> = 2.861s</span>
+        <span><strong>1M</strong>C<sub>R</sub> = 5.683s</span>
+        <span><strong>2M</strong>C<sub>R</sub> = 11.283s</span>
+        <span><strong>4M</strong>C<sub>R</sub> = 19.772s</span>
+        <span><strong>Classification</strong>APPROX_LINEAR</span>
+      </div>
+      <div class="claim-meta" style="margin-bottom:1rem;">
+        <span><strong>GPU mean (full run)</strong>2.0%</span>
+        <span><strong>GPU median</strong>0%</span>
+        <span><strong>GPU peak</strong>100%</span>
+        <span><strong>Mean power</strong>62.7W</span>
+      </div>
+      <p style="font-size:14px; color:var(--text-soft); margin-bottom:1.5rem;">At 4M, accelerator execution occurred in bursts while the frozen CPU-side resolver dominated the surrounding wall-clock workload, exposing state resolution as a major infrastructure optimization target.</p>
+
+      <div class="card" style="background:var(--bg); border-color:var(--border-mid);">
+        <div style="font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:.75rem;">Three-Axis Summary: K / Q / C<sub>R</sub></div>
+        <div class="claim-meta">
+          <span><strong>K (active context)</strong>No detected material positive global scaling across 32K&ndash;4M. Local upturn 1M&rarr;4M disclosed.</span>
+          <span><strong>Q (accuracy)</strong>Oscillates 40.0%&ndash;46.3%. No global monotonic trend.</span>
+          <span><strong>C<sub>R</sub> (retrieval work)</strong>Approximately linear. State resolution is the dominant scaling pressure.</span>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:1.25rem;">
+        <a href="benchmarks.html#corpus-scaling" class="btn btn-primary">Full A100 Evidence &rarr;</a>
+      </div>
     </section>
 
     <!-- STATE -->
