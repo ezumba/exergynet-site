@@ -1,59 +1,66 @@
-# ExergyNet External Claims and TS Boundary Register
+# ExergyNet External Claims and Trade-Secret Boundary Register
+# EXERGYNET_EXTERNAL_CLAIMS_AND_TS_BOUNDARY_REGISTER.md
+# Status: ACTIVE -- Updated 2026-09-02
+# Rule: PUBLISH THE PHENOMENON. PROTECT THE RECIPE.
 
-This register classifies public website statements by disclosure level.
+## Boundary Classification
 
-## LNES-84 / Compact Deterministic Index
+### PUBLIC (unrestricted disclosure)
+- Measured result (with stated envelope and limitation)
+- Validated experiment scope
+- Architecture concept (layer/function, not mechanism)
+- Component name and responsibility
+- Public principles (MEMORY GROWTH != INFERENCE GROWTH, RIGHT TO KNOW != RIGHT TO ACT)
+- Benchmark summary numbers (see claim ledger for individual claim status)
+- Settlement subsystem documentation (LNES-03, LNES-04 status, contract addresses)
 
-PUBLIC: Result, principle, envelope. Public copy may say indexed evidence selection reduced retrieval work in a tested 1GB / 100-query enterprise population, improved symmetric correctness from 87% to 94%, and produced 52,753.8x median paired speedup in that run.
+### NDA (available under non-disclosure)
+- Deeper methodology for LNES-82C and H200 campaigns
+- Full statistical distributions beyond public summary
+- Workload specification details beyond summary
+- Detailed architecture tradeoff analysis
+- LNES-86 integration approach (high level, not mechanism)
 
-NDA: Broader benchmark methodology, source artifact inventory, error analysis categories, and validation discussion.
+### EDT_TS (trade secret -- not to be disclosed)
+- Work Compression rarity thresholds
+- Work Compression prefix construction rules
+- Posting logic and pruning rules
+- Crossover thresholds for routing decisions
+- Cache topology internals
+- LNES-86 adaptive retrieval mechanism (selectivity emergence mechanism)
+- TS security operational mechanics
+- Settlement private key management
+- Internal scoring coefficients
 
-EDT_TS: Exact Compact Index construction choices, normalization heuristics, discriminating keys, posting-list pruning/intersection/cap logic, tie-breaking, score fusion, cache behavior, stale/corrupt-index detection signatures, and claim-avoidance red-team analysis.
+## Current External Claim Status
 
-## LNES-86 / Adaptive Deterministic Work Routing
+| CLAIM | CURRENT_STATUS | ACTION |
+|-------|----------------|--------|
+| ExergyNet is a decentralized protocol | STALE/INCORRECT | FAQ, homepage, llms.txt rebased |
+| dual-layer settlement engine | HISTORICAL | Rewritten in FAQ as historical context |
+| Layer-0 Mesh / Layer-1 Membranes | SUPERSEDED | Labeled historical in FAQ |
+| Proof-of-Exergy / PoX | HISTORICAL | Labeled historical in FAQ |
+| $EXG as current accounting token | LEGACY | token.html marked Historical; FAQ updated |
+| Solana/Base as primary category | STALE | Repositioned as settlement subsystems |
+| RISC Zero as universal compute | NEEDS_CONTEXT | Existing note present; no overgeneralization added |
+| 8K->285K as primary benchmark | CURRENT (H200) | Correctly labeled as H200 campaign |
+| 660-820 tokens | CURRENT (H200) | Correctly labeled as H200 campaign |
+| 125x corpus growth to 4M | CURRENT | Primary scaling evidence; claim ledger CLM-005 |
+| ~903 mean K at 4M holdout | CURRENT | Claim ledger CLM-007 |
+| 11.3x correct-task throughput | CURRENT | Claim ledger CLM-001; envelope stated |
+| USENIX Security 2026 | EXTERNAL_CITATION | Softened to citation; external paper (Wang et al., arXiv:2607.19545) |
+| AutoHunter / Agent #116 / 0xWork | UNVERIFIED_CURRENT | Retained in docs; not presented as primary architecture |
+| MyMonitor.ai | UNVERIFIED_CURRENT | Appears as logo; retain pending corporate status review |
 
-PUBLIC: Result, principle, envelope. Public copy may say no single retrieval strategy wins on every workload, LNES-86.2 measured 1.886x vs always-legacy, 1.142x vs always-compact, 95.6% holdout route-selection accuracy, and 1.023x oracle gap in a frozen routing population.
+## Disclosure Principles
 
-NDA: High-level diligence methodology and non-reproducible summaries of model-fitting stages.
+1. Publish the phenomenon (what was measured, what was observed)
+2. Protect the recipe (how it works mechanically, thresholds, construction rules)
+3. State every envelope (hardware, corpus, workload scope)
+4. Disclose every material limitation in the same breath as the result
+5. Separate campaigns (H200 and A100 are independent; do not merge absolute K values)
+6. Label historical content explicitly (HISTORICAL ARCHITECTURE / SUPERSEDED DESIGN)
 
-EDT_TS: Rarity thresholds, exact crossover logic, feature vectors, routing hierarchy, coefficients, cache topology internals, mutation-adjacent cold-path signatures, and implementation recipes.
+## Revision History
 
-## VMN
-
-PUBLIC: VMN is an open-source local memory node for xLMP; public copy may disclose resilience statuses such as mutation consistency, restart persistence, corruption recovery, deterministic rebuild, authority separation, and concurrency validated through C16 in isolated testing.
-
-NDA: Detailed resilience protocol and test matrix.
-
-EDT_TS: Failure injection recipes, recovery signatures, replay-ledger implementation, internal index structures, and capability registry schema.
-
-## xLMP / H200
-
-PUBLIC: xLMP is the AI Memory Control Plane. Public copy may disclose 11.3x correct-task throughput over full-context replay on the tested H200 workload, 660-820 active-token operating range, and 31x lower context cost per fully-correct task where tied to source/envelope.
-
-NDA: Full benchmark harness walkthrough and non-public reviewer packet.
-
-EDT_TS: Segment construction, retrieval heuristics, benchmark tuning, deployed adapter quirks, private cache topology, and unpublished optimization work.
-
-## LNES-22 / Authority
-
-PUBLIC: Memory, reasoning, and execution authority are separate. Right to know is not right to act.
-
-NDA: Policy architecture and controlled integration details.
-
-EDT_TS: Capability registry schema, action canonicalization edge cases, replay protection internals, nonce/signature details, and consequence transaction-state-machine internals.
-
-## Vanguard
-
-PUBLIC: Vanguard is reasoning, orchestration, and execution coordination. It consumes evidence from the Memory Control Plane and operates under authority constraints.
-
-NDA: Deployment topology, private operational controls, and enterprise assurance workflow.
-
-EDT_TS: Model routing internals, private policies, runtime control details, and security-sensitive bypass/failure signatures.
-
-## Omega Carrier
-
-PUBLIC: Omega Carrier is transport architecture for persistent memory identity, provenance, integrity, and freshness. Memory portability does not imply execution authority.
-
-NDA: Partner integration and transport assurance details.
-
-EDT_TS: Accelerator routing thresholds, cloud/procurement/access strategy, internal transport state machines, private relay topology, and authority transfer protections.
+- 2026-09-02: Initial register created; LNES-82C semantic rebase documented

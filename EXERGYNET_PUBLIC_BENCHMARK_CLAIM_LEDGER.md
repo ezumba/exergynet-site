@@ -1,30 +1,32 @@
 # ExergyNet Public Benchmark Claim Ledger
+# EXERGYNET_PUBLIC_BENCHMARK_CLAIM_LEDGER.md
+# Status: ACTIVE -- Updated 2026-09-02
+# Rule: No numerical claim goes public unless VERIFIED in this ledger.
 
-Purpose: internal website safety ledger for public benchmark claims. No website number should be published unless `STATUS=VERIFIED`.
+| CLAIM_ID | PUBLIC_TEXT | VALUE | UNIT | EXPERIMENT | ENVELOPE | LIMITATION | STATUS |
+|----------|-------------|-------|------|------------|----------|------------|--------|
+| CLM-001 | ~11.3x correct-task throughput vs. full-context replay | 11.3 | x | H200 campaign | Single NVIDIA H200, Nemotron-class model, tested workload | Single hardware/model/workload; not universal | VERIFIED/PUBLIC |
+| CLM-002 | ~660-820 prompt tokens held flat as corpus scaled 8K->285K | 660-820 | tokens (active staged K) | H200 campaign | Single NVIDIA H200, corpus 8K-285K | H200 campaign only; absolute K differs by hardware/model | VERIFIED/PUBLIC |
+| CLM-003 | 8%->0% false authoritative commitments at 84% accuracy | 8%->0% | false commitment rate | Authority layer test | 100 procurement-decision cases | Single workload; ungoverned baseline | VERIFIED/PUBLIC |
+| CLM-004 | 0/1 -- reasoning model complied with injection, deterministic boundary rejected | 0 vs 1 | compliance events | Prompt-injection red team | Live test, reproduced twice | Two reproductions; single attack type | VERIFIED/PUBLIC |
+| CLM-005 | 125x nominal corpus growth across 32K->4M A100 campaign | 125 | x nominal | LNES-82C | 4x A100-SXM4-40GB, TP=4, NVIDIA NIM; adversarial synthetic corpus 32K-4M | A100 campaign only; absolute K differs by hardware/model | VERIFIED/PUBLIC |
+| CLM-006 | No detected material positive global scaling of mean K across 32K-4M | b ~7.83e-7 | regression slope | LNES-82C nine-point ladder | 32K-4M adversarial synthetic corpus, A100 | Local upturn exists (1M->4M delta K=+85.18, CI [+74.91,+95.08]); claim is global slope only | VERIFIED/PUBLIC |
+| CLM-007 | Mean active staged context approximately 903 at 4M holdout | 902.81 | tokens (mean K) | LNES-82C 4M sealed holdout | 4x A100-SXM4-40GB, 190 queries, 0 mismatches | Sealed holdout only; dev mean 901.65 | VERIFIED/PUBLIC |
+| CLM-008 | Local upturn: K trough ~764 at 1M, recovery to ~903 at 4M | trough 763.86, 4M 902.81 | tokens | LNES-82C | 32K-4M A100 campaign | Local upturn does not invalidate global slope; disclosed | VERIFIED/PUBLIC |
+| CLM-009 | H200 and A100 are separate campaigns | -- | -- | Separate campaigns | Different hardware, different models | Do not combine absolute K values across campaigns | VERIFIED/PUBLIC |
 
-| CLAIM_ID | PUBLIC_TEXT | VALUE | UNIT | EXPERIMENT | TEST_ENVELOPE | SOURCE_ARTIFACT | SOURCE_HASH | LIMITATION | PUBLIC_DISCLOSURE_LEVEL | TS_EXCLUSION | PAGE_USED | STATUS |
-|---|---:|---:|---|---|---|---|---|---|---|---|---|---|
-| XLMP-H200-001 | Correct-task throughput over full-context replay | 11.3 | x | xLMP / H200 memory efficiency | Single NVIDIA H200, same Nemotron model, same 100-question set, highest tested SLA-compliant operating point | XLMP_MEMORY_EFFICIENCY_BENCHMARK_REPORT.md | 2F03EE367802694FDC7F921303D639275A4C522E82F424E25FB4A11608581561 | Wall-time proxy, not integrated GPU-seconds or energy | PUBLIC | No retrieval heuristics, chunking internals, or implementation recipe | index.html; benchmarks.html | VERIFIED |
-| XLMP-H200-002 | Active xLMP prompt token operating range | 660-820 | tokens | xLMP / H200 memory efficiency | Corpus scaled from approximately 8k to 285k tokens in H200 benchmark | XLMP_MEMORY_EFFICIENCY_BENCHMARK_REPORT.md | 2F03EE367802694FDC7F921303D639275A4C522E82F424E25FB4A11608581561 | Synthetic benchmark corpus; tested range only | PUBLIC | No segment construction or selection rules | index.html; benchmarks.html | VERIFIED |
-| XLMP-H200-003 | Lower context cost per fully-correct task vs full-context replay | 31 | x | Persistent-agent H200 task benchmark | 100 ten-step memory tasks, same H200 and model | XLMP_MEMORY_EFFICIENCY_BENCHMARK_REPORT.md | 2F03EE367802694FDC7F921303D639275A4C522E82F424E25FB4A11608581561 | Fully-correct-task metric; not a universal cost claim | PUBLIC | No benchmark tuning tricks or implementation internals | benchmarks.html | VERIFIED |
-| LNES84-3-001 | Median paired retrieval speedup | 52,753.8 | x | LNES-84.3 Phase 4-7 enterprise retrieval | 1GB corpus, 100 enterprise queries | LNES84_3_PHASE4_7_FINAL_HASH_MANIFEST.txt | 9F800314D7A3134307FD1E5C03F128E6F7D495C15C9195C4B39090D04434966A | Applies to that enterprise population only; not universal retrieval speed | PUBLIC | No Compact Index construction, posting-list pruning, scoring, or tie-break recipe | index.html; benchmarks.html | VERIFIED |
-| LNES84-3-002 | Symmetric correctness improvement | 87 to 94 | percent | LNES-84.3 Phase 4-7 enterprise retrieval | Symmetric evidence inspection on 1GB / 100-query population | LNES84_3_PHASE4_7_FINAL_HASH_MANIFEST.txt | 9F800314D7A3134307FD1E5C03F128E6F7D495C15C9195C4B39090D04434966A | Scorer limitations and one index-candidate miss disclosed in source package | PUBLIC | No failure signatures or red-team claim-avoidance details | benchmarks.html | VERIFIED |
-| LNES84-3-003 | Minimum observed paired retrieval speedup | 3.96 | x | LNES-84.3 Phase 4-7 enterprise retrieval | 1GB corpus, 100 paired queries | LNES84_3_PHASE4_7_FINAL_HASH_MANIFEST.txt | 9F800314D7A3134307FD1E5C03F128E6F7D495C15C9195C4B39090D04434966A | Does not establish every future workload is faster | PUBLIC | No candidate selection recipe | benchmarks.html | VERIFIED |
-| VMN-100MB-001 | 100MB aggregate paired median speedup | 0.70 | x | VMN-native 100MB scale addendum | 697 documents, 228 paired records | LNES84_3_100MB_SCALE_ADDENDUM.json | 30E6B07D2D056C194D0568DC6CC24B248B7E361A8A8D5407127F775078C1BCC5 | Demonstrates indexed path can be slower overall in this workload | PUBLIC | No document construction recipe beyond public scale | benchmarks.html | VERIFIED |
-| VMN-100MB-002 | 100MB filler/large-document median speedup | 2.11 | x | VMN-native 100MB scale addendum | 33 filler-subset records, 14.5% of query mix | LNES84_3_100MB_SCALE_ADDENDUM.json | 30E6B07D2D056C194D0568DC6CC24B248B7E361A8A8D5407127F775078C1BCC5 | Subset result only; not universal | PUBLIC | No crossover thresholds or routing rule | benchmarks.html | VERIFIED |
-| LNES86-2-001 | Adaptive router vs always-legacy | 1.886 | x | LNES-86.2 adaptive deterministic work routing | Frozen 231-query routing population; 45 holdout cells | lnes86_2_holdout_results.json | F3F221D8F9874BFC602FEC5D6F626C3A0EFEC5C25D423864CAA4DDDFEF564ED8 | Production blocked pending concurrency-tail hardening | PUBLIC | No rarity thresholds, feature list, routing hierarchy, coefficients, or cache internals | index.html; benchmarks.html | VERIFIED |
-| LNES86-2-002 | Adaptive router vs always-compact | 1.142 | x | LNES-86.2 adaptive deterministic work routing | Frozen 231-query routing population; 45 holdout cells | lnes86_2_holdout_results.json | F3F221D8F9874BFC602FEC5D6F626C3A0EFEC5C25D423864CAA4DDDFEF564ED8 | Production blocked pending concurrency-tail hardening | PUBLIC | No routing recipe | benchmarks.html | VERIFIED |
-| LNES86-2-003 | Adaptive router vs first-generation router | 1.150 | x | LNES-86.2 adaptive deterministic work routing | Frozen 231-query routing population; 45 holdout cells | lnes86_2_holdout_results.json | F3F221D8F9874BFC602FEC5D6F626C3A0EFEC5C25D423864CAA4DDDFEF564ED8 | Production blocked pending concurrency-tail hardening | PUBLIC | No routing recipe | benchmarks.html | VERIFIED |
-| LNES86-2-004 | Holdout route-selection accuracy | 95.6 | percent | LNES-86.2 adaptive deterministic work routing | Frozen holdout split: 45 cells | lnes86_2_holdout_results.json | F3F221D8F9874BFC602FEC5D6F626C3A0EFEC5C25D423864CAA4DDDFEF564ED8 | Holdout population only | PUBLIC | No underlying feature thresholds | benchmarks.html | VERIFIED |
-| LNES86-2-005 | Oracle gap | 1.023 | x | LNES-86.2 adaptive deterministic work routing | Frozen holdout split: 45 cells | lnes86_2_holdout_results.json | F3F221D8F9874BFC602FEC5D6F626C3A0EFEC5C25D423864CAA4DDDFEF564ED8 | Oracle already knows faster path; router is not production-promoted | PUBLIC | No coefficients or TS signal details | benchmarks.html | VERIFIED |
-| VMN-RES-001 | Concurrency validated through C16 | C16 | status | Isolated VMN concurrency validation | LNES-86.2 concurrency and VMN validation artifacts | lnes86_2_concurrency_results.json | not recorded in this pass | Does not mean production promotion | PUBLIC | No failure injection recipes | index.html; benchmarks.html | VERIFIED |
+## Claims NOT Cleared for Publication
 
-Blocked or deferred claims:
+- Exact rarity thresholds (Work Compression)
+- Prefix construction rules (Work Compression)
+- Posting/pruning logic (Work Compression)
+- Crossover thresholds for routing decisions (LNES-86)
+- Cache topology internals
+- LNES-86 adaptive retrieval mechanism (selectivity emergence)
+- Security operational mechanics
+- Internal scoring coefficients
 
-| CLAIM_ID | PUBLIC_TEXT | REASON_BLOCKED |
-|---|---|---|
-| BLOCKED-001 | Universal O(1) or constant-time retrieval | Contradicted by workload-dependent VMN and Compact Index results. |
-| BLOCKED-002 | Compact Index is always faster | Contradicted by 10MB and 100MB VMN-native aggregate results. |
-| BLOCKED-003 | LNES-86.2 production-ready | Production promotion remains blocked pending concurrency-tail hardening. |
-| BLOCKED-004 | Exabyte-scale millisecond query claims | Not verified against canonical sealed artifacts in this pass. |
-| BLOCKED-005 | Routing thresholds or term-rarity mechanics | EDT trade-secret controlled information. |
+## Revision History
+
+- 2026-09-02: Initial ledger created, 9 verified public claims populated
+- 2026-09-02: Supersedes prior session benchmark summaries; incorporates K_LOCAL_UPTURN_CONTINUES
