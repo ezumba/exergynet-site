@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ExergyNet — Infrastructure for Persistent Machine Intelligence</title>
+<title>ExergyNet — AI Memory Control Plane</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="ExergyNet is infrastructure for persistent, governed, and economically accountable machine intelligence. Models can change. Institutional state must persist.">
-<meta name="keywords" content="ExergyNet, useful machine work, model-independent state, persistent AI memory, authoritative state, AI infrastructure efficiency, interoperability, Consequence Boundary, xLMP, Exergy Vault, Vanguard, VMN, MCP">
-<meta property="og:title" content="ExergyNet — Infrastructure for Persistent Machine Intelligence">
-<meta property="og:description" content="ExergyNet is infrastructure for persistent, governed, and economically accountable machine intelligence. Models can change. Institutional state must persist.">
+<meta name="description" content="ExergyNet is an AI Memory Control Plane for persistent and autonomous AI systems. It separates accumulated memory from active model context, reduces unnecessary retrieval and inference work, preserves evidence, and keeps execution authority independent of the model.">
+<meta name="keywords" content="ExergyNet, AI Memory Control Plane, persistent AI memory, work compression, LNES-22 authority control, model-independent state, authoritative state, xLMP, Exergy Vault, Vanguard, VMN, MCP, Omega Carrier, bounded evidence">
+<meta property="og:title" content="ExergyNet — AI Memory Control Plane">
+<meta property="og:description" content="ExergyNet is an AI Memory Control Plane for persistent and autonomous AI systems. It separates accumulated memory from active model context, reduces unnecessary work, preserves evidence, and keeps execution authority independent of the model.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ExergyNet — Infrastructure for Persistent Machine Intelligence">
-<meta name="twitter:description" content="Persistent, governed, model-independent infrastructure for machine intelligence. 125× corpus growth tested. No detected material positive global scaling of mean active model-facing context through 4M tokens.">
+<meta name="twitter:title" content="ExergyNet — AI Memory Control Plane">
+<meta name="twitter:description" content="AI Memory Control Plane for persistent and autonomous AI. 125× corpus growth tested across 32K→4M. Mean active staged context ~903 tokens at 4M holdout. Models can change. Institutional state must persist.">
 <link rel="canonical" href="https://exergynet.org/">
 <link rel="stylesheet" href="style.css">
 <script>
@@ -78,7 +78,7 @@
   "@type": "Organization",
   "name": "ExergyNet",
   "url": "https://exergynet.org",
-  "description": "ExergyNet is infrastructure for persistent, governed, and economically accountable machine intelligence. Models can change. Institutional state must persist."
+  "description": "ExergyNet is an AI Memory Control Plane for persistent and autonomous AI systems. VMN/xLMP is the persistent memory substrate. Work Compression reduces unnecessary retrieval and inference work. Vanguard coordinates reasoning and model execution. LNES-22 is the Authority Control Plane. Omega Carrier provides agent economic and transport control. Settlement and cryptographic proof systems are supporting subsystems."
 }
 </script>
 </head>
@@ -99,7 +99,7 @@
       <div class="container-wide">
         <div class="home-hero-grid">
           <div>
-            <div class="hero-eyebrow"><span class="dot"></span>Infrastructure for Persistent Machine Intelligence</div>
+            <div class="hero-eyebrow"><span class="dot"></span>AI Memory Control Plane</div>
             <h1>Infrastructure for Persistent Machine Intelligence</h1>
             <p class="hero-sub">Models can change. Institutional state must persist.</p>
             <p style="max-width:640px; color:var(--text-soft); line-height:1.7; margin-bottom:1.25rem;">ExergyNet does not require you to replace your model or your cloud. It gives your organization a persistent, model-independent record of state and evidence, with measured evidence on inference-context scaling across corpus sizes from 32K to 4M tokens.</p>
@@ -135,7 +135,7 @@
             </div>
             <div class="stack-row">
               <div class="stack-key">Authority</div>
-              <div class="stack-value"><strong>Consequence Boundary</strong><br>AI can propose consequences. It should not authorize its own — that authority stays with your institution.</div>
+              <div class="stack-value"><strong>LNES-22 Authority Control Plane</strong><br>Identity, capability, policy, freshness, and transaction state kept as independent checks outside the model. AI proposes. It cannot grant itself authority.</div>
             </div>
           </div>
         </div>
@@ -223,7 +223,10 @@
         <p style="max-width:820px; color:var(--text-soft); margin-bottom:2rem;"><strong>Context</strong> is what's supplied to the model for the current inference. <strong>Memory</strong> is information retained because it may help later reasoning. <strong>Authoritative State</strong> is the externally maintained record of what your system currently treats as canonical — version, source, provenance, authority, permissions, and transition history, where applicable. Provider-native caching and memory systems are commoditizing the first two; ExergyNet's product boundary is the third.</p>
 
         <div class="concept-neq">Memory Growth &ne; Inference Growth</div>
-        <p style="max-width:820px; color:var(--text-soft); margin-bottom:2rem;">Across a tested 32K&ndash;4M adversarial synthetic corpus envelope on 4&times; A100-SXM4-40GB hardware, a 125&times; increase in corpus size produced no detected material positive global scaling of mean active model-facing context. Your knowledge can grow without forcing proportional growth in model-facing context — though the precise relationship is workload-dependent and must be measured, not assumed. <a href="benchmarks.html#corpus-scaling" style="color:var(--accent);">See the A100 campaign evidence &rarr;</a></p>
+        <p style="max-width:820px; color:var(--text-soft); margin-bottom:2rem;">Both the H200 and A100 campaigns, on different hardware and models, show the same structural result: a large increase in persistent corpus size did not produce proportional growth in mean active model-facing context. In the A100 32K&rarr;4M campaign, mean active K ranged from a trough of &sim;764 at 1M tokens to &sim;903 at 4M &mdash; a real local upturn, disclosed, not hidden &mdash; while the global nine-point regression slope remained effectively zero (R&sup2;=0.0004). Absolute K values differ between campaigns because hardware and models differ. The structural claim holds in both. <a href="benchmarks.html#corpus-scaling" style="color:var(--accent);">See the full evidence &rarr;</a></p>
+
+        <div class="concept-neq">Right to Know &ne; Right to Act</div>
+        <p style="max-width:820px; color:var(--text-soft); margin-bottom:2rem;">A model that has access to memory is not thereby authorized to act on what it reads. <strong>Intelligence and authority are architecturally separate in ExergyNet.</strong> The LNES-22 Authority Control Plane enforces identity, capability, policy, freshness, nonce, and transaction state as independent checks placed between a model&rsquo;s reasoning and any system that reasoning can affect. An AI agent should never be able to grant itself authority merely by becoming convinced that an action is legitimate.</p>
 
         <div class="card-grid">
           <div class="card accent-border">
@@ -389,11 +392,11 @@
     <!-- CONSEQUENCE BOUNDARY (Layer 4 - late, not primary CTA) -->
     <section style="padding: 3.5rem 0;">
       <div class="container-wide">
-        <div class="section-label">Machine Authority Control Infrastructure</div>
+        <div class="section-label">LNES-22 Authority Control Plane</div>
         <h2 style="margin-bottom:0.75rem;">AI can propose. It should not authorize itself.</h2>
-        <p style="max-width:780px; color:var(--text-soft); margin-bottom:1.75rem;">The Consequence Boundary is ExergyNet's authorization layer for autonomous agents — an independent identity, capability, freshness, and integrity check placed between an agent's reasoning and any system that reasoning can affect. Authority originates with the institution using ExergyNet; a consequential action is constrained only where the applicable enforcement boundary is actually present and active. Patent pending (U.S. Provisional Application No. 64/134,973). Live-tested against a real prompt-injection red team.</p>
+        <p style="max-width:780px; color:var(--text-soft); margin-bottom:1.75rem;">LNES-22 is ExergyNet&rsquo;s authority control plane for autonomous agents &mdash; an independent check on identity, capability, policy, freshness, nonce, replay state, and transaction state placed between an agent&rsquo;s reasoning and any system that reasoning can affect. Reasoning compromise does not automatically imply authority compromise. A model being convinced an action is legitimate is not sufficient authorization for that action to proceed. Authority originates with the institution using ExergyNet. Patent pending (U.S. Provisional Application No. 64/134,973). Live-tested against a real prompt-injection red team.</p>
         <div class="btn-row">
-          <a href="security.html" class="btn btn-secondary">The Consequence Boundary &rarr;</a>
+          <a href="security.html" class="btn btn-secondary">LNES-22 Authority Architecture &rarr;</a>
           <a href="security.html#verify" class="btn btn-ghost">See the Evidence &rarr;</a>
         </div>
       </div>
@@ -404,12 +407,12 @@
       <div class="container-wide">
         <div class="section-label">Security Research</div>
         <h2>Architectural response to the x402 vulnerability matrix.</h2>
-        <p style="max-width:700px; margin-bottom:2rem; color:var(--text-soft);">Security research accepted for USENIX Security 2026 identifies facilitator-mediated failure modes in x402 deployments. ExergyNet&rsquo;s architectural answer: capital locked before compute, proof verified before settlement, asset authority constrained by contract.</p>
+        <p style="max-width:700px; margin-bottom:2rem; color:var(--text-soft);">Security research (Wang et al., arXiv:2607.19545, submitted July 2026; journal reference: USENIX Security 2026) identifies facilitator-mediated failure modes in x402 deployments. ExergyNet&rsquo;s architectural answer: capital locked before compute, proof verified before settlement, asset authority constrained by contract.</p>
 
         <div class="card accent-border" style="max-width:820px; position:relative; overflow:hidden;">
           <div style="position:absolute; top:0; right:0; padding:0.35rem 0.85rem; background:var(--accent); color:#000; font-family:var(--display); font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; border-bottom-left-radius:var(--radius);">Whitepaper</div>
           <div style="margin-bottom:1rem; margin-top:0.25rem;">
-            <span class="badge badge-green" style="font-size:0.72rem; padding:0.2rem 0.6rem; margin-right:0.5rem;">USENIX 2026</span>
+            <span class="badge badge-blue" style="font-size:0.72rem; padding:0.2rem 0.6rem; margin-right:0.5rem;">arXiv:2607.19545</span>
             <span class="badge badge-blue" style="font-size:0.72rem; padding:0.2rem 0.6rem;">x402 Security</span>
           </div>
           <h3 style="font-size:1.3rem; margin-bottom:0.6rem;">Resolving the x402 Vulnerability Matrix</h3>

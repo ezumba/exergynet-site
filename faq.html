@@ -207,8 +207,9 @@
 
     <!-- NETWORK / ECONOMIC PROTOCOL -->
     <section>
-      <div class="section-label">IV &middot; Network / Economic Protocol</div>
-      <h2>Protocol Mechanics &amp; $EXG</h2>
+      <div class="section-label">IV &middot; Network / Settlement Layer</div>
+      <h2>Protocol Mechanics &mdash; Settlement and Legacy Architecture</h2>
+      <p style="max-width:740px; margin-bottom:1.5rem; color:var(--text-soft); font-size:14px;">ExergyNet is an AI Memory Control Plane. It has optional settlement subsystems (LNES-03 on Solana, LNES-04 on Base L2) for verifiable compute use cases. The questions below describe those subsystems; they are not the primary ExergyNet product category.</p>
 
       <div class="space-y-4">
         <details class="card">
@@ -217,17 +218,18 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            No. ExergyNet is a dual-layer settlement engine. The <strong>Layer-0 Mesh</strong> (physical hardware swarm) generates verifiable truth. The <strong>Layer-1 Membranes</strong> (LNES-03 on Solana + LNES-04 on Base) act as financial clearinghouses that verify proofs and settle capital.
+            No. ExergyNet is an <strong>AI Memory Control Plane</strong> &mdash; infrastructure for persistent and autonomous AI systems. It has optional settlement and proof subsystems (LNES-03 on Solana, LNES-04 on Base L2) for verifiable compute use cases, but these are supporting mechanisms, not ExergyNet&rsquo;s primary category. Settlement and blockchain rails are available where economic finality is needed; they do not define what ExergyNet is. The primary architecture is: Persistent Memory (VMN/xLMP) &rarr; Work Compression &rarr; Bounded Evidence &rarr; Reasoning (Vanguard) &rarr; Authority (LNES-22) &rarr; Consequence &rarr; Settlement where required.
           </div>
         </details>
 
         <details class="card">
           <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
-            What is Proof-of-Exergy (PoX)?
+            What is Proof-of-Exergy (PoX)? <span style="font-size:11px; font-weight:400; color:var(--text-faint); margin-left:0.5rem;">[Historical Architecture]</span>
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            PoX replaces wasteful hashing (PoW) and capital plutocracy (PoS) with hardware-bound, deterministically anchored truth. Compute work executed in a RISC Zero zkVM produces a ZK-STARK proof. Consensus is derived from mathematical verification of useful work — not synthetic effort.
+            <p style="font-size:12px; color:var(--amber,#ffb830); margin-bottom:0.75rem; padding:0.5rem 0.75rem; border-left:3px solid var(--amber,#ffb830); background:rgba(255,184,48,0.05);">HISTORICAL ARCHITECTURE &mdash; Proof-of-Exergy belongs to an earlier ExergyNet architectural generation. The current ExergyNet architecture does not describe its primary operation as a consensus protocol.</p>
+            Proof-of-Exergy (PoX) was an early ExergyNet consensus design in which hardware-bound compute work, verified via ZK-STARK proof (RISC Zero zkVM), replaced synthetic hashing (Proof-of-Work) or capital-staking (Proof-of-Stake) as the proof-of-participation mechanism. See the <a href="protocol.html">Protocol</a> page for historical details and the current architecture overview for the live component map.
           </div>
         </details>
 
@@ -237,17 +239,18 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            Currently 0.002 SOL on LNES-03. Pricing is dynamic and adjusts based on network conditions to ensure reliable settlement while maintaining fair rewards for node operators.
+            Pricing depends on the integration path. The LNES-03 Solana settlement path (under investigation for transaction failures) used 0.002 SOL per cycle. The LNES-04 Base L2 path uses USDC-denominated tolls &mdash; see the <a href="api-integration.html">API Integration</a> guide for current configuration. Vanguard API and Omega Carrier usage is metered through your portal account balance (USDC-denominated). See <a href="proof.html">verification status</a> for current LNES-03 and LNES-04 operational state.
           </div>
         </details>
 
         <details class="card">
           <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
-            What is $EXG and can I buy it?
+            What is $EXG and can I buy it? <span style="font-size:11px; font-weight:400; color:var(--text-faint); margin-left:0.5rem;">[Legacy Token]</span>
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            $EXG is a transient internal accounting token. It is minted when capital is locked and burned upon successful settlement. It is <strong>not tradable</strong> and holds no speculative value. It exists only for the duration of a compute cycle. See <a href="token.html">Token Info</a>.
+            <p style="font-size:12px; color:var(--amber,#ffb830); margin-bottom:0.75rem; padding:0.5rem 0.75rem; border-left:3px solid var(--amber,#ffb830); background:rgba(255,184,48,0.05);">LEGACY TOKEN &mdash; $EXG was the internal accounting token for the LNES-03 Solana settlement subsystem. Current portal economics use USDC-denominated account balances.</p>
+            $EXG was a transient internal accounting token used with the LNES-03 Solana settlement path. It was minted when capital was locked and burned upon successful settlement &mdash; never tradable, no speculative value. The current ExergyNet Portal uses USDC-denominated account balances (micro-USDC) for Vanguard API, Omega Carrier, and agent economics. RHO is the protocol-layer accounting concept for certain settlement pathways &mdash; it is not a stablecoin, not USD-redeemable, and has no canonical market price. See <a href="token.html">Token Info</a> for the historical LNES-03 accounting model.
           </div>
         </details>
 
@@ -257,7 +260,7 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            30% of every toll is routed atomically and instantly to the node operator's Solana/Base wallet upon successful proof verification. No claims, no delays. See <a href="connect.html">Compute Partner Access</a>.
+            In the Solana LNES-03 model, 30% of every toll was routed atomically to the node operator&rsquo;s wallet upon successful proof verification. The Base LNES-04 model uses an equivalent USDC operator split. See the <a href="connect.html">Compute Partner Access</a> page and <a href="proof.html">verification status</a> for current settlement liveness on each path.
           </div>
         </details>
       </div>
