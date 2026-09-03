@@ -165,3 +165,63 @@ But they are supporting mechanisms, not ExergyNet's identity.
 ## Contact
 
 https://exergynet.org/design-partner.html
+
+## MCP Tools Available from ExergyNet
+
+ExergyNet publishes two MCP stdio servers installable via npx. No private key,
+no API key, and no cloud account required for either.
+
+### ExergyNet MCP Server
+npm: exergynet-mcp-server
+MCP Registry: io.github.ezumba/exergynet
+Install: npx -y exergynet-mcp-server
+Glama: https://glama.ai/mcp/servers/ezumba/exergynet-mcp-server
+GitHub: https://github.com/ezumba/exergynet-mcp-server
+
+Tools:
+  exergynet_get_program_id          — Returns LNES-03 Solana program ID. Static, no network.
+  exergynet_verify_program          — Read-only check: LNES-03 program account exists and is executable.
+  exergynet_get_proof_transaction   — Returns reference LNES-03 settlement transaction signature. Static.
+  exergynet_estimate_gate           — Local arithmetic: external compute cost vs settlement cost + margin.
+  exergynet_open_job                — DISABLED. Fail-closed. No signing. No transaction. See security advisory.
+
+Security: No tool in this package holds funds, requests a private key, or submits transactions.
+Security advisory: https://exergynet.org/security.html
+
+### Vanguard Memory Node (VMN)
+npm: @lnes/vanguard-memory-node
+MCP Registry: io.github.ezumba/vanguard-memory-node
+Install: npx -y @lnes/vanguard-memory-node
+GitHub: https://github.com/ezumba/vanguard-memory-node
+Vault default: ~/.vmn/ (override with VMN_VAULT_PATH env var)
+
+VMN is the local, offline-first memory substrate for ExergyNet agents.
+It uses a sharded BM25 inverted index — deterministic retrieval, no embeddings,
+no model drift, no cloud dependency. Content-addressed at SHA-256 per shard.
+
+Tools:
+  vmn_ingest          — Store text as SHA-256 shard with BM25 indexing.
+  vmn_search          — Full-vault keyword search. Deterministic: same query → same ranked result.
+  vmn_recall          — Retrieve evidence windows from a shard by ID.
+  vmn_ingest_file     — Delta-ingest a growing file without re-ingesting old content.
+  vmn_list            — List all memory objects in the vault.
+  vmn_inspect         — Metadata for a specific shard.
+  vmn_delete          — Remove a shard and its index entries.
+  vmn_stats           — Aggregate vault statistics.
+  vmn_index_status    — BM25 index health report.
+  vmn_rebuild_index   — Rebuild the full sharded inverted index from stored shards.
+  vmn_sync_vault      — Sync shards to ExergyNet LNES-17 for on-chain attestation (requires LNES17_API_KEY).
+
+VMN use with any MCP-compatible agent (Claude Desktop, Claude Code, elizaOS, LangChain, Pydantic AI):
+  {"mcpServers": {"vanguard-memory": {"command": "npx", "args": ["-y", "@lnes/vanguard-memory-node"]}}}
+
+## MCP Service Discovery
+
+Machine-readable MCP server manifest for this domain:
+  https://exergynet.org/.well-known/mcp.json
+
+OpenAI plugin manifest (legacy):
+  https://exergynet.org/.well-known/ai-plugin.json
+
+ExergyNet identity document:
+  https://exergynet.org/.well-known/exergynet.json
