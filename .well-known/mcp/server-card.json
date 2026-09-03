@@ -6,5 +6,22 @@
   "iconUrl": "https://exergynet.org/logo.png",
   "documentationUrl": "https://exergynet.org/mcp.html",
   "capabilities": ["persistent_memory", "bounded_evidence_retrieval", "provenance_receipts", "authority_scoped_tools"],
-  "auth": ["ed25519"]
+  "auth": ["ed25519"],
+  "relatedServers": [
+    {
+      "type": "stdio",
+      "name": "ExergyNet MCP Server (read-only Solana lookups)",
+      "npm": "exergynet-mcp-server",
+      "install": "npx -y exergynet-mcp-server",
+      "registry": "io.github.ezumba/exergynet"
+    },
+    {
+      "type": "stdio",
+      "name": "Vanguard Memory Node — local deterministic BM25 memory",
+      "npm": "@lnes/vanguard-memory-node",
+      "install": "npx -y @lnes/vanguard-memory-node",
+      "registry": "io.github.ezumba/vanguard-memory-node"
+    }
+  ],
+  "discovery": "https://exergynet.org/.well-known/mcp.json"
 }
