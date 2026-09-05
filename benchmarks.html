@@ -82,10 +82,11 @@
       <a href="whitepaper.html" class="btn btn-secondary">White Paper (Preview)</a>
     </div>
 
-    <div class="result-strip" aria-label="Executive benchmark results">
+    <div class="result-strip" aria-label="Executive benchmark results" style="grid-template-columns:repeat(5,minmax(0,1fr));">
       <div class="result-cell"><div class="result-value">11.3&times;</div><div class="result-label">Correct-task throughput</div><div class="result-scope">Measured H200 full-context comparison.</div></div>
       <div class="result-cell"><div class="result-value">52,753.8&times;</div><div class="result-label">Median paired retrieval speedup</div><div class="result-scope">Tested 1GB / 100-query enterprise population.</div></div>
       <div class="result-cell"><div class="result-value">1.886&times;</div><div class="result-label">Adaptive router vs always-legacy</div><div class="result-scope">Frozen LNES-86.2 holdout population.</div></div>
+      <div class="result-cell"><div class="result-value">b ≈ 0</div><div class="result-label">N→K scaling slope (32K–10M)</div><div class="result-scope">CI includes zero. Memory growth ≠ inference growth. 5/5 holdout runs deterministic at 10M.</div></div>
       <div class="result-cell"><div class="result-value">C16</div><div class="result-label">Concurrency validated</div><div class="result-scope">Isolated VMN routing and evidence checks.</div></div>
     </div>
   </div>
@@ -169,6 +170,21 @@
           <span><strong>10MB</strong>0.72&times; aggregate; 0.69&times; small/entity subset; 2.28&times; filler/large subset.</span>
           <span><strong>100MB</strong>0.70&times; aggregate; 0.68&times; entity subset; 2.11&times; filler/large subset.</span>
           <span><strong>Limit</strong>Two scale points; not a complete crossover surface.</span>
+        </div>
+      </article>
+
+      <article class="bench-card accent-border" style="grid-column:1/-1;">
+        <h3>N→K Corpus Scaling: Memory Growth ≠ Inference Growth</h3>
+        <p>The central scaling question: as the persistent corpus grows, does the evidence staged into active model context also grow? A ten-point ladder from 32K to 10M nominal tokens produced a linear fit with <strong>b = 2.79&times;10<sup>−6</sup></strong> (95% CI [−8.59&times;10<sup>−6</sup>, +1.42&times;10<sup>−5</sup>], includes zero; development data only). No material positive scaling trend was detected within the tested envelope. The 10M corpus point extended 312.5&times; beyond the 32K baseline.</p>
+        <p style="margin-top:.75rem;">A genuine sealed 5-run &times; 190-query holdout at the 10M corpus point confirmed K boundedness: <strong>5/5 runs produced identical aggregate statistics and identical per-query staged-token counts (0/190 per-query mismatches), mean K = 895.96 versus 902.81 at 4M despite a 2.5&times; corpus increase</strong>. Correctness crossed the preregistered 40% floor at 39.5% (75/190 unique queries correct) — a retrieval-quality finding under adversarial density at 10M, not a system-level error: all 950 inference calls returned status=ok. Q1 (single-fact) held at 43.0% and Q2 (multi-evidence) reached 62.5%; Q3 (temporal authority) was impacted by the adversarial corpus design.</p>
+        <div class="claim-meta" style="grid-template-columns:repeat(4,1fr);">
+          <span><strong>Envelope</strong>32K–10M nominal tokens; Nemotron model via NVIDIA NIM; adversarial synthetic corpus (seed=42).</span>
+          <span><strong>Holdout (10M)</strong>5/5 runs deterministic. Mean K = 895.96. Median = 908. P95 = 985. Acc = 39.5%.</span>
+          <span><strong>Gate Result</strong>Gate 1 (K ≤ 950) PASS. Gate 2 (acc ≥ 40%) Q_BEND — 0.5 pp below floor. Gate 3 (retrieval ≤ 50s) PASS.</span>
+          <span><strong>Limit</strong>Results bounded to tested model, hardware, and corpus construction. Not a proof of universal constant complexity. Retrieval ratio hardware-confounded (4M on A100, 10M holdout on WSL2).</span>
+        </div>
+        <div style="margin-top:1rem;padding:.85rem;border-left:3px solid var(--accent);background:var(--accent-dim);border-radius:0 var(--radius) var(--radius) 0;font-size:13px;color:var(--text-soft);">
+          <strong>Correct bounded claim:</strong> Across the tested nominal 32K–10M corpus envelope on the tested hardware and model, no material positive linear scaling of mean active model-facing staged context with accumulated corpus size was detected. At 10M, mean K was 895.96 — bounded, not proportional. This is an empirical observation within a defined envelope — not a mathematical proof of constant complexity, not a universal O(1) characterization, and not a claim about arbitrary scales, models, or architectures.
         </div>
       </article>
     </div>

@@ -365,7 +365,7 @@
       <div class="container-wide">
         <div class="section-label">Measured Progress</div>
         <h2>Architecture supported by benchmark evidence.</h2>
-        <p style="max-width:800px;">The public benchmark program focuses on measured behavior, explicit limitations, and reproducible results. The numbers below apply to the tested workloads and conditions.</p>
+        <p style="max-width:800px;">The public benchmark program focuses on measured behavior, explicit limitations, and reproducible results. The numbers below apply to the tested workloads and conditions. ExergyNet does not require a model change or cloud migration; the corpus scaling evidence (32K–10M) was measured on existing infrastructure.</p>
 
         <div class="validation-grid">
           <div class="validation-card">
@@ -383,6 +383,10 @@
           <div class="validation-card">
             <div class="validation-num">C16</div>
             <div class="validation-label">Concurrency validated in isolated VMN testing with evidence parity and authority separation preserved.</div>
+          </div>
+          <div class="validation-card">
+            <div class="validation-num">32K–10M</div>
+            <div class="validation-label">N&rarr;K corpus scaling envelope: no material positive global K growth detected across a 312.5&times; corpus range. Genuine 10M holdout: 5/5 runs deterministic, mean K = 895.96.</div>
           </div>
         </div>
 

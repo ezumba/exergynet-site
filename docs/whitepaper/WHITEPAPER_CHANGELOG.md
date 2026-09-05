@@ -273,3 +273,22 @@ images, and it exists solely as a build input for the DOCX target.
 Final state: `EXERGYNET_WHITEPAPER_PUBLIC_V3.pdf` (16 pages, visually clean) and
 `EXERGYNET_WHITEPAPER_PUBLIC_V3.docx` (zero conversion warnings, four equations embedded as images) are
 both complete. Visual QA is complete, not blocked.
+
+---
+
+## 2026-08-29 — Publication closure: figure rebuild, canonical-state cleanup, claim-ledger fix
+
+**Scope:** No changes to the V3 manuscript body, PDF, or DOCX. This pass covers figure assets, the
+internal canonical-state document, the claim ledger's operational note, and the agent handoff test.
+
+| Timestamp | File | Change | Reason | Evidence source |
+|---|---|---|---|---|
+| 2026-08-29 | `docs/whitepaper/figures/fig10_state_mobility.png` (rebuilt) | Full rebuild showing V3 results: left panel = component isolation (R_CONV alone→MATCH, S_SSM alone→MATCH, ROOT_CAUSE=UNKNOWN), right panel = structural decomposition (R pair ordinals {2,9}/blocks {4,21}, PAIR required; S ordinals {4,5}/blocks {9,11}, alternative sufficient) | Prior fig10 was from V1/V2 era; V3 §5 has substantially different structural results from F6C and F6D | `LNES119B_EVIDENCE_LEDGER.md` Entries 022–024; WP-C028–C031 |
+| 2026-08-29 | `docs/whitepaper/figures/fig13_state_types_authority.png` (new) | New figure: two-type state architecture — PERSISTENT PROJECT STATE (VMN/xLMP, model-independent, survives session boundary) vs. MODEL-NATIVE EXECUTION STATE (PIP, same-model same-runtime), with AUTHORITY always requiring independent revalidation at destination; governing invariant STATE_REALIZED ≠ AUTHORIZED | Directive §15: "This distinction is important enough for a figure"; §7 (PIP) and §4 (VMN) are described as architecturally complementary but not yet integrated | WP-C032 (PIP specification); WP-C019 (VMN); §7 boxed invariant |
+| 2026-08-29 | `docs/whitepaper/WHITEPAPER_CLAIM_LEDGER_V3.md` | Operational note on MCP version updated: 0.2.6 is now confirmed ACTIVE_LATEST (was recorded as 0.2.5 at prior authorship); 0 npm-audit findings confirmed | MCP 0.2.6 release confirmed by MCP_0_2_6_RELEASE_EVIDENCE.md; prior note was accurate at first writing | NPM_AUDIT=0, CONSUMER_INSTALL=PASS, NPM_TEST_10X=10/10 PASS |
+| 2026-08-29 | `EXERGYNET_CURRENT_RESEARCH_STATE.md` | Full reconstruction with exactly 10 required sections, no duplicates; maturity entries corrected (NEURO-LOCK: IMPLEMENTED, not DEPLOYED from FAA exemption; RHO: PILOT, no "static tariff PRODUCTION"; xLMP/VMN: local vs. handoff vs. deployed distinguished; PIP-V0: SPECIFICATION_COMPLETE + REFERENCE_IMPLEMENTATION_COMPLETE); canonical public paper set to V3 | Internal state document had accumulated duplicate/extra sections and contradictory maturity rows from incremental rewriting | Reconciled against V3 §13 maturity table and component boundary evidence |
+
+**Visual QA:** fig10 and fig13 individually rendered and inspected. 0 clipped, 0 overlapping,
+0 internal labels, 0 encoding corruption. Both figures correspond to active WP-C### claims (WP-C027–031 for fig10; WP-C019/032 and §7 invariant for fig13).
+
+**V3 manuscript, PDF, and DOCX unchanged from the prior pass.**

@@ -1,7 +1,7 @@
-# xLMP and the AI Memory Control Plane
+﻿# xLMP and the AI Memory Control Plane
 
 **Persistent State, Bounded Evidence, and Portable Memory
-Beyond the Model Context Window — Digital and Physical**
+Beyond the Model Context Window â€” Digital and Physical**
 
 A Technical White Paper
 
@@ -11,22 +11,12 @@ A Technical White Paper
 Chief Architect and Corresponding Author
 ExergyNet
 
-**Bontu Veena**
-H200 Saturation Testing and Benchmark Validation; QPS Ladder Analysis
-ExergyNet
-[CO-AUTHOR ACCEPTANCE: PENDING FINAL REVIEW]
-
-**Kyaw Phone**
-Systems Engineering and Application Architecture
-ExergyNet
-[CO-AUTHOR ACCEPTANCE: PENDING FINAL REVIEW]
-
 ---
 
 August 2026
-**Version 1.9 — Internal Co-Author Review Draft**
-Public Classification: OPEN (pending co-author confirmation and legal-entity resolution)
-Document Hash: [pending]
+**Version 1.14 - Pre-Release Technical Review Candidate**
+Public Classification: OPEN TECHNICAL REVIEW
+Artifact Integrity: canonical SHA-256 recorded in `AI_MEMORY_CONTROL_PLANE_v1.12_HASH_MANIFEST_2026-08-18.txt` after source freeze.
 
 Canonical source: `exergynet/docs/whitepaper/AI_MEMORY_CONTROL_PLANE.md`
 Claim Ledger: `exergynet/docs/whitepaper/CLAIM_LEDGER.md`
@@ -39,14 +29,20 @@ Maintenance policy: `exergynet/LWP_MAINTENANCE_POLICY.md`
 
 This paper describes the architectural principles, category definition, and
 design philosophy of xLMP, the ExergyNet Ledger Memory Protocol, and the
-AI Memory Control Plane category. Security-sensitive implementation details,
-private key material, deployment credentials, internal infrastructure topology,
-and proprietary resolver mechanics are excluded from this publication. Benchmark
+AI Memory Control Plane category. ExergyNet is referenced as the technology
+and infrastructure platform described in this paper; application-specific
+deployments and licensees are separate from the platform architecture unless
+explicitly identified. Security-sensitive implementation details, private key
+material, deployment credentials, internal infrastructure topology, and
+proprietary resolver mechanics are excluded from this publication. Benchmark
 data is drawn from signed, internally-verified deliverables identified in the
 evidence directory. Performance claims identify their test conditions and
 evidence identifiers. Individual claims are categorized in `CLAIM_LEDGER.md`.
 This document does not constitute a financial prospectus or investment
-solicitation.
+solicitation. No Hopper/RISC Zero proving-path performance claim is made in
+this edition; Hopper-based proving, Bonsai proving, and other accelerated
+RISC Zero proving paths are excluded unless expressly identified in a cited
+evidence record.
 
 The companion paper to this publication is:
 *LNES-22 and the Agent Authority Control Plane:
@@ -57,15 +53,6 @@ The relationship between the two papers:
 > xLMP governs the evidence available to an agent.
 > LNES-22 governs consequential actions requested by that agent.
 
-**Co-Author Note (internal — remove before final publication):**
-Bontu Veena and Kyaw Phone are listed as proposed co-authors pending their
-independent confirmation of: (1) acceptance of authorship; (2) accuracy of all
-sections attributed to them; (3) approval of the final publication; and (4)
-responsibility for their documented contributions. The [CO-AUTHOR ACCEPTANCE:
-PENDING FINAL REVIEW] markers will be removed only after each author confirms
-all four conditions. No claims are attributed to either author that are not
-supported by the project record.
-
 ---
 
 ## Author Contributions
@@ -75,15 +62,12 @@ category definition; ExergyNet systems architecture; physical-AI architecture;
 NEURO-LOCK architecture; Atlas geospatial layer design; methodology; original
 drafting; supervision; corresponding author.
 
-**Bontu Veena:** H200 saturation testing and QPS ladder analysis; concurrency
-and throughput testing; Useful-Answer-per-Token metric validation; benchmark
-presentation preparation for NVIDIA; technical review and editing.
-[PENDING AUTHOR CONFIRMATION — see handoff: `HANDOFF_TO_VEENA_NVIDIA_MEETING.md`]
+**Veena Bontu:** Independent validation of 10M corpus-scaling results and
+adjusted claims; review of Section 35.3.2 and manuscript scope boundaries.
+Co-author. Cleared 2026-09-04.
 
-**Kyaw Phone:** Systems engineering; application architecture; model and tool
-routing; persistent-memory integration; voice-agent runtime architecture;
-technical review and editing.
-[PENDING AUTHOR CONFIRMATION]
+Benchmark, systems-engineering, and review evidence from additional project
+records is cited by evidence identifier where used.
 
 ---
 
@@ -110,11 +94,17 @@ The core architectural inversion xLMP introduces is:
 > Computation attaches to persistent state.
 > The model is temporary; the memory is primary.
 
+In the LNES-59 procurement-state validation, model judgment accuracy remained
+unchanged at 84 percent while false authoritative-state commitments fell from
+8 percent to 0 percent. The result is a state-governance finding: the memory
+control plane did not make the model smarter, but it prevented unresolved
+evidence from being silently promoted into authoritative system state.
+
 Measured on H200 infrastructure, xLMP kept prompt tokens at approximately
-660–820 tokens as the corpus grew from 8k to 285k tokens, while full-context
+660â€“820 tokens as the corpus grew from 8k to 285k tokens, while full-context
 injection grew from 11k to 67k tokens and was rejected outright past 262k.
 xLMP delivered a mean accuracy improvement of 24.4 points over the tested RAG
-implementation at equal evidence budget, and approximately 42.7× the
+implementation at equal evidence budget, and approximately 42.7Ã— the
 Useful-Answer-per-Token efficiency of full-context injection.
 
 This architecture extends to physical systems. A conversational system can often
@@ -228,7 +218,7 @@ and staged, and how it survives the end of any given session.
 Let C be the total persistent corpus. In a fully stateless system:
 
 - At each invocation, some fraction f(C) of the corpus is selected and injected.
-- Prefill cost is proportional to the injected context: P(q) ∝ f(C).
+- Prefill cost is proportional to the injected context: P(q) âˆ f(C).
 - As C grows, f(C) may grow. Prefill cost grows correspondingly.
 
 xLMP is designed to keep the model-facing evidence window bounded as the
@@ -244,7 +234,7 @@ ways the similarity metric does not capture will be missing. The model reasons
 over an incomplete evidence base without knowing it is incomplete.
 
 **Vector databases:** useful discovery tools. They identify candidate documents
-relevant to a query. They are not a memory control plane — they do not provide
+relevant to a query. They are not a memory control plane â€” they do not provide
 completeness guarantees, integrity verification, provenance records, or
 model-independent content addressing.
 
@@ -277,7 +267,7 @@ In the ExergyNet system architecture, this layer has distinct components:
 |-----------|------|
 | xLMP | Persistent memory protocol and control plane |
 | VMN | Local developer memory node; open-source xLMP implementation |
-| Omega Carrier | Cross-agent MCP toolset (Tools 1–5 deployed); cross-device memory transport architecture (designed) |
+| Omega Carrier | Cross-agent MCP toolset (Tools 1â€“5 deployed); cross-device memory transport architecture (designed) |
 | Vanguard | Multi-model inference, bounded planning, review, and coordination over persistent state |
 | LNES-22 | Deterministic authority gate for software consequential actions |
 | NEURO-LOCK | Physical-actuation control boundary for autonomous machines |
@@ -288,20 +278,20 @@ roles.
 
 ```text
 Persistent State (Total Corpus: C)
-        │
-        │  xLMP / AI Memory Control Plane
-        ▼
+        â”‚
+        â”‚  xLMP / AI Memory Control Plane
+        â–¼
 Bounded Active Evidence E(q)
-        │
-        │  Tokenization / Model Runtime
-        ▼
+        â”‚
+        â”‚  Tokenization / Model Runtime
+        â–¼
 KV Cache / HBM
-        │
-        │  FlashAttention / Inference Kernels
-        ▼
+        â”‚
+        â”‚  FlashAttention / Inference Kernels
+        â–¼
 SRAM / Tensor Cores
-        │
-        ▼
+        â”‚
+        â–¼
 Model Computation
 ```
 
@@ -321,14 +311,14 @@ The central developer inversion:
 
 xLMP is not RAG. xLMP is not a vector database. xLMP is not context
 compression. xLMP is not a blockchain storage product. xLMP is not an MCP
-plugin — VMN exposes its capabilities through MCP as an interface; the memory
+plugin â€” VMN exposes its capabilities through MCP as an interface; the memory
 control plane is the system behind it. xLMP is not an LLM.
 
 ### 7. What "Authoritative" Means: Three Properties
 
 **Integrity:** the evidence matches its cryptographic commitment.
 ```
-Content root → retrieved bytes = committed bytes.
+Content root â†’ retrieved bytes = committed bytes.
 ```
 Integrity alone does not establish that committed bytes represent true or
 reliable information. It establishes content identity.
@@ -336,21 +326,21 @@ reliable information. It establishes content identity.
 **Provenance:** the source, issuer, and transformation history of the evidence
 are known and recorded.
 ```
-Signed provenance record → source and transformation history.
+Signed provenance record â†’ source and transformation history.
 ```
 Provenance alone does not establish authority. It establishes traceable origin.
 
 **Authority:** a governing policy recognizes a specific source or object as
 authoritative for a specified purpose, within a defined scope.
 ```
-Policy + provenance → recognized decision status for a specified purpose.
+Policy + provenance â†’ recognized decision status for a specified purpose.
 ```
 
 The three properties form a complete chain:
 ```
-Content root        →  integrity
-Signed provenance   →  origin
-Authority policy    →  recognized decision status
+Content root        â†’  integrity
+Signed provenance   â†’  origin
+Authority policy    â†’  recognized decision status
 ```
 
 xLMP governs the first two directly. Authority policies are managed by the
@@ -408,7 +398,7 @@ that matter once evidence is used to justify a decision or action:
 **Temporal validity:** a fact recorded as authoritative at ingest is not
 necessarily authoritative indefinitely. The control plane must be able to
 represent when a fact became valid, whether it has been superseded, and
-when it expires or must be forgotten — not only what the fact is.
+when it expires or must be forgotten â€” not only what the fact is.
 
 **Decision lineage:** which evidence supported which interpretation, under
 which policy state, producing which proposed action, receiving which
@@ -434,7 +424,7 @@ A memory object consists of:
 
 - **Content:** the stored knowledge.
 - **Root:** the cryptographic commitment to the canonical form of the content. Same canonical content, same root. Changed content, different root.
-- **Metadata:** mutable owner-controlled attributes — title, tags, lifecycle state, access controls, timestamps. Separately rooted from content.
+- **Metadata:** mutable owner-controlled attributes â€” title, tags, lifecycle state, access controls, timestamps. Separately rooted from content.
 - **Manifest:** ordered record of segments, their hashes, payload hash, chunker version, normalization version.
 - **Ownership:** the identity of the principal that controls the object.
 - **Provenance record:** source identifier, ingest timestamp, ingesting identity, transformation history, lineage references.
@@ -500,7 +490,7 @@ Formal definition:
 2. The application selects roots from the discovery result based on priority and context-budget policies.
 3. For each selected root, recall retrieves complete evidence within the chosen recall mode and declared boundary.
 4. Recall output is assembled into the prompt context, with provenance labels identifying the source root and recall mode for each evidence block.
-5. Dormant state — all memory not in the staged evidence — remains in storage, incurring no compute cost.
+5. Dormant state â€” all memory not in the staged evidence â€” remains in storage, incurring no compute cost.
 
 The evidence budget B is the maximum evidence volume that will be staged for a single model invocation. Every evidence block in the context is associated with a root the application can independently verify.
 
@@ -509,8 +499,8 @@ The evidence budget B is the maximum evidence volume that will be staged for a s
 Attachment is temporary and task-scoped. A model session may discover, recall
 bounded evidence, commit new objects, and update metadata. When the task
 completes, the model session detaches. The memory objects persist independently
-of the session. The next model to attach — different model, different hardware,
-different application — attaches to the same objects via the same roots.
+of the session. The next model to attach â€” different model, different hardware,
+different application â€” attaches to the same objects via the same roots.
 
 ### 16. State Mutation and Versioning
 
@@ -526,6 +516,21 @@ VERIFIED          Proof independently verified
 REJECTED          Object failed integrity check or verification
 ```
 
+
+### 16.1 The Determinism Divide: Learned Memory vs. Committed Memory
+
+The AI Memory Control Plane distinguishes learned, rewritable model memory from
+content-addressed, committed memory. Learned memory may be updated by training,
+fine-tuning, cache eviction, preference learning, or prompt history. Committed
+memory is different: it is identified, provenance-bearing state whose integrity
+and authority can be checked outside the model. A later correction does not
+silently overwrite the historical record. Committed memory is superseded, not
+silently mutated.
+
+This divide is why xLMP treats retrieval, state resolution, and authority as
+system functions rather than as model impressions. The model may interpret
+evidence; the memory control plane governs which evidence is in scope and
+whether it is allowed to become authoritative state.
 ### 17. Access Control and Memory Namespaces
 
 Namespaces: Personal, Organizational, Application, Public. Access control
@@ -558,21 +563,21 @@ Application lifecycle:
 
 ```
 Create persistent memory namespace
-        ↓
+        â†“
 Commit memory objects
-        ↓
+        â†“
 Attach authorized model session
-        ↓
+        â†“
 Discover candidate state
-        ↓
+        â†“
 Recall bounded evidence
-        ↓
+        â†“
 Perform computation
-        ↓
+        â†“
 Commit resulting state
-        ↓
+        â†“
 Detach model
-        ↓
+        â†“
 Attach another model or system later
 ```
 
@@ -609,8 +614,8 @@ verification, or production resolver capabilities.
 - Chunk-boundary fragmentation corrected in v1.1 by record-aware boundary detection.
 - Literal-only BM25 matching corrected by morphological normalization at ingest and query time.
 - Index serialization bottleneck at large object counts; addressed in v1.2 sharded incremental index architecture (in development).
-- VMN-style BM25 indexing was evaluated locally as a candidate retrieval replacement for xLMP's current linear-scan retrieval path and did not outperform it at the tested LNES-59 procurement-corpus scale (20–164 documents; ~18×–98× slower; evidence recall not consistently better). At small-to-medium procurement corpus scale, the current linear scan is faster because VMN's indexed approach pays fixed filesystem/index overhead that dominates any theoretical lookup advantage. This remains an open large-scale/crossover research question, not a validated advancement — untested at corpus scales where an indexed lookup's theoretical advantage might begin to outweigh that fixed overhead.
-- **Current status (v2.0):** VMN is published as `@lnes/vanguard-memory-node@2.0.0` (npm, public), source-synchronized to its GitHub repository. It now provides adaptive deterministic retrieval — a workload-aware retrieval path that can change strategy when the active path's assumptions stop holding for a given query — validated with 34/34 regression tests passing (30 original plus 4 exercising the adaptive path) and zero observed regressions against the prior release. This supersedes the "v1.2 sharded incremental index architecture (in development)" line above, which is retained here as historical record of the earlier engineering finding, not as current status. The internal decision mechanics of the adaptive path are a trade-secret-controlled implementation detail and are not disclosed in this paper; see Section 20.1 below for the retrieval-benchmark family this connects to.
+- VMN-style BM25 indexing was evaluated locally as a candidate retrieval replacement for xLMP's current linear-scan retrieval path and did not outperform it at the tested LNES-59 procurement-corpus scale (20â€“164 documents; ~18Ã—â€“98Ã— slower; evidence recall not consistently better). At small-to-medium procurement corpus scale, the current linear scan is faster because VMN's indexed approach pays fixed filesystem/index overhead that dominates any theoretical lookup advantage. This remains an open large-scale/crossover research question, not a validated advancement â€” untested at corpus scales where an indexed lookup's theoretical advantage might begin to outweigh that fixed overhead.
+- **Current status (v2.0):** VMN is published as `@lnes/vanguard-memory-node@2.0.0` (npm, public), source-synchronized to its GitHub repository. It now provides adaptive deterministic retrieval â€” a workload-aware retrieval path that can change strategy when the active path's assumptions stop holding for a given query â€” validated with 34/34 regression tests passing (30 original plus 4 exercising the adaptive path) and zero observed regressions against the prior release. This supersedes the "v1.2 sharded incremental index architecture (in development)" line above, which is retained here as historical record of the earlier engineering finding, not as current status. The internal decision mechanics of the adaptive path are a trade-secret-controlled implementation detail and are not disclosed in this paper; see Section 20.1 below for the retrieval-benchmark family this connects to.
 
 #### 20.1 LNES-84: Compact/Deterministic Index Retrieval Benchmark
 
@@ -618,7 +623,7 @@ A separate, sealed benchmark line (LNES-84) evaluated a compact,
 deterministic candidate-index structure as a replacement for VMN's
 linear-scan evidence retrieval, independent of the LNES-86 adaptive-routing
 work described in Section 20.2. **The verdict is workload-dependent, not
-uniformly positive, and is stated as such deliberately** — the correctness
+uniformly positive, and is stated as such deliberately** â€” the correctness
 and robustness side of this system is validated without qualification;
 the performance side is not.
 
@@ -630,12 +635,12 @@ recovery, and authority-boundary negative tests.
 **Performance:** the effect is real but depends heavily on workload shape.
 On a narrow, single-scale 1GB / 100-query population where the linear-scan
 baseline pays a large, constant per-query cost, the indexed approach showed
-a large observed advantage — median paired speedup 52,753.8x (bootstrap 95%
+a large observed advantage â€” median paired speedup 52,753.8x (bootstrap 95%
 CI [42,014x, 56,537x]), faster on 100 of 100 queries, alongside a measured
 accuracy improvement from 87% to 94% under a corrected symmetric scoring
 rule (+7 percentage points, p = 0.039). On a later, more realistic 10MB
 vault built with a **mixed** document-size composition (231 real paired
-queries — 84% small/entity documents, 16% large/filler documents), the
+queries â€” 84% small/entity documents, 16% large/filler documents), the
 aggregate **median** speedup was 0.72x: the indexed approach was slower
 than the linear-scan baseline on the median query, because its fixed
 per-call construction overhead is not amortized when most queries touch
@@ -670,17 +675,17 @@ implementation detail and is not disclosed in this paper.
 
 Omega Carrier has two distinct aspects with different implementation states:
 
-**Deployed: Cross-Agent MCP Toolset (Tools 1–5, SSE port 8765)**
-Omega Carrier Tools 1–5 are a real deployed MCP toolset for visiting AI agents,
+**Deployed: Cross-Agent MCP Toolset (Tools 1â€“5, SSE port 8765)**
+Omega Carrier Tools 1â€“5 are a real deployed MCP toolset for visiting AI agents,
 operational on port 8765. They provide AI agents with access to Exergy Vault
 capabilities including evidence recall, vault commit, and Rho economic
 operations. Tool 6 (`strike_rho_recursion`) has a HITL gate now deployed;
 the siphon swap signal remains not fully wired. (EVD-008)
 
 **Designed: Cross-Device xLMP Memory Transport**
-The broader Omega Carrier memory transport architecture — moving xLMP objects
-between devices (laptop VMN → workstation VMN → field node) with root and
-provenance preservation — is designed and documented. It is distinct from the
+The broader Omega Carrier memory transport architecture â€” moving xLMP objects
+between devices (laptop VMN â†’ workstation VMN â†’ field node) with root and
+provenance preservation â€” is designed and documented. It is distinct from the
 deployed MCP toolset and is not yet operationally deployed.
 
 **Note on naming:** "Omega Carrier" in this paper refers to both the deployed
@@ -692,9 +697,9 @@ systems sharing a name. The status table in Section 32 distinguishes them.
 Example: an autonomous software development system.
 
 ```
-Claude plans       →  commits planning output to xLMP
-Coding model       →  retrieves planning output; commits implementation
-Local model        →  analyzes committed implementation using private context
+Claude plans       â†’  commits planning output to xLMP
+Coding model       â†’  retrieves planning output; commits implementation
+Local model        â†’  analyzes committed implementation using private context
                       without sharing with external model providers
 ```
 
@@ -708,9 +713,9 @@ A personal AI system accumulating genuine knowledge across years:
 
 ```
 Laptop:   morning planning session, using personal VMN namespace
-Phone:    midday query answered by local model, adding a memory object
+Mobile:   midday query answered by local model, adding a memory object
 Tablet:   evening research, drawing on accumulated context
-          ↓
+          â†“
       Omega Carrier cross-device transport synchronizes
 ```
 
@@ -734,12 +739,12 @@ allows. Mission context survives power cycles and connectivity gaps.
 
 ---
 
-## Part V: Beyond Silicon — Persistent State and Cryptographic Actuation for Physical AI
+## Part V: Beyond Silicon â€” Persistent State and Cryptographic Actuation for Physical AI
 
 Physical AI systems represent the highest-stakes application class for
 persistent memory. A conversational AI system can often recover from a wrong
-response. An embodied system — a machine with motors, actuators, rotors,
-sensors, and kinetic consequence — can convert stale memory, poisoned evidence,
+response. An embodied system â€” a machine with motors, actuators, rotors,
+sensors, and kinetic consequence â€” can convert stale memory, poisoned evidence,
 an incorrect coordinate, or an unauthorized model output into physical damage.
 
 The demands of physical AI are therefore more stringent than those of software
@@ -761,11 +766,11 @@ across multiple dimensions.
 The temporary context limitation is an inconvenience in conversational systems.
 In physical systems, it is a safety concern.
 
-A physical AI system — an autonomous aircraft, a ground vehicle, a heavy-lift
-machine — requires across the duration of an extended mission:
+A physical AI system â€” an autonomous aircraft, a ground vehicle, a heavy-lift
+machine â€” requires across the duration of an extended mission:
 
 - **Mission history:** what routes have been operated, what tasks completed, what obstacles recorded.
-- **Maintenance state:** airframe hours, component-level wear, inspection records, pending maintenance actions.
+- **Maintenance state:** airframe hours, component-level wear, inspection records, scheduled maintenance actions.
 - **Geospatial constraints:** restricted airspace, terrain data, obstacle maps, corridor authorizations.
 - **Prior sensor observations:** what sensors observed on prior passes of a location, how those observations have changed.
 - **Operator directives:** standing rules of engagement, mission-specific instructions, changes issued during earlier mission phases.
@@ -814,7 +819,7 @@ evidence enters active computation.
 > The flight session is temporary. The aircraft's mission memory is not.
 
 A model that attaches to the aircraft's xLMP namespace for a planning or
-perception task retrieves bounded evidence from mission objects — the relevant
+perception task retrieves bounded evidence from mission objects â€” the relevant
 portions of the mission history, the applicable geospatial constraints, the
 current safety state. It does not reconstruct the entire mission context from
 scratch. When the model session ends, the mission objects persist. The next
@@ -847,19 +852,19 @@ not provide positioning independent of GPS. Positioning independent of GPS
 infrastructure is a separate architecture problem. A LNES number for that
 system has not yet been assigned in the project record. (See Section 28.1.)
 
-#### 28.1 GPS-Independent Positioning [LNES Number TBD]
+#### 28.1 GPS-Independent Positioning [LNES number reserved for future assignment]
 
 A physical AI system that relies exclusively on GPS satellite infrastructure for
 its position estimate is dependent on a single, spoofable, jammable signal
-source. A GPS-independent positioning and ranging layer — operating through
-mesh-network ranging, acoustic ranging, inertial fusion, or other means — is a
+source. A GPS-independent positioning and ranging layer â€” operating through
+mesh-network ranging, acoustic ranging, inertial fusion, or other means â€” is a
 design requirement for certain physical AI operating environments.
 
 No ExergyNet LNES number has been confirmed in the project record for this
 system. **LNES-11 is occupied:** in the deployed `biological_proxy` system
 on AskMo, LNES-11 designates the bilateral consensus protocol (`vanguard-ultra`)
 that provides independent second-opinion review of high-stakes model decisions.
-(Evidence: EVD-006 — `deployed-snapshots/README.md`.) Using LNES-11 for
+(Evidence: EVD-006 â€” `deployed-snapshots/README.md`.) Using LNES-11 for
 GPS-independent positioning in this paper would create a numbering collision
 with a live deployed system. A LNES number for the positioning layer must be
 assigned separately before it appears in any publication.
@@ -921,9 +926,9 @@ operational configuration is internal only.
 
 | Layer | Status |
 |-------|--------|
-| LiveKit SFU (Carrier EC2) | DEPLOYED — 18+ days uptime confirmed |
-| coturn TURN relay | DEPLOYED — ports 3478/5349/relay range |
-| Cross-network WebRTC calls | DEPLOYED — confirmed |
+| LiveKit SFU (Carrier EC2) | DEPLOYED â€” 18+ days uptime confirmed |
+| coturn TURN relay | DEPLOYED â€” ports 3478/5349/relay range |
+| Cross-network WebRTC calls | DEPLOYED â€” confirmed |
 | Durable mesh relay (non-WebRTC fallback) | DESIGNED |
 
 ### 30. NEURO-LOCK: Cryptographic Actuation Boundary
@@ -957,24 +962,24 @@ The intended authorization chain for a physical action:
 
 ```
 xLMP evidence root
-    ↓
+    â†“
 authorized identity (operator or trustee with signing capability)
-    ↓
+    â†“
 typed capability (specific, declared action class)
-    ↓
+    â†“
 exact resource and argument commitment (target, parameters)
-    ↓
+    â†“
 policy evaluation (does the request fit the authorized scope?)
-    ↓
+    â†“
 required human or trustee approval (where policy demands it)
-    ↓
+    â†“
 NEURO-LOCK actuation decision
-    ↓
+    â†“
 signed execution record (what was done, when, by which authorization)
 ```
 
-This chain ensures that natural language in retrieved memory — however
-authoritatively it appears — has zero authority to authorize a physical action.
+This chain ensures that natural language in retrieved memory â€” however
+authoritatively it appears â€” has zero authority to authorize a physical action.
 
 #### 30.1 FAA Operating Context
 
@@ -1045,7 +1050,7 @@ status.
 **SUBSYSTEM: xLMP**
 ROLE: Persistent memory protocol and control plane
 IMPLEMENTATION_STATUS: DEPLOYED (VMN local, Exergy Vault); STAGED (production resolver)
-VALIDATION_STATUS: H200 benchmark — prompt tokens 660–820 flat, +24.4 accuracy vs RAG, 42.7× token efficiency vs full-context (EVD-001, EVD-002)
+VALIDATION_STATUS: H200 benchmark â€” prompt tokens 660â€“820 flat, +24.4 accuracy vs RAG, 42.7Ã— token efficiency vs full-context (EVD-001, EVD-002)
 DEPLOYMENT_STATUS: DEPLOYED (VMN local); STAGED (enterprise resolver)
 PUBLIC_CLAIM_STATUS: Full architecture claimed; benchmark companion in preparation
 EVIDENCE_REFERENCE: EVD-001, EVD-002
@@ -1057,16 +1062,16 @@ ROLE: Local developer memory node; open-source xLMP implementation
 IMPLEMENTATION_STATUS: DEPLOYED (v2.0.0, npm-published as `@lnes/vanguard-memory-node`)
 VALIDATION_STATUS: Ingest, retrieval, root-bound recall, MCP integration tested; 34/34 regression tests passing on v2.0.0 (Section 20)
 DEPLOYMENT_STATUS: DEPLOYED (production local instances; source synchronized to GitHub)
-PUBLIC_CLAIM_STATUS: Full capabilities as described in Section 20; adaptive deterministic retrieval enabled (mechanism not disclosed — trade secret)
+PUBLIC_CLAIM_STATUS: Full capabilities as described in Section 20; adaptive deterministic retrieval enabled (mechanism not disclosed â€” trade secret)
 EVIDENCE_REFERENCE: Direct system operation; npm registry + GitHub release provenance
 
 ---
 
-**SUBSYSTEM: Omega Carrier (MCP Toolset, Tools 1–5)**
+**SUBSYSTEM: Omega Carrier (MCP Toolset, Tools 1â€“5)**
 ROLE: Cross-agent MCP toolset for visiting AI agents; SSE port 8765
 IMPLEMENTATION_STATUS: DEPLOYED
-VALIDATION_STATUS: Tools 1–5 REAL; Tool 6 HITL gate deployed 2026-08-01; siphon swap signal not wired
-DEPLOYMENT_STATUS: DEPLOYED (Tools 1–5); STAGED (Tool 6 full path)
+VALIDATION_STATUS: Tools 1â€“5 REAL; Tool 6 HITL gate deployed 2026-08-01; siphon swap signal not wired
+DEPLOYMENT_STATUS: DEPLOYED (Tools 1â€“5); STAGED (Tool 6 full path)
 PUBLIC_CLAIM_STATUS: MCP toolset described as deployed; cross-device transport architecture described as designed (Section 21)
 EVIDENCE_REFERENCE: EVD-008
 
@@ -1085,7 +1090,7 @@ EVIDENCE_REFERENCE: EVD-008
 **SUBSYSTEM: Vanguard**
 ROLE: Multi-model inference, bounded planning, review, and coordination over persistent state
 IMPLEMENTATION_STATUS: DEPLOYED (biological_proxy, multi-model router on AskMo)
-VALIDATION_STATUS: Live-tested — inference restored, tool execution verified, LNES-11 bilateral consensus operational
+VALIDATION_STATUS: Live-tested â€” inference restored, tool execution verified, LNES-11 bilateral consensus operational
 DEPLOYMENT_STATUS: DEPLOYED
 PUBLIC_CLAIM_STATUS: Routing and inference capabilities claimed as deployed
 EVIDENCE_REFERENCE: EVD-006; live system test August 2026
@@ -1102,7 +1107,7 @@ EVIDENCE_REFERENCE: Project record review; absence of deployed engine is the evi
 
 ---
 
-**SUBSYSTEM: GPS-Independent Positioning [LNES Number TBD]**
+**SUBSYSTEM: GPS-Independent Positioning [LNES number reserved for future assignment]**
 ROLE: Positioning and ranging independent of GPS satellite infrastructure
 IMPLEMENTATION_STATUS: DESIGNED
 VALIDATION_STATUS: Not yet in system test
@@ -1135,7 +1140,7 @@ EVIDENCE_REFERENCE: EVD-005
 **SUBSYSTEM: LNES-12 Acoustic Signaling / WebRTC Layer**
 ROLE: Real-time communications infrastructure: LiveKit SFU + coturn on Carrier EC2
 IMPLEMENTATION_STATUS: DEPLOYED
-VALIDATION_STATUS: Cross-network video calls confirmed; TURN relay hardened through LNES-12.1–12.8
+VALIDATION_STATUS: Cross-network video calls confirmed; TURN relay hardened through LNES-12.1â€“12.8
 DEPLOYMENT_STATUS: DEPLOYED
 PUBLIC_CLAIM_STATUS: Communications layer for physical AI coordination described; operational status as deployed infrastructure claimed
 EVIDENCE_REFERENCE: EVD-007
@@ -1144,7 +1149,7 @@ EVIDENCE_REFERENCE: EVD-007
 
 **SUBSYSTEM: LNES-22**
 ROLE: Deterministic authority gate for software consequential actions
-IMPLEMENTATION_STATUS: PARTIALLY DEPLOYED — see breakdown below
+IMPLEMENTATION_STATUS: STAGED - mixed deployed and designed components; see breakdown below
 VALIDATION_STATUS: Live adversarial test, August 2026; rejection logging validated
 DEPLOYMENT_STATUS: STAGED (multiple components; see breakdown)
 PUBLIC_CLAIM_STATUS: Per-component status explicit in table below
@@ -1154,15 +1159,15 @@ LNES-22 component breakdown:
 
 | Component | Status |
 |-----------|--------|
-| Ed25519 review signing (VANGUARD-01 / shadow_listener.py) | DEPLOYED — restored 2026-08-05 |
-| Sensory-trigger webhook from agent-edit | DEPLOYED — restored 2026-08-05 |
-| POST /api/admin/build/vanguard-review receiver | DEPLOYED — restored 2026-08-05 |
-| Schema validation and replay/expiry enforcement | DEPLOYED — §IV of architecture doc |
-| Reverse tunnel (Portal:3000 → WSL2:8000) | BROKEN — port 3000 remote-forward fails; port 3009 works as fallback |
-| Deterministic policy gate (policy_gate.py) | STAGED — implemented, not wired to execution |
-| Delegation receipts | DESIGNED — spec complete, implementation pending |
-| Durable replay protection (persistent storage) | PLANNED — currently in-memory only |
-| Consequential action execution | NOT WIRED — nothing consumes review decision for execution-relevant action |
+| Ed25519 review signing (VANGUARD-01 / shadow_listener.py) | DEPLOYED â€” restored 2026-08-05 |
+| Sensory-trigger webhook from agent-edit | DEPLOYED â€” restored 2026-08-05 |
+| POST /api/admin/build/vanguard-review receiver | DEPLOYED â€” restored 2026-08-05 |
+| Schema validation and replay/expiry enforcement | DEPLOYED â€” Â§IV of architecture doc |
+| Reverse tunnel (Portal:3000 -> WSL2:8000) | STAGED - port 3009 fallback works; port 3000 path not claimed |
+| Deterministic policy gate (policy_gate.py) | STAGED â€” implemented, not wired to execution |
+| Delegation receipts | DESIGNED â€” spec complete, implementation DESIGNED |
+| Durable replay protection (persistent storage) | DESIGNED - persistent storage path not claimed as deployed |
+| Consequential action execution | NOT_CLAIMED - review decision is not consumed for execution-relevant action |
 
 ---
 
@@ -1172,7 +1177,7 @@ IMPLEMENTATION_STATUS: DESIGNED (full authorization chain)
 FAA_DISCLOSURE_STATUS: DISCLOSED_IN_OPERATING_DOCUMENTATION (Docket FAA-2025-5731)
 REGULATORY_PLATFORM_STATUS: BOLT_EXEMPTION_GRANTED (Exemption No. 26214, MTOW 275 lbs)
 FAA_TECHNICAL_ENDORSEMENT: NOT_CLAIMED
-PRODUCTION_ACTUATION_STATUS: NOT_CLAIMED — full chain not operationally deployed
+PRODUCTION_ACTUATION_STATUS: NOT_CLAIMED â€” full chain not operationally deployed
 PUBLIC_CLAIM_STATUS: FAA disclosure context claimed; full authorization chain described as architecture; production operations not claimed
 EVIDENCE_REFERENCE: EVD-003
 
@@ -1228,9 +1233,9 @@ This creates a closed-loop validation sequence:
 
 This protocol represents the progression from an AI memory benchmark to a
 full physical-intelligence validation. The current xLMP benchmark (Section
-34–35) evaluates whether authoritative and complete evidence can be
+34â€“35) evaluates whether authoritative and complete evidence can be
 assembled efficiently for computation. Later validation must test whether
-the entire evidence–reasoning–authorization–execution–verification loop
+the entire evidenceâ€“reasoningâ€“authorizationâ€“executionâ€“verification loop
 remains correct under environmental change, model substitution,
 communications disruption, and mission handoff.
 
@@ -1260,14 +1265,14 @@ Central design objective:
 
 ```
 |E(q)| << C                     evidence is a small fraction of corpus
-|E(q)| ≤ B                      evidence respects declared budget
-P(q)  ∝ |E(q)|                  prompt cost proportional to evidence
-|E(q)| ≤ W                      evidence fits model's context
+|E(q)| â‰¤ B                      evidence respects declared budget
+P(q)  âˆ |E(q)|                  prompt cost proportional to evidence
+|E(q)| â‰¤ W                      evidence fits model's context
 ```
 
-Stateless full-context:  P(q) ∝ C
-RAG top-k:               P(q) ∝ k · chunk_size (bounded; completeness not guaranteed)
-xLMP bounded recall:     P(q) ∝ |E(q)| (bounded; completeness guaranteed within declared boundary)
+Stateless full-context:  P(q) âˆ C
+RAG top-k:               P(q) âˆ k Â· chunk_size (bounded; completeness not guaranteed)
+xLMP bounded recall:     P(q) âˆ |E(q)| (bounded; completeness guaranteed within declared boundary)
 
 **Important qualification:** D(C) may grow with C. Discovery, index maintenance,
 storage, catalog traversal, synchronization, provenance management, and
@@ -1278,48 +1283,50 @@ every task.
 Useful-work metric:
 
 ```
-UW = correct answers / (total prompt + completion tokens) × 1,000
+UW = correct answers / (total prompt + completion tokens) Ã— 1,000
 ```
 
 ### 34. Benchmark Methodology and Test Environment
 
-**Evidence identifiers:** EVD-001, EVD-002 (signed artifacts with SHA-256
-hashes, independently verifiable)
+**Evidence identifiers:** EVD-001, EVD-002, EVD-012, EVD-013 (signed artifacts
+with SHA-256 hashes, independently verifiable)
 
-**Test environment:** H200 infrastructure (primary benchmark environment).
-Cross-accelerator comparison included A10.
+**Test environment:** H200 infrastructure is the primary benchmark environment.
+Separate cross-accelerator runs exercised NVIDIA A100 and Google TPU v6e under
+their own disclosed runtime constraints. These benchmark families are not
+averaged together.
 
-**Software versions and configurations:** per signed artifact contents (EVD-001,
-EVD-002). Specific versions are documented in the benchmark deliverables and
-available to reviewers who verify the artifact SHA-256 hashes.
+**Software versions and configurations:** per signed artifact contents. Specific
+versions are documented in the benchmark deliverables and available to reviewers
+who verify the artifact SHA-256 hashes.
 
 **Corpus:**
-- 8k to 285k tokens (multiple corpus sizes tested)
+- 8k to 285k tokens in the H200 memory-efficiency family
+- 8k / 16k / 24k tokens in the A100 and TPU v6e R6 cross-accelerator family
 - Text documents
 - No overlap between training data and evaluation corpus
 
 **Scoring:** correctness scored per response; full-context rejected outright
-past 262k tokens (context window exceeded).
+past 262k tokens where the context window was exceeded.
 
-**Baselines:** full-context injection; RAG (dense-embedding retrieval —
+**Baselines:** full-context injection; RAG (dense-embedding retrieval -
 all-MiniLM-L6-v2 embeddings, cosine similarity, top-k=5, specific
 configuration in EVD-001). xLMP: root-bound recall from discovered objects.
 
-**Saturation testing (Veena):** QPS ladder test at multiple load points.
-QPS-1 and QPS-50 endpoints documented in EVD-002; intermediate QPS 10–45
-data pending receipt from Veena for saturation-knee precision.
-
-### 35. Benchmark Results
-
-All results from H200 environment. Evidence: EVD-001, EVD-002.
+**H200 saturation testing:** a fixed-QPS ladder and bracketed follow-up runs
+showed that correctness held among completed responses, while service capacity
+was limited by offered-work completion and throughput efficiency under load.
+The sustainable knee is bracketed between QPS 12 and QPS 15 in the corrected
+saturation analysis.
+### 35. Benchmark Results`r`n`r`nThe first result family below is from the H200 environment (EVD-001, EVD-002). Cross-accelerator results are identified separately in Section 35.3.1.
 
 **Prompt token consumption:**
 
 | Method | Prompt tokens | Notes |
 |--------|--------------|-------|
-| Full-context | 11k–67k (growing); rejected past 262k | Grows with corpus |
+| Full-context | 11kâ€“67k (growing); rejected past 262k | Grows with corpus |
 | RAG (dense-embedding baseline) | [in EVD-001] | MiniLM + cosine top-5 |
-| xLMP bounded recall | ~660–820 flat | Stable as corpus grew 8k → 285k |
+| xLMP bounded recall | ~660â€“820 flat | Stable as corpus grew 8k â†’ 285k |
 
 **Accuracy at equal evidence budget:**
 
@@ -1331,41 +1338,50 @@ All results from H200 environment. Evidence: EVD-001, EVD-002.
 
 | Method | Relative performance |
 |--------|---------------------|
-| xLMP vs. full-context | ~11.3× |
-| xLMP vs. RAG | ~1.7× |
+| xLMP vs. full-context | ~11.3Ã— |
+| xLMP vs. RAG | ~1.7Ã— |
 
 **Useful Answer per Token (common-support, apples-to-apples, 8k/32k/64k):**
 
 | Method | Relative performance |
 |--------|---------------------|
-| xLMP vs. full-context | ~42.7× |
-| xLMP vs. RAG | ~4.0× |
+| xLMP vs. full-context | ~42.7Ã— |
+| xLMP vs. RAG | ~4.0Ã— |
 
 **64k accuracy note:** accuracy dip at 64k has a confirmed, documented root
-cause — chunk-boundary record fragmentation — not a vague scale-related
+cause â€” chunk-boundary record fragmentation â€” not a vague scale-related
 decline. Per-row evidence in EVD-002. This defect is corrected in the current
 VMN implementation.
 
 #### 35.1 Saturation Behavior
 
-From EVD-002 (Veena saturation test):
-- Correctness held on completed responses under load
-- Throughput collapsed under overload conditions
-- "19 QPS sustained capacity" is not an appropriate characterization — the 19 QPS
-  data point represents overloaded conditions (38.6% throughput efficiency,
-  82% completion ratio)
-- 18% of responses at QPS-50 did not complete (timed out)
+From the corrected H200 saturation analysis:
 
-The correct characterization: correctness held among completed responses; capacity
-under sustained load requires the intermediate QPS ladder data (pending Veena
-delivery of QPS 10–45 results).
+| Target QPS | Achieved req/s | Efficiency | Completed / admitted | End-to-end p50 | End-to-end p90 | End-to-end p99 | Status |
+|---:|---:|---:|---:|---:|---:|---:|---|
+| 10 | 9.63 | 96.3% | 589/589 | 2.1s | 3.7s | 4.7s | Pass / marginal |
+| 12 | 11.35 | 94.6% | 695/695 | 2.93s | - | - | Marginal |
+| 15 | 13.18 | 87.9% | 813/813 | 5.39s | - | - | Fails efficiency |
+| 20 | 17.79 | 89.0% | 1101/1101 | 5.5s | 9.7s | 12.9s | Fails efficiency |
+| 25 | 19.20 | 76.8% | 1302/1302 | 8.4s | 12.3s | 15.2s | Overloaded |
+| 30 | 19.52 | 65.1% | 1467/1467 | 12.5s | 17.5s | 20.3s | Overloaded |
+| 35 | 20.26 | 57.9% | 1638/1638 | 15.8s | 22.4s | 25.6s | Overloaded |
+| 40 | 20.52 | 51.3% | 1807/1807 | 19.1s | 28.8s | 31.9s | Overloaded ceiling |
+| 45 | 19.52 | 43.4% | 1757/1962 | 20.1s | 33.6s | 37.6s | Timeout/interruption |
+| 50 | 19.29 | 38.6% | 1736/2117 | 22.5s | 37.3s | 41.6s | Timeout/interruption |
 
+The correct characterization is not "19 QPS sustained capacity." QPS 30
+achieved about 19.52 requests per second only under overloaded conditions, and
+QPS 40 reached the maximum observed completed throughput of about 20.52 requests
+per second while dropping roughly one quarter of offered arrivals before
+admission. The sustainable-service knee is bracketed between QPS 12 and QPS 15;
+a clean QPS 13-14 run would be required to pin it more tightly.
 #### 35.2 Benchmark Limitations
 
-- H200-environment results; other hardware not yet benchmarked
+- H200 results are the primary memory-efficiency family; A100 and TPU v6e were benchmarked separately under R6, with different runtime constraints and metrics
 - RAG baseline is one specific configuration; more sophisticated RAG may narrow gaps
 - Corpus limited to text documents; multimodal corpus not yet tested
-- Saturation test: intermediate QPS data pending
+- H200 saturation knee is bracketed between QPS 12 and QPS 15; QPS 13-14 remains untested
 
 #### 35.3 xLMP Context-Efficiency Benchmark (Proposed)
 
@@ -1384,14 +1400,14 @@ W(q)   model-facing context
 K(q)   active KV state
 ```
 
-**Corpus scale:** 1×, 10×, 100×, 1,000×
+**Corpus scale:** 1Ã—, 10Ã—, 100Ã—, 1,000Ã—
 
 **Primary arms:**
 
-- F0 — Full-context dense attention, while technically feasible
-- R4 — Modern hybrid RAG + reranker + parent expansion
-- X2 — xLMP bounded-evidence resolver
-- O1 — Gold-evidence oracle
+- F0 â€” Full-context dense attention, while technically feasible
+- R4 â€” Modern hybrid RAG + reranker + parent expansion
+- X2 â€” xLMP bounded-evidence resolver
+- O1 â€” Gold-evidence oracle
 
 The same model, generation parameters, and optimized inference runtime
 would be held constant across arms. FlashAttention would not be used as a
@@ -1422,55 +1438,140 @@ throughput advantage over full-context injection, established on H200 in
 Section 35, appears on other accelerator families, and how the size of that
 advantage moves with corpus scale on each.
 
-**Method:** frozen retrieval logic with runtime shim — the retrieval and
-scoring code under test was held constant across accelerators; each
-accelerator required a disclosed runtime workaround to run at all (A100:
-32,768-token context-window ceiling on the test host; TPU v6e: a required
-`v2-alpha-tpuv6e` image and a configuration-shape patch to the
-`tpu_inference`/Qwen2 loader). These are runtime-environment shims, not
-modifications to the retrieval logic itself. Model: Qwen2.5-7B-Instruct.
-Corpus scales tested: 8k / 16k / 24k tokens. Concurrency: single-stream.
+**Method:** frozen retrieval logic with runtime shim - the retrieval and
+scoring code under test was held constant across accelerators; each accelerator
+required a disclosed runtime workaround to run at all (A100: 32,768-token
+context-window ceiling on the test host; TPU v6e: a required `v2-alpha-tpuv6e`
+image and a configuration-shape patch to the `tpu_inference`/Qwen2 loader).
+These are runtime-environment shims, not modifications to the retrieval logic
+itself. Model: Qwen2.5-7B-Instruct. Corpus scales tested: 8k / 16k / 24k tokens.
 
-**A100 results** (GCP `a2-highgpu-1g`): S_NVIDIA = 1.41x / 1.92x / 2.63x at
-8k/16k/24k tokens respectively (full-context throughput 1212→902→664
-tasks/min; xLMP throughput 1704→1732→1744 tasks/min). This does not reach
-the H200 benchmark's 11.3x — a real, architectural ceiling of this run, not
-a discrepancy: the A100 host's 32,768-token context window caps how large a
-full-context baseline penalty can grow before that baseline itself becomes
-unable to run.
+**Single-stream paper baseline:** the source whitepaper claim ledger and sealed
+R6 summary report the following throughput multipliers:
 
-**TPU v6e (Trillium) results**: S_TPU = 0.945x / 1.118x / 1.375x at the
-same three scales — an advantage that is smaller than A100's and grows more
-slowly. R-ratio (S_TPU / S_NVIDIA) shrinks with scale: 0.67 → 0.58 → 0.52.
-**A real caveat that matters more than the throughput numbers themselves:**
-full-context accuracy on TPU is degraded and does not move in one direction
-across scale (74% → 54% → 66%). The full-method TPU throughput figures
-above should be read with real skepticism about correctness as a result —
-they are observed in this pass, not confirmed as reproducible, and are not
-counterbalanced or replicated.
+| Corpus scale | A100 xLMP vs full-context | TPU v6e xLMP vs full-context | TPU full-context correctness |
+|---:|---:|---:|---:|
+| 8k tokens | 1.41x | 0.945x | 74% |
+| 16k tokens | 1.92x | 1.118x | 54% |
+| 24k tokens | 2.63x | 1.375x | 66% |
 
-**Cross-silicon statement:** the xLMP throughput advantage was observed on
-both NVIDIA A100 and Google Trillium v6e under the tested R6 methodology.
-This is not a claim that the two accelerators show identical multipliers —
-they do not — and it is not a claim that either result replicates or
-extends the separate H200 memory-efficiency benchmark (Section 35), which
-used different hardware, a different model, and a different metric. The
-three are kept as separate benchmark families: H200 memory-efficiency,
-A100/TPU cross-accelerator R6 scaling, and (below, Section 35.4 and
-Section 20) the LNES-58→LNES-59 state-governance and local-retrieval
-benchmark families.
+**C=4 public/website configuration:** separate R6 artifacts and charts label the
+public cross-accelerator configuration as `C=4`. The public-facing values of
+approximately 2.26x for A100 and approximately 1.93x for TPU belong to that
+configuration and must not be averaged with, substituted for, or treated as a
+replicate of the single-stream paper baseline above.
 
-### 35.4 From Retrieval to Authoritative State: LNES-58 → LNES-59
+**A100 result:** S_NVIDIA = 1.41x / 1.92x / 2.63x at 8k/16k/24k tokens
+respectively. This does not reach the H200 benchmark's 11.3x - a real,
+architectural ceiling of this run, not a discrepancy: the A100 host's
+32,768-token context window caps how large a full-context baseline penalty can
+grow before that baseline itself becomes unable to run.
+
+**TPU v6e (Trillium) result:** S_TPU = 0.945x / 1.118x / 1.375x at the same
+three scales - an advantage that is smaller than A100's and grows more slowly.
+R-ratio (S_TPU / S_NVIDIA) shrinks with scale: 0.67 -> 0.58 -> 0.52. A real
+caveat matters more than the throughput numbers themselves: full-context
+accuracy on TPU is degraded and does not move in one direction across scale
+(74% -> 54% -> 66%). The full-method TPU throughput figures should be read with
+skepticism about correctness until replicated. A replication plan should rerun
+the TPU full-context arm at the same 8k/16k/24k scales, preserve identical
+scoring, and add at least one clean repeat per scale before treating the
+non-monotonic accuracy pattern as stable.
+
+**Cross-silicon statement:** the xLMP throughput advantage was observed on both
+NVIDIA A100 and Google Trillium v6e under the tested R6 methodology once corpus
+size exceeded the TPU crossover region. This is not a claim that the two
+accelerators show identical multipliers - they do not - and it is not a claim
+that either result replicates or extends the separate H200 memory-efficiency
+benchmark (Section 35), which used different hardware, a different model, and a
+different metric. The three are kept as separate benchmark families: H200
+memory-efficiency, A100/TPU cross-accelerator R6 scaling, and the LNES-58 to
+LNES-59 state-governance and local-retrieval benchmark families.
+
+#### 35.3.2 xLMP Corpus-Scaling Characterization (LNES-82C, 32K→10M, Executed)
+
+The primary hypothesis from Section 35.3 — that model-facing context K remains bounded
+rather than proportional to corpus size — was tested empirically across a nominal
+32K–10M token corpus range using an adversarial corpus designed to stress
+temporal-authority retrieval.
+
+**Method:** Frozen harness (SHA-256: `c5b7849d2906b200554a345ae3fa11adfd2ccd63b2b2e49120d6982f0e4d17a1`),
+model `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` via NVIDIA NIM, adversarial
+corpus constructed deterministically from a seeded generator with 25% temporal-
+interference content (superseded specifications, rejected revisions, conflicting
+date records). Ten corpus scales tested: 32K, 64K, 128K, 285K, 384K, 500K, 1M, 2M,
+4M, and 10M estimated tokens. Development queries ran at each scale; a sealed
+190-query holdout was reserved for the 10M endpoint only. Holdout and harness
+SHA-256 hashes were recorded before any inference executed.
+
+**K result — Ezumba Law IV confirmed across tested envelope:**
+Across the tested nominal 32K–10M corpus envelope, mean model-facing context remained
+bounded rather than increasing proportionally with stored state. At the genuine 10M
+holdout point, mean K was 895.96 tokens versus 902.81 at 4M, despite a 2.5×
+increase in corpus size.
+
+A 10-point OLS fit over development-run K values (all corpus scales, development
+queries only) produced slope b = 2.79×10⁻⁶ tokens per corpus token (R² = 0.038;
+95% CI [−8.59×10⁻⁶, +1.42×10⁻⁵], df = 8). The confidence interval includes zero.
+Corpus size explained approximately 3.8% of observed K variance under this linear
+model, with no material positive trend detected within the tested envelope.
+This fit uses development-query data only; the sealed holdout data was not used
+in any regression computation.
+
+| Corpus N | Mean K (dev) | Accuracy (dev) |
+|---:|---:|---:|
+| 32,000 | 908 | 45.3% |
+| 64,000 | 892 | 42.6% |
+| 128,000 | 867 | 43.7% |
+| 285,000 | 870 | 42.9% |
+| 384,000 | 876 | 42.6% |
+| 500,000 | 876 | 42.2% |
+| 1,000,000 | 764 | 42.6% |
+| 2,000,000 | 816 | 45.3% |
+| 4,000,000 | 902 | 46.3% |
+| **10,000,000** | **897** | **41.1%** |
+
+**Correctness finding — Q_BEND triggered at 10M holdout:**
+Correctness crossed the preregistered Q_BEND threshold at the 10M holdout, with
+75/190 unique queries correct (39.5%), 0.5 percentage point below the 40% boundary.
+The identical result across five shuffled repetitions demonstrates deterministic
+reproduction of the measured outcome, not five independent accuracy samples.
+
+Q-class analysis: Q1 (single-fact lookup) reached 43.0%, exactly at the
+preregistered pass threshold; Q2 (multi-evidence synthesis) reached 62.5%.
+Q3 (temporal authority) was 12.0%: the Q3 result is consistent with the intended
+temporal-interference stress introduced by the 10M adversarial corpus, which
+included approximately 1M tokens of superseded specifications, rejected revisions,
+and conflicting date records specifically designed to challenge temporal authority
+selection. Q4 (adversarial ambiguity) was 16.0%. Q_BEND is a retrieval-quality
+characterization under adversarial density at 10M corpus scale, not a system-level
+error: all 950 inference calls across the 5-run holdout returned status=ok with
+valid model output.
+
+**Retrieval result — C_BEND characterization hardware-confounded:**
+Retrieval P50 at 10M on the holdout run was 18.7s (WSL2 on Windows local hardware).
+The 10M/4M retrieval ratio cannot be stated as evidence-grade scaling characterization:
+the 4M campaign ran on GCP A100 hardware; the 10M holdout ran on a different host
+with a different I/O stack. A hardware-matched retrieval comparison has not been run.
+What can be stated: retrieval P50 at 10M remained under the preregistered 50,000ms
+hard ceiling regardless of hardware comparison.
+
+**Evidence reference:** LNES-82C campaign (sealed 2026-09-04); 5-run × 190-query holdout,
+GCS-archived. Harness SHA-256 and holdout query-set SHA-256 frozen before any inference
+executed. Cross-population note: the Q3 comparison above (4M dev vs 10M holdout) is
+cross-population; a matched holdout comparison at 4M was not separately conducted.
+
+### 35.4 From Retrieval to Authoritative State: LNES-58 â†’ LNES-59
 
 Section 35's benchmark measures token efficiency and throughput at fixed
-evidence correctness — it holds the question "did the model get the right
+evidence correctness â€” it holds the question "did the model get the right
 answer" constant and measures cost. A separate, later benchmark line
 (LNES-58, then LNES-59) tests a different question: once evidence is
 retrieved, should the model's own probabilistic output be the sole
 authority over whether that output becomes committed, authoritative
 system state? This section reports that line's results. It is a distinct
-benchmark from Section 35's H200 corpus-scaling test — different
-hardware, different metric, different question — not a continuation of
+benchmark from Section 35's H200 corpus-scaling test â€” different
+hardware, different metric, different question â€” not a continuation of
 it.
 
 **LNES-58 (healthcare domain, closed-world)** established, for a
@@ -1489,14 +1590,14 @@ temporal lineage (supersession, revocation, expiry, future-effectiveness),
 and evidence includes non-authoritative sources (rumor, unconfirmed
 chat/email) that must not be treated as fact. Moving the architecture
 into this domain surfaced genuine defects not present in the closed-world
-design — full development chronology and defect taxonomy are internal
-engineering records, not reproduced here — which were fixed prior to
+design â€” full development chronology and defect taxonomy are internal
+engineering records, not reproduced here â€” which were fixed prior to
 freezing the architecture (version V7) ahead of a sealed blind holdout.
 
 **The controlled comparison.** On a 50-case sealed, post-freeze synthetic
 procurement holdout (evidence identifiers: LNES59-HOLDOUT, frozen after
 the architecture itself was frozen and never executed against the
-architecture during authoring — see the limitation note below), eight
+architecture during authoring â€” see the limitation note below), eight
 pipeline configurations were run against the identical 50 cases:
 
 | Arm | Description | Candidate-state correct | Authorized-state correct | False-authoritative-state rate |
@@ -1512,26 +1613,26 @@ pipeline configurations were run against the identical 50 cases:
 
 **The central result (X1 vs. X2):** X1 and X2 read the identical
 deterministically-resolved state envelope and both achieved 84%
-candidate-state correctness — the model's raw judgment was identical.
+candidate-state correctness â€” the model's raw judgment was identical.
 X1 committed 4 of those 50 judgments as authoritative state that
 contradicted the deterministically-resolvable ground truth (an 8%
-false-authoritative-state rate). X2 — the same pipeline, with one
+false-authoritative-state rate). X2 â€” the same pipeline, with one
 addition: a deterministic consistency check applied after generation,
-before anything is treated as authoritative — committed none of those
-four. Observed reduction on this holdout: **8% → 0%, a 100% relative
+before anything is treated as authoritative â€” committed none of those
+four. Observed reduction on this holdout: **8% â†’ 0%, a 100% relative
 reduction**, at a disclosed cost of a 10% raw false-block rate (roughly
 4% after manual case-by-case inspection attributed the remainder to a
 scoring-metric artifact on correctly-blocked authority violations, not
 governance errors) and a 6% false-allow rate (cases where the gate
 correctly found no contradiction to a model's *hedge*, but a determinate
-correct answer existed and the model should have asserted it — a
+correct answer existed and the model should have asserted it â€” a
 disclosed structural blind spot, not fixed as part of this benchmark:
 the gate is built to catch overclaiming, not underclaiming).
 
 **Stated precisely, because it is easy to overstate:** the model did not
 become more accurate. Candidate-state correctness was identical between
 X1 and X2 (84% = 84%). The system became more selective about which of
-the model's own claims it would accept as authoritative — exactly the
+the model's own claims it would accept as authoritative â€” exactly the
 distinction Section 39 makes in the security context ("evidence tells
 the agent what the world contains; authority tells the agent what it is
 permitted to cause"), now shown to apply to the agent's own memory
@@ -1555,21 +1656,21 @@ LNES-22's domain (see Section 40 for the updated pipeline view).
 
 **Other findings from the same run:**
 - **B4** (structured fact memory, no xLMP state governance) tied B0 for
-  the best comparator score (72%) but did not close the gap to X1/X2 —
+  the best comparator score (72%) but did not close the gap to X1/X2 â€”
   extracting clean, typed evidence is not the same as resolving it.
 - **B1/B2/B3**, reported separately as distinct RAG configurations rather
   than a single "RAG" figure per this paper's Appendix B discipline, had
-  uniformly high evidence recall (96–98%) but 64–68% final accuracy — on
+  uniformly high evidence recall (96â€“98%) but 64â€“68% final accuracy â€” on
   this holdout, the shortfall was concentrated in reasoning over
   temporal/authority/scope conflicts once evidence was already correctly
   retrieved, not in retrieval failure. Adding a reranker (B3) did not
   improve accuracy over the un-reranked hybrid arm (B2) in this
-  configuration and cost roughly 100× the retrieval latency (CPU-bound,
-  no accelerator in this test environment — a hardware-tier finding, not
+  configuration and cost roughly 100Ã— the retrieval latency (CPU-bound,
+  no accelerator in this test environment â€” a hardware-tier finding, not
   an architectural one).
 
 **Cross-domain framing (deliberately bounded):** LNES-58 and LNES-59
-provide **cross-domain evidence** — two independently-designed domains
+provide **cross-domain evidence** â€” two independently-designed domains
 (healthcare, enterprise procurement) showing directionally consistent
 results for the same architectural separation. This is not universal
 proof, not a mathematical proof applicable to all AI systems, and not a
@@ -1594,13 +1695,13 @@ and evidence hashes: internal engineering records (`LNES59_Procurement_Bench/`),
 not reproduced in full here per this paper's practice of citing evidence
 categories rather than internal file paths.
 
-**Procurement boundary condition (LNES-82D.3–D.5, local + cloud, 2026-08-15):** On procurement, ExergyNet found a boundary condition: naive bounded retrieval was fast but inaccurate. Deterministic graph, entity, and policy-state resolvers improved full evidence recall from 46 percent to 60 percent with zero regressions, but remained below the 85 percent cloud gate. Procurement therefore remains an active relational-state research track, not a solved benchmark. A remaining failure class involves content-equivalent policy records with distinct IDs, suggesting that future evaluation should distinguish payload-equivalent evidence from exact document-ID matching — this is a disclosed open question, not a claim that it proves benchmark failure; resolving it would require a purpose-built payload-equivalence evaluator, not yet built.
+**Procurement boundary condition (LNES-82D.3â€“D.5, local + cloud, 2026-08-15):** On procurement, ExergyNet found a boundary condition: naive bounded retrieval was fast but inaccurate. Deterministic graph, entity, and policy-state resolvers improved full evidence recall from 46 percent to 60 percent with zero regressions, but remained below the 85 percent cloud gate. Procurement therefore remains an active relational-state research track, not a solved benchmark. A remaining failure class involves content-equivalent policy records with distinct IDs, suggesting that future evaluation should distinguish payload-equivalent evidence from exact document-ID matching â€” this is a disclosed open question, not a claim that it proves benchmark failure; resolving it would require a purpose-built payload-equivalence evaluator, not yet built.
 
 ### 35.5 The Third Domain: LNES-60 Physical Truth (Phase 1 + Phase 1.5 Validated)
 
 LNES-58 tested epistemic truth in a closed-world healthcare domain. LNES-59
 tested institutional truth in an open-world enterprise procurement domain.
-LNES-60 introduces a third truth model — **physical / configurational truth** —
+LNES-60 introduces a third truth model â€” **physical / configurational truth** â€”
 where the question changes from "which record is authoritative" to "does the
 physical object in front of the system conform to the state that any record,
 documentary, digital, or witnessed, says it should be in?"
@@ -1611,8 +1712,8 @@ deterministically establish operational state and prevent release until the
 conflict is resolved?
 
 **The new evidence plane.** LNES-58/59 operated on documentary evidence
-alone. LNES-60 introduces physical witness state — sensor-derived evidence
-about the actual physical condition of a component or aircraft — as a fourth
+alone. LNES-60 introduces physical witness state â€” sensor-derived evidence
+about the actual physical condition of a component or aircraft â€” as a fourth
 evidence plane, alongside documentary state, command/digital state, and a
 witness trust state that must separately validate the sensor's identity,
 calibration, freshness, scope, and health before its reading is treated as
@@ -1629,12 +1730,12 @@ misinterpretation):**
 
 This is not "sensor always wins." A sensor reading whose trust properties
 are unverified becomes `STALE_WITNESS`, `SENSOR_DEGRADED`, or
-`WITNESS_SCOPE_ERROR` rather than an automatic override — the same
+`WITNESS_SCOPE_ERROR` rather than an automatic override â€” the same
 non-collapsed resolution discipline as LNES-58/59's epistemic states,
 applied to physical evidence. And critically: a historical documentary
 fact (e.g., "technician serviced this component") is preserved even when a
 trusted physical reading contradicts the current-state conclusion derived from
-it — xLMP supersedes the conclusion, not the fact.
+it â€” xLMP supersedes the conclusion, not the fact.
 
 **Target domain (architecture design phase):** KTX Tensile-Lift heavy-lift
 UAV. The initial output is an engineering pre-flight authorization gate
@@ -1646,20 +1747,20 @@ separate policy evaluation before any action authority is granted.
 
 **Benchmark results (Phase 1 + Phase 1.5, synthetic holdout only):** Two
 completed validation runs against a sealed 50-case synthetic holdout covering
-20 KTX adversarial test classes (≥2 instances each). Phase 1 used a
+20 KTX adversarial test classes (â‰¥2 instances each). Phase 1 used a
 deterministic rule-based reference simulator; Phase 1.5 used a real probabilistic
 model (claude-sonnet-5). All witness data `SIMULATED_WITNESS`; no real sensor
 hardware or aircraft involved at any stage.
 
 | Arm | Phase 1 (simulator) | Phase 1.5 (real model) |
 |---|---|---|
-| P0/M0 Documentary only — false release | 30% (15/50) | 8% (4/50) |
-| P0/M0 Documentary only — release accuracy | 18% | 28% |
-| P1/M1 Raw telemetry, ungoverned — false release | **34% (17/50)** | **20% (10/50)** |
-| P1/M1 Raw telemetry, ungoverned — release accuracy | 66% | 78% |
-| P2/M2 Governed + LNES-22 gate — false release | **0% (0/50)** | **0% (0/50)** |
-| P2/M2 Governed + LNES-22 gate — release accuracy | 100% | 100% |
-| P2/M2 Governed + LNES-22 gate — false hold | 0% | 0% |
+| P0/M0 Documentary only â€” false release | 30% (15/50) | 8% (4/50) |
+| P0/M0 Documentary only â€” release accuracy | 18% | 28% |
+| P1/M1 Raw telemetry, ungoverned â€” false release | **34% (17/50)** | **20% (10/50)** |
+| P1/M1 Raw telemetry, ungoverned â€” release accuracy | 66% | 78% |
+| P2/M2 Governed + LNES-22 gate â€” false release | **0% (0/50)** | **0% (0/50)** |
+| P2/M2 Governed + LNES-22 gate â€” release accuracy | 100% | 100% |
+| P2/M2 Governed + LNES-22 gate â€” false hold | 0% | 0% |
 | Gate: candidate false releases prevented | 2/2 (100%) | 2/2 (100%) |
 | Gate: false holds introduced | 0 | 0 |
 
@@ -1674,7 +1775,7 @@ failure classes drove the M1/P1 regression. The simulator failed on
 overriding a documented defect). The real model handled those classes correctly
 via commonsense conflict reasoning, but failed systematically on
 `stale_after_event`, `wrong_aircraft`, `wrong_component`, and
-`mission_envelope_violation` — failure modes that require persistent temporal,
+`mission_envelope_violation` â€” failure modes that require persistent temporal,
 identity, scope, and authority relationships not contained in an individual
 sensor reading. These findings are complementary, not contradictory: both
 confirm that deterministic governance (P2/M2) is the necessary mechanism,
@@ -1686,18 +1787,17 @@ the requested mission remains unauthorized. xLMP + LNES-60 establishes what
 the machine is. LNES-22 establishes what the machine is permitted to do.
 
 **Status:** VALIDATED (Phase 1 + Phase 1.5) on a sealed synthetic holdout.
-Phase 2 (real sensor hardware bench): SOFTWARE READY / HARDWARE EXECUTION
-PENDING. Phase 3 (aircraft integration): NOT STARTED. No real sensor hardware
+Phase 2 (real sensor hardware bench): SOFTWARE READY / HARDWARE EXECUTION`r`nNOT_CLAIMED. Phase 3 (aircraft integration): DESIGNED. No real sensor hardware
 campaign conducted; no autonomous return-to-service claim; no regulatory or
 legal substitution.
 
 ### 36. Context-Boundary Behavior
 
-In an xLMP system, bounded evidence is selected to fit within budget B ≤ W.
+In an xLMP system, bounded evidence is selected to fit within budget B â‰¤ W.
 The model's context is never exceeded by evidence staging. Retrieval accuracy
 degrades gracefully as corpus size grows rather than cliff-failing when the
 corpus exceeds the context window. Full-context injection was rejected outright
-past 262k tokens; xLMP continued operating at 285k corpus with ~660–820 prompt
+past 262k tokens; xLMP continued operating at 285k corpus with ~660â€“820 prompt
 tokens.
 
 ### 37. Cross-Accelerator Portability
@@ -1730,7 +1830,7 @@ The most important rule:
 
 In August 2026, security researchers disclosed exploitation of multi-agent
 trust relationships in which an untrusted input caused a privileged workflow
-to execute restricted operations through a trusted identity — "privilege
+to execute restricted operations through a trusted identity â€” "privilege
 laundering." The persistence of memory makes this vulnerability more severe:
 a poisoned memory object retrieved by a trusted agent can cause that agent to
 take actions that appear well-founded.
@@ -1750,8 +1850,8 @@ chain must be re-established for each consequential physical action.
 ### 40. LNES-22 as a Companion Control Plane
 
 xLMP controls what evidence enters an agent's computation. LNES-22 controls
-what actions that evidence may authorize. Natural language — regardless of how
-authoritatively it appears in a retrieved document — has zero authority over
+what actions that evidence may authorize. Natural language â€” regardless of how
+authoritatively it appears in a retrieved document â€” has zero authority over
 LNES-22 policy decisions.
 
 Detailed treatment is in the companion paper: *LNES-22 and the Agent Authority
@@ -1763,23 +1863,23 @@ is the companion paper's domain and is not what LNES-59 tested):
 
 ```
 PERSISTENT STATE
-      ↓
-xLMP — AI MEMORY CONTROL PLANE          (governs what the system knows)
-      ↓
+      â†“
+xLMP â€” AI MEMORY CONTROL PLANE          (governs what the system knows)
+      â†“
 PROBABILISTIC MODEL                     (interprets what the system knows)
-      ↓
+      â†“
 CANDIDATE CLAIM / DECISION
-      ↓
-DETERMINISTIC STATE GOVERNANCE          (Section 35.4: X1→X2, benchmark-implemented)
-      ↓
+      â†“
+DETERMINISTIC STATE GOVERNANCE          (Section 35.4: X1â†’X2, benchmark-implemented)
+      â†“
 AUTHORIZED STATE
-      ↓
-LNES-22 — ACTION AUTHORITY              (governs what the system may cause)
-      ↓
+      â†“
+LNES-22 â€” ACTION AUTHORITY              (governs what the system may cause)
+      â†“
 EXECUTION
-      ↓
+      â†“
 EDGE WITNESS / OUTCOME
-      ↓
+      â†“
 PERSISTENT STATE UPDATE  (feeds back to the top)
 ```
 
@@ -1790,14 +1890,14 @@ NEURO-LOCK (Section 30) sits below authorized action as the cryptographic
 actuation boundary. **LNES-59 validated the deterministic-state-governance
 step of this pipeline (state envelope through authorized state) on a
 sealed procurement holdout; it did not exercise LNES-22's action-authority
-layer, execution, or physical actuation** — those remain governed by the
+layer, execution, or physical actuation** â€” those remain governed by the
 status distinctions already made in Section 41, Appendix D, and the
 companion LNES-22 paper.
 
 ### 41. Delegation and Consequential Actions
 
-Any action modifying shared state — code deployment, fund transfer, data
-deletion, infrastructure change, credential issuance, physical actuation —
+Any action modifying shared state â€” code deployment, fund transfer, data
+deletion, infrastructure change, credential issuance, physical actuation â€”
 must be treated as consequential and require explicit authority beyond evidence
 retrieval.
 
@@ -1897,25 +1997,25 @@ For dense attention, if the full corpus is inserted into context, attention
 cost scales with the size of that context:
 
 ```
-T_attention ∝ O(C_ctx²)
+T_attention âˆ O(C_ctxÂ²)
 ```
 
 With bounded evidence staging, attention cost instead scales with the size
 of the activated evidence:
 
 ```
-T_attention ∝ O(|E(q)|²)
+T_attention âˆ O(|E(q)|Â²)
 ```
 
 This is not a claim that every storage, retrieval, or control-plane cost is
-constant with corpus size — discovery, indexing, and synchronization costs
+constant with corpus size â€” discovery, indexing, and synchronization costs
 can still grow with C (Section 33's qualification on D(C) applies here as
 well). The claim is narrower and specific to attention: **persistent state
 can scale independently of active attention state when the evidence
 required for a task remains bounded.**
 
 Decode remains strongly influenced by active KV-cache length and HBM
-traffic — bounding W(q) does not remove that cost, it reduces how much of
+traffic â€” bounding W(q) does not remove that cost, it reduces how much of
 it a given task incurs. Reducing unnecessary model-facing state therefore
 acts before the model-level KV optimizations used by modern inference
 runtimes, not instead of them:
@@ -1939,7 +2039,7 @@ efficiently.
 
 Build applications whose memory survives the model, device, cloud, and session.
 Applications built on xLMP can change model providers without losing accumulated
-state — reducing provider lock-in at the state layer, which is the most durable
+state â€” reducing provider lock-in at the state layer, which is the most durable
 layer of lock-in.
 
 ### 45. Value to Accelerator and Cloud Providers
@@ -1978,10 +2078,10 @@ standardization process as the architecture matures.
 - VMN local ingest, BM25 retrieval, root-bound recall
 - VMN MCP integration with Claude Code
 - SHA-256 content-rooted object identity and integrity verification
-- H200 benchmark: prompt tokens 660–820 flat; +24.4 accuracy vs RAG; ~42.7× token efficiency vs full-context (EVD-001, EVD-002)
+- H200 benchmark: prompt tokens 660â€“820 flat; +24.4 accuracy vs RAG; ~42.7Ã— token efficiency vs full-context (EVD-001, EVD-002)
 - Biological Proxy multi-model inference routing (AskMo, TypeScript)
 - LNES-11 bilateral consensus (vanguard-ultra mode) in biological_proxy
-- Omega Carrier Tools 1–5 (SSE MCP toolset, port 8765)
+- Omega Carrier Tools 1â€“5 (SSE MCP toolset, port 8765)
 - LNES-22 Ed25519 signing, sensory trigger, review endpoint, schema validation, replay enforcement
 - LNES-06 Edge Witness Android platform (v2.22.8 versionCode 247)
 - LNES-12 LiveKit/coturn WebRTC calling layer on Carrier EC2
@@ -1992,37 +2092,30 @@ standardization process as the architecture matures.
 
 - LNES-22 deterministic policy gate (module implemented; not wired to execution)
 - Omega Carrier Tool 6 (`strike_rho_recursion`) HITL gate (deployed); siphon swap signal (not wired)
-- Delegation receipt specification (complete; implementation pending)
+- Delegation receipt specification (complete; implementation DESIGNED)
 - LNES-06 xLMP vault integration (staged)
 
 ### 50. Current Integrity Commitment Status
 
-Current xLMP deployments use SHA-256 content commitments for local integrity
-verification on the synchronous query path. The xLMP-DS ZK query
-(`xlmp_zk_query`) returns a SHA-256 hash labeled as a Groth16 receipt on this
-hot path — this is documented in the project record (EVD-009) and is not
-claimed as genuine ZK proof verification for query-time responses.
+The current Vault query surface separates three ideas that earlier drafts
+blurred together:
 
-A separate, explicit, asynchronous Groth16 proof path (`/api/xlmp/prove`) has
-been directly verified: on the currently-deployed CPU infrastructure, this
-path completed a real, non-placeholder Groth16 proof for a minimal Vault
-object in approximately 13.5 minutes (EVD-011). This validates the optional
-proof path while confirming that real Groth16 remains too slow for
-synchronous query-time execution on the tested CPU deployment. The result
-reflects the currently-deployed CPU configuration only — it does not evaluate
-GPU, Bonsai, or other accelerated proving paths, and is not claimed as a
-lower bound on achievable Groth16 latency.
+1. **Synchronous hot path:** the deployed query path can return a deterministic
+   SHA-256 integrity digest or receipt for the queried Vault content. This is
+   useful for content integrity and replay comparison, but it is not a Groth16
+   proof and should not be labeled as one.
+2. **Asynchronous proving path:** the explicit opt-in proving path has generated
+   and verified a real Groth16 proof for a minimal Vault object in the deployed
+   CPU-only environment. That result demonstrates proof generation and local
+   verification for the tested path only.
+3. **On-chain or membrane acceptance:** a valid proof, an authorized image ID,
+   and a contract's acceptance rules are separate checks. Image-ID binding does
+   not by itself prove that an external input was truthful.
 
-The architecture is dual-path: the hot path (synchronous Vault queries) uses
-SHA-256 content-addressed receipts for low-latency operation; the cold path
-(asynchronous, explicit, opt-in) uses real Groth16 integrity proofs, now
-verified to complete successfully on deployed infrastructure for a single
-minimal object. Production zero-knowledge computation integrated into the
-synchronous query path remains under development and is explicitly NOT
-CLAIMED as deployed; the asynchronous proof path is CLAIMED as verified for
-one minimal test object, not as validated at production scale, under
-concurrent load, or with on-chain settlement.
-
+This edition therefore claims SHA-256 integrity on the hot path and real
+Groth16 proving only on the separate async path. It does not claim that every
+Vault query is ZK-proven, that async proving is production-scale reliable, or
+that on-chain settlement has been verified from the EVD-011 proof run.
 ### 51. Open Research Questions
 
 - Formal evidence completeness for objects with complex internal structure
@@ -2032,7 +2125,7 @@ concurrent load, or with on-chain settlement.
 - Memory conflict reconciliation across distributed nodes
 - Verifiable model attachment as a component of the authority receipt
 - Hardware-attested observation integration with xLMP root scheme
-- GPS-independent positioning integration with Atlas spatial graphs [LNES TBD]
+- GPS-independent positioning integration with Atlas spatial graphs [future LNES assignment]
 
 ### 52. Conclusion and Category Declaration
 
@@ -2049,7 +2142,7 @@ The architectural inversion:
 > The model is temporary. Persistent memory is primary.
 > Computation attaches to state. State does not follow computation.
 
-In the highest-stakes application class — autonomous physical systems — the
+In the highest-stakes application class â€” autonomous physical systems â€” the
 same xLMP memory primitive that serves a software agent provides persistent
 mission state for machines with kinetic consequence. The authority boundary
 that governs what a software agent is permitted to request is extended, through
@@ -2071,7 +2164,7 @@ NEURO-LOCK:   What physical action has been verified and authorized,
 ```
 
 ExergyNet introduces the AI Memory Control Plane as the persistent
-infrastructure layer beneath autonomous intelligence — digital and physical.
+infrastructure layer beneath autonomous intelligence â€” digital and physical.
 
 The ultimate consequence of the AI Memory Control Plane is not simply better
 model context. It is persistent physical intelligence: systems capable of
@@ -2081,6 +2174,178 @@ verifying physical outcomes, and continuing a mission across models and
 machines. In this architecture, intelligence is not contained within a
 single model invocation. It persists as a governed operational state to
 which models, tools, networks, and physical systems temporarily attach.
+
+---
+
+## Part X: Beyond the Memory Control Plane
+
+### 53. ExergyNet as a Multi-Plane Autonomous Systems Architecture
+
+This paper describes one control plane of a larger ExergyNet architecture.
+Persistent memory alone does not constitute autonomous infrastructure. An
+autonomous system that can recall its own history still needs independent,
+separately verifiable controls for what it is authorized to do with that
+memory, what resource it consumes to act on it and under whose delegated
+spend, what physical consequence its actions may cause, and what actually
+happened as a result. This section places xLMP correctly within that larger
+system. It does not extend the AI Memory Control Plane's proven scope to
+cover any of the boundaries described below.
+
+#### 53.1 The Loop This Paper Is One Layer Of
+
+Sections 5-18, 39-41, and 26-32 of this paper already describe, without
+naming them as such, three of the boundaries a production autonomous system
+needs:
+
+- **Sections 5-18 (the AI Memory Control Plane itself):** what state may the
+  system know, and under what integrity/provenance guarantee.
+- **Sections 39-41 (Evidence Is Not Authority; LNES-22):** what consequence
+  that evidence may be used to authorize -- a deliberately separate property
+  from what the system knows.
+- **Sections 26-32 (NEURO-LOCK):** what physical action a verified
+  authorization object, not a model's own output, may actually cause.
+
+A fourth boundary is visible in this paper's own description of Omega
+Carrier (Section 21) but not yet elevated into an architecture of its own.
+Omega Carrier's deployed toolset already exposes evidence recall, vault
+commit, and Rho economic operations side by side (Section 21), which means a
+machine-economic question -- what resource may an identified model consume,
+under whose delegated authority, at what price, and where does settlement
+go -- already sits adjacent to the memory question this paper answers. That
+question deserves its own control plane, not a subsection of this one.
+
+#### 53.2 Four Control Planes, Not One
+
+```
+AI MEMORY CONTROL PLANE            What state may the system know?
+(this paper)
+
+AGENT AUTHORITY CONTROL PLANE      What consequence may the system cause?
+(LNES-22, Section 40)
+
+MACHINE ECONOMIC CONTROL PLANE     What resource may the system consume,
+(Section 53.3)                     under whose authority, at what price,
+                                    and where does settlement go?
+
+PHYSICAL ACTUATION CONTROL PLANE   What physical consequence may actually
+(NEURO-LOCK, Section 30)           occur?
+```
+
+These are deliberately not collapsed into one another. The same discipline
+that governs Sections 9 and 39 of this paper -- integrity, provenance, and
+authority are separate, independently verifiable properties -- extends
+across all four planes:
+
+```
+MODEL_ID            does not imply    SPENDING_AUTHORITY
+SPENDING_AUTHORITY  does not imply    SERVICE_DELIVERY
+SERVICE_DELIVERY    does not imply    SETTLEMENT
+SETTLEMENT          does not imply    ACTION_AUTHORITY
+```
+
+Each transition needs its own evidence. A model carrying a verifiable
+identity is not thereby authorized to spend; being authorized to spend does
+not itself prove a memory operation was delivered; a delivered operation
+does not itself prove settlement occurred; and a settled payment does not
+itself grant authority to act -- that authority is LNES-22's question
+(Section 40), not the economic plane's.
+
+#### 53.3 The Machine Economic Control Plane (Status: Staged, Integration Incomplete)
+
+The emerging primitive is: an identified machine consumes a network resource
+under bounded, delegated economic authority, receives an attributable usage
+receipt, and settles the transaction through a deterministic economic
+boundary. Concretely, for xLMP-adjacent memory operations:
+
+```
+MODEL_ID  -->  delegated $RHO spending authority  -->  Omega Carrier request
+      -->  VMN memory operation  -->  usage receipt  -->  on-chain settlement
+      -->  treasury distribution
+```
+
+This is not claimed as deployed. What is verified as of this writing:
+
+- Omega Carrier's deployed toolset (Section 21) already exposes Rho economic
+  operations alongside memory recall/commit, establishing that the economic
+  and memory surfaces are adjacent in the running system, not merely
+  conceptually related.
+- A dedicated settlement contract for model-identified, per-operation memory
+  pricing has been implemented and passed its full test suite -- 30 tests
+  specific to this contract (0 failures), within a 79-test full-repository
+  suite (0 failures) -- but has not yet been deployed to any network. No
+  chain write has occurred for this contract.
+- Settlement requires an authenticated commitment, not a caller-supplied
+  claim. The contract carries an immutable receipt-signer address; a
+  settlement can only succeed if it carries a valid ECDSA signature from
+  that signer over a commitment binding the allowance key, the model ID read
+  from contract storage (not caller-supplied), the request ID, session ID,
+  VMN namespace, operation, result root, usage units, the on-chain-computed
+  price, and the receipt hash. The validated test suite confirms that a
+  forged receipt hash, an altered result root, an altered operation, a
+  receipt signed for the wrong model, an unrecognized signer, a replayed
+  valid receipt, and a malformed signature are each independently rejected.
+- That mechanism is distinct from four separate things this paper's own
+  epistemology (Sections 9, 39) requires keeping apart: (A) a content
+  commitment -- the result root, a hash of the VMN operation's own output;
+  (B) a receipt hash -- a digest of the full off-chain receipt record; (C)
+  an ECDSA authentication of the settlement commitment -- a signature
+  proving whoever produced it held the designated signing key; and (D) a
+  zero-knowledge proof of the underlying memory execution. The staged design
+  provides (A) through (C). It does not provide (D) -- there is no ZK proof
+  that the VMN operation was actually performed as claimed, only a
+  cryptographic signature asserting it.
+- Payment is receipt-gated on-chain settlement, not payment strictly
+  preceding service. In the intended flow, VMN/Omega service delivery
+  precedes receipt creation; the settlement transaction itself -- signature
+  check, allowance checks, and token transfer -- executes atomically within
+  a single call once a receipt exists, and reverts as a whole if the token
+  transfer fails. That contract-level atomicity is a separate property from
+  the off-chain question of when the VMN operation ran relative to when its
+  receipt was signed and submitted.
+
+```
+OMEGA_PERSISTENT_RECEIPT_SIGNER   NOT YET LIVE
+OMEGA_SIGNED_RECEIPT_EMISSION     NOT YET LIVE
+ON-CHAIN MEMORY SETTLEMENT        NOT YET DEPLOYED
+```
+
+The receipt-signer key this mechanism checks against is not yet provisioned
+in, or used by, the running Omega Carrier service -- no signed receipt has
+been emitted by a live system. This remains STAGED language with incomplete
+integration, not DEPLOYED language, per this paper's own claim-status
+discipline (Appendix D, `CLAIM_LEDGER.md`). It is included here because the
+boundary itself -- model identity does not imply spending authority,
+spending authority does not imply delivered service, and a signed
+commitment does not imply the signer is wired into any live service -- is
+already a necessary property of the architecture Omega Carrier is built on,
+independent of whether the settlement contract or its signer identity have
+been deployed and connected yet.
+
+#### 53.4 Publication Architecture
+
+This paper will remain the memory-plane paper. Extending it indefinitely to
+cover authority, economics, actuation, and outcome would weaken the category
+claim it exists to make. The intended publication structure separates each
+plane into its own paper, with a single architecture paper above them
+describing the closed loop:
+
+```
+Paper I     xLMP and the AI Memory Control Plane          (this paper)
+Paper II    LNES-22 and the Agent Authority Control Plane
+Paper III   $RHO and the Machine Economic Control Plane
+Paper IV    Omega Carrier and the Autonomous Service Fabric
+Paper V     NEURO-LOCK and Physical Consequence Control
+```
+
+with an umbrella paper -- *ExergyNet: An Operating Substrate for Autonomous
+Agency* -- describing the full loop: persistent state, service access, model
+identity, delegated spend, metered consumption, usage receipt, settlement,
+requested consequence, authorized execution, observed physical outcome, and
+the return of that outcome to persistent state as new xLMP evidence.
+
+**None of Papers II through V, or the umbrella paper, exist yet as of this
+writing.** This section states the intended structure, not a publication
+claim.
 
 ---
 
@@ -2142,7 +2407,7 @@ accesses specific memory objects and stages bounded evidence for a given task.
 architecture of Bolt. Disclosed in FAA-reviewed operating documentation for
 Exemption No. 26214.
 
-**Omega Carrier:** (1) DEPLOYED: cross-agent MCP toolset, Tools 1–5, SSE port
+**Omega Carrier:** (1) DEPLOYED: cross-agent MCP toolset, Tools 1â€“5, SSE port
 8765; (2) DESIGNED: cross-device xLMP memory transport architecture.
 
 **OTET:** API-only write gate for infrastructure operations.
@@ -2190,7 +2455,7 @@ hashes (EVD-001, EVD-002). A publicly reproducible companion publication with:
 - Full raw result tables
 - Reproducibility package (software versions, configuration, scoring rubric)
 - Statistical methodology (confidence intervals, repetition protocol, outlier treatment)
-- Saturation test complete data (pending Veena's QPS 10–45 intermediate results)
+- Saturation test complete data (documented in the corrected saturation record's QPS 10â€“45 intermediate results)
 
 is in preparation. Tables in this paper marked with specific numbers from EVD-001/002
 are drawn from the signed deliverables.
@@ -2202,17 +2467,17 @@ are drawn from the signed deliverables.
 Full claim ledger with evidence identifiers: `exergynet/docs/whitepaper/CLAIM_LEDGER.md`
 
 **DEMONSTRATED (benchmark evidence, EVD-001, EVD-002):**
-- xLMP prompt tokens ~660–820 flat (corpus 8k → 285k)
-- Full-context tokens 11k–67k growing; rejected past 262k
+- xLMP prompt tokens ~660â€“820 flat (corpus 8k â†’ 285k)
+- Full-context tokens 11kâ€“67k growing; rejected past 262k
 - +24.4 accuracy points over tested RAG at equal evidence budget
-- ~11.3× correct-task throughput vs full-context
-- ~1.7× correct-task throughput vs RAG
-- ~42.7× Useful Answer per Token vs full-context
-- ~4.0× Useful Answer per Token vs RAG
+- ~11.3Ã— correct-task throughput vs full-context
+- ~1.7Ã— correct-task throughput vs RAG
+- ~42.7Ã— Useful Answer per Token vs full-context
+- ~4.0Ã— Useful Answer per Token vs RAG
 - VMN ingest, retrieval, root-bound recall (same benchmark environment)
 - 64k accuracy dip: confirmed root cause (chunk-boundary fragmentation), corrected
 
-**DEMONSTRATED (LNES-58/LNES-59 state-governance benchmarks, Section 35.4 —
+**DEMONSTRATED (LNES-58/LNES-59 state-governance benchmarks, Section 35.4 â€”
 sealed synthetic holdouts, not independently third-party authored; see
 Section 35.4 limitations):**
 - LNES-59: on a 50-case sealed procurement holdout, adding a deterministic
@@ -2224,38 +2489,53 @@ Section 35.4 limitations):**
   procurement) that probabilistic interpretation and authoritative-state
   commitment are separable system functions
 
-**DEMONSTRATED (LNES-82E.1 — dual-path Vault proof architecture, EVD-011):**
+**DEMONSTRATED (LNES-82C corpus-scaling campaign, sealed 5-run × 190-query holdout,
+Section 35.3.2):**
+- Across the tested nominal 32K–10M token corpus envelope, mean model-facing context
+  (K) ranged 895–908 tokens; 10-point OLS slope b = 2.79×10⁻⁶ (95% CI includes zero;
+  R² = 0.038) — bounded rather than proportionally growing with corpus size
+- Q_BEND triggered at the 10M holdout: 75/190 unique queries correct (39.5%),
+  0.5 pp below the preregistered 40% floor; result deterministic across five shuffled
+  holdout repetitions (not five independent accuracy samples)
+- Q1 (single-fact) 43.0% and Q2 (multi-evidence synthesis) 62.5% held at or above
+  preregistered thresholds; Q3 (temporal authority) 12.0% under 10M adversarial
+  temporal-interference stress; Q4 (adversarial) 16.0%
+- Retrieval P50 at 10M (18.7s) under the 50,000ms preregistered hard ceiling;
+  cross-hardware retrieval ratio not evidence-grade (see Section 35.3.2 caveat)
+
+**DEMONSTRATED (LNES-82E.1 â€” dual-path Vault proof architecture, EVD-011):**
 - The async Groth16 proof path (`/api/xlmp/prove`) is verified for a minimal
   Vault object: a real, non-placeholder 256-byte Groth16 seal was produced on
   the currently-deployed CPU infrastructure in approximately 13.5 minutes
 - The synchronous Vault query path remains SHA-256 receipt based, unchanged
   by this result
 - This validates the architecture split between low-latency query receipts
-  (hot path) and delayed cryptographic proof generation (cold path) — it does
+  (hot path) and delayed cryptographic proof generation (cold path) â€” it does
   not validate production-scale reliability, concurrent-load behavior,
   GPU/Bonsai-accelerated proving, or on-chain settlement from this run
 
 **DEPLOYED:**
 See CLAIM_LEDGER.md for full list. Key items:
 LNES-06 Edge Witness (v2.22.8); LNES-12 LiveKit/coturn; LNES-11 bilateral
-consensus; Omega Carrier Tools 1–5; LNES-22 Ed25519 signing and review
+consensus; Omega Carrier Tools 1â€“5; LNES-22 Ed25519 signing and review
 infrastructure; Biological Proxy multi-model routing; Bolt FAA Exemption
 No. 26214.
 
 **NOT CLAIMED:**
 ZK proof verification integrated into the synchronous Vault query path
-(xLMP-DS ZK query still returns a SHA-256-labeled Groth16 receipt on the hot
-path, unchanged by EVD-011 — EVD-009); every Vault query being ZK-proven
-(only the separate, explicit, opt-in async path produces a real proof);
-async Groth16 proving verified at production scale, under concurrent load,
-or as a general reliability guarantee (EVD-011 is a single run against one
-minimal object); on-chain settlement verified from the EVD-011 proof run;
-~13.5 minutes as a universal or hardware-independent lower bound on Groth16
-proving time (only the currently-deployed CPU-only path was measured; GPU,
-Bonsai, and other accelerated paths were not evaluated); fully operational
-NEURO-LOCK cryptographic actuation loop in production; FAA certification of
-NEURO-LOCK or xLMP; FAA endorsement of ExergyNet; full LNES-22 authority loop
-closure (tunnel broken, policy gate not wired to execution).
+(the hot path returns a SHA-256 integrity receipt, not a Groth16 proof -
+EVD-009); every Vault query being ZK-proven (only the separate, explicit,
+opt-in async path produces a real proof); async Groth16 proving verified at
+production scale, under concurrent load, or as a general reliability guarantee
+(EVD-011 is a single run against one minimal object); on-chain settlement
+verified from the EVD-011 proof run; approximately 13.5 minutes as a universal
+or hardware-independent lower bound on Groth16 proving time (only the
+currently-deployed CPU-only path was measured; Hopper, Bonsai, GPU, and other
+accelerated paths were not evaluated); fully operational NEURO-LOCK
+cryptographic actuation loop in production; FAA certification of NEURO-LOCK or
+xLMP; FAA endorsement of ExergyNet; full LNES-22 authority loop closure
+(transport and policy-to-execution wiring remain outside this paper's proven
+scope).
 
 ---
 
@@ -2301,47 +2581,107 @@ AI Inference Market." AMD Newsroom, August 2026.
 
 ## Appendix F: Revision Log
 
-Mandatory per LWP Maintenance Policy §6. Every substantive status change or
-structural addition requires a row.
+Mandatory per LWP Maintenance Policy Section 6. Every substantive status change
+or structural addition requires a row. Earlier revision history is preserved in
+`WHITEPAPER_V1_9_BASELINE.md` and the v1.9 source hash recorded in the v1.10
+hash manifest; this public pre-release appendix lists the current correction
+row only.
 
 | Version | Date | Claim or section | Previous status | New status | Evidence reference |
 |---------|------|-----------------|-----------------|------------|--------------------|
-| 1.9 | 2026-08-17 | New Section 35.3.1 (Cross-Accelerator Scaling: A100 and TPU v6e), Section 20 (VMN v2.0 status + new 20.1 LNES-84, new 20.2 LNES-86), VMN physical-AI status-table entry | A100/TPU cross-accelerator results existed only in an unmerged external draft outside the repository; VMN status table did not reflect the v2.0.0 npm publication; canonical had zero LNES-84 or LNES-86 content | Reconciled an external v1.9 working draft (`Documents/Codex/.../AI_MEMORY_CONTROL_PLANE_v1.9_2026-08-15.md`, outside git, not merged wholesale) against sealed benchmark artifacts before any import. Added: A100 R6 scaling (1.41x/1.92x/2.63x) and TPU v6e mirror (0.945x/1.118x/1.375x, with disclosed non-monotonic accuracy caveat), both verified byte-for-byte against sealed summaries; VMN v2.0.0 npm-publication status with adaptive-retrieval capability (mechanism undisclosed, trade secret); LNES-84 workload-dependent retrieval verdict, deliberately presenting both the 1GB/100-query pass's 52,753.8x median speedup and the later, more comprehensive 10MB mixed-vault pass's 0.72x median (indexed approach slower on the realistic query mix) side by side rather than the positive figure alone, per the source artifacts' own final verdict; LNES-86 adaptive-routing headline figures (~1.92x/~1.13x within tested workload) with mechanism withheld per R6. All four kept as separate, explicitly self-distinguishing benchmark families from the existing H200 and LNES-58/59 sections. See `WHITEPAPER_V1_9_CANONICAL_RECONCILIATION_PLAN.md` for the full per-claim verification table | `LNES82C6_ASYMPTOTIC_SCALING_SUMMARY.md`, `LNES82C7B_TPU_MIRROR_SUCCESS_SUMMARY.md`, `LNES84_3_FINAL_VERDICT.md`, `LNES84_3_PHASE4_7_ANALYSIS_REPORT.md`, `LNES86_6_VALIDATION_REPORT.md`, npm registry + GitHub provenance for `@lnes/vanguard-memory-node@2.0.0` |
-| 1.9 | 2026-08-17 | Section 35 (Baselines paragraph + prompt-token-consumption table) | RAG baseline described as "BM25-based" / "RAG (BM25 baseline)" | Corrected — the real EVD-001 baseline (`xLMP_Memory_Efficiency_Benchmark_Report.md` §2, sealed package `ExergyNet_H200_Performance_Benchmarks_v2.zip`, SHA-256 `7005fa07...`) is dense-embedding retrieval: all-MiniLM-L6-v2 embeddings, cosine similarity, top-k=5 — not BM25. Triggered by Veena's co-author review of the superseded v1.1 working draft flagging the baseline as possibly TF-IDF; reconciliation against the sealed source found the current canonical text's "BM25" claim was itself the error (not TF-IDF either) | `xLMP_Memory_Efficiency_Benchmark_Report.md` §2 (EVD-001); see `VEENA_WHITEPAPER_REVIEW_RECONCILIATION_2026-08-17.md` for full audit |
-| 1.9 | 2026-08-16 | Section 50 (Current Integrity Commitment Status) + Appendix D (DEMONSTRATED, NOT CLAIMED) + Claim Ledger | Production ZK proof verification (Groth16) listed as PLANNED / NOT CLAIMED, no deployed-environment verification on record | Added — the async Groth16 proof path (`/api/xlmp/prove`) directly verified end-to-end on the deployed Portal CPU host: real, non-placeholder 256-byte Groth16 seal produced for a minimal Vault object in ~13.5 minutes. Framed as a dual-path architecture (SHA-256 hot path for synchronous queries, async Groth16 cold path now verified). Explicitly not claimed: production-scale reliability, concurrent-load behavior, GPU/Bonsai-accelerated proving, 13.5 minutes as a lower bound, or on-chain settlement from this run | LNES82E1_VAULT_ASYNC_GROTH16_PROOF_PATH_REPORT.md + _MANIFEST.json + _RAW_RESULTS.json (EVD-011) |
-| 1.8 | 2026-08-15 | Section 35.4 (procurement boundary condition, new paragraph) + Claim Ledger (STAGED) | LNES-59 procurement results ended at the X1→X2 controlled comparison, no later cloud/offline follow-up on record | Added the LNES-82D.3–D.5 procurement boundary finding: naive bounded retrieval fast but inaccurate; deterministic graph/entity/policy-state resolvers raised full evidence recall 46%→60% with zero regressions, still below the 85% cloud gate; procurement stays an active research track, not solved; disclosed the content-equivalent-policy-records-under-distinct-IDs open question without overclaiming it as proof of benchmark failure | `LNES82D3_PROCUREMENT_A100_RUN_LOG.md`, `LNES82D4_PROCUREMENT_GRAPH_ENTITY_RETRIEVAL_REPORT.md`, `LNES82D5_POLICY_AUTHORITY_STATE_RESOLVER_REPORT.md` |
-| 1.8 | 2026-08-15 | Section 20 (VMN Engineering Findings) + Claim Ledger (NOT CLAIMED) | No local A/B evaluation of BM25-indexed retrieval vs. current xLMP linear scan on record | Added — VMN-style BM25 indexing evaluated locally as a candidate xLMP retrieval replacement; did not outperform the current linear scan at 20–164 document procurement-corpus scale (~18×–98× slower); evidence recall not consistently better; not a validated advancement, remains an open large-scale/crossover research question | LNES-84.2 local A/B benchmark, 40 trial runs (4 corpus scales × 5 counterbalanced trials × 2 methods), zero errors; `LNES84_2_XLMP_VMN_CANDIDATE_REPORT.md` |
-| 1.8 | 2026-08-09 | Validation (Section 35.5 benchmark table + architectural statement) | v1.7 prose-only results | Added Phase 1 vs Phase 1.5 side-by-side metrics table; canonical finding statement; architectural statement "physical-state correctness and action authority are separate system properties"; Phase 2 maturity label "SOFTWARE READY / HARDWARE EXECUTION PENDING"; removed orphaned v1.6 status text | LNES60_PHASE1.5_FINAL_VALIDATION_REPORT.md + LNES60_PHASE1_VS_PHASE1.5_COMPARISON.md |
-| 1.7 | 2026-08-09 | Validation (Section 35.5 status upgrade) | "Architecture Defined — Not Yet Executed" | Upgraded to "Phase 1 + Phase 1.5 Validated": added Phase 1 (deterministic simulator, 0% P2 false releases on sealed 50-case holdout) and Phase 1.5 (real model claude-sonnet-5, 0% M2 false releases, 100% accuracy, 2/2 gate corrections on mission-envelope cases, 0 false holds) results; added Status block with VALIDATED label, synthetic-only caveat, no-regulatory-substitution claim; section heading updated to reflect current maturity | LNES60_PHASE1.5_FINAL_VALIDATION_REPORT.md + LNES60_PHASE1_FINAL_VALIDATION_REPORT.md; sealed evaluator outputs; independently verified by frozen scorer against sealed holdout |
-| 1.6 | 2026-08-08 | Validation (new Section 35.5) | Not present | Added — "LNES-60: The Third Domain: Physical Truth (Architecture Defined — Not Yet Executed)": four-plane truth model, governing principle, KTX domain, RELEASE_ELIGIBLE/HOLD/INCOMPLETE terminal states, explicit DESIGNED status and no-regulatory-claim scope | Operator-authorized architectural addition; no experiment executed, no benchmark result claimed; internal engineering documents LNES60_Physical_Truth/ |
-| 1.5 | 2026-08-08 | Appendix D | LNES-58/59 not present in demonstrated claims | Added LNES-58/LNES-59 state-governance demonstrated-claim entry, cross-referencing Section 35.4 | LNES-59 sealed holdout, 400/400 case-arm evaluations, direct measurement |
-| 1.5 | 2026-08-08 | LNES-22 pipeline (Section 40) | Text description only, no full state→action diagram | Added full pipeline diagram (persistent state → xLMP → model → candidate claim → state governance → authorized state → LNES-22 → execution → edge witness → persistent-state update) with explicit scope note that LNES-59 validated only through "authorized state," not action authority or physical actuation | Operator-authorized addition; describes existing architecture plus the new Section 35.4 result, no new implementation-status claim |
-| 1.5 | 2026-08-08 | Validation (new Section 35.4) | Not present | Added — "From Retrieval to Authoritative State: LNES-58 → LNES-59": full 8-arm comparator table, X1→X2 controlled-comparison result, retrieval/state-resolution/memory-authority/action-authority distinction, cross-domain framing, disclosed limitations | LNES-59 sealed post-freeze synthetic procurement holdout, 50 cases, 400 case-arm evaluations, 0 failures; `LNES59_FINAL_VALIDATION_REPORT.md` and `LNES59_FINAL_RESULTS_MANIFEST.json` (SHA-256 verified unchanged before this update) |
-| 1.4 | 2026-08-07 | Category Definition (Section 5) | Text-only description of xLMP vs. execution roles | Added data-boundary diagram (persistent state → xLMP → bounded evidence → KV cache/HBM → FlashAttention/kernels → SRAM/tensor cores → computation) with explanatory paragraph | Operator-authorized addition; describes existing architecture, no new claim |
-| 1.4 | 2026-08-07 | Economics (new Section 43.3) | Not present | Added — "Decoupling Persistent State from Active Attention": formal O(C_ctx²) vs O(\|E(q)\|²) attention-scaling distinction, explicit non-constant-cost caveat, relationship to model/kernel-level techniques (KV-cache compression, sparse/sliding-window/hybrid attention, GQA/MQA) | Operator-authorized addition; established ML-architecture techniques, no external claim requiring verification; claim-discipline constraints applied (no O(1)/thermodynamic-necessity language) |
-| 1.4 | 2026-08-07 | Validation (new Section 35.3) | Not present | Added — "xLMP Context-Efficiency Benchmark (Proposed)": corpus-scale sweep (1x-1000x) methodology, variables, arms, metrics; explicitly labeled a hypothesis to test, not a run result | Operator-authorized roadmap addition; no benchmark execution performed or implied |
-| 1.3 | 2026-08-07 | Category Definition (new Section 9.1) | Not present | Added — "Temporal Validity and Decision Lineage," extending the Section 7 integrity/provenance/authority triad with temporal validity and decision-lineage as governance dimensions; cross-references Section 32.1 rather than duplicating its chain diagram | Operator-authorized addition; synthesizes and sharpens operator's own framing, no external claim requiring verification |
-| 1.3 | 2026-08-06 | Economics (new Section 43.2) | Not present | Added — "Model-Specific Silicon and Externalized Intelligence State," positioning xLMP as complementary to model-hardwired inference silicon; explicit no-partnership, no-endorsement caveat included | Operator-authorized addition; AMD/Taalas acquisition and Taalas HC1 (~17,000 tok/s/user, Llama 3.1 8B) independently verified via web search before inclusion (AMD Newsroom, Aug 2026) |
-| 1.3 | 2026-08-06 | Economics (new Section 43.1) | Not present | Added — "Relationship to AI-Native Storage Processors," positioning xLMP as complementary to (not competing with) hardware storage acceleration; explicit no-joint-benchmark, no-vendor-relationship caveat included | Operator-authorized addition; NVIDIA Vera BlueField-4 STX announcement independently verified via web search before inclusion (NVIDIA Newsroom, June 2026) |
-| 1.3 | 2026-08-06 | Physical AI (new Section 26.1) | Not present | Added — "Trust Infrastructure for Physical Autonomy," framing ExergyNet as airframe-independent trust infrastructure vs. a single-platform program; no regulatory-adoption or market claims included | Operator-authorized architectural addition; commercial/regulatory strategy content kept out per operator's own scope split |
-| 1.3 | 2026-08-06 | Physical AI (new Section 32.1) | Not present | Added — "Closed-Loop Validation for Persistent Physical Intelligence," a proposed 10-stage validation sequence; explicitly framed as target architecture, not claimed as integrated | Operator-authorized architectural addition; synthesizes existing xLMP/LNES-22/NEURO-LOCK triad |
-| 1.3 | 2026-08-06 | Vanguard role (Section 6 table and Physical AI Status Table) | "Multi-model inference routing and coordination over persistent state" | "Multi-model inference, bounded planning, review, and coordination over persistent state" | Operator-authorized refinement; not claimed as a general-purpose autonomous planner |
-| 1.3 | 2026-08-06 | Category Declaration (Section 52) | Ended at "persistent infrastructure layer beneath autonomous intelligence" | Added closing paragraph naming persistent physical intelligence as the architecture's ultimate consequence | Operator-authorized addition; no benchmark, implementation-status, FAA, or LNES-22 deployment claim changed |
-| 1.2 | 2026-08-05 | Canonical location | Downloads working draft | `exergynet/docs/whitepaper/AI_MEMORY_CONTROL_PLANE.md` | Governance correction |
-| 1.2 | 2026-08-05 | Version label | "Public Draft" | "Internal Co-Author Review Draft" | Co-author acceptance and legal entity unresolved |
-| 1.2 | 2026-08-05 | Institutional affiliation | "ExergyNet Corp" (unverified) | "ExergyNet" (technology identity pending legal confirmation) | Governance correction |
-| 1.2 | 2026-08-05 | LNES-11 (Section 28.1) | "GPS-independent mesh positioning" (incorrect) | LNES-11 = bilateral consensus (biological_proxy, vanguard-ultra); positioning layer TBD | EVD-006 — numbering collision with deployed system |
-| 1.2 | 2026-08-05 | LNES-12 (Section 29.2) | "Designed: Global Media Mesh" (incorrect) | DEPLOYED: LiveKit/coturn WebRTC calling layer on Carrier EC2 | EVD-007 — LNES12_CHANGE_LOG.md |
-| 1.2 | 2026-08-05 | LNES-06 (Section 29.1) | "Designed: hardware-authenticated observation layer" (understated) | DEPLOYED: Android sensor platform v2.22.8; xLMP integration STAGED | EVD-005 |
-| 1.2 | 2026-08-05 | Omega Carrier (Section 21) | "DESIGNED" (incorrect for toolset) | Tools 1–5 DEPLOYED (SSE port 8765); Tool 6 STAGED; cross-device transport DESIGNED | EVD-008 |
-| 1.2 | 2026-08-05 | NEURO-LOCK status table | Single "DESIGNED + FAA-REVIEWED" field | 5 separate dimensions: IMPLEMENTATION, FAA_DISCLOSURE, REGULATORY_PLATFORM, FAA_TECHNICAL_ENDORSEMENT, PRODUCTION_ACTUATION | Governance correction |
-| 1.2 | 2026-08-05 | LNES-22 (Section 32) | Single-line "STAGED" | Per-component breakdown (9 components, mixed DEPLOYED/BROKEN/STAGED/DESIGNED/NOT_WIRED) | EVD-004 |
-| 1.2 | 2026-08-05 | Benchmark numbers | "pending companion publication" (T4 environment) | Real H200 numbers from signed deliverables: 660–820 prompt tokens; +24.4 accuracy; 42.7× token efficiency | EVD-001, EVD-002 |
-| 1.2 | 2026-08-05 | Veena contribution | "AI/ML validation; retrieval-versus-reasoning analysis" (generic) | H200 saturation testing; QPS ladder analysis; concurrency testing; benchmark presentation for NVIDIA | EVD-010 |
-| 1.2 | 2026-08-05 | Atlas (Section 28) | "DESIGNED with deployed OSRM/MLD substrate" (unverified claim in review) | DESIGNED; no deployed routing engine found in project record | Project record review |
-| 1.1 | 2026-08-05 | Physical AI section (Part V) | Not present | Added — DESIGNED / FAA-REVIEWED per subsystem | Architecture documentation; EVD-003 |
-| 1.1 | 2026-08-05 | Co-authorship | Single author (Seven Ezumba) | Veena and Phone proposed; PENDING FINAL REVIEW | Co-author acceptance process initiated |
-| 1.0 | 2026-08-03 | Full paper v1.0 | v0.9 internal draft | 12-point assessment applied | Initial assessment review |
+| 1.10 | 2026-08-18 | Pre-release correction pass for NVIDIA technical review | v1.9 carried internal review markers, unresolved public entity language, incomplete H200 saturation ladder, hot-path Groth16/SHA-256 label ambiguity, and unseparated R6 single-stream/C=4 framing | Cleaned public authorship and entity framing conservatively; restored corrected H200 saturation ladder and sustainable-knee language; separated single-stream R6 values from C=4 public configuration; corrected hot-path integrity language; added LNES-59 executive-summary result and determinism-divide subsection; preserved LNES-84/LNES-86 workload-dependent caveats; added Hopper/RISC Zero proving-path exclusion | H200 corrected saturation report; `LNES82C6_ASYMPTOTIC_SCALING_SUMMARY.md`; `LNES82C7B_TPU_MIRROR_SUCCESS_SUMMARY.md`; `LNES86_6_VALIDATION_REPORT.md`; hot-path source inspection |
+| 1.11 | 2026-08-18 | New Part X / Section 53: "ExergyNet as a Multi-Plane Autonomous Systems Architecture" | Paper's closing section (52) framed the AI Memory Control Plane without explicitly bounding it against the larger ExergyNet architecture it sits within | Added a structural section (not a status-block edit) naming four separate control planes (Memory / Authority / Economic / Physical), extending this paper's existing integrity-provenance-authority separation discipline to economic delegation; explicitly scoped the Machine Economic Control Plane as DESIGNED/STAGED, not DEPLOYED; stated an intended five-paper-plus-umbrella publication structure as roadmap, not existing artifacts | Section 21 (Omega Carrier, existing); Section 40 (LNES-22, existing); Sprint 01J recon + forge build/test results (`MemoryMarketSettlement.sol`, 23/23 new tests, no chain write); `CLAIM_LEDGER.md` |
+| 1.12 | 2026-08-18 | Section 53.3 engineering-state reconciliation following Sprint 01J.1 | Section 53.3 (v1.11) described a 23-test settlement contract with "pre-execution payment enforcement" and a SHA-256 usage receipt; the contract had since gained an authenticated ECDSA receipt-signer requirement and grown its test suite, which the section text no longer matched | Updated test counts (30 contract-specific / 79 full-repository, 0 failures, independently re-run); described the new `authorizedReceiptSigner` ECDSA commitment mechanism and the forged/altered/wrong-signer/replay rejections the test suite validates; separated result-root content commitment, receipt hash, ECDSA authentication, and ZK proof as four distinct properties, stating plainly that no ZK proof of memory execution is provided; replaced "pre-execution payment enforcement" with "receipt-gated on-chain settlement" and separated service-level ordering from contract-level atomicity; added explicit not-yet-live status for the Omega receipt-signer identity and signed-receipt emission; status header changed from "Designed and Staged, Not Deployed" to "Staged, Integration Incomplete." No other section altered | `MemoryMarketSettlement.sol` and `MemoryMarketSettlement.t.sol` (direct source read); `forge test` re-run in the actual build environment (79 passed, 0 failed, 0 skipped, independently executed this pass, not read from a prior report) |
+| 1.13 | 2026-08-28 | New Appendix G: LNES-119B Experimental Evidence — Recurrent Execution-State Mobility | Paper contained no section documenting the LNES-119B experimental campaign. F6D (R-state interaction isolation) completed with a 1-minimal PAIR result. | Added structural appendix (not a status-block edit to existing content) documenting the tested configuration, measured findings for S-state sufficiency (F6C) and R-state minimality (F6D), explicit claim boundaries, and a RESEARCH FRONTIER designation. Evidence-bounded language throughout: same-model/same-runtime envelope only; root cause UNKNOWN; no mechanism claim; no cross-model or cross-architecture portability claim. Part X and all other sections unchanged. | LNES119B Evidence Ledger Entry 024 (F6D complete, R_MINIMAL confirmed, append-only record); Entry 023 (F6C S-state background-necessity trials); Entry 011 (F4 component isolation); LNES119B_F6_RECURRENT_LAYER_MAP_FINAL.json (GGUF tensor-name inspection) |
+| 1.14 | 2026-09-04 | New Section 35.3.2: xLMP Corpus-Scaling Characterization (LNES-82C, 32K→10M, Executed); Appendix D DEMONSTRATED entry | Section 35.3 stated "no run of this benchmark has occurred"; the LNES-82C campaign completed through 10M with a sealed 5-run × 190-query holdout | Added Section 35.3.2 documenting 10-point corpus-scaling ladder (32K–10M), OLS fit (b=2.79×10⁻⁶, CI includes zero, development data only), 10M holdout K=895.96 vs 4M baseline 902.81, Q_BEND triggered (75/190, 39.5%), Q-class breakdown, and hardware-confound disclosure for retrieval ratio; added Appendix D DEMONSTRATED entry. Operator-approved addition after GCS-verified holdout seal (2026-09-04). | EVIDENCE_SEAL_LNES82C10M_HOLDOUT.md (sealed, GCS-verified); 5 JSONL holdout artifacts (SHA-256 verified, GCS-archived); LNES82C10M_PREFLIGHT.md (pre-registered gates) |
+
+---
+
+## Appendix G: LNES-119B Experimental Evidence — Recurrent Execution-State Mobility
+
+**Status: RESEARCH FRONTIER (first validated result in tested configuration; not a deployed capability)**
+
+**Internal evidence source:** LNES-119B Evidence Ledger (canonical append-only record, not a public artifact).
+Findings summarized here are independently verifiable from that ledger. No private credentials, host identifiers, or internal infrastructure topology are included in this appendix.
+
+### G.1 Motivation and Scope
+
+Section 53.4 of this paper names an umbrella publication, *ExergyNet: An Operating Substrate for Autonomous Agency*, as the intended home for the full loop of memory, authority, economics, and physical consequence. One component of that loop — whether an agent's learned execution state can be transported across physically distinct compute hosts — was previously undocumented because it had not been systematically tested. LNES-119B is the first experimental campaign designed to isolate which components of a running SSM model's recurrent state control the trajectory of generation on a remote host.
+
+This appendix records the findings of that campaign within their verified boundaries. It does not extend the memory-plane or authority-plane claims made elsewhere in this paper.
+
+### G.2 Tested Configuration
+
+**Model:** Nemotron-H architecture (hybrid SSM/MoE), same quantized weights on both hosts.
+**Runtime:** llama.cpp CPU-only inference, identical binary, identical model file, frozen to the same version on both hosts. GPU layers = 0. No JIT compilation path.
+**State artifact (sidecar):** contains recurrent (SSM/Mamba) state only — specifically R_CONV (convolutional recurrent state) and S_SSM (state-space model hidden state) for 23 SSM-only transformer blocks. No attention KV cache is included; the model's attention blocks carry no persistent state between generations.
+**Two hosts:** distinct CPU architectures (AMD EPYC and Intel Xeon) on separate Azure virtual machines.
+**Workload:** MEDIUM prefix (29 tokens); generation length 20 tokens; temperature=0, seed=42.
+**Total cross-host mobility trials executed:** 6 (F1 through F5; F6 is component isolation, not a new mobility trial).
+
+### G.3 Baseline Finding
+
+Within the tested configuration, importing a sidecar created on Host A (source) into a fresh process on Host B (destination) and immediately continuing generation produces a measurable effect on Host B's output trajectory. With the full sidecar (both R_CONV and S_SSM layers from Host A), the SHORT workload reproduces Host A's continuation exactly; the MEDIUM and LONG workloads diverge from both Host A's fresh result and Host B's native result, instead producing a consistent intermediate trajectory whose SHA-256 digest is reproducible across repeated trials.
+
+Isolating R_CONV alone (from Host A) with S_SSM from Host B, or S_SSM alone (from Host A) with R_CONV from Host B, each individually shifts Host B's trajectory to match Host A's MEDIUM fresh continuation exactly. This demonstrates that each component carries sufficient causal information to redirect Host B's generation — within the tested workload and configuration.
+
+### G.4 S-State Structure (Campaign F6C — Background Necessity)
+
+Two individual SSM blocks (model blocks 9 and 11, sidecar ordinals 4 and 5 respectively) were each tested as independent deletions from a reduced S-state background. Both produced MATCH_NODE_A_FRESH when deleted from the background set (i.e., the remaining S-state sufficed without the deleted block).
+
+**Evidence-bounded conclusions:**
+- `BLOCK9_INDIVIDUALLY_SUFFICIENT = YES` (within tested configuration and background)
+- `BLOCK11_INDIVIDUALLY_SUFFICIENT = YES` (within tested configuration and background)
+- `BLOCK9_BACKGROUND_NECESSARY = NO`
+- `BLOCK11_BACKGROUND_NECESSARY = NO`
+- `S_REDUNDANCY_CLASS = ALTERNATIVE_SUFFICIENT_WITHIN_TESTED_CONFIGURATION`
+
+**Claim boundary:** these conclusions apply to the tested MEDIUM intervention, with the tested S-state background. They do not establish globally minimum S-state cardinality and do not generalize across workloads, runtimes, or model architectures.
+
+### G.5 R-State Structure (Campaign F6D — Interaction Isolation)
+
+An adaptive delta-debugging search over the full 11-ordinal R_CONV set ({ordinals 1–11}) identified a 1-minimal sufficient subset within the tested search. The minimum sufficient set contains exactly two elements: sidecar ordinals 2 and 9, corresponding to model blocks 4 and 21 respectively.
+
+- Ordinal 2 (block 4) lies in the lower half of the 23 active SSM layers.
+- Ordinal 9 (block 21) lies in the upper half.
+- Neither element alone is sufficient: removing either reverts Host B to its native trajectory (MATCH_NODE_B_NATIVE), confirmed by necessity challenge using historical controls.
+- Alternative sufficient routes: not observed within the tested search. The search tested P0 minus ordinal 2 (the set of all other ordinals) and found MATCH_NODE_B_NATIVE, establishing that ordinal 2 is uniquely required in the tested context. No substitution for ordinal 2 was identified.
+- One novel trajectory was observed during search: ordinal set {1, 2, 8} produced a SHA-256 continuation digest not matching any reference. This trajectory is preserved in the evidence ledger as a scientific observation; it is not a failure.
+
+**Evidence-bounded conclusions:**
+- `R_MINIMAL_SUFFICIENT_ORDINALS = {2, 9}` (within tested search, 24-realization budget)
+- `R_MINIMAL_SUFFICIENT_MODEL_BLOCKS = {4, 21}`
+- `R_REQUIRED_INTERACTION_ORDER = PAIR`
+- `R_CROSS_HALF_INTERACTION = SUPPORTED` (blocks in lower and upper halves are both required)
+- `ALTERNATIVE_R_SUFFICIENT_ROUTE = NOT_OBSERVED`
+- `ROOT_CAUSE = UNKNOWN` — the pair is localized; no lower-level mechanism (arithmetic, weight structure, compilation path, or cross-host floating-point equivalence) has been directly demonstrated.
+
+**Claim boundary:** this is a 1-minimal sufficient set within the adaptive search executed, with the tested S background (S=ALL_B), with the tested MEDIUM workload, in the frozen runtime envelope. It does not establish the globally minimum cardinality of R-state influence across workloads, runtimes, or architectures. It does not explain *why* these two blocks interact.
+
+### G.6 What Is Not Claimed
+
+The following claims are **not supported by this evidence** and must not be inferred from this appendix:
+
+- Universal execution-state portability across models, runtimes, or architectures
+- Cross-model portability (the same sidecar format has not been tested with any other model)
+- Cross-runtime portability (results are specific to the frozen llama.cpp CPU-only runtime)
+- Cross-architecture portability (tested on two specific CPU architectures; other hardware not tested)
+- Discovery of "the model's memory" or identification of a semantic memory substrate
+- Root-cause closure — the mechanism producing these effects has not been demonstrated at the level of floating-point arithmetic, weight structure, or microarchitecture
+- That state portability implies authority portability: an agent whose execution state is transported to a new host does not thereby inherit any spending authority, action authorization, or consequence authority that was in effect at the source host. These are separately governed properties (see Section 40 and Section 53.2).
+
+### G.7 Research Frontier
+
+The following questions are open as of this writing:
+
+- Does the PAIR interaction generalize across MEDIUM workloads of different semantic content?
+- Does it appear across LONG workloads (tested only with full sidecar, not the minimal pair)?
+- What is the mechanism? Candidate hypotheses (CPU floating-point divergence, KV-cache initialization, sidecar encoding semantics, layer-position interaction in SSM dynamics) have not been eliminated.
+- Does a minimal sufficient S-state set exist, and if so what is its cardinality?
+- Are these findings replicable on a third independently configured host?
+- Does a different quantization level or precision alter the minimal set?
+
+**LNES-119B_STATUS = FROZEN_VALIDATED_RESEARCH_ENVELOPE** following F6D campaign closure. No further trials are authorized under the current campaign scope. The findings above represent the complete validated evidence for same-model execution-state mobility within the tested Nemotron-H/llama.cpp configuration.
 
 ---
 
@@ -2349,14 +2689,9 @@ Seven Ezumba
 Chief Architect and Corresponding Author
 ExergyNet
 
-**Version 1.9 — Internal Co-Author Review Draft**
+**Version 1.13 - Pre-Release Technical Review Candidate**
 August 2026
 
-Co-authors Bontu Veena and Kyaw Phone: listed as proposed co-authors pending
-independent final review and acceptance confirmation.
-[CO-AUTHOR ACCEPTANCE PENDING]
-
-*This document must not be published, committed to a public repository, or
-distributed externally until: (1) both co-authors confirm; (2) legal entity
-name is confirmed; (3) FAA source note is attached; (4) claim ledger passes
-review; and (5) operator explicitly authorizes publication.*
+This document is a technical-review candidate. Publication authority, legal
+entity naming, and any additional authorship approvals remain governed by the
+operator's release process and are not inferred by this document.

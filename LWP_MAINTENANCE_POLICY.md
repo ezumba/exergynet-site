@@ -62,6 +62,25 @@ just a silent edit):
 - A public capability becoming unavailable
 - Correction of a previously published overstatement
 
+**Part X / Section 53 freeze condition (set 2026-08-18, operator-confirmed):**
+after the v1.12 reconciliation brought Section 53.3 into alignment with the
+verified Sprint 01J.1 engineering state, the operator's explicit instruction
+was to freeze Part X unless one of exactly three things happens:
+
+1. A material memory-plane result changes (something Parts I-IX already
+   claim shifts status).
+2. The live claim status of a component Part X itself references changes
+   (e.g. Omega Carrier's receipt-signer wiring goes live, LNES-22 loop
+   closure changes, NEURO-LOCK actuation status changes).
+3. The Base Sepolia machine-economic strike (Sprint 01J and its successors)
+   completes deployment and warrants a one-line status update.
+
+Anything deeper than a one-line status update belongs in the eventual
+Paper III (`$RHO` and the Machine Economic Control Plane), not in further
+expansion of Section 53. Do not treat routine Sprint-01J-family engineering
+progress as a trigger by itself — only a genuine status-category change per
+one of the three conditions above warrants touching this section again.
+
 Two recurring, concrete sources of these triggers:
 
 - A new subsystem reaches a real, verified milestone worth a reader knowing
