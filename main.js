@@ -88,7 +88,7 @@
           '</div>' +
           '<div class="nav-social">' +
             '<a href="https://x.com/ExergyNet" target="_blank" class="nav-social-link">&#x1D54F;</a>' +
-            '<a href="https://discord.com/channels/1500548202384986203/1500548202959732970" target="_blank" class="nav-social-link">&#x2666;</a>' +
+            '<a href="https://discord.gg/EXERGYNET" target="_blank" class="nav-social-link">&#x2666;</a>' +
           '</div>' +
           '<button class="theme-toggle" id="theme-toggle">\u2600</button>' +
           '<button class="hamburger" id="hamburger">&#9776;</button>' +

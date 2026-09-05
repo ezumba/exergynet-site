@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: ExergyNet Compute
-  description: Content-addressed AI memory with tamper-evident SHA-256 receipts. On-chain zero-knowledge verification is in development.
+  title: ExergyNet Network State
+  description: Minimal public endpoint for current LNES-04 Membrane network state. This is a partial reference — see https://exergynet.org/docs.html and https://exergynet.org/api-integration.html for the full, current endpoint set (compute settlement, memory/evidence retrieval, sensor relay). On-chain zero-knowledge verification for settlement is in development; see https://exergynet.org/proof.html for current contract and verification status.
   version: "1.0.0"
 servers:
   - url: https://explorer-api.exergynet.org
@@ -9,7 +9,7 @@ paths:
   /api/v1/state:
     get:
       operationId: getNetworkState
-      summary: Retrieves the current thermodynamic state and latest strikes on the LNES-04 Membrane.
+      summary: Retrieves the current network state and latest settlement activity on the LNES-04 Membrane.
       responses:
         "200":
           description: OK

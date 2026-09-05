@@ -48,9 +48,15 @@
   <div class="container">
 
     <!-- STATUS NOTICE: ZK Compute Settlement -->
-    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
+    <div class="card" style="margin:0 0 1rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
       <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — ZK Compute Settlement</strong></p>
       <p style="font-size:13px;margin:0.5rem 0 0;">ZK-STARK compute settlement is operating in testnet mode. Status labels on this page reflect the target ExergyNet compute architecture. On-chain ZK proof verification for the compute grid is in development. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract and verification status.</p>
+    </div>
+
+    <!-- STATUS NOTICE: Write Settlement Disabled -->
+    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
+      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>WRITE SETTLEMENT: TEMPORARILY DISABLED PENDING VERIFIED PRODUCTION MIGRATION</strong></p>
+      <p style="font-size:13px;margin:0.5rem 0 0;">The HTTP/Ed25519 handshake and <code>exergynet_open_job</code> write-settlement flow documented below describe ExergyNet's target compute-settlement architecture — they are not currently operational, and no transaction is created or broadcast by following them. For a currently working, read-only MCP integration, see the <a href="https://www.npmjs.com/package/exergynet-mcp-server" style="color:var(--amber,#ffb830);">exergynet-mcp-server</a> npm package, whose own write path is likewise disabled pending the same migration — see its <a href="https://github.com/ezumba/exergynet-site/blob/main/MCP_SECURITY_ADVISORY_2026-08-28.md" style="color:var(--amber,#ffb830);">security advisory</a> for detail.</p>
     </div>
 
     <!-- GATEWAY ENDPOINT -->
@@ -70,9 +76,9 @@
 
     <!-- HANDSHAKE PROTOCOL -->
     <section>
-      <div class="section-label">Handshake Protocol</div>
+      <div class="section-label">Handshake Protocol &mdash; Target Design, Not Yet Live</div>
       <h2>Ed25519 Authentication</h2>
-      <p style="max-width:660px; margin-bottom:1.5rem;">All requests to the MCP Neural Gateway must be signed with your agent's Solana Ed25519 private key to prevent replay attacks and MITM intercepts.</p>
+      <p style="max-width:660px; margin-bottom:1.5rem;">This is the target handshake for the write-settlement gateway once it migrates to production: requests would be signed with an agent's Solana Ed25519 private key to prevent replay attacks and MITM intercepts. <strong>This handshake is not active today</strong> &mdash; the endpoint does not currently process signed requests.</p>
 
       <div class="card-grid">
         <div class="card">
@@ -104,9 +110,9 @@ const nonce = crypto.randomBytes(8).toString('hex');</code></pre>
       </div>
 
       <div class="card" style="background:var(--accent-dim); border-color:rgba(0,232,135,0.2); margin-top:1rem;">
-        <h4>Success Response</h4>
+        <h4>Target Success Response (once live)</h4>
         <pre><code>{ "status": "proxy_initiated", "verified": true }</code></pre>
-        <p style="margin-top:0.75rem; font-size:13px;">Your agent is now cleared to broadcast the 0.002 SOL lock transaction.</p>
+        <p style="margin-top:0.75rem; font-size:13px;">This is the intended response shape once write settlement migrates to production. Today, no request to this endpoint clears an agent to broadcast a transaction &mdash; the write path is disabled.</p>
       </div>
     </section>
 
@@ -122,8 +128,8 @@ const nonce = crypto.randomBytes(8).toString('hex');</code></pre>
           <tbody>
             <tr>
               <td>exergynet_open_job</td>
-              <td>Initiate a compute job — locks SOL escrow</td>
-              <td><span class="badge badge-blue">0.002 SOL</span></td>
+              <td>Target: initiate a compute job, locking SOL escrow. Write settlement is temporarily disabled pending verified production migration — no job is opened and no transaction is created today.</td>
+              <td><span class="badge badge-gray">Disabled</span></td>
             </tr>
             <tr>
               <td>exergynet_status</td>
@@ -132,11 +138,12 @@ const nonce = crypto.randomBytes(8).toString('hex');</code></pre>
             </tr>
             <tr>
               <td>exergynet_get_proof</td>
-              <td>Retrieve ZK-STARK proof for a completed job</td>
+              <td>Retrieve the on-chain settlement record for a completed job</td>
               <td><span class="badge badge-gray">Read-only</span></td>
             </tr>
           </tbody>
         </table>
+        <p style="margin-top:1rem;font-size:12px;color:var(--text-faint);">LNES-03 compute-job settlement is designed around a RISC Zero-produced ZK-STARK proof; see <a href="proof.html" style="color:var(--accent);">On-Chain Proof</a> for which contracts currently enforce on-chain verification versus recording a receipt pending it. This is a separate mechanism from the VMN/memory-query receipt, which returns a SHA-256 content hash, not a ZK proof.</p>
       </div>
     </section>
 

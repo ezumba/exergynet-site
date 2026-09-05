@@ -214,8 +214,8 @@
 
     <!-- STATUS NOTICE: ZK Compute Settlement -->
     <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — ZK Compute Settlement</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">ZK-STARK compute settlement is operating in testnet mode. Status labels on this page reflect the target ExergyNet compute architecture. On-chain ZK proof verification for the compute grid is in development. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract and verification status.</p>
+      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — Settlement &amp; Verification</strong></p>
+      <p style="font-size:13px;margin:0.5rem 0 0;">"Primary" below means recommended integration target, not currently live for real capital: the Base Mainnet contract is deployed but operating in mock-only mode. Base Sepolia is available for test and demonstration use today. Solana Mainnet-Beta (LNES-03) is deployed but under active investigation for transaction failures. On-chain ZK proof verification for the compute grid is in development. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract addresses and verification status.</p>
     </div>
 
     <!-- ══════════════════════════════════════════════
@@ -238,7 +238,7 @@
               <li><span class="spec-key">Network</span>        <span class="spec-val">Base Mainnet <code>eip155:8453</code></span></li>
               <li><span class="spec-key">Payment</span>        <span class="spec-val">x402 / USDC · HTTP-native agent payments</span></li>
               <li><span class="spec-key">x402 Version</span>   <span class="spec-val">1</span></li>
-              <li><span class="spec-key">Operator Wallet</span><span class="spec-val"><code style="font-size:11px;">0xbd1e790f6040FA62797671B84a50025a0133109C</code></span></li>
+              <li><span class="spec-key">Operator Wallet</span><span class="spec-val"><code style="font-size:11px;">0x27cC42ee80CA945F96b93999CCdb02520618578B</code></span></li>
               <li><span class="spec-key">USDC Contract</span>  <span class="spec-val"><code style="font-size:11px;">0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code></span></li>
               <li><span class="spec-key">Facilitator</span>    <span class="spec-val"><code style="font-size:11px;">api.cdp.coinbase.com/platform/v2/x402</code></span></li>
               <li><span class="spec-key">Sensor Toll</span>    <span class="spec-val">3000 µUSDC (0.003 USDC) per x402 call</span></li>
@@ -361,8 +361,8 @@
         <div class="arch-row highlight-row">
           <div class="arch-label">S</div>
           <div class="arch-content">
-            <h5>Settlement Layer — Base Mainnet (Primary) · Solana Mainnet-Beta (Active)</h5>
-            <p>Desktop Prover submits <code>POST /api/compute/settle</code> with proof hash and payout address. L0 Sequencer records <code>ZK-STARK VERIFIED</code>. <strong>Base:</strong> Sovereign Siphon routes USDC to operator EVM wallet. <strong>Solana:</strong> LNES-03 burns $EXG, fractures SOL yield 30/70 atomically.</p>
+            <h5>Settlement Layer — Base Mainnet (Primary) · Solana Mainnet-Beta (Investigating)</h5>
+            <p>Desktop Prover submits <code>POST /api/compute/settle</code> with proof hash and payout address. L0 Sequencer records <code>ZK-STARK VERIFIED</code>. <strong>Base:</strong> Settlement Router routes USDC to operator EVM wallet. <strong>Solana:</strong> LNES-03 burns $EXG, fractures SOL yield 30/70 atomically.</p>
           </div>
         </div>
       </div>
@@ -404,7 +404,7 @@
           <div class="flow-arrow-down">↓</div>
           <div class="flow-node active-node">
             <span class="badge badge-green" style="min-width:32px; text-align:center;">05</span>
-            <span><strong>Settlement</strong> — <code>POST /api/compute/settle</code> submitted. L0 records proof. Sovereign Siphon routes USDC to operator wallet.</span>
+            <span><strong>Settlement</strong> — <code>POST /api/compute/settle</code> submitted. L0 records proof. Settlement Router routes USDC to operator wallet.</span>
           </div>
         </div>
 

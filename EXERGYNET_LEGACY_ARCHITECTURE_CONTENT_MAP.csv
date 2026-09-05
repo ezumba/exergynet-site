@@ -1,0 +1,29 @@
+URL,FILE,TERM,CURRENT_STATUS,ACTION,REPLACEMENT,SOURCE_OF_TRUTH
+https://exergynet.org/,index.html,Infrastructure for Persistent Machine Intelligence (title),SUPERSEDED,REPLACED,"ExergyNet - AI Memory Control Plane",index.html (updated)
+https://exergynet.org/,index.html,Memory Growth != Inference Growth concept block (missing 1M trough),INCOMPLETE,UPDATED,"Added 1M trough ~764 recovery to ~903; H200/A100 synthesis; disclosed local upturn",benchmarks.html LNES-82C evidence
+https://exergynet.org/,index.html,Authority section label: Machine Authority Control Infrastructure,STALE,REPLACED,"LNES-22 Authority Control Plane",security.html (current)
+https://exergynet.org/,index.html,Consequence Boundary in stack panel,PARTIAL,UPDATED,"LNES-22 Authority Control Plane",security.html (current)
+https://exergynet.org/,index.html,USENIX Security 2026 accepted for,IMPRECISE,SOFTENED,"arXiv:2607.19545; journal reference USENIX Security 2026",x402-security-brief.html citation
+https://exergynet.org/faq.html,faq.html,dual-layer settlement engine,STALE/INCORRECT,REPLACED,"ExergyNet is an AI Memory Control Plane",llms.txt
+https://exergynet.org/faq.html,faq.html,Layer-0 Mesh,SUPERSEDED,LABELED_HISTORICAL,"Legacy settlement architecture",protocol.html (historical)
+https://exergynet.org/faq.html,faq.html,Layer-1 Membranes,SUPERSEDED,LABELED_HISTORICAL,"Legacy settlement architecture",protocol.html (historical)
+https://exergynet.org/faq.html,faq.html,Proof-of-Exergy (PoX) as current,HISTORICAL,LABELED_HISTORICAL,"Proof-of-Exergy is historical architecture; not current primary operation",llms.txt
+https://exergynet.org/faq.html,faq.html,$EXG as current accounting token,LEGACY,LABELED_LEGACY,"Current portal uses USDC-denominated balances",token.html (historical)
+https://exergynet.org/faq.html,faq.html,Cost 0.002 SOL on LNES-03 as current,PARTIAL,UPDATED,"Multi-path description with liveness caveat",proof.html
+https://exergynet.org/faq.html,faq.html,Section header Protocol Mechanics & $EXG,STALE,REPLACED,"Protocol Mechanics - Settlement and Legacy Architecture",faq.html (updated)
+https://exergynet.org/token.html,token.html,$EXG as current product,LEGACY,LABELED_HISTORICAL,"Historical Architecture - LNES-03 Settlement Subsystem",token.html (updated)
+https://exergynet.org/token.html,token.html,Page title $EXG Token Physics,STALE,UPDATED,"$EXG Token Physics - Historical LNES-03 Architecture",token.html (updated)
+https://exergynet.org/token.html,token.html,Meta description as current product,LEGACY,UPDATED,"Historical Architecture description",token.html (updated)
+https://exergynet.org/,footer.html,Tagline: Persistent State Evidence & Authority,INCOMPLETE,UPDATED,"AI Memory Control Plane for Persistent and Autonomous AI",footer.html (updated)
+https://exergynet.org/,footer.html,Chain badges: Solana LNES-03 Base LNES-04,STALE_FRAMING,UPDATED,"LNES-03 Settlement / LNES-04 Settlement",footer.html (updated)
+https://exergynet.org/,footer.html,The Consequence Boundary nav link,PARTIAL,UPDATED,"Authority Control (LNES-22)",security.html
+https://exergynet.org/,footer.html,Token Info nav link,STALE_FRAMING,UPDATED,"Token Info (Historical)",token.html (historical)
+https://exergynet.org/api-integration.html,api-integration.html,LNES-04 references,CURRENT,RETAIN,"LNES-04 is the recommended integration path; keep as-is",api-integration.html
+https://exergynet.org/docs.html,docs.html,AutoHunter / Agent #116 / 0xWork,UNVERIFIED_CURRENT,MONITOR,"Verify current operational status; retain pending audit",docs.html
+https://exergynet.org/docs.html,docs.html,$EXG Transient Forging in flow diagram,HISTORICAL,RETAIN_WITH_CONTEXT,"Part of LNES-03 flow documentation; already labeled as retained path",docs.html
+https://exergynet.org/proof.html,proof.html,LNES-03 and LNES-04 deployment documentation,CURRENT,RETAIN,"Settlement status documentation; clearly labeled with operational status",proof.html
+https://exergynet.org/protocol.html,protocol.html,Proof-of-Exergy section,HISTORICAL,RETAIN,"Historical protocol documentation; label as historical if not yet done",protocol.html
+https://exergynet.org/roadmap.html,roadmap.html,LNES-03 Deployment phase,HISTORICAL,RETAIN,"Roadmap historical record; no action required",roadmap.html
+https://exergynet.org/security.html,security.html,LNES-03 defense matrix,HISTORICAL,RETAIN_LABELED,"Status notice present; acceptable as-is",security.html
+https://exergynet.org/x402-security-brief.html,x402-security-brief.html,USENIX Security 2026 citation,EXTERNAL_CITATION,RETAIN,"Full citation with arXiv ID; external paper",x402-security-brief.html
+https://exergynet.org/voice.html,voice.html,MyMonitor.ai logo,UNVERIFIED_CURRENT,MONITOR,"Verify corporate positioning; retain pending review",voice.html

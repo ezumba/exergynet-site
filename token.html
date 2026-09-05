@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>$EXG Token Physics | ExergyNet</title>
+<title>$EXG Token Physics — Historical LNES-03 Architecture | ExergyNet</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="ExergyNet $EXG — Transient Zero-Knowledge Energy Receipt. Internal accounting unit of the LNES-03 Unidirectional Sump. Not a speculative token.">
+<meta name="description" content="Historical Architecture: $EXG was the internal accounting token for ExergyNet's LNES-03 Solana settlement subsystem. Current ExergyNet Portal economics use USDC-denominated balances. This page documents the legacy LNES-03 accounting model.">
 <link rel="stylesheet" href="style.css">
 <script>
 // Inline theme init to prevent flash
@@ -38,18 +38,18 @@
     <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-150px;"></div>
     
     <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Transient Accounting Unit</div>
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem; color:var(--amber,#ffb830);"><span class="dot" style="background:var(--amber,#ffb830);"></span>Historical Architecture &mdash; LNES-03 Settlement Subsystem</div>
       <h1>$EXG<br><span class="accent">Token Physics</span></h1>
-      <p class="hero-sub">The internal Zero-Knowledge Energy Receipt of the LNES-03 Unidirectional Sump. $EXG exists only for the duration of a compute cycle and is annihilated upon settlement.</p>
+      <p class="hero-sub">Historical documentation for the internal accounting token of the LNES-03 Unidirectional Sump. $EXG was a transient compute receipt &mdash; minted at job open, annihilated at settlement. <strong>Current ExergyNet Portal economics use USDC-denominated account balances, not $EXG.</strong></p>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- STATUS NOTICE: ZK Compute Settlement -->
-    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — ZK Compute Settlement</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">ZK-STARK compute settlement is operating in testnet mode. Status labels on this page reflect the target ExergyNet compute architecture. On-chain ZK proof verification for the compute grid is in development. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract and verification status.</p>
+    <!-- HISTORICAL ARCHITECTURE NOTICE -->
+    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.07);">
+      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>HISTORICAL ARCHITECTURE &mdash; LNES-03 Settlement Subsystem</strong></p>
+      <p style="font-size:13px;margin:0.5rem 0 0;">This page documents the $EXG accounting model for the LNES-03 Solana settlement subsystem &mdash; an earlier ExergyNet architectural generation. <strong>Current ExergyNet Portal economics use USDC-denominated account balances (micro-USDC), not $EXG.</strong> RHO is the protocol-layer accounting concept for certain settlement pathways; it is not a stablecoin, not USD-redeemable, and has no canonical market price. LNES-03 Solana settlement is under active investigation for transaction failures &mdash; see <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current status. This page is retained as a historical record.</p>
     </div>
 
     <!-- CRYPTOGRAPHIC COORDINATES -->
@@ -79,7 +79,7 @@
           This token serves as cryptographic proof that compute energy has been escrowed.
         </p>
         <p style="margin-top:1.25rem; font-size:15px; line-height:1.8;">
-          Upon successful ZK verification by the physical swarm, the Sovereign Siphon burns the $EXG completely and atomically releases the underlying capital (30% to the node operator, 70% to the Protocol Treasury).
+          Upon successful ZK verification by the physical swarm, the Settlement Router burns the $EXG completely and atomically releases the underlying capital (30% to the node operator, 70% to the Protocol Treasury).
         </p>
       </div>
     </section>
@@ -112,8 +112,8 @@
         </div>
         <div class="card">
           <h4>Protocol Behavior</h4>
-          <p>Observe live <code>MintTo</code> and <code>Burn</code> instructions in recent LNES-03 settlements.</p>
-          <a href="proof.html" class="btn btn-secondary" style="margin-top:1rem; font-size:12px;">View Recent Settlements &rarr;</a>
+          <p><code>MintTo</code> and <code>Burn</code> instructions are the settlement mechanism on LNES-03. That program is currently under active investigation for transaction failures — see current verification status before assuming recent activity reflects normal operation.</p>
+          <a href="proof.html" class="btn btn-secondary" style="margin-top:1rem; font-size:12px;">View Verification Status &rarr;</a>
         </div>
       </div>
     </section>
@@ -122,7 +122,7 @@
     <section class="cta-section" style="border-top:1px solid var(--border);">
       <div class="container">
         <h2>Understand Before You Integrate</h2>
-        <p>$EXG is a sovereign compute receipt — not an investment.</p>
+        <p>$EXG is a transient compute receipt — not an investment.</p>
         <div class="btn-row" style="justify-content:center;">
           <a href="protocol.html" class="btn btn-primary">Protocol Reference</a>
           <a href="whitepaper.html" class="btn btn-secondary">Full Architecture</a>

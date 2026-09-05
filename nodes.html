@@ -36,7 +36,7 @@
     <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
     <div class="container">
       <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Node Operator Guide · LNES-06 v1.2</div>
-      <h1>Turn Your Hardware into a<br><span class="accent">Sovereign Integrity Node</span></h1>
+      <h1>Turn Your Hardware into a<br><span class="accent">Verified Integrity Node</span></h1>
       <p class="hero-sub">ExergyNet's verification and compute capacity is contributed by independent hardware operators worldwide. Run the LNES-03 Desktop Prover or entropy-k-core daemon, verify computational work for autonomous AI agents, and settle rewards on Base. (Settlement liveness: see the status note below.)</p>
     </div>
   </div>
@@ -45,8 +45,8 @@
 
     <!-- STATUS NOTICE: ZK Compute Settlement -->
     <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — ZK Compute Settlement</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">ZK-STARK compute settlement is operating in testnet mode. Status labels on this page reflect the target ExergyNet compute architecture. On-chain ZK proof verification for the compute grid is in development. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract and verification status.</p>
+      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — Read Before Running a Node for Income</strong></p>
+      <p style="font-size:13px;margin:0.5rem 0 0;">The Base Mainnet LNES-04 contract that this page describes for USDC payouts is currently operating in <strong>mock-only mode — it does not yet route real capital.</strong> Do not acquire hardware or commit resources based on an expectation of real USDC income today. Base Sepolia (testnet) and Solana LNES-03 (deployed, under active investigation for transaction failures) are the currently testable paths. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract addresses and verification status before assuming any payout is live.</p>
     </div>
 
     <!-- NODE TYPES -->
@@ -92,7 +92,7 @@
           <div class="flow-arrow">+</div>
           <div class="flow-step">70% Protocol Treasury</div>
         </div>
-        <p style="font-size:14px;">Rewards are denominated in USDC and settled on Base Mainnet (eip155:8453). The Sovereign Siphon routes your share to the EVM payout wallet you specify at launch. No lockups. No intermediaries.</p>
+        <p style="font-size:14px;">Rewards are denominated in USDC and settled on Base Mainnet (eip155:8453). The Settlement Router routes your share to the EVM payout wallet you specify at launch. No lockups. No intermediaries.</p>
       </div>
 
       <div class="card-grid" style="margin-bottom:2rem;">
@@ -178,7 +178,7 @@
         <div class="card">
           <h4>Step 04 — Verify</h4>
           <pre><code>[MEMBRANE] Proof Condensed &amp; Radiated</code></pre>
-          <p style="margin-top:0.75rem; font-size:13px;">You are live and earning. The Sovereign Siphon settles proofs and routes USDC to your wallet. Check the <a href="explorer.html">Explorer</a> for your verified node status.</p>
+          <p style="margin-top:0.75rem; font-size:13px;">You are live and earning. The Settlement Router settles proofs and routes USDC to your wallet. Check the <a href="explorer.html">Explorer</a> for your verified node status.</p>
         </div>
       </div>
 
@@ -257,7 +257,7 @@ cargo build --release</code></pre>
         <div class="card">
           <h4>Step 04 — Verify</h4>
           <pre><code>[MEMBRANE] Proof Condensed &amp; Radiated</code></pre>
-          <p style="margin-top:0.75rem; font-size:13px;">Your node is live and earning. The Sovereign Siphon settles proofs and routes USDC to your wallet. Check the <a href="explorer.html">Explorer</a> for your verified status.</p>
+          <p style="margin-top:0.75rem; font-size:13px;">Your node is live and earning. The Settlement Router settles proofs and routes USDC to your wallet. Check the <a href="explorer.html">Explorer</a> for your verified status.</p>
         </div>
       </div>
     </section>
@@ -288,7 +288,7 @@ cargo build --release</code></pre>
     <section class="cta-section" style="border-top:1px solid var(--border);">
       <div class="container">
         <h2>Ready to Join the Swarm?</h2>
-        <p>Your hardware's verified computation is a monetizable asset. USDC on Base. ZK-STARK verified.</p>
+        <p>Your hardware's computation is a monetizable asset, settled in USDC on Base. Proof settlement is on testnet today — see the status notice above.</p>
         <div class="btn-row" style="justify-content:center;">
           <a href="lnes06.html"                                class="btn btn-primary">Command Center &amp; Downloads ↗</a>
           <a href="https://github.com/ezumba/entropy-k-core" target="_blank" class="btn btn-secondary">Clone entropy-k-core &rarr;</a>
