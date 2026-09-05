@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -215,8 +215,8 @@
       <div class="section-label">Abstract</div>
       <h2>The Mandate</h2>
       <div class="card accent-border" style="margin-bottom:1.5rem;">
-        <p>Autonomous systems cannot depend indefinitely on stateless prompts, opaque cloud execution, and probabilistic fragment retrieval. As AI moves into clinical, financial, industrial, scientific, and sovereign operations, persistent state must remain available across models and hardware while every consequential operation retains a traceable evidence chain.</p>
-        <p>ExergyNet is a sovereign memory and verification fabric for autonomous systems. Exergy Vault preserves machine state as integrity-rooted objects. xLMP stages the smallest complete set of authoritative evidence required for an operation. SEI-Vanguard coordinates memory, models, tools, and policy. Verification layers bind digital execution, hardware identity, physical observations, and settlement into independently inspectable receipts.</p>
+        <p>Autonomous AI systems have execution capability but lack the infrastructure layer beneath it: persistent, portable, verifiable memory that survives models, sessions, devices, and hardware generations. The model context window is working memory. Applications that require durable state must reconstruct it at every invocation, paying the full prefill cost each time, approaching context limits as state accumulates, and losing continuity when models change.</p>
+        <p>xLMP, the ExergyNet Ledger Memory Protocol, defines the missing layer — the AI Memory Control Plane: the persistent infrastructure that governs which identified, bounded, provenance-bearing evidence enters an agent's computation; where that state survives across models, devices, and accelerators; and how evidence integrity, provenance, and authority are maintained as independent, separately verifiable properties.</p>
       </div>
 
       <div class="card-grid">
@@ -227,8 +227,8 @@
         </div>
         <div class="card">
           <h4>Solution</h4>
-          <h3>Sovereign Operational Memory</h3>
-          <p>Preserve state outside the model, address evidence deterministically, verify the execution path, and stage only the bounded context required by the current operation.</p>
+          <h3>Persistent Infrastructure Layer</h3>
+          <p>Preserve state outside the model as integrity-rooted objects, address evidence deterministically with provenance, verify the execution path, and stage only the bounded context required by the current operation.</p>
         </div>
       </div>
     </section>
@@ -307,7 +307,7 @@
           <ul>
             <li>Infrastructure-agnostic signaling</li>
             <li>Intermittent-connectivity operation</li>
-            <li>Sovereign media and machine transport</li>
+            <li>Identity-preserving machine transport</li>
           </ul>
         </div>
         <div class="card architecture-layer">
@@ -581,16 +581,16 @@
       <h2>Measured Validation</h2>
       <p style="max-width:760px;">Selected benchmark findings demonstrate bounded active context, cross-accelerator portability, compact deterministic retrieval, and the difference between complete-object delivery and top-k fragment retrieval.</p>
 
-      <div class="metric-grid">
+      <div class="metric-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
         <div class="metric-card">
           <div class="section-label" style="margin-bottom:.4rem;">H200 Productivity</div>
           <div class="metric-value">11.3×</div>
           <p>Correct-task throughput over full-context replay for the tested workload on the same H200 and model.</p>
         </div>
         <div class="metric-card">
-          <div class="section-label" style="margin-bottom:.4rem;">Bounded Context</div>
+          <div class="section-label" style="margin-bottom:.4rem;">Bounded Context (H200 / 285K corpus)</div>
           <div class="metric-value">660–820</div>
-          <p>Approximate xLMP prompt-token range as stored memory grew across the validated corpus sweep.</p>
+          <p>Approximate xLMP prompt-token range as stored memory grew 8K→285K tokens on the H200 benchmark workload.</p>
         </div>
         <div class="metric-card">
           <div class="section-label" style="margin-bottom:.4rem;">Compact Retrieval</div>
@@ -602,16 +602,23 @@
           <div class="metric-value">96.0%</div>
           <p>xLMP accuracy versus 82.6% for the tested sparse top-k RAG path on cross-document synthesis.</p>
         </div>
+        <div class="metric-card">
+          <div class="section-label" style="margin-bottom:.4rem;">N→K Corpus Scaling (32K–10M)</div>
+          <div class="metric-value" style="font-size:1.1rem; line-height:1.3;">No material<br>positive scaling</div>
+          <p>Across the tested 32K–10M nominal corpus envelope, mean staged context (K) showed no material positive growth. 10-point fit: b = 2.79×10⁻⁶ (95% CI includes zero; development data). Genuine 10M holdout: 5/5 runs deterministic, 0/190 per-query mismatches, mean K = 895.96.</p>
+        </div>
       </div>
 
       <div class="card accent-border">
         <h4>What the Benchmarks Establish</h4>
         <ul class="wp-bullets">
-          <li>Persistent memory can grow while active prompt context remains bounded.</li>
+          <li>Persistent memory can grow while active prompt context remains bounded — observed on H200 (8K–285K corpus) and on the LNES-82C campaign (32K–10M corpus).</li>
+          <li>Across the tested 32K–10M nominal envelope, mean staged context showed no material positive scaling with corpus size. Memory Growth ≠ Inference Growth, within the validated envelope.</li>
           <li>The same memory plane can operate across T4, A10, and H200 environments.</li>
           <li>Record-aware deterministic retrieval can remain compact, fast, and integrity-preserving.</li>
           <li>Top-k fragment retrieval can omit independently listed evidence before a model receives the question.</li>
           <li>Complete object delivery reduces that specific pre-model failure mode, while model reasoning remains a separate responsibility.</li>
+          <li>All N→K scaling claims are bounded to their tested corpus size, model, and hardware topology and do not extend to arbitrary scales, models, or architectures.</li>
         </ul>
       </div>
     </section>
@@ -686,8 +693,13 @@
           </tr>
           <tr>
             <td>Large-scale compact-index validation</td>
-            <td><span class="status-chip research">Pending Scale Test</span></td>
-            <td>100 MB and 1 GB isolated-host validation.</td>
+            <td><span class="status-chip validated">Validated</span></td>
+            <td>1 GB / 100-query narrow-population compact-index validation complete (52,753.8× median paired speedup; 0.72× aggregate in realistic mixed vault — both numbers reported). Results are workload-dependent.</td>
+          </tr>
+          <tr>
+            <td>N→K corpus scaling (32K–10M)</td>
+            <td><span class="status-chip validated">Validated</span></td>
+            <td>Nine-point A100 TP=4 ladder (32K–4M): no material positive K scaling detected; 9-point fit b = 7.83×10⁻⁷ (CI includes zero). Holdouts at 1M/2M/4M all 5/5 deterministic runs, 0/190 per-query mismatches. Gates A and B failed at 500K corpus peak — preserved without relabeling; Gate D PASS. Genuine 10M holdout (5/5 deterministic runs, 0/190 mismatches, mean K = 895.96, WSL2/Windows): K_FLAT_OR_STABLE within established 764–908 envelope; Q_BEND FORMALLY TRIGGERED at 39.5% (0.5pp below 40% floor, Q3/Q4 adversarial density — retrieval-quality finding, not system error); C_R(10M) hardware-confounded. All results bounded to tested model, hardware, and corpus construction.</td>
           </tr>
         </tbody>
       </table>

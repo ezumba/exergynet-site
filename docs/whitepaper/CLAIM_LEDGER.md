@@ -3,7 +3,7 @@
 **Canonical location:** `exergynet/docs/whitepaper/CLAIM_LEDGER.md`
 **Governs:** `AI_MEMORY_CONTROL_PLANE.md` (same directory)
 **Policy:** `exergynet/LWP_MAINTENANCE_POLICY.md`
-**Last updated:** 2026-08-17
+**Last updated:** 2026-08-18
 
 Each claim is keyed to an evidence record in `evidence/README.md`.
 
@@ -60,6 +60,7 @@ Each claim is keyed to an evidence record in `evidence/README.md`.
 | Delegation receipt specification | — | Spec complete; implementation pending |
 | Procurement deterministic graph/entity/policy-state resolver (LNES-82D.4–D.5) | — | Offline-only, real, zero-regression improvement: full evidence recall 46%→60% across 4 arms (100 real LNES-59 cases). Remains below the 85% cloud gate (`LNES82D5_HALT_BELOW_CLOUD_GATE`) — not cloud-validated, no LLM in the loop yet. Remaining failure classes: naive-retrieval misses on transactional documents, content-equivalent policy records under distinct IDs (an evaluation-methodology question, not yet resolved). |
 | Async Groth16 proof path — connection to synchronous query hot path / production-scale operation | EVD-011 | The proof path itself is verified (see DEMONSTRATED); it is not wired into the synchronous query response, has been run exactly once against one minimal object, and has not been tested under concurrent load, larger documents, or repeated runs. |
+| Machine Economic Control Plane settlement contract (`MemoryMarketSettlement.sol`) — model-scoped $RHO spending allowances, per-operation memory pricing, cross-model authority isolation, ECDSA-authenticated settlement receipts, dual replay protection | — | Sprint 01J.1: forge build/test pass, 30/30 contract-specific tests, 79/79 full repo suite, 0 failures — independently re-run 2026-08-18, not read from a prior report. Adds an immutable `authorizedReceiptSigner`; settlement requires a valid ECDSA signature over a commitment binding allowanceKey, storage-read modelId, requestId, sessionId, vmnNamespace, operation, resultRoot, usageUnits, on-chain-computed price, and receiptHash. Test suite validates rejection of a forged receipt hash, an altered result root, an altered operation, a receipt signed for the wrong model, an unrecognized signer, a replayed valid receipt, and a malformed signature. Not deployed to any network — no chain write has occurred. The receipt-signer identity this mechanism checks against is not yet provisioned in, or used by, the live Omega Carrier service — no signed receipt has been emitted by a live system. Provides content commitment + receipt hash + ECDSA authentication; does NOT provide a ZK proof of memory execution. Omega Carrier's deployed Tools 1–5 already expose Rho economic operations alongside memory recall/commit (EVD-008), which this contract is designed to settle against once deployed and connected. |
 
 ## DESIGNED
 *(Architecture documented; implementation not yet complete)*
@@ -70,6 +71,7 @@ Each claim is keyed to an evidence record in `evidence/README.md`.
 | GPS-independent positioning layer [LNES number TBD] | — | Not yet assigned; LNES-11 is occupied (bilateral consensus) |
 | NEURO-LOCK full cryptographic authorization chain | EVD-003 | Architecture described; production actuation NOT CLAIMED |
 | Omega Carrier cross-device xLMP memory transport | EVD-008 | Distinct from deployed Tools 1–5 MCP toolset |
+| Four-plane ExergyNet architecture (Memory / Authority / Economic / Physical control planes) as an explicit, formally separated system model | — | Named and scoped in whitepaper Section 53 (v1.11). Extends the paper's existing integrity/provenance/authority separation (Sections 9, 39) to economic delegation. Each plane's dedicated paper (II–V) and the umbrella architecture paper do not yet exist. |
 
 ## PLANNED
 *(On technical roadmap; not yet designed in detail)*

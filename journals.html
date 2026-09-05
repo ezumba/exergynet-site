@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ExergyNet Journal | Insights on Sovereign Compute</title>
+<title>ExergyNet Journal | Persistent Machine Intelligence</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Zero-knowledge proofs, sovereign AI infrastructure, and the economics of decentralized compute. Insights from the ExergyNet team.">
+<meta name="description" content="Zero-knowledge proofs, persistent AI infrastructure, and the architecture of verifiable autonomous systems. Insights from the ExergyNet team.">
 <meta property="og:title" content="ExergyNet Journal">
-<meta property="og:description" content="Insights on zero-knowledge proofs, AI infrastructure, and sovereign compute.">
+<meta property="og:description" content="Insights on zero-knowledge proofs, persistent AI infrastructure, and the architecture of verifiable autonomous systems.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org/journals">
 <link rel="stylesheet" href="style.css">
@@ -22,6 +22,25 @@
 })();
 </script>
 <style>
+/* ── Journal surface semantic tokens ─────────────────────────────────────────
+   Scoped to the journal page so the fix can't affect the rest of the site.
+   Dark values inherit the existing global palette (kept exactly as-is — dark
+   mode is already correct). Light values are set explicitly because the global
+   --text-faint (#8aabcc) has too little contrast on the white (--bg-card) cards;
+   these light values all clear WCAG AA (>=4.5:1) on #ffffff. */
+:root {
+  --journal-title:   var(--text);
+  --journal-sub:     var(--text-soft);
+  --journal-excerpt: var(--text-faint);
+  --journal-meta:    var(--text-faint);
+}
+:root[data-theme="light"] {
+  --journal-title:   #0d2138; /* ~15:1 on #fff */
+  --journal-sub:     #2f4d6b; /* ~8:1  */
+  --journal-excerpt: #46617e; /* ~6.2:1 */
+  --journal-meta:    #526c88; /* ~5.0:1 */
+}
+
 /* ── Journal page styles ─────────────────────────────────────────────────── */
 .journal-hero {
   text-align: center;
@@ -95,7 +114,7 @@
 .journal-featured-card {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  background: var(--surface, #1a2236);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
@@ -112,7 +131,7 @@
 .journal-featured-img {
   position: relative;
   min-height: 340px;
-  background: var(--surface);
+  background: var(--bg-card);
   overflow: hidden;
 }
 .journal-featured-img img {
@@ -141,19 +160,19 @@
   font-size: clamp(1.25rem, 2.5vw, 1.75rem);
   font-weight: 800;
   line-height: 1.2;
-  color: var(--text);
+  color: var(--journal-title);
   letter-spacing: -0.025em;
   margin: 0;
 }
 .journal-featured-sub {
   font-size: 15px;
-  color: var(--text-soft);
+  color: var(--journal-sub);
   line-height: 1.6;
   margin: 0;
 }
 .journal-featured-excerpt {
   font-size: 13px;
-  color: var(--text-dim, #6b7280);
+  color: var(--journal-excerpt);
   line-height: 1.7;
   margin: 0;
 }
@@ -167,7 +186,7 @@
 .journal-byline-dot { color: var(--border); font-size: 12px; }
 .journal-byline span {
   font-size: 12px;
-  color: var(--text-dim, #6b7280);
+  color: var(--journal-meta);
 }
 
 /* Card grid */
@@ -177,7 +196,7 @@
   gap: 22px;
 }
 .journal-card {
-  background: var(--surface, #1a2236);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
@@ -192,7 +211,7 @@
 }
 .journal-card-img {
   height: 180px;
-  background: var(--surface);
+  background: var(--bg-card);
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
@@ -200,7 +219,7 @@
 .journal-card-img img { width: 100%; height: 100%; object-fit: cover; }
 .journal-card-placeholder {
   height: 120px;
-  background: linear-gradient(135deg, var(--surface) 0%, #0d1526 100%);
+  background: linear-gradient(135deg, var(--bg-card) 0%, #0d1526 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -222,13 +241,13 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.35;
-  color: var(--text);
+  color: var(--journal-title);
   letter-spacing: -0.01em;
   margin: 0;
 }
 .journal-card-excerpt {
   font-size: 13px;
-  color: var(--text-dim, #6b7280);
+  color: var(--journal-excerpt);
   line-height: 1.65;
   margin: 0;
   flex: 1;
@@ -238,36 +257,54 @@
   align-items: center;
   gap: 8px;
   padding-top: 10px;
-  border-top: 1px solid var(--border-dim, #1e293b);
+  border-top: 1px solid var(--border-mid);
   margin-top: auto;
 }
 .journal-card-meta span {
   font-size: 11px;
-  color: var(--text-dim, #6b7280);
+  color: var(--journal-meta);
 }
 .journal-card-meta-dot { color: var(--border); }
 
-/* Pagination */
-.journal-pagination {
+/* Controls row: tag filters + sort */
+.journal-controls-row {
   display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 52px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0 24px 36px;
+  max-width: 1100px;
+  margin: 0 auto;
 }
-.journal-pg-btn {
-  width: 36px; height: 36px;
-  border-radius: 8px;
+.journal-sort-select {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
-  background: transparent;
+  background: var(--bg-card, transparent);
   color: var(--text-soft);
   cursor: pointer;
+}
+
+/* Load more */
+.journal-loadmore-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 52px;
+}
+.journal-loadmore-btn {
   font-size: 13px;
+  padding: 10px 28px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
   transition: all 0.15s ease;
 }
-.journal-pg-btn:hover,
-.journal-pg-btn.active {
+.journal-loadmore-btn:hover {
   border-color: var(--accent);
-  background: rgba(0, 232, 135, 0.07);
   color: var(--accent);
 }
 
@@ -275,7 +312,7 @@
 .journal-loading {
   text-align: center;
   padding: 80px 24px;
-  color: var(--text-dim, #6b7280);
+  color: var(--text-faint);
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
 }
@@ -290,7 +327,7 @@
   margin-bottom: 16px;
 }
 .journal-empty p {
-  color: var(--text-dim, #6b7280);
+  color: var(--text-faint);
   font-size: 14px;
 }
 
@@ -316,13 +353,19 @@
   <!-- Hero -->
   <div class="journal-hero">
     <div class="journal-hero-eyebrow">ExergyNet Journal</div>
-    <h1>Sovereign Compute,<br><span>In Print</span></h1>
-    <p>Zero-knowledge proofs, AI infrastructure,<br>and the economics of decentralized compute.</p>
+    <h1>Persistent Machine Intelligence,<br><span>In Print</span></h1>
+    <p>Zero-knowledge proofs, persistent AI infrastructure,<br>and the architecture of verifiable autonomous systems.</p>
   </div>
 
-  <!-- Tag filters -->
-  <div class="journal-tags" id="tag-strip">
-    <button class="journal-tag-btn active" data-tag="">All</button>
+  <!-- Tag filters + sort control -->
+  <div class="journal-controls-row">
+    <div class="journal-tags" id="tag-strip" style="padding:0;margin:0;justify-content:flex-start;">
+      <button class="journal-tag-btn active" data-tag="">All tags</button>
+    </div>
+    <select id="sort-select" class="journal-sort-select">
+      <option value="newest">Newest first</option>
+      <option value="oldest">Oldest first</option>
+    </select>
   </div>
 
   <!-- Article grid -->
@@ -330,7 +373,9 @@
     <div id="journal-content">
       <div class="journal-loading">loading articles…</div>
     </div>
-    <div class="journal-pagination" id="pagination" style="display:none;"></div>
+    <div class="journal-loadmore-wrap" id="loadmore-wrap" style="display:none;">
+      <button class="journal-loadmore-btn" id="loadmore-btn">Load more</button>
+    </div>
   </div>
 
 </main>
@@ -350,7 +395,8 @@ fetch('footer.html').then(r => r.text()).then(h => {
 });
 
 // ── State ──────────────────────────────────────────────────────────────────
-var state = { page: 1, tag: '', total: 0, pages: 1 };
+var PAGE_SIZE = 12;
+var state = { tag: '', sort: 'newest', loaded: 0, total: 0, hasMore: false, articles: [] };
 var knownTags = new Set();
 
 function fmtDate(iso) {
@@ -363,7 +409,7 @@ function coverSrc(url) {
   // resolve against the portal where it was uploaded — this page is served
   // from a different origin (GitHub Pages), so a bare relative src 404s here.
   if (!url) return '';
-  return /^https?:///i.test(url) ? url : 'https://portal.exergynet.org' + url;
+  return /^https?:\/\//i.test(url) ? url : 'https://portal.exergynet.org' + url;
 }
 
 function tagChips(tags, max) {
@@ -424,7 +470,6 @@ function esc(s) {
 function renderTags(tags) {
   var strip = document.getElementById('tag-strip');
   if (!strip) return;
-  // Clear existing dynamic tags (keep "All")
   var existing = strip.querySelectorAll('[data-tag]:not([data-tag=""])');
   existing.forEach(function(el) { el.remove(); });
   tags.forEach(function(t) {
@@ -440,90 +485,97 @@ function renderTags(tags) {
 
 function setTag(t) {
   state.tag = t;
-  state.page = 1;
-  document.querySelectorAll('.journal-tag-btn').forEach(function(btn) {
+  document.querySelectorAll('#tag-strip .journal-tag-btn').forEach(function(btn) {
     btn.classList.toggle('active', btn.getAttribute('data-tag') === t);
   });
-  load();
+  load(true);
 }
 
-function renderPagination(pages, current) {
-  var pg = document.getElementById('pagination');
-  if (!pg) return;
-  if (pages <= 1) { pg.style.display = 'none'; return; }
-  pg.style.display = 'flex';
-  pg.innerHTML = '';
-  for (var i = 1; i <= pages; i++) {
-    (function(p) {
-      var btn = document.createElement('button');
-      btn.className = 'journal-pg-btn' + (p === current ? ' active' : '');
-      btn.textContent = p;
-      btn.onclick = function() { state.page = p; load(); };
-      pg.appendChild(btn);
-    })(i);
-  }
-}
-
-function load() {
+function renderArticles(reset) {
   var content = document.getElementById('journal-content');
-  if (content) content.innerHTML = '<div class="journal-loading">loading articles…</div>';
+  if (!content) return;
 
-  var qs = 'page=' + state.page + '&limit=12';
+  if (state.articles.length === 0) {
+    content.innerHTML = '<div class="journal-empty"><div class="journal-empty-icon">◈</div><p>No articles published yet.</p></div>';
+    return;
+  }
+
+  // Sort client-side (production API ignores the sort param).
+  var sorted = state.articles.slice().sort(function(a, b) {
+    var da = new Date(a.published_at).getTime() || 0;
+    var db = new Date(b.published_at).getTime() || 0;
+    return state.sort === 'oldest' ? da - db : db - da;
+  });
+  var featured = sorted.filter(function(a) { return a.featured; });
+  var rest     = sorted.filter(function(a) { return !a.featured; });
+
+  var html = '';
+  if (featured.length > 0) {
+    html += '<div class="journal-featured">' + featuredCard(featured[0]) + '</div>';
+    var gridItems = featured.slice(1).concat(rest);
+    if (gridItems.length > 0) html += '<div class="journal-grid">' + gridItems.map(articleCard).join('') + '</div>';
+  } else {
+    html += '<div class="journal-grid">' + rest.map(articleCard).join('') + '</div>';
+  }
+  content.innerHTML = html;
+
+  var lm = document.getElementById('loadmore-wrap');
+  if (lm) lm.style.display = state.hasMore ? 'flex' : 'none';
+}
+
+// reset=true → fresh filter/sort change (replace results). reset=false → Load More (append).
+function load(reset) {
+  var content = document.getElementById('journal-content');
+  if (reset !== false) reset = true;
+
+  if (reset) {
+    state.loaded = 0;
+    state.articles = [];
+    if (content) content.innerHTML = '<div class="journal-loading">loading articles…</div>';
+  }
+
+  // Production API supports tag + offset/limit only. Sort is applied client-side;
+  // category filtering is not supported server-side, so no category param is sent.
+  var qs = 'limit=' + PAGE_SIZE + '&offset=' + state.loaded;
   if (state.tag) qs += '&tag=' + encodeURIComponent(state.tag);
 
   fetch('https://portal.exergynet.org/api/blog/articles?' + qs)
     .then(function(r) { return r.json(); })
     .then(function(data) {
       var articles = data.articles || [];
-      state.pages = data.pages || 1;
+      state.articles = reset ? articles : state.articles.concat(articles);
+      state.loaded = state.articles.length;
+      state.total = data.total || 0;
+      // Production API does not return has_more — derive it from the real total.
+      state.hasMore = state.loaded < state.total;
 
-      // Collect tags (first page only)
-      if (state.page === 1 && !state.tag) {
-        articles.forEach(function(a) {
-          (a.tags || []).forEach(function(t) { knownTags.add(t); });
-        });
+      if (reset && !state.tag) {
+        articles.forEach(function(a) { (a.tags || []).forEach(function(t) { knownTags.add(t); }); });
         renderTags(Array.from(knownTags));
       }
 
-      if (!content) return;
-
-      if (articles.length === 0) {
-        content.innerHTML = '<div class="journal-empty"><div class="journal-empty-icon">◈</div><p>No articles published yet.</p></div>';
-        renderPagination(1, 1);
-        return;
-      }
-
-      var featured = articles.filter(function(a) { return a.featured; });
-      var rest     = articles.filter(function(a) { return !a.featured; });
-
-      var html = '';
-      if (featured.length > 0 && state.page === 1) {
-        html += '<div class="journal-featured">' + featuredCard(featured[0]) + '</div>';
-        // Any additional featured fall into grid
-        var gridItems = featured.slice(1).concat(rest);
-        if (gridItems.length > 0) {
-          html += '<div class="journal-grid">' + gridItems.map(articleCard).join('') + '</div>';
-        }
-      } else {
-        html += '<div class="journal-grid">' + articles.map(articleCard).join('') + '</div>';
-      }
-
-      content.innerHTML = html;
-      renderPagination(state.pages, state.page);
+      renderArticles();
     })
     .catch(function(err) {
-      if (content) content.innerHTML = '<div class="journal-loading">Could not load articles. Check back soon.</div>';
+      if (content && reset) content.innerHTML = '<div class="journal-loading">Could not load articles. Check back soon.</div>';
       console.error('Journal fetch error:', err);
     });
 }
 
-// ── Tag strip click handler for "All" button ───────────────────────────────
+// ── Controls ─────────────────────────────────────────────────────────────
 document.getElementById('tag-strip').addEventListener('click', function(e) {
   if (e.target.getAttribute('data-tag') === '') setTag('');
 });
+document.getElementById('sort-select').addEventListener('change', function(e) {
+  state.sort = e.target.value;
+  renderArticles(); // client-side re-sort of already-loaded articles
+});
+document.getElementById('loadmore-btn').addEventListener('click', function() {
+  load(false);
+});
 
 // ── Init ───────────────────────────────────────────────────────────────────
-load();
+load(true);
 </script>
 
 <script src="main.js" defer></script>
