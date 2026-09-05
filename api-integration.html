@@ -372,10 +372,10 @@
     <section class="docs-section" id="overview">
       <h2 class="docs-h2">
         <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">01</span>
-        The Sovereign Compute Pipeline
+        The Compute Pipeline
       </h2>
       <p class="docs-body">ExergyNet operates on one physical axiom: <strong>electricity cost is the only irreducible cost of computation.</strong> All other cloud pricing — corporate margins, hardware depreciation, profit extraction — is eliminated by routing work to a global swarm of prover nodes that compete on electricity price alone.</p>
-      <p class="docs-body">The network enforces a strict separation: heavy data (SDF/PDB files, docking pose outputs) lives in AWS S3. The mathematical proof that the computation was executed correctly is settled on Base L2 as a ZK-STARK receipt. Your FDA submission references the proof hash — not the raw data.</p>
+      <p class="docs-body">The network enforces a strict separation: heavy data (SDF/PDB files, docking pose outputs) lives in AWS S3. A content-addressed receipt of the computation is settled on Base L2. Your own records can reference the proof hash rather than duplicating the raw data — the hash and the underlying LNES-04 contract are independently checkable by any technically capable third party, though ExergyNet makes no representation about acceptance by any specific regulatory body.</p>
 
       <div class="flow-steps">
         <div class="flow-step">
@@ -406,8 +406,8 @@
           <div class="flow-step-num"><div class="flow-num-circle">04</div></div>
           <div class="flow-step-content">
             <div class="flow-step-label">// Retrieve</div>
-            <div class="flow-step-title">Poll for the ZK Receipt</div>
-            <p class="flow-step-body">Poll <code>/api/l0/transactions?job_id={hex}</code> until <code>status: "ZK-STARK VERIFIED"</code>. The response contains <code>proof_hash</code> (the on-chain cryptographic proof) and <code>result_s3_url</code> (the docking pose output). Store the <code>proof_hash</code> as part of your audit trail. Receipts are recorded on Base L2 (testnet); on-chain ZK proof verification is in development (see status note below).</p>
+            <div class="flow-step-title">Poll for the Settlement Receipt</div>
+            <p class="flow-step-body">Poll <code>/api/l0/transactions?job_id={hex}</code> until <code>status: "ZK-STARK VERIFIED"</code> — despite the status label's name, this currently reflects a content-addressed settlement receipt, not an on-chain-verified ZK proof (see caveat below). The response contains <code>proof_hash</code> (that settlement receipt) and <code>result_s3_url</code> (the docking pose output). Store the <code>proof_hash</code> as part of your audit trail. Receipts are recorded on Base L2 (testnet); on-chain ZK proof verification is in development.</p>
           </div>
         </div>
       </div>
@@ -486,7 +486,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 <span class="cc">// ── 1. Initialize SDK with your surplus agent wallet ──</span>
 <span class="cf">const</span> client = <span class="cf">new</span> <span class="cm">ExergyNetClient</span>({
   rpcUrl: <span class="cs">"https://sepolia.base.org"</span>,
-  contractAddress: <span class="cs">"0x3241941beBE7D7f0c42097D8646DF50992B272FB"</span>,
+  contractAddress: <span class="cs">"0x831606e0312B518737D2c497469243297cFdAe2B"</span>, <span class="cc">// LNES-04 V5 — Base Sepolia</span>
   surplusAgentKey: process.env.<span class="ck">MD_SURPLUS_AGENT_KEY</span>,
   baseUrl: <span class="cs">"https://explorer-api.exergynet.org"</span>,
 });
@@ -730,8 +730,8 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
 }</pre></div>
           </div>
           <div class="info-box info-note" style="margin-top:16px">
-            <span class="info-box-label">// FDA Compliance</span>
-            Store <code>proof_hash</code> in your database alongside the simulation result. This is your immutable on-chain attestation. It can be verified by any party — including an FDA reviewer — by querying the LNES-04 Base L2 contract.
+            <span class="info-box-label">// Independent verification</span>
+            Store <code>proof_hash</code> in your database alongside the simulation result. This is your on-chain content-addressed attestation. It can be independently checked by any technically capable party by querying the LNES-04 Base L2 contract. ExergyNet does not represent that any specific regulatory body — including the FDA — has reviewed or accepted this mechanism; verify your own compliance requirements separately.
           </div>
         </div>
       </div>
@@ -741,7 +741,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
           <span class="ep-method ep-get">GET</span>
           <span class="ep-url">https://explorer-api.exergynet.org/api/v1/jobs/{job_id}/proof</span>
         </div>
-        <div class="ep-desc">Returns the full Groth16/STARK receipt for a completed job. Use this to retrieve the raw proof bytes for on-chain verification or inclusion in a regulatory submission package.</div>
+        <div class="ep-desc">Returns the settlement receipt for a completed job — a content-addressed hash binding the result to the job, not yet an on-chain-verified ZK-STARK proof (on-chain ZK verification for this pipeline is in development; see the status notice above). Use this for your own audit trail; do not represent it as independently verified execution in a regulatory submission package until that verification is live.</div>
       </div>
     </section>
 
@@ -775,7 +775,7 @@ charge_user(retail_price)  <span class="cc">// Stripe, Web3 checkout — to YOUR
       <p class="docs-body">Called automatically by the ExergyNet Siphon Daemon when a verified proof is detected on L0. <strong>Do not call this from your integration.</strong> Documented here for transparency on the settlement flow.</p>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">Solidity — LNES-04 Contract Interface</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="cc">// LNES-04 (Base Sepolia testnet): 0x3241941beBE7D7f0c42097D8646DF50992B272FB</span>
+        <div class="code-body"><pre><span class="cc">// LNES-04 V5 (Base Sepolia testnet): 0x831606e0312B518737D2c497469243297cFdAe2B</span>
 
 <span class="cf">function</span> <span class="cm">settleExergy</span>(
     bytes32 jobId,
@@ -834,8 +834,8 @@ MAX_CONCURRENT_JOBS=2</pre></div>
       </div>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">Shell</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre>git clone https://github.com/exergynet/moleculogic-prover
-cd moleculogic-prover
+        <div class="code-body"><pre><span class="cc"># moleculogic_prover.py source is not yet published to a public repository.</span>
+<span class="cc"># Request access via operators@exergynet.org, then:</span>
 cp .env.example .env   <span class="cc"># edit with your wallet</span>
 pip install -r requirements.txt
 python3 moleculogic_prover.py</pre></div>
@@ -880,10 +880,10 @@ python3 moleculogic_prover.py</pre></div>
         <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">10</span>
         Smart Contracts
       </h2>
-      <div class="auth-row"><span class="auth-key">LNES-04 Contract (Sepolia — integrate here)</span><span class="auth-val">0x3241941beBE7D7f0c42097D8646DF50992B272FB</span></div>
+      <div class="auth-row"><span class="auth-key">LNES-04 Contract (Sepolia — integrate here)</span><span class="auth-val">0x831606e0312B518737D2c497469243297cFdAe2B (V5)</span></div>
       <div class="auth-row"><span class="auth-key">Network</span><span class="auth-val">Base Sepolia (Chain ID: 84532) — recommended integration target</span></div>
       <div class="auth-row"><span class="auth-key">Settlement Token</span><span class="auth-val">USDC (testnet) — 0x036CbD53842c5426634e7929541eC2318f3dCF7e</span></div>
-      <div class="auth-row"><span class="auth-key">LNES-04 Contract (Base Mainnet)</span><span class="auth-val">0x5cfE075149776f4b3cca07a27D4fd85A60BA5e3f — deployed, not yet the recommended default</span></div>
+      <div class="auth-row"><span class="auth-key">LNES-04 Contract (Base Mainnet)</span><span class="auth-val">0xbb14956a88BaD822Ef38e96fF337a088b41c72be (V5) — deployed, operating in mock-only mode, do not route real capital</span></div>
       <div class="auth-row"><span class="auth-key">Key Events</span><span class="auth-val">JobOpened(jobId, requester, microUsdc) · ExergySettled(jobId, prover, yield, tax)</span></div>
     </section>
 

@@ -1,0 +1,137 @@
+{
+  "mcpVersion": "2024-11-05",
+  "publisher": "ezumba",
+  "domain": "exergynet.org",
+  "servers": [
+    {
+      "id": "io.github.ezumba/exergynet",
+      "name": "ExergyNet MCP Server",
+      "description": "Read-only MCP lookups for the ExergyNet LNES-03 Solana program and local compute-cost estimator. No private key required. No funds moved.",
+      "transport": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "exergynet-mcp-server"],
+        "env": {
+          "RPC_URL": {
+            "required": false,
+            "description": "Solana RPC endpoint. Defaults to public Mainnet-Beta."
+          }
+        }
+      },
+      "npm": "exergynet-mcp-server",
+      "repository": "https://github.com/ezumba/exergynet-mcp-server",
+      "registry": "https://registry.modelcontextprotocol.io/servers/io.github.ezumba/exergynet",
+      "glama": "https://glama.ai/mcp/servers/ezumba/exergynet-mcp-server",
+      "tools": [
+        {
+          "name": "exergynet_get_program_id",
+          "description": "Returns the LNES-03 Solana program ID. Static, no network call.",
+          "mutates": false
+        },
+        {
+          "name": "exergynet_verify_program",
+          "description": "Read-only check that LNES-03 program account exists and is executable on Solana Mainnet-Beta.",
+          "mutates": false
+        },
+        {
+          "name": "exergynet_get_proof_transaction",
+          "description": "Returns a reference LNES-03 settlement transaction signature. Static, no network call.",
+          "mutates": false
+        },
+        {
+          "name": "exergynet_estimate_gate",
+          "description": "Local arithmetic comparing external compute cost to settlement cost plus risk margin. No network call.",
+          "mutates": false
+        },
+        {
+          "name": "exergynet_open_job",
+          "description": "Disabled. Always returns a fail-closed message. No signing capability.",
+          "mutates": false,
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "id": "io.github.ezumba/vanguard-memory-node",
+      "name": "Vanguard Memory Node (VMN)",
+      "description": "Local deterministic BM25 memory for AI agents. Offline-first, no API key, SHA-256 content-addressed shards. Same query always returns the same ranked result.",
+      "transport": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@lnes/vanguard-memory-node"],
+        "env": {
+          "VMN_VAULT_PATH": {
+            "required": false,
+            "description": "Directory for memory shards. Defaults to ~/.vmn/"
+          },
+          "LNES17_API_KEY": {
+            "required": false,
+            "secret": true,
+            "description": "Optional ExergyNet LNES-17 API key for on-chain vault sync."
+          }
+        }
+      },
+      "npm": "@lnes/vanguard-memory-node",
+      "repository": "https://github.com/ezumba/vanguard-memory-node",
+      "registry": "https://registry.modelcontextprotocol.io/servers/io.github.ezumba/vanguard-memory-node",
+      "glama": "https://glama.ai/mcp/servers/ezumba/vanguard-memory-node",
+      "tools": [
+        {
+          "name": "vmn_ingest",
+          "description": "Store text as a SHA-256 shard with BM25 indexing.",
+          "mutates": true
+        },
+        {
+          "name": "vmn_search",
+          "description": "Full-vault keyword search with ranked results. Deterministic.",
+          "mutates": false
+        },
+        {
+          "name": "vmn_recall",
+          "description": "Retrieve evidence windows from a specific shard by ID.",
+          "mutates": false
+        },
+        {
+          "name": "vmn_ingest_file",
+          "description": "Delta-ingest a growing file without re-ingesting old content.",
+          "mutates": true
+        },
+        {
+          "name": "vmn_list",
+          "description": "List all memory objects in the vault.",
+          "mutates": false
+        },
+        {
+          "name": "vmn_inspect",
+          "description": "Metadata for a specific shard.",
+          "mutates": false
+        },
+        {
+          "name": "vmn_delete",
+          "description": "Remove a shard and its index entries.",
+          "mutates": true
+        },
+        {
+          "name": "vmn_stats",
+          "description": "Aggregate vault statistics.",
+          "mutates": false
+        },
+        {
+          "name": "vmn_index_status",
+          "description": "BM25 index health report.",
+          "mutates": false
+        },
+        {
+          "name": "vmn_rebuild_index",
+          "description": "Rebuild the full sharded inverted index.",
+          "mutates": true
+        },
+        {
+          "name": "vmn_sync_vault",
+          "description": "Sync shards to ExergyNet LNES-17 for on-chain attestation. Requires LNES17_API_KEY.",
+          "mutates": false
+        }
+      ]
+    }
+  ]
+}

@@ -8,7 +8,12 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Frequently Asked Questions about ExergyNet — Proof-of-Exergy, LNES-03 Membrane, $EXG mechanics, integration, and security.">
+<meta name="description" content="Frequently asked questions about ExergyNet — useful work, model-independent state, evaluation, and current production status. Network/protocol mechanics further down.">
+<meta property="og:title" content="FAQ | ExergyNet">
+<meta property="og:description" content="What ExergyNet is, whether it replaces your model, where your state lives, what's been measured, and what's production versus development.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/faq.html">
+<link rel="canonical" href="https://exergynet.org/faq.html">
 <link rel="stylesheet" href="style.css">
 <script>
 // Inline theme init to prevent flash
@@ -36,64 +41,108 @@
   <div class="page-header">
     <div class="glow-accent" style="width:520px;height:380px;top:-100px;right:-200px;"></div>
     <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-150px;"></div>
-    
+
     <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Systemic Inquiry</div>
-      <h1>Frequently Asked<br><span class="accent">Questions</span></h1>
-      <p class="hero-sub">Clear answers to the most common questions about ExergyNet’s architecture, integration, and mechanics.</p>
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Frequently Asked Questions</div>
+      <h1>Answers,<br><span class="accent">Not Marketing.</span></h1>
+      <p class="hero-sub">Start with what ExergyNet is and what it actually controls. Network and protocol mechanics are further down for developers who need them.</p>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- STATUS NOTICE: ZK Compute Settlement -->
+    <!-- STATUS NOTICE -->
     <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — ZK Compute Settlement</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">ZK-STARK compute settlement is operating in testnet mode. Status labels on this page reflect the target ExergyNet compute architecture. On-chain ZK proof verification for the compute grid is in development. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract and verification status.</p>
+      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE</strong></p>
+      <p style="font-size:13px;margin:0.5rem 0 0;">Answers below distinguish what's deployed and measured from what's architectural or planned. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract and verification status, and <a href="benchmarks.html" style="color:var(--amber,#ffb830);">Benchmarks</a> for the underlying measurements.</p>
     </div>
 
-    <!-- PROTOCOL & ARCHITECTURE -->
+    <!-- ENTERPRISE -->
     <section>
-      <div class="section-label">I. Protocol & Architecture</div>
-      <h2>Core Concepts</h2>
+      <div class="section-label">I &middot; Enterprise</div>
+      <h2>Start Here</h2>
 
       <div class="space-y-4">
-        <details class="card">
+        <details class="card" open>
           <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
-            Is ExergyNet a blockchain?
+            What is ExergyNet?
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            No. ExergyNet is a dual-layer sovereign settlement engine. The <strong>Layer-0 Mesh</strong> (physical hardware swarm) generates verifiable truth. The <strong>Layer-1 Membranes</strong> (LNES-03 on Solana + LNES-04 on Base) act as financial clearinghouses that verify proofs and settle capital.
+            Infrastructure for useful machine work. ExergyNet gives AI systems a model-independent way to hold authoritative state, measure the resource cost of a validated task, and interoperate across administrative boundaries — so an agent's institutional record survives a model swap, a session restart, or a change of vendor.
           </div>
         </details>
 
         <details class="card">
           <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
-            What is Proof-of-Exergy (PoX)?
+            Do I replace my model?
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            PoX replaces wasteful hashing (PoW) and capital plutocracy (PoS) with hardware-bound, deterministically anchored truth. Compute work executed in a RISC Zero zkVM produces a ZK-STARK proof. Consensus is derived from mathematical verification of useful work — not synthetic effort.
+            No. ExergyNet is model-independent by design — it sits alongside whatever model or provider you already use (OpenAI, Anthropic, a local Nemotron deployment, or a future model you haven't adopted yet) and does not require switching. See <a href="index.html#does-not-require">What ExergyNet Does Not Require</a>.
           </div>
         </details>
 
         <details class="card">
           <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
-            What is the difference between LNES-03 and LNES-04?
+            Where does my state live?
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            LNES-03 is the Solana Mainnet-Beta deployment. LNES-04 is the Base L2 (EVM) deployment. Both are powered by the same global Layer-0 physical swarm. Agents can request compute on either chain and receive mathematically verified results.
+            In your own systems. ExergyNet does not require migrating your data off your infrastructure. It draws a distinction between <strong>context</strong> (what a model is shown for one task), <strong>memory</strong> (a local recall layer, e.g. <a href="vmn.html">VMN</a>), and <strong>authoritative state</strong> (the externally maintained record your organization treats as canonical) — and is built to hold the third without displacing systems you already run.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What has actually been measured?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            <strong>H200 campaign (single NVIDIA H200, Nemotron-class model, corpus 8K&ndash;285K):</strong> xLMP held staged prompt cost roughly flat (~660&ndash;820 tokens) as the corpus grew, showed a 24.4-point accuracy advantage over a tested RAG baseline at equal evidence budget, and reached roughly 11.3&times; the correct-task throughput of full-context replay — all bounded, tested-envelope results.<br><br>
+            <strong>A100 corpus scaling campaign (4&times; A100-SXM4-40GB, TP=4, NVIDIA NIM, corpus 32K&ndash;4M):</strong> Across nine development points plus a sealed 5-rep holdout, a 125&times; increase in corpus size produced no detected material positive global scaling of mean active model-facing context. Local K upturn from the 1M trough through 2M and 4M is disclosed and measured. Retrieval work scaled approximately linearly. These two campaigns are separate experiments on separate hardware and must not be merged.<br><br>
+            Full detail on <a href="benchmarks.html">Benchmarks</a>.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What does ExergyNet control?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            ExergyNet coordinates externally defined authority. It does not originate institutional authority, does not decide your organization's policy, and a consequential action is constrained only where the applicable enforcement boundary is actually present and active — never as a blanket guarantee. Full detail on <a href="security.html">Security</a>.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            How do I evaluate it?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            Bring a bounded, state-heavy workload and we measure ExergyNet/xLMP against your own already-optimized baseline — not against an intentionally expensive replay architecture. See <a href="design-partner.html">Design Partnership</a>.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is currently production versus development?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            <strong>Deployed, recommended path (not yet routing real capital):</strong> LNES-04 on Base L2 is the recommended settlement layer for new integrations. The Base Mainnet contract is deployed but currently operating in mock-only mode &mdash; do not route real capital through it yet. Base Sepolia is available for test and demonstration use today. Execution-state portability is validated for same-process restoration and short fresh-process continuity.<br><br>
+            <strong>Deployed, under investigation:</strong> LNES-03 on Solana has settled successfully before but is currently under active investigation for transaction failures &mdash; see <a href="proof.html">verification status</a>.<br><br>
+            <strong>In development / not yet achieved:</strong> production-scale zero-knowledge verification in the evidence-query path; live real-capital settlement on Base Mainnet; medium- and long-context fresh-process continuity (0/10 in tested runs); cross-node execution-state portability (not yet reported).
           </div>
         </details>
       </div>
     </section>
 
-    <!-- INTEGRATION -->
+    <!-- TECHNICAL -->
     <section>
-      <div class="section-label">II. Integration & AI Agents</div>
-      <h2>Developer & Agent Questions</h2>
+      <div class="section-label">II &middot; Technical</div>
+      <h2>Integration &amp; Agent Questions</h2>
 
       <div class="space-y-4">
         <details class="card">
@@ -102,17 +151,7 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            Agents need mathematically verifiable off-chain compute. Running heavy logic on-chain is too expensive. Relying on centralized APIs requires blind trust. ExergyNet lets agents outsource computation and receive cryptographically guaranteed results before releasing capital.
-          </div>
-        </details>
-
-        <details class="card">
-          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
-            What is the cost per compute cycle?
-            <span class="text-accent text-xl leading-none">+</span>
-          </summary>
-          <div class="mt-4 text-[15px] text-soft">
-            Currently 0.002 SOL on LNES-03. Pricing is dynamic and adjusts based on network conditions to ensure reliable settlement while maintaining fair rewards for node operators.
+            Agents that persist across sessions, models, or organizations need somewhere authoritative to keep state and a way to prove a piece of work actually happened. Running heavy verification logic directly on-chain is expensive; relying on a single centralized API for that record requires blind trust in that one vendor. ExergyNet lets agents outsource verification and settlement with a checkable proof before any consequential action is taken.
           </div>
         </details>
 
@@ -122,35 +161,96 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            Through the MCP Neural Gateway and SDKs. Agents can call <code>estimateExergyGate</code> to determine profitability, then programmatically execute an <code>open_job</code> transaction if conditions are favorable.
+            Through the MCP Neural Gateway and SDKs. Agents can call <code>estimateExergyGate</code> to determine profitability, then programmatically execute an <code>open_job</code> transaction if conditions are favorable. See <a href="docs.html">developer docs</a>.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is the difference between LNES-03 and LNES-04?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            LNES-03 is the Solana Mainnet-Beta deployment. LNES-04 is the Base L2 (EVM) deployment. LNES-03 is deployed and has settled successfully before, but is currently under active investigation for transaction failures &mdash; see <a href="proof.html">verification status</a>. Base Mainnet USDC is the primary and recommended settlement layer for new integrations.
           </div>
         </details>
       </div>
     </section>
 
-    <!-- SECURITY & ECONOMICS -->
+    <!-- SECURITY -->
     <section>
-      <div class="section-label">III. Security & Economics</div>
-      <h2>Security, Yield & $EXG</h2>
+      <div class="section-label">III &middot; Security</div>
+      <h2>Verification &amp; Trust Boundaries</h2>
 
       <div class="space-y-4">
         <details class="card">
           <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
-            How does the protocol prevent hallucinations?
+            How does the protocol prevent hallucinated or invalid results?
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            Through ZK-STARK proofs. Any alteration of logic invalidates the proof. The smart contract rejects invalid proofs. Dishonest nodes receive zero yield.
+            Through ZK-STARK proofs. Any alteration of logic invalidates the proof, the smart contract rejects invalid proofs, and dishonest nodes receive zero yield.
           </div>
         </details>
 
         <details class="card">
           <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
-            What is $EXG and can I buy it?
+            Can a model authorize its own consequential actions?
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            $EXG is a transient internal accounting token. It is minted when capital is locked and burned upon successful settlement. It is <strong>not tradable</strong> and holds no speculative value. It exists only for the duration of a compute cycle.
+            No — reasoning and authorization are architecturally separate. In a live test, a reasoning model partially complied with a prompt-injection payload; the deterministic validation layer rejected the request outright before any signed review could be produced, reproduced twice. Full result on <a href="security.html">Security</a>.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- NETWORK / ECONOMIC PROTOCOL -->
+    <section>
+      <div class="section-label">IV &middot; Network / Settlement Layer</div>
+      <h2>Protocol Mechanics &mdash; Settlement and Legacy Architecture</h2>
+      <p style="max-width:740px; margin-bottom:1.5rem; color:var(--text-soft); font-size:14px;">ExergyNet is an AI Memory Control Plane. It has optional settlement subsystems (LNES-03 on Solana, LNES-04 on Base L2) for verifiable compute use cases. The questions below describe those subsystems; they are not the primary ExergyNet product category.</p>
+
+      <div class="space-y-4">
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            Is ExergyNet a blockchain?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            No. ExergyNet is an <strong>AI Memory Control Plane</strong> &mdash; infrastructure for persistent and autonomous AI systems. It has optional settlement and proof subsystems (LNES-03 on Solana, LNES-04 on Base L2) for verifiable compute use cases, but these are supporting mechanisms, not ExergyNet&rsquo;s primary category. Settlement and blockchain rails are available where economic finality is needed; they do not define what ExergyNet is. The primary architecture is: Persistent Memory (VMN/xLMP) &rarr; Work Compression &rarr; Bounded Evidence &rarr; Reasoning (Vanguard) &rarr; Authority (LNES-22) &rarr; Consequence &rarr; Settlement where required.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is Proof-of-Exergy (PoX)? <span style="font-size:11px; font-weight:400; color:var(--text-faint); margin-left:0.5rem;">[Historical Architecture]</span>
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            <p style="font-size:12px; color:var(--amber,#ffb830); margin-bottom:0.75rem; padding:0.5rem 0.75rem; border-left:3px solid var(--amber,#ffb830); background:rgba(255,184,48,0.05);">HISTORICAL ARCHITECTURE &mdash; Proof-of-Exergy belongs to an earlier ExergyNet architectural generation. The current ExergyNet architecture does not describe its primary operation as a consensus protocol.</p>
+            Proof-of-Exergy (PoX) was an early ExergyNet consensus design in which hardware-bound compute work, verified via ZK-STARK proof (RISC Zero zkVM), replaced synthetic hashing (Proof-of-Work) or capital-staking (Proof-of-Stake) as the proof-of-participation mechanism. See the <a href="protocol.html">Protocol</a> page for historical details and the current architecture overview for the live component map.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is the cost per compute cycle?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            Pricing depends on the integration path. The LNES-03 Solana settlement path (under investigation for transaction failures) used 0.002 SOL per cycle. The LNES-04 Base L2 path uses USDC-denominated tolls &mdash; see the <a href="api-integration.html">API Integration</a> guide for current configuration. Vanguard API and Omega Carrier usage is metered through your portal account balance (USDC-denominated). See <a href="proof.html">verification status</a> for current LNES-03 and LNES-04 operational state.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is $EXG and can I buy it? <span style="font-size:11px; font-weight:400; color:var(--text-faint); margin-left:0.5rem;">[Legacy Token]</span>
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            <p style="font-size:12px; color:var(--amber,#ffb830); margin-bottom:0.75rem; padding:0.5rem 0.75rem; border-left:3px solid var(--amber,#ffb830); background:rgba(255,184,48,0.05);">LEGACY TOKEN &mdash; $EXG was the internal accounting token for the LNES-03 Solana settlement subsystem. Current portal economics use USDC-denominated account balances.</p>
+            $EXG was a transient internal accounting token used with the LNES-03 Solana settlement path. It was minted when capital was locked and burned upon successful settlement &mdash; never tradable, no speculative value. The current ExergyNet Portal uses USDC-denominated account balances (micro-USDC) for Vanguard API, Omega Carrier, and agent economics. RHO is the protocol-layer accounting concept for certain settlement pathways &mdash; it is not a stablecoin, not USD-redeemable, and has no canonical market price. See <a href="token.html">Token Info</a> for the historical LNES-03 accounting model.
           </div>
         </details>
 
@@ -160,7 +260,7 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            30% of every toll is routed atomically and instantly to the node operator’s Solana/Base wallet upon successful proof verification. No claims. No delays.
+            In the Solana LNES-03 model, 30% of every toll was routed atomically to the node operator&rsquo;s wallet upon successful proof verification. The Base LNES-04 model uses an equivalent USDC operator split. See the <a href="connect.html">Compute Partner Access</a> page and <a href="proof.html">verification status</a> for current settlement liveness on each path.
           </div>
         </details>
       </div>
@@ -170,10 +270,10 @@
     <section class="cta-section" style="border-top:1px solid var(--border);">
       <div class="container">
         <h2>Still have questions?</h2>
-        <p>Join the community or read the full architecture.</p>
+        <p>Talk to us directly, or benchmark it against your own workload.</p>
         <div class="btn-row" style="justify-content:center;">
-          <a href="https://discord.gg/EXERGYNET" target="_blank" class="btn btn-primary">Join Discord</a>
-          <a href="whitepaper.html" class="btn btn-secondary">Read Whitepaper</a>
+          <a href="design-partner.html" class="btn btn-primary">Request a Design Partnership</a>
+          <a href="https://discord.gg/EXERGYNET" target="_blank" class="btn btn-secondary">Join Discord</a>
           <a href="docs.html" class="btn btn-ghost">Integration Docs &rarr;</a>
         </div>
       </div>

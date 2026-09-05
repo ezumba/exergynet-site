@@ -1173,7 +1173,7 @@ async function vgSend() {
   _vgThinking = true;
   _addVgBubble(text, 'user', false);
   var thinkBubble = _addVgBubble('…', 'assistant', true);
-  var sysCtx = 'You are Vanguard, the ExergyNet sovereign AI assistant. Keep answers concise and relevant.';
+  var sysCtx = 'You are Vanguard, the ExergyNet AI assistant. Keep answers concise and relevant.';
   if (_spaceTitle) sysCtx += ' The user is attending a live Space titled "' + _spaceTitle + '".';
   var messages = [{ role: 'system', content: sysCtx }].concat(_vgHistory).concat([{ role: 'user', content: text }]);
   try {
@@ -1224,7 +1224,7 @@ function renderInvite() {
       '<div style="text-align:center;padding:10px 0 6px">',
       '<div style="font-size:48px;margin-bottom:12px">🎙️</div>',
       '<h1 style="font-size:22px;font-weight:800;margin-bottom:8px">ExergyNet Spaces</h1>',
-      '<p class="sub" style="color:var(--muted);font-size:13px;line-height:1.5">Audio rooms on the sovereign mesh.<br>Ask the host to share their invite link.</p>',
+      '<p class="sub" style="color:var(--muted);font-size:13px;line-height:1.5">Audio rooms on the ExergyNet mesh.<br>Ask the host to share their invite link.</p>',
       '</div>',
       '<div class="divider">Get the app</div>',
       '<a class="btn btn-green" href="https://explorer-api.exergynet.org/downloads/ExergyNet-latest.apk">⬇ Download for Android</a>',
@@ -1238,7 +1238,7 @@ function renderInvite() {
   inner.innerHTML = [
     '<span class="live-chip"><span class="dot"></span>LIVE SPACE</span>',
     '<h1 style="font-size:22px;font-weight:800;margin:14px 0 5px">A Space is live right now</h1>',
-    '<p style="color:var(--muted);font-size:13px;line-height:1.5">Hosted on the ExergyNet sovereign mesh.</p>',
+    '<p style="color:var(--muted);font-size:13px;line-height:1.5">Hosted on the ExergyNet mesh.</p>',
     '<div class="room-pill">' + esc(shortRoom) + '</div>',
     '<button class="btn btn-ghost" id="listen-browser-btn" style="margin-top:16px">👻 Listen in Browser (Ghost Mode)</button>',
     '<div class="divider">Have the app?</div>',

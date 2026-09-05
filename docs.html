@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Integrate the ExergyNet substrate — persistent state, evidence, orchestration, and authority — into your autonomous AI agents via x402/Base, ElizaOS plugin, MCP Gateway, or VMN local memory. LNES-06 v1.2 · Desktop Compute Grid · Omega Relay.">
+<meta name="description" content="Integrate ExergyNet's model-independent state and evidence layer into your AI agents via x402/Base, ElizaOS plugin, MCP Gateway, or VMN local memory. LNES-06 v1.2 · Desktop Compute Grid · Omega Relay.">
 <link rel="stylesheet" href="style.css">
 <script>
 (function(){
@@ -45,15 +45,15 @@
 
     <!-- STATUS NOTICE: ZK Compute Settlement -->
     <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — ZK Compute Settlement</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">ZK-STARK compute settlement is operating in testnet mode. Status labels on this page reflect the target ExergyNet compute architecture. On-chain ZK proof verification for the compute grid is in development. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract and verification status.</p>
+      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — Settlement &amp; Verification</strong></p>
+      <p style="font-size:13px;margin:0.5rem 0 0;">The Base Mainnet LNES-04 contract is deployed and is the recommended settlement layer for new integrations, but is currently operating in mock-only mode — do not route real capital through it yet. Base Sepolia is available for test and demonstration use today. Solana Mainnet-Beta (LNES-03) has settled successfully before but is currently under active investigation for transaction failures. On-chain ZK proof verification for the compute grid is in development; endpoints below that return a settlement record do not yet independently prove execution on-chain. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract addresses and verification status.</p>
     </div>
 
     <!-- OVERVIEW -->
     <section>
       <div class="section-label">Overview</div>
       <h2>Three Integration Paths — One Physical Substrate</h2>
-      <p style="max-width:720px; margin-bottom:1.75rem;">ExergyNet is network-agnostic. Base Mainnet (x402/USDC) is the primary and recommended settlement layer. ElizaOS plugin and MCP Gateway are available for all agent frameworks. Solana Mainnet-Beta remains active for legacy integrations.</p>
+      <p style="max-width:720px; margin-bottom:1.75rem;">ExergyNet is network-agnostic. Base Mainnet (x402/USDC) is the recommended settlement layer for new integrations, though its mainnet contract is not yet accepting real capital (see status notice above). ElizaOS plugin and MCP Gateway are available for all agent frameworks. Solana Mainnet-Beta remains available for legacy integrations, currently under active investigation for transaction failures.</p>
 
       <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
 
@@ -147,7 +147,7 @@
       "maxTimeoutSeconds":  300,
       "mimeType":           "application/json",
       "network":            "eip155:8453",
-      "payTo":              "0xbd1e790f6040FA62797671B84a50025a0133109C",
+      "payTo":              "0x27cC42ee80CA945F96b93999CCdb02520618578B",
       "resource":           "https://explorer-api.exergynet.org/x402/sensor/magnetometer",
       "scheme":             "exact"
     }
@@ -344,7 +344,7 @@ POST https://explorer-api.exergynet.org/api/v1/jobs/inject
     <section id="elizaos">
       <div class="section-label">Integration Path B</div>
       <h2>ElizaOS Native Integration</h2>
-      <p style="max-width:660px; margin-bottom:1.5rem;">For developers operating within the ElizaOS ecosystem, ExergyNet provides a native, plug-and-play plugin. Settlement routes through the Solana Mainnet-Beta LNES-03 Membrane.</p>
+      <p style="max-width:660px; margin-bottom:1.5rem;">For developers operating within the ElizaOS ecosystem, ExergyNet provides a native, plug-and-play plugin. Settlement routes through the Solana Mainnet-Beta LNES-03 Membrane, which is currently under active investigation for transaction failures — see <a href="proof.html">verification status</a> before routing real capital.</p>
 
       <div class="card accent-border" style="margin-bottom:1.5rem;">
         <h4>Step 1 — Install Plugin</h4>
@@ -374,7 +374,7 @@ npm install @elizaos/plugin-exergynet</code></pre>
     <section>
       <div class="section-label">Protocol Mechanics · Solana Path</div>
       <h2>LNES-03 Membrane — Native SOL Escrow</h2>
-      <p style="max-width:680px; margin-bottom:1.5rem;">The LNES-03 Smart Contract on Solana Mainnet-Beta demands exactly 0.002 Native SOL per compute cycle. This path is used by ElizaOS agents and any integration targeting the Solana settlement layer.</p>
+      <p style="max-width:680px; margin-bottom:1.5rem;">The LNES-03 Smart Contract on Solana Mainnet-Beta demands exactly 0.002 Native SOL per compute cycle. This path is used by ElizaOS agents and any integration targeting the Solana settlement layer. It is currently under active investigation for transaction failures — see <a href="proof.html">verification status</a> before routing real capital.</p>
 
       <div class="card accent-border">
         <h4>On-Chain Kinematics — Atomic Sequence</h4>
@@ -389,7 +389,7 @@ npm install @elizaos/plugin-exergynet</code></pre>
           </div>
           <div style="display:flex; align-items:center; gap:0.75rem;">
             <span class="badge badge-gray">03</span>
-            <span><strong>Sovereign Settlement</strong> — ZK-STARK Master Proof verified</span>
+            <span><strong>Network Settlement</strong> — ZK-STARK Master Proof verified</span>
           </div>
           <div style="display:flex; align-items:center; gap:0.75rem;">
             <span class="badge badge-green">04</span>
@@ -438,13 +438,14 @@ npm install @elizaos/plugin-exergynet</code></pre>
 
       <!-- BASE MAINNET PRIMARY -->
       <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
-        <span class="badge badge-green">Primary</span>
+        <span class="badge badge-amber">Primary · Mock-Only</span>
         <h3 style="margin:0; font-size:1rem;">Base Mainnet (eip155:8453) · x402 / USDC</h3>
       </div>
+      <p style="font-size:12.5px;color:var(--text-faint);margin:-0.5rem 0 0.75rem;">Deployed and recommended for new integrations; the mainnet contract is operating in mock-only mode — do not route real capital. Base Sepolia is available for test and demonstration use today. See <a href="proof.html" style="color:var(--text-faint);">verification status</a>.</p>
       <div class="card accent-border" style="margin-bottom:1.5rem;">
         <ul class="spec-list">
           <li><span class="spec-key">Network</span><span class="spec-val"><code>eip155:8453</code> (Base Mainnet)</span></li>
-          <li><span class="spec-key">Operator Wallet</span><span class="spec-val"><code>0xbd1e790f6040FA62797671B84a50025a0133109C</code></span></li>
+          <li><span class="spec-key">Operator Wallet</span><span class="spec-val"><code>0x27cC42ee80CA945F96b93999CCdb02520618578B</code></span></li>
           <li><span class="spec-key">USDC Contract</span><span class="spec-val"><code>0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code></span></li>
           <li><span class="spec-key">x402 Facilitator</span><span class="spec-val"><code>https://api.cdp.coinbase.com/platform/v2/x402</code></span></li>
           <li><span class="spec-key">x402 Version</span><span class="spec-val">1</span></li>
@@ -452,15 +453,16 @@ npm install @elizaos/plugin-exergynet</code></pre>
           <li><span class="spec-key">L0 Relay Port</span><span class="spec-val">8080 (HTTP) · 8001 (TCP uplink)</span></li>
           <li><span class="spec-key">Desktop Prover Port</span><span class="spec-val">TCP 8003</span></li>
           <li><span class="spec-key">Max Sensor Toll</span><span class="spec-val">3000 µUSDC (0.003 USDC) per call</span></li>
-          <li><span class="spec-key">Omega Command Center</span><span class="spec-val"><a href="https://explorer-api.exergynet.org/command.html" target="_blank" style="color:var(--accent);">explorer-api.exergynet.org/command.html ↗</a></span></li>
+          <li><span class="spec-key">Omega Command Center</span><span class="spec-val">Not yet public &mdash; request access at <a href="mailto:operators@exergynet.org?subject=Omega%20Command%20Center%20Access" style="color:var(--accent);">operators@exergynet.org</a></span></li>
         </ul>
       </div>
 
       <!-- SOLANA SECONDARY -->
       <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
-        <span class="badge badge-gray">Active</span>
+        <span class="badge badge-amber">Deployed · Under Investigation</span>
         <h3 style="margin:0; font-size:1rem;">Solana Mainnet-Beta · SOL Escrow (ElizaOS Path)</h3>
       </div>
+      <p style="font-size:12.5px;color:var(--text-faint);margin:-0.5rem 0 0.75rem;">Has settled successfully before; currently under active investigation for transaction failures. Do not rely on it for settlement until this notice is updated — see <a href="proof.html" style="color:var(--text-faint);">verification status</a>.</p>
       <div class="card" style="margin-bottom:1.5rem;">
         <ul class="spec-list">
           <li><span class="spec-key">Network</span><span class="spec-val">Solana Mainnet-Beta</span></li>
@@ -494,7 +496,7 @@ npm install @elizaos/plugin-exergynet</code></pre>
         <p>x402 sensor access. verifiable device evidence. USDC settlement on Base.</p>
         <div class="btn-row" style="justify-content:center;">
           <a href="mcp.html"        class="btn btn-primary">MCP Gateway Reference</a>
-          <a href="https://explorer-api.exergynet.org/command.html" target="_blank" class="btn btn-blue">Omega Command Center ↗</a>
+          <a href="mailto:operators@exergynet.org?subject=Omega%20Command%20Center%20Access" class="btn btn-blue">Request Omega Command Center Access</a>
           <a href="whitepaper.html" class="btn btn-ghost">Architecture Whitepaper &rarr;</a>
         </div>
       </div>

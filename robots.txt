@@ -2,3 +2,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://exergynet.org/sitemap.xml
+
+# Machine-readable ExergyNet description for AI crawlers and LLMs:
+# https://exergynet.org/llms.txt
