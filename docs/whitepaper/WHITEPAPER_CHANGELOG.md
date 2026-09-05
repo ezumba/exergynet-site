@@ -292,3 +292,37 @@ internal canonical-state document, the claim ledger's operational note, and the 
 0 internal labels, 0 encoding corruption. Both figures correspond to active WP-C### claims (WP-C027–031 for fig10; WP-C019/032 and §7 invariant for fig13).
 
 **V3 manuscript, PDF, and DOCX unchanged from the prior pass.**
+
+---
+
+## 2026-09-04 — V3 publication-integrity reconciliation (HOLD_FOR_SURGICAL_RECONCILIATION resolved)
+
+**Scope:** Bounded reconciliation of `EXERGYNET_WHITEPAPER_PUBLIC_V3.md` and `EXERGYNET_WHITEPAPER_PUBLIC_V3_docxsrc.md` against the current xLMP source (`AI_MEMORY_CONTROL_PLANE_PUBLIC_SANITIZED_v2.1.md`) and validated state. No changes to Sections 5–7 (execution-state mobility, model-substitution principle, PIP) or any architectural claims. DOCX and PDF must be regenerated from these corrected sources before publication.
+
+**Publication verdict triggering this pass:**
+`AUTHORSHIP_INTEGRITY = FAIL` (title page showed only Seven Ezumba; Veena not listed)
+`10M_EVIDENCE_RECONCILIATION = FAIL` (paper stopped at H200 8K–285K; 32K–10M campaign completed)
+`PROCUREMENT_SAMPLE_WORDING = CORRECTION_REQUIRED` ("100 real procurement cases" ambiguous)
+`CLAIM_STATUS_RECONCILIATION = REQUIRED` (42.7× labelled "pending re-verification"; CLAIM_LEDGER shows DEMONSTRATED)
+`VANGUARD_STATUS_RECONCILIATION = REQUIRED` (single "Vanguard Production" row conflated routing service and undeployed Core V0)
+`ARTIFACT_VERSIONING = REQUIRED` (cover said "August 2026" only; paper incorporates Sept 4 evidence)
+
+| Item | P-level | Files changed | Change |
+|---|---|---|---|
+| Authorship — title page | P0 | V3.md, docxsrc.md | Changed "Seven Ezumba, Chief Architect" to "Seven Ezumba — Chief Architect and Corresponding Author / Bontu Veena — Co-author, Independent Validation and Review / ExergyNet" |
+| Artifact version | P1 | V3.md, docxsrc.md | "August 2026" → "Version 3.0 — Public Release Candidate, August–September 2026" |
+| Abstract — 10M result | P0 | V3.md, docxsrc.md | Added sentence: 32K–10M ten-point ladder found no material positive K scaling; 10M holdout mean K=895.96 (5/5 det.), Q_BEND at 39.5% registered |
+| Exec summary table — N→K row | P0 | V3.md, docxsrc.md | Added 6th headline result row: N→K corpus scaling, 32K–10M, A100 through 4M/WSL2 at 10M, Q_BEND noted |
+| Exec summary — procurement fix | P0/P1 | V3.md, docxsrc.md | "100 real procurement cases" → "50 unique cases × 2 arms (100 total pipeline executions)" |
+| Section 4 Figure 4 caption | P0 | V3.md, docxsrc.md | Removed "broader-scale validation is part of the ongoing measurement program" — replaced with reference to completed N→K validation |
+| Section 4 — N→K paragraph | P0 | V3.md, docxsrc.md | New paragraph: A100 32K–4M campaign + 10M holdout (K=895.96, 5/5 det., Q_BEND 39.5%, WSL2 hardware-confound caveat) |
+| Section 4 — validation scope (42.7×) | P1 | V3.md, docxsrc.md | "pending independent re-verification" → "demonstrated under EVD-002" (consistent with CLAIM_LEDGER.md) |
+| Section 9 — procurement body text | P0/P1 | V3.md, docxsrc.md | "100 real procurement-decision cases" → "50 unique procurement-decision cases (100 total pipeline executions across two arms)" |
+| Section 9 — Figure 6 caption | P0/P1 | V3.md, docxsrc.md | "100 real procurement-decision cases" → "50 unique procurement-decision cases (100 pipeline executions, two arms)" |
+| Section 13 — N→K scaling row | P0 | V3.md, docxsrc.md | New maturity row: N→K corpus scaling (32K–10M) — Validated (sealed holdout) |
+| Section 13 — Vanguard split | P1 | V3.md, docxsrc.md | "Vanguard (model routing) — Production" split into: "Vanguard model-routing service — Operational" and "Vanguard Core V0 (intelligence execution runtime) — Locally validated, 55/55 tests, integration pending, NOT DEPLOYED" |
+| Author Contributions section | P0 | V3.md, docxsrc.md | New section added after References: Seven's contributions (architecture, execution-state mobility research, LNES-22, physical-AI, drafting); Veena's contributions (July 2026 H200 saturation benchmark co-authorship per EVD-001 record, 10M holdout validation, manuscript scope review, MCP 0.2.6 + PIP-V0 validation); explicit scope exclusions for Veena |
+
+**Evidence sources:** CLAIM_LEDGER.md (42.7× DEMONSTRATED under EVD-002); EVIDENCE_SEAL_LNES82C10M_HOLDOUT.md (10M sealed holdout, K=895.96, Q_BEND); operator publication-integrity review 2026-09-04; xLMP source `AI_MEMORY_CONTROL_PLANE_PUBLIC_SANITIZED_v2.1.md` v2.2/v2.3.
+
+**DOCX and PDF are now stale** — must be regenerated from the corrected `.md` sources and artifact SHA frozen before distribution.

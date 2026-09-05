@@ -1,3 +1,9 @@
+---
+header-includes:
+  - \usepackage{caption}
+  - \captionsetup{labelformat=empty,labelsep=none}
+---
+
 <!--COVER-->
 # EXERGYNET
 
@@ -5,9 +11,12 @@
 
 Model-independent state, execution-state mobility, and measured efficiency for AI systems that must persist across models, sessions, machines, and organizations.
 
-Seven Ezumba, Chief Architect
+Seven Ezumba — Chief Architect and Corresponding Author
+Bontu Veena — Co-author, Independent Validation and Review
 
-August 2026
+ExergyNet
+
+Version 3.0 — Public Release Candidate, August–September 2026
 
 <!--PAGEBREAK-->
 
@@ -15,7 +24,7 @@ August 2026
 
 Artificial intelligence is becoming more capable and more substitutable at the model layer at the same time: new models arrive quarterly, model choice is increasingly a commodity decision, and the cost of a single inference call continues to fall. What has not fallen is the cost of everything a persistent, multi-step, multi-agent system must do around that inference call — reconstructing state, re-fetching evidence, coordinating multiple models and tools, and producing a record of what actually happened. That cost is paid in compute, memory, storage, network, energy, and engineering effort, and it does not disappear just because the model got better.
 
-That gap motivates ExergyNet's first and most concrete question, which is economic before it is architectural: **can a system reduce the resource cost required to complete a validated useful task, measured against a workload's own existing, optimized baseline — without requiring that workload to abandon its chosen model or infrastructure?** On a single NVIDIA H200 with a Nemotron-class model, ExergyNet's xLMP memory layer held staged prompt cost roughly flat at ~660–820 tokens as the underlying corpus grew from 8,000 to 285,000 tokens, delivered a 24.4-point accuracy advantage over a tested RAG baseline at equal evidence budget, and reached roughly 11.3x the correct-task throughput of full-context replay at each method's best compliant load. These are bounded, tested-envelope results, not a universal savings claim, and they are reported that way throughout this paper.
+That gap motivates ExergyNet's first and most concrete question, which is economic before it is architectural: **can a system reduce the resource cost required to complete a validated useful task, measured against a workload's own existing, optimized baseline — without requiring that workload to abandon its chosen model or infrastructure?** On a single NVIDIA H200 with a Nemotron-class model, ExergyNet's xLMP memory layer held staged prompt cost roughly flat at ~660–820 tokens as the underlying corpus grew from 8,000 to 285,000 tokens, delivered a 24.4-point accuracy advantage over a tested RAG baseline at equal evidence budget, and reached roughly 11.3x the correct-task throughput of full-context replay at each method's best compliant load. A broader N→K corpus-scaling validation across a 32K–10M ten-point ladder found no material positive scaling of staged context with corpus size within the tested envelope; a genuine 5-run sealed holdout at 10M confirmed mean K = 895.96 (5/5 deterministic runs, 0/190 per-query mismatches), with a retrieval-quality degradation formally registered at 39.5% accuracy under adversarial corpus density (Q_BEND — 0.5pp below the preregistered 40% floor). These are bounded, tested-envelope results, not universal savings claims, and they are reported that way throughout this paper.
 
 Efficiency alone is not the product. The durable requirement underneath it is different in kind: **models can change. Institutional state must persist.** This paper reports a second, newer result in that same spirit, at a different layer: within a frozen same-model runtime envelope, specific components of a model's own live execution state were isolated and shown to move across physically distinct machines — different CPU vendors, different hosts — and independently reproduce the source machine's continuation behavior. This does not establish universal execution-state portability, and this paper is explicit about what it does and does not show; it does establish that execution state, like persistent memory, is decomposable into named, independently testable components, some of which travel.
 
@@ -39,10 +48,13 @@ As machine intelligence becomes economically productive at industry scale — a 
 | Result | Measured outcome | Tested envelope |
 |---|---|---|
 | Useful-work / state efficiency | Prompt cost held ~660-820 tokens flat as corpus grew 8k-285k; full-context grew to 67k and was rejected past 262k | H200, synthetic corpus |
-| State governance | False authoritative commitments fell 8% to 0%; model accuracy held at 84% | 100 real procurement cases |
+| N→K corpus scaling | Staged context held within 764–908 token envelope across 32K–10M corpus range; no material positive scaling detected; 10M holdout mean K = 895.96 (5/5 deterministic runs); Q_BEND formally registered at 39.5% under adversarial density | 32K–10M nominal; Nemotron model; A100 TP=4 through 4M; WSL2/Windows at 10M (retrieval timing hardware-confounded) |
+| State governance | False authoritative commitments fell 8% to 0%; model accuracy held at 84% | 50 unique cases × 2 arms (100 total pipeline executions) |
 | Deterministic authority | Rejected a live prompt-injection after the reasoning model complied; reproduced twice | Live listener, unit-tested |
 | Execution-state mobility | Same-model cross-host recurrent-state realization demonstrated; a two-block region of one state component was each independently sufficient to reproduce the source host's trajectory, and a second component was reduced to a two-block interacting pair within the tested search | Frozen same-model runtime, one workload length, two physical x86-64 hosts |
 | Physical consequence | False-release held at 0/50 in two independent runs vs. 20-34% ungoverned | Sealed synthetic holdout |
+
+**Two supporting implementations, at their actual maturity.** The five results above address inference cost, governance, authority, mobility, and physical consequence. Two additional implementations underpin the architecture's longer-term direction and are reported at their current, bounded maturity: VMN (the local open-source node for xLMP's persistent-state model) demonstrated that a project's authoritative state can survive an agent or session boundary and be recovered in a clean second process, in a local non-production test — a local, non-production result, not a distributed or customer-deployed infrastructure. Separately, a reference implementation of the Portable Intelligence Package specification — six lifecycle functions, tested against eight structured negative cases (wrong identity, wrong runtime, modified state, missing provenance, authority laundering, economic-authority injection, consequence-authority injection, runtime mismatch), all rejected or blocked as designed — validates that the hard invariant this section's architecture depends on (STATE\_REALIZED $\neq$ AUTHORIZED) is enforceable in code. Neither of these is a production deployment; both are reported as what they are: tested, local implementations of ideas this paper describes at the specification and research-frontier stage.
 
 **The larger implication.** As machine output becomes economically productive at industry scale, the resources and coordination mechanisms that sustain it become strategic infrastructure in their own right, not implementation detail.
 
@@ -65,6 +77,8 @@ Each of these is a property of the architecture described in this paper, not a m
 Every independent reasoning system begins each session from nothing durable: state is reconstructed at full cost, evidence is re-fetched without stable identity, authority is implicit in whatever credentials the caller holds, and no independent record survives to explain why an action occurred. This is a property of the surrounding architecture, not of any particular model, and improving the model does not change it. The cost is not paid once — it is paid every session, every model swap, and every hand-off between agents, in compute, memory, storage, network, energy, and engineering time.
 
 This argument is no longer only architectural — it is now visible in the infrastructure economics of the companies building frontier compute. In its most recent quarter, NVIDIA reported $89.0 billion in Data Center revenue, up 117% year-over-year, and supply and capacity purchase commitments that rose from $119 billion to $279 billion quarter-over-quarter — an increase its finance leadership attributed primarily to the procurement of memory. At the same time, independent technical disclosures from memory manufacturer Micron reported that compute performance is scaling roughly 3x every two years while high-bandwidth memory (HBM) capacity is scaling less than 2x over the same period **(Figure 9)**.
+
+![Figure 9. Compute performance versus high-bandwidth memory capacity scaling trajectories, per independent industry technical disclosure (Micron, Hot Chips 2026, Stanford University, August 23, 2026). Compute performance scales approximately 3× per two years; HBM capacity scales less than 2×. External evidence confirming the infrastructure premise this paper derives independently — not an ExergyNet result.](figures/fig09b_compute_vs_hbm.png){ width=90% }
 
 These figures are external, dated evidence about the industry, not ExergyNet results, and they do not validate this architecture. What they confirm is the premise this paper derives independently: memory, compute, energy, and physical infrastructure have become contended, strategically managed resources — exactly the resource layer that a workload's own cost-per-validated-task must eventually measure, allocate, and account for (Sections 2 and 10).
 
@@ -104,11 +118,15 @@ alongside the completion-time distributions $T_{p50}$ and $T_{p95}$, since a wor
 
 ExergyNet occupies the boundary between a reasoning engine and the world it can affect. The reasoning engine is interchangeable — GPT, Claude, Nemotron, an open-weight model, a robotics controller, or a human operator — and the architecture is drawn accordingly: models and applications connect through ExergyNet's protocol components to state the customer owns, inside a boundary the customer controls **(Figure 1)**. ExergyNet does not hold that state on the customer's behalf as a precondition of using it, and it is not drawn as a box every request must pass through with no visibility into what happens inside.
 
+![Figure 1. ExergyNet at the boundary between a reasoning engine and the world it can affect. Customer-controlled state is the fixed point; reasoning engines, models, and applications connect through ExergyNet's protocol layer without requiring the customer to relocate that state or transfer authority.](figures/fig01_thesis.png){ width=90% }
+
 The architecture organizes into three coordination planes **(Figure 2)**:
 
 - **Plane I — Knowledge & State.** What exists, what happened, and what is currently authoritative: xLMP / Exergy Vault, deterministic indexing and routing, Temporal Authority, and physical observation (Edge Witness).
 - **Plane II — Coordination & Authority.** Who may interact with what, under what constraints: machine identity, the xISA capability vocabulary, Vanguard model routing, the LNES-22 Consequence Boundary, and AERIS external-evidence acquisition.
 - **Plane III — Resource & Economic Coordination.** What was consumed, authorized, and settled: RHO resource accounting, Omega, and MMS settlement.
+
+![Figure 2. Three ExergyNet coordination planes: Plane I (Knowledge & State — xLMP/Exergy Vault, deterministic routing, Temporal Authority, Edge Witness), Plane II (Coordination & Authority — machine identity, xISA capability vocabulary, Vanguard model routing, LNES-22 Consequence Boundary, AERIS external-evidence acquisition), and Plane III (Resource & Economic Coordination — RHO resource accounting, Omega, MMS settlement). Each plane is independently governed; authority, memory, and resource accounting are maintained as separate predicates.](figures/fig02_three_planes.png){ width=90% }
 
 The architecture keeps a small set of predicates permanently separate: memory evidence is not execution authority; model identity is not agent identity; agent identity is not economic authority; economic authority is not consequence authority; and resource accounting is not market value. Section 7 extends this same discipline to a model's own execution state. These separations are what let intelligence be swapped, fail, or be distrusted without the surrounding system losing what it knows, what it may do, or what it must account for.
 
@@ -121,9 +139,15 @@ The clearest cost of statelessness is reconstruction: an agent that rebuilds its
 
 On a single NVIDIA H200 with a Nemotron-class model over a synthetic corpus, xLMP held staged prompt cost roughly flat at ~660-820 tokens as the underlying corpus grew from 8,000 to 285,000 tokens, while full-context injection grew to 67,000 tokens and was rejected outright past 262,000 **(Figure 4)**. At equal evidence budget, xLMP retrieval reached 92.4% accuracy against a 68.0% tested RAG baseline — a 24.4-point advantage — and delivered roughly 11.3x the correct-task throughput of full-context at each method's best compliant load **(Figure 5)**.
 
+![Figure 4. xLMP staged prompt-token cost (tokens) as underlying corpus grows from 8,000 to 285,000 documents, versus full-context injection on the same hardware target (single NVIDIA H200, Nemotron-class model, synthetic corpus). Full-context injection grew to 67,000 tokens and was rejected past 262,000; xLMP held approximately 660–820 tokens throughout. H200 tested envelope (8K–285K). Broader N→K corpus-scaling validation (32K–10M) has been completed separately; see Section 4 validation scope.](figures/fig04_context_scaling.png){ width=90% }
+
+![Figure 5. xLMP retrieval accuracy and correct-task throughput at equal evidence budget versus a tested RAG baseline. xLMP reached 92.4% accuracy against 68.0% for the RAG baseline (24.4-point advantage); correct-task throughput approximately 11.3× higher than full-context replay at each method's best compliant load. H200 / synthetic-corpus envelope.](figures/fig05_memory_dashboard.png){ width=90% }
+
 **Why this is a capacity result, not only a cost result.** Reducing the context staged into active working memory per operation means the same physical hardware sustains more useful machine work per unit of memory and time. Under constrained memory and compute, that is a capacity property, not merely a savings — and it is precisely the $C_{\text{state}}$ term of the useful-work cost decomposition introduced in Section 2.
 
-**Validation scope.** These results hold within the tested H200 / synthetic-corpus envelope; broader-scale validation is part of the ongoing measurement program described in Section 13. A separate efficiency figure (~42.7x vs. full-context, ~4.0x vs. RAG) is reported pending independent re-verification of its source artifact.
+**N→K corpus-scaling validation.** A broader measurement campaign, conducted on A100 TP=4 infrastructure across a ten-point 32K–4M nominal corpus ladder and confirmed with a genuine 5-run sealed holdout at 10M, found no material positive scaling of mean staged context (K) with corpus size within the tested envelope: development regression fit b ≈ 2.79 × 10⁻⁶ (95% CI includes zero), and the 10M holdout produced mean K = 895.96 with 5/5 deterministic runs and 0/190 per-query mismatches. A retrieval-quality degradation was formally registered at the 10M holdout point (Q_BEND: accuracy 39.5%, 0.5pp below the preregistered 40% floor, driven by adversarial temporal-authority and ambiguity query classes under high-density corpus construction). Retrieval timing at 10M (18.7s P50) is hardware-confounded — measured on WSL2/Windows, not on the A100 TP=4 infrastructure used for the 32K–4M campaign, and is not an evidence-grade retrieval-ratio figure against the 4M measurement. All N→K results are bounded to the tested model, hardware, and corpus construction.
+
+**Validation scope.** The H200 / synthetic-corpus results hold within the tested envelope (8K–285K). N→K corpus-scaling has been validated through the 10M holdout; findings are summarized above and in the validation table in Section 13. The efficiency figures ~42.7× vs. full-context and ~4.0× vs. RAG are demonstrated under EVD-002 (common-support, apples-to-apples comparison; per-row evidence in the claim ledger).
 
 VMN provides a local, open-source implementation of xLMP's persistent-state model — a developer-facing node that runs without a cloud dependency. VMN's own local operation is independent of the execution-state research reported in Section 5; integrating VMN's persistent project state with the portable execution-state package that Section 5 and Section 7 describe is itself part of this paper's stated research frontier (Section 13), not a completed integration.
 
@@ -177,7 +201,9 @@ The `R_CONV` component's positive region did not decompose the same way: splitti
 
 ### 5.8 What was demonstrated
 
-Within a frozen same-model, same-runtime, same-quantization envelope, on one tested medium-length workload, across two physically distinct x86-64 CPU platforms (an AMD EPYC and an Intel Xeon host): a model's live recurrent execution state decomposes into independently testable named components; specific components of that state, transplanted alone, are sufficient to reproduce the source host's reference continuation on the destination host; one component's effect is carried by either of two individually-sufficient, mutually non-required blocks; the other component's effect requires a specific two-block pair with no individually-sufficient member and no alternative pair found within the tested search. This is a same-model, cross-host result about execution-state structure and mobility. It is not a claim that any of this generalizes across models, runtimes, quantizations, workload lengths, or host counts beyond what was tested.
+Within a frozen same-model, same-runtime, same-quantization envelope, on one tested medium-length workload, across two physically distinct x86-64 CPU platforms (an AMD EPYC and an Intel Xeon host): a model's live recurrent execution state decomposes into independently testable named components; specific components of that state, transplanted alone, are sufficient to reproduce the source host's reference continuation on the destination host; one component's effect is carried by either of two individually-sufficient, mutually non-required blocks; the other component's effect requires a specific two-block pair with no individually-sufficient member and no alternative pair found within the tested search. This is a same-model, cross-host result about execution-state structure and mobility. It is not a claim that any of this generalizes across models, runtimes, quantizations, workload lengths, or host counts beyond what was tested **(Figure 10)**.
+
+![Figure 10. Execution-state mobility: component isolation and recurrent-state decomposition. *Left:* Transplanting R\_CONV alone, or S\_SSM alone, from the source host (AMD EPYC 74F3) to the destination host (Intel Xeon Platinum 8573C) each independently reproduced the source host's reference trajectory for the tested workload. Root cause of cross-host divergence: unknown. *Right:* Structural decomposition within the tested search. R\_CONV effect localized to a 1-minimal sufficient pair (model blocks 4 and 21; both required, no alternative pair found within the tested search). S\_SSM effect: blocks 9 and 11 are each individually sufficient; neither is individually required (alternative-sufficient pair). Envelope: frozen same-model, same-runtime, same-quantization; one tested medium-length workload; two physically distinct x86-64 hosts.](figures/fig10_state_mobility.png){ width=90% }
 
 ### 5.9 What remains open
 
@@ -205,12 +231,16 @@ This paper therefore distinguishes two portability classes rather than treating 
 | **Persistent / authoritative project state** (Section 4) | Model-independent by architecture — defined and maintained independently of which model is reasoning over it | Architectural property, demonstrated within the tested envelopes reported in Sections 4 and 8 |
 | **Model-native live execution state** (Section 5) | Currently validated only within a same-model, frozen-runtime envelope | Cross-model execution-state movement is not demonstrated and is not claimed |
 
+This two-class distinction, and the authority boundary that applies to both classes, is illustrated in **Figure 13**.
+
+![Figure 13. Two classes of state and the authority boundary. Persistent project state (xLMP/VMN) is architecturally model-independent: defined and maintained independently of which model is reasoning over it. Model-native live execution state is currently validated only within a same-model, frozen-runtime envelope. Authority must be re-established independently at each destination; neither class of state carries authority with it. Governing invariant: STATE\_REALIZED $\neq$ AUTHORIZED.](figures/fig13_state_types_authority.png){ width=90% }
+
 **The infrastructure can be model-independent even when a model's native execution state is not.** That is the precise, bounded form of the model-substitution principle this paper defends: the authoritative state described in Section 4's boxed distinction is defined independently of any one model's internal representation, which is what makes substitution a coherent target regardless of what is or is not yet known about moving a model's own live execution state across a model change. The point of this section is the requirement the architecture is built to satisfy, not a claim that the hardest form of it — silent, lossless state continuity across a full model substitution — has already been demonstrated.
 
 
 ## 7. Portable Intelligence Packaging
 
-**Status: defined / specification.** This section describes an architectural pattern this paper is proposing based on the boundaries Sections 4–6 establish; it is not describing a shipped implementation, and no claim in this section should be read as a current-production status claim.
+**Status: specification complete + reference implementation (local test envelope).** This section describes an architectural pattern based on the boundaries Sections 4–6 establish. A reference implementation of six lifecycle functions — pack, inspect, verify, unpack, compatibility-check, and authority-check — has been built and tested in a local, non-production environment. Eight tested negative cases (wrong model identity, wrong runtime identity, modified state, missing provenance, authority laundering, economic-authority injection, consequence-authority injection, runtime incompatibility) were each rejected or blocked as designed. This reference implementation is a local, tested artifact — not a production deployment, not a production transport protocol, and not a universal cross-model execution-state format. No claim in this section should be read as a current-production status claim.
 
 Sections 4 and 5 establish two different kinds of state with two different portability profiles: persistent, authoritative project state that is architecturally model-independent, and live execution state that this paper has shown, within a tested envelope, to be decomposable and partially portable across physical hosts running the same model. A portable machine-intelligence package — the unit that would need to move if an agent's work is to continue on a different machine, under a different model, or under a different institution's infrastructure — has to keep these and several other properties separate rather than collapsed into one artifact:
 
@@ -231,7 +261,7 @@ $$
 \boxed{\text{STATE\_REALIZED} \neq \text{AUTHORIZED}}
 $$
 
-Execution state may move, and Section 5 reports a tested case where a specific slice of it did. Authority — economic or consequential — does not move with it, and must be re-established at the destination under that destination's own authority mechanisms (Sections 8–9 for the general case; LNES-22's Consequence Boundary for the enforcement mechanism). Portable Intelligence Packaging is the architectural name for keeping these properties separate as this paper's execution-state, memory, and authority work continue to develop together; it is a specification this paper is stating precisely so that future implementation work can be checked against it, not a system that exists today.
+Execution state may move, and Section 5 reports a tested case where a specific slice of it did. Authority — economic or consequential — does not move with it, and must be re-established at the destination under that destination's own authority mechanisms (Sections 8–9 for the general case; LNES-22's Consequence Boundary for the enforcement mechanism). Portable Intelligence Packaging is the architectural name for keeping these properties separate as this paper's execution-state, memory, and authority work continue to develop together. The reference implementation's six lifecycle functions define and enforce this separation in code: `pack` embeds identity, state, provenance, capability, and authority fields as distinct, separately checkable objects; `verify` re-derives and checks the package's integrity hash and all hard invariants independently; `authority-check` refuses to grant ACTIVE status when any of the three revalidation gates — economic authority, consequence authority, or capability reconfirmation — has not been explicitly cleared at the destination. No production deployment is described or claimed here; the reference implementation exists to validate that the specification's hard invariants are enforceable, not to replace the production integration work that remains ahead.
 
 
 ## 8. Administrative Boundaries and Interoperability
@@ -242,16 +272,22 @@ Some of the strongest requirements this architecture answers only appear once mo
 
 **The integration-cost argument, correctly bounded.** As the number of independent, heterogeneous intelligences and organizations (N) in a shared workflow grows, unconstrained pairwise integration between every pair carries a potential quadratic cost; a shared substrate instead lets each participant implement one common interface **(Figure 3A)**. This is a potential integration bound, not a measurement of actual network traffic in any deployed system, and it does not imply that every model needs ExergyNet. The defensible conclusion is narrower and remains true even in a world where most participants never adopt this protocol: **if independently governed systems require repeated bilateral state, identity, evidence, or authority integrations, common protocol semantics can reduce the bespoke integration burden those systems would otherwise each pay separately.**
 
+![Figure 3. Administrative boundary and interoperability. *Left (3A):* A shared substrate bounds pairwise integration cost: N independent participants each implement one common interface rather than N(N−1) bilateral integrations. *Right (3B):* Two organizations, each retaining their own internal systems and authoritative state, bridged only at the interaction boundary — not merged, not placed under one administrator. Verifiable state and evidence are exchanged at the boundary only.](figures/fig03_shared_infrastructure.png){ width=90% }
+
 
 ## 9. Reasoning, Evidence, and Authority
 
 Reasoning and authorization are architecturally separate. A proposed action must independently clear four gates — identity, capability, freshness, and integrity — before it is treated as authorized; failing any one gate is a denial **(Figure 7)**.
 
+![Figure 7. Deterministic authority-gate architecture: four sequential gates (identity, capability, freshness, integrity) that a proposed action must independently clear before treatment as authorized. Failure at any gate is a denial. Authority evaluation is structurally separated from the reasoning model; key material never reaches the model layer.](figures/fig07_authority_pipeline.png){ width=90% }
+
 **The strongest result.** ExergyNet sent a live prompt-injection payload to a running authority-review listener. The reasoning model partially complied: it returned an approval and did not flag the injection despite its own instructions to do so. The deterministic validation layer rejected the request outright before any signed review could be produced — no credential was exposed at any point, because key material is structurally excluded from what reaches the model. The attack was reproduced after a logging fix, with the same rejection now producing a durable, signed record. The finding, bounded to this validated run and stated as evidence for one specific architectural principle — **reasoning and authority must remain separable, not that ExergyNet should govern every model** — is this: a reasoning model can fail adversarially without the authority system failing with it.
 
 Supporting validation: 64 assertions across three independent unit-test scripts; 38 of 39 adversarial tests passed against the agent-authorization API (the one failure was a test-environment artifact); and 100 of 100 concurrent double-allocation attempts against a shared balance were correctly serialized.
 
-**Evidence integrity is separately governed.** State-governance testing over 100 real procurement-decision cases reduced false authoritative-state commitments from 8% to 0% while model judgment accuracy held flat at 84% **(Figure 6)** — the substrate prevented unresolved evidence from being promoted into an authoritative record, within the tested case set. This distinction matters commercially: **the model did not become more accurate; the surrounding system prevented unresolved evidence from becoming authoritative state.** Better governance is not the same thing as better model intelligence, and this result is evidence for the state-centric product definition in Section 4, not for the model's own reasoning quality.
+**Evidence integrity is separately governed.** State-governance testing over 50 unique procurement-decision cases (100 total pipeline executions across two arms — ungated and gated) reduced false authoritative-state commitments from 8% to 0% while model judgment accuracy held flat at 84% **(Figure 6)** — the substrate prevented unresolved evidence from being promoted into an authoritative record, within the tested case set. This distinction matters commercially: **the model did not become more accurate; the surrounding system prevented unresolved evidence from becoming authoritative state.** Better governance is not the same thing as better model intelligence, and this result is evidence for the state-centric product definition in Section 4, not for the model's own reasoning quality.
+
+![Figure 6. State-governance results across 50 unique procurement-decision cases (100 total pipeline executions, two arms: ungated and gated). False authoritative-state commitments reduced from 8% to 0%; model judgment accuracy held at 84%. The governance substrate prevented unresolved evidence from becoming authoritative state — model accuracy was not changed by the governance layer.](figures/fig06_state_governance.png){ width=90% }
 
 **Validation scope.** The identity/capability/freshness/integrity validator is live and independently tested. The broader policy-capability gate is implemented and tested but currently runs in a monitored pilot mode: it evaluates and logs every real decision without yet being the sole authority over execution (Section 13).
 
@@ -259,6 +295,8 @@ Supporting validation: 64 assertions across three independent unit-test scripts;
 ## 10. Machine Resource Economics
 
 If machine output is economically productive, the resources consumed to produce it — compute, memory, storage, network, energy, and time — become economically significant in their own right. ExergyNet's answer is a resource-authority pipeline: humans fund an agent identity, which receives bounded economic authority, spends it under explicit policy, and produces an auditable settlement record **(Figure 11)**. As Section 7 makes explicit for execution state generally, an agent identity or a granted budget intent is not, by itself, spending authority — economic authority is a separate predicate that must be independently established, not inferred from identity or intent alone.
+
+![Figure 11. Resource-authority pipeline. Humans fund a bounded agent identity, which receives explicit economic authority, spends under policy, and produces an auditable settlement record. Economic authority is a separate predicate from agent identity or intent; neither model state nor agent identity alone constitutes spending authority.](figures/fig11_omega_lifecycle.png){ width=90% }
 
 RHO is ExergyNet's resource-cost accounting unit, defined by measurement, not by market price. A metrology pass fixed a measured cost basis across two hardware classes; the operations with the lowest cost are measured directly at the host, while the highest-cost operation (dominated by GPU inference) is currently modeled from pricing data rather than measured on-device — the next stage of the metrology program. As a concrete reference point, the frozen G0 accounting basis defines 1 RHO_G0 as corresponding to $0.0001 of reference ExergyNet economic-capacity cost — an accounting normalization, not a market price, a stablecoin peg, a USD redemption promise, a physical energy-unit definition, or a token price. RHO's value is defined independently of any market price, token, or energy interpretation, and this paper does not imply otherwise. Separately, any metered or shadow-tariff pricing work referenced elsewhere in ExergyNet's internal documentation is explicitly a shadow policy candidate, not the production settlement policy this paper reports.
 
@@ -275,7 +313,11 @@ As machine intelligence moves from producing information to controlling conseque
 
 **The primary consequence-active example: an aviation pre-flight authorization gate.** A heavy-lift uncrewed aircraft program illustrates the requirement with unusual clarity: a physical machine with real authority to release cargo or return to service, continuous telemetry, explicit safety invariants, and consequences that cannot be undone once actuated. ExergyNet's authorization gate for this program produces exactly three terminal states — release-eligible, hold, or incomplete — as an additional safety layer, deferring final authority to its own separate policy evaluation **(Figure 12)**.
 
+![Figure 12. Aviation pre-flight authorization gate: three terminal states (release-eligible, hold, or incomplete). The gate operates as an additional safety layer, deferring final authority to the aircraft program's own separate policy evaluation. ExergyNet is not the sole authority over the release decision.](figures/fig12_tensile_lift_flow.png){ width=90% }
+
 Across two independent validation runs — a deterministic rule-based simulator and, separately, a real reasoning model — the governed gate held false-release at 0 of 50 cases on a sealed synthetic test set, against a 20-34% false-release rate for the same cases evaluated on ungoverned raw telemetry **(Figure 8)**.
+
+![Figure 8. Aviation pre-flight gate validation: false-release held at 0 of 50 cases across two independent validation runs (deterministic rule-based simulator and a real reasoning model), versus 20–34% false-release rate for the same cases evaluated on ungoverned raw telemetry. Tested on a sealed synthetic 50-case holdout — no real aircraft or sensor hardware involved.](figures/fig08_aviation_gate.png){ width=90% }
 
 **Validation scope.** This result is measured against a sealed, synthetic 50-case holdout; no real aircraft or sensor hardware was involved. A regulatory authorization exists for the related aircraft program permitting controlled testing and evaluation — a fact about that program's regulatory status, not a certification of this architecture.
 
@@ -296,8 +338,10 @@ Every component below is reported at its actual, current maturity stage: **Defin
 | Component | Maturity | Boundary |
 |---|---|---|
 | xLMP / Exergy Vault | Production | Published local node (VMN); integrity is distinct from correctness |
+| N→K corpus scaling (32K–10M) | Validated — sealed holdout | 32K–4M on A100 TP=4; 10M sealed holdout on WSL2/Windows; Q_BEND registered at 10M (39.5%, adversarial density); retrieval timing at 10M is hardware-confounded |
 | Compact Index / Adaptive Routing | Validated -> Partial production | Performance is workload-dependent |
-| Vanguard (model routing) | Production | Proposes actions; does not self-authorize |
+| Vanguard model-routing service | Operational | Proposes actions; does not self-authorize |
+| Vanguard Core V0 (intelligence execution runtime) | Locally validated — 55/55 tests; integration pending | Not deployed; production activation not authorized; separate from the operational routing service above |
 | Authority validator (identity, capability, freshness, integrity) | Production | Live-validated against a real adversarial run |
 | Policy / capability gate | Pilot | Evaluates and logs every real decision; not yet the sole execution authority |
 | xISA capability taxonomy | Validated | Isolated research environment; not yet production-active |
@@ -308,7 +352,7 @@ Every component below is reported at its actual, current maturity stage: **Defin
 | AERIS (external evidence) | Validated | Test network; production settlement requires a further generation |
 | Edge Witness (physical observation) | Production | Attests device signature, not physical truth |
 | Execution-state mobility | Validated within a frozen same-model, cross-host envelope | Same model, same runtime, same quantization, one tested workload length, two x86-64 hosts; cross-model, cross-runtime, cross-ISA, and general-workload portability not demonstrated |
-| Portable Intelligence Package | Defined / specification | Reference architecture; no production implementation claimed |
+| Portable Intelligence Package | Specification complete + reference implementation (local) | 6 lifecycle functions implemented and tested; 8/8 negative cases rejected as designed; local test envelope only; no production deployment claimed |
 | Aviation pre-flight gate | Validated (synthetic holdout) | No real-aircraft validation yet reported |
 | Physical-state observation (forward architecture) | Defined (proposed) | No implementation yet |
 
@@ -350,3 +394,12 @@ Design partners can provide a bounded, state-heavy workload for comparative meas
 7. Federal Aviation Administration. Exemption No. 26214, Docket FAA-2025-5731.
 
 *A full claim ledger, source registry, and revision history are maintained as separate internal diligence documents and are available on request.*
+
+
+## Author Contributions
+
+**Seven Ezumba — Chief Architect and Corresponding Author.** Conceptualization; xLMP architecture and AI Memory Control Plane category definition; ExergyNet systems architecture; execution-state mobility research, protocol design, and decomposition methodology (Sections 5–7); LNES-22 consequence-boundary architecture; physical-AI architecture (Sections 9 and 11); methodology; original drafting; supervision.
+
+**Bontu Veena — Co-author, Independent Validation and Review.** Co-author of the July 2026 H200 fixed-QPS saturation benchmark (EVD-001 benchmark record; separate benchmark record; cited as the H200 experimental baseline throughout Sections 4 and 13 of this paper). Independent validation of 10M corpus-scaling results (LNES-82C.10M sealed holdout) and adjusted claims; review of manuscript scope boundaries. Independent execution of `exergynet-mcp-server@0.2.6` public validation protocols including npm-audit, MCP initialization, tool-discovery, and fail-closed settlement-path behavior; independent execution of the PIP-V0 reference test suite (33 PASS / 0 FAIL including eight negative tests and the STATE\_REALIZED ≠ AUTHORIZED lifecycle invariant). Co-authorship cleared 2026-09-04.
+
+Contribution scope boundaries, stated explicitly: Veena's co-authorship does not extend to ExergyNet architectural design, xLMP methodology, the execution-state mobility research and decomposition reported in Sections 5–7, or the LNES-22 authority architecture — those contributions are Seven Ezumba's alone.
