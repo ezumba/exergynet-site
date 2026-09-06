@@ -1911,5 +1911,87 @@ Public-claim impact:      None — the restart control-plane's prior broken
 
 ---
 
+## BLK-031 — LNES-90 FFLONK setup: snarkjs WASM 4 GB memory ceiling
+
+```
+Subsystem:               LNES-90 production-scale ZK proof packaging.
+                          A proving pipeline for a Plonky3 FRI STARK
+                          verifier circuit (7,668,964 R1CS constraints,
+                          BN-254 curve) could not complete its FFLONK
+                          setup phase using the snarkjs@0.7.6 toolchain.
+Blocker class:            COMPUTE_ARCHITECTURE_RESOURCE
+Status:                   OPEN — architectural redesign required.
+                          snarkjs@0.7.6 cannot complete FFLONK setup
+                          for this circuit on any machine of any RAM
+                          size. This is not a capacity gap; it is an
+                          architectural ceiling in the toolchain itself.
+Current verified state:
+  CIRCUIT_R1CS_CONSTRAINTS = 7,668,964 (independently verified via
+    node --max-old-space-size=16384 ... r1cs info)
+  POT23_CEREMONY_VERIFIED   = PASS (11m54s wall, 72.6 GiB peak RSS,
+    "Powers of Tau Ok!")
+  FFLONK_SETUP_RESULT       = CRASH — std::bad_alloc (SIGABRT / signal 6)
+  FFLONK_SETUP_WALL_TIME    = 2m34s (crash point)
+  FFLONK_SETUP_PEAK_RSS     = 20.1 GiB
+  FFLONK_SETUP_CRASH_POINT  = constraint 5,000,000 / 7,668,964 (65%)
+  HOST_RAM_AT_CRASH         = 248 GiB free of 251 GiB total
+  HOST_VM                   = Azure Standard_E32ds_v5 (32 vCPU, 256 GiB)
+                              vm-lnes90-forge — DEALLOCATED 2026-09-06
+  ZKEY_PRODUCED             = NO
+  GATE1_FFLONK_STATUS       = FAIL
+
+  Root cause: snarkjs's ffjavascript native layer uses WebAssembly with
+  a 32-bit linear memory model. Any single WASM instance is capped at
+  4 GiB of addressable memory regardless of host RAM. At approximately
+  5M constraints loaded, the native extension exhausted this 4 GiB
+  ceiling and threw std::bad_alloc. Increasing --max-old-space-size
+  has no effect on native WASM memory allocations. The failure is
+  deterministic and reproducible on any host configuration.
+Blocked work:             Gate-1 FFLONK setup, prove, verify, negative
+                          control, and all downstream Gate-2 work
+                          predicated on a working snarkjs FFLONK prover
+                          for this circuit.
+Not blocked:              R1CS compilation, witness generation, ceremony
+                          preparation, and circuit correctness work. Gate-2
+                          architecture planning can proceed using the
+                          definitive Gate-1 measurements above.
+Resolution options:
+  (A) X-Forge (selected direction): a pure-Rust native prover using
+      arkworks-rs for BN-254 arithmetic, rayon for parallel NTT/FFT and
+      MSM, and direct 64-bit OS memory allocation via mmap — no WASM
+      dependency. Blueprint: docs/whitepaper/LNES90_SOVEREIGN_FORGE_SPEC.md.
+  (B) rapidsnark: iden3's C++ prover for Groth16; does not support
+      FFLONK but avoids the WASM ceiling for Groth16 circuits.
+  (C) Alternative FFLONK backend: Polygon Hermez's C++ fflonk prover
+      (uses ffiasm-generated field arithmetic); FFLONK-compatible but
+      requires a C++ toolchain and is less actively maintained.
+  (D) Circuit decomposition: reduce to sub-2M constraints via recursive
+      proof aggregation or constrained query deduplication, making the
+      circuit viable for snarkjs again.
+Exact unblock condition:
+  For option A: X-Forge (or chosen alternative) produces a valid FFLONK
+  zkey + proof + verification for the same 7,668,964-constraint R1CS,
+  with gate1.log showing FFLONK_SETUP_EXIT=0 and POSITIVE_PROOF_VERIFY=PASS,
+  plus a successful negative control.
+Next authorized action:   Operator authorizes the X-Forge build phase.
+Prohibited action:        Do not retry snarkjs@0.7.6 FFLONK setup on any
+                          machine — the ceiling is architectural, not a RAM
+                          or heap-flag problem. Do not allocate a new proving
+                          VM until the X-Forge build phase is authorized and
+                          a binary is ready to test.
+Owner:                    Operator (architecture decision)
+Last verified:            2026-09-06 — live Gate-1 run on Azure
+                          Standard_E32ds_v5 (256 GiB RAM, 512 GiB SSD).
+                          std::bad_alloc confirmed at constraint 5M/7.67M
+                          with 248 GiB RAM free. VM deallocated same day.
+Public-claim impact:      BLK-003 ("production-scale ZK verifier — compute
+                          architecture") already correctly describes this
+                          capability as not yet an active production feature.
+                          No new public claim correction needed; update BLK-003's
+                          last-verified date if status is re-reviewed publicly.
+```
+
+---
+
 **Related:** A separate, private vault-state reference and white-paper
 status-claim policy exist outside this repository and are not detailed here.
