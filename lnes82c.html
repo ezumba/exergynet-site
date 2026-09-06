@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LNES-82C: N&rarr;K Corpus Scaling Validation | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="LNES-82C: ExergyNet's sealed, hash-verified N&rarr;K corpus-scaling validation for xLMP, spanning a ten-point development ladder from 32K to 10M nominal tokens plus separately sealed 4M and 10M holdout evaluations.">
+<meta name="keywords" content="LNES-82C, xLMP, N to K scaling, AI memory benchmark, bounded context, ExergyNet, 10M token benchmark, deterministic retrieval evidence">
+<link rel="canonical" href="https://exergynet.org/lnes82c.html">
+<meta property="og:title" content="LNES-82C: N&rarr;K Corpus Scaling Validation | ExergyNet">
+<meta property="og:description" content="Sealed, hash-verified evidence for xLMP's bounded active context across a 32K&ndash;10M nominal token corpus ladder, including the genuine 10M holdout and its Q_BEND finding.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/lnes82c.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LNES-82C: N&rarr;K Corpus Scaling Validation">
+<meta name="twitter:description" content="Sealed evidence for xLMP's bounded active context, 32K&ndash;10M nominal tokens, including the genuine 10M holdout's Q_BEND result.">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+  .lnes-hero{position:relative;overflow:hidden;padding:6rem 0 4rem;}
+  .lnes-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;}
+  .result-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;border:1px solid var(--border-mid);background:var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:2rem;}
+  .result-cell{background:var(--bg-card);padding:1.35rem;}
+  .result-value{font-family:var(--display);font-size:clamp(1.7rem,4.2vw,2.6rem);line-height:.95;font-weight:900;color:var(--accent);margin-bottom:.55rem;}
+  .result-cell.warn .result-value{color:var(--amber);}
+  .result-label{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);line-height:1.45;}
+  .result-scope{font-size:12px;color:var(--text-soft);line-height:1.45;margin-top:.55rem;}
+  .lnes-section{padding:3rem 0;}
+  .lnes-section h2{margin-bottom:.6rem;}
+  .lnes-section > .container-wide > p.lede{max-width:820px;color:var(--text-soft);line-height:1.7;margin-bottom:1.25rem;}
+  .data-table-wrap{border:1px solid var(--border-mid);border-radius:var(--radius-lg);overflow-x:auto;margin:1.25rem 0;}
+  table.evidence{font-size:13px;}
+  table.evidence th{padding:.75rem 1rem;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);border-bottom:1px solid var(--border-mid);background:var(--bg-card-2);white-space:nowrap;}
+  table.evidence td{padding:.65rem 1rem;border-bottom:1px solid var(--border);vertical-align:middle;white-space:nowrap;}
+  table.evidence tr:last-child td{border-bottom:none;}
+  table.evidence tr.highlight td{background:rgba(0,232,135,0.05);font-weight:600;}
+  table.evidence tr.warn td{background:rgba(255,184,48,0.06);}
+  .status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;margin-top:1rem;}
+  .status-tile{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-card);padding:1.1rem 1.25rem;}
+  .status-tile b{display:block;color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;}
+  .status-tile.not-established b{color:var(--amber);}
+  .status-tile ul{margin:0;padding-left:1.1rem;}
+  .status-tile li{font-size:13px;color:var(--text-soft);line-height:1.65;margin-bottom:.6rem;}
+  .status-tile li:last-child{margin-bottom:0;}
+  .status-tile li strong{color:var(--text);}
+  .warning-card{border-color:rgba(255,184,48,.35);background:rgba(255,184,48,.06);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin:1.25rem 0;}
+  .warning-card b{color:var(--amber);}
+  .hash-block{background:var(--bg-card-2);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--text-soft);overflow-x:auto;margin:1.25rem 0;}
+  .hash-block .k{color:var(--text-faint);}
+  .hash-block .v{color:var(--accent);}
+  .prompt-box{background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:1.5rem 1.75rem;margin:1.25rem 0;position:relative;}
+  .prompt-box p{font-size:14px;line-height:1.7;color:var(--text-soft);font-style:italic;margin:0 0 1rem;}
+  .term-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem;margin-top:1rem;}
+  .term{border-top:1px solid var(--border);padding-top:.75rem;}
+  .term strong{display:block;color:var(--text);margin-bottom:.25rem;}
+  .term span{font-size:13px;color:var(--text-soft);line-height:1.55;}
+  .related-list{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+  .related-list a{font-family:var(--mono);font-size:12.5px;padding:.55rem 1rem;border:1px solid var(--border-mid);border-radius:var(--radius);color:var(--text-soft);text-decoration:none;background:var(--bg-card);}
+  .related-list a:hover{border-color:var(--accent);color:var(--accent);}
+  @media(max-width:900px){.result-strip,.status-grid,.term-list{grid-template-columns:1fr 1fr;}}
+  @media(max-width:640px){.result-strip,.status-grid,.term-list{grid-template-columns:1fr;}.lnes-hero{padding:4rem 0 3rem;}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "LNES-82C: N→K Corpus Scaling Validation",
+  "description": "Sealed, hash-verified evidence for xLMP's bounded active model-facing context across a ten-point development ladder (32K–10M nominal tokens) plus separately sealed 4M and 10M holdout evaluations, including the genuine 10M holdout's Q_BEND accuracy finding.",
+  "url": "https://exergynet.org/lnes82c.html",
+  "creator": {
+    "@type": "Organization",
+    "name": "ExergyNet",
+    "url": "https://exergynet.org"
+  },
+  "variableMeasured": ["active staged context (K)", "task accuracy", "retrieval latency"],
+  "measurementTechnique": "Frozen harness xlmp_500k_scaling_bench.py against nvidia/nemotron-3-nano-omni-30b-a3b-reasoning via NVIDIA NIM",
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "ExergyNet xLMP Whitepaper",
+    "url": "https://exergynet.org/whitepaper.html"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="circuit-canvas"></canvas>
+<div class="site-wrap">
+<div id="site-header"></div>
+<main class="page">
+
+<section class="lnes-hero">
+  <div class="glow-accent" style="width:560px;height:460px;top:-130px;left:-190px;"></div>
+  <div class="glow-blue" style="width:600px;height:420px;top:-80px;right:-220px;"></div>
+  <div class="container-wide">
+    <div class="lnes-kicker">Sealed Benchmark Evidence &middot; LNES-82C</div>
+    <h1>N&rarr;K Corpus Scaling Validation</h1>
+    <p class="hero-sub" style="max-width:780px;">LNES-82C is ExergyNet's N&rarr;K corpus-scaling validation lineage. Its development ladder was executed on 4&times; NVIDIA A100-SXM4-40GB, while the 10M genuine holdout used a different WSL2/Windows retrieval host and is reported separately below. This page is the dedicated public evidence record for the LNES-82C lineage; the <a href="whitepaper.html">whitepaper</a> carries a condensed summary of the same evidence.</p>
+
+    <div class="result-strip">
+      <div class="result-cell"><div class="result-value">895.96</div><div class="result-label">Mean K, 10M genuine holdout</div><div class="result-scope">10,116,589 estimated tokens. 5/5 deterministic runs, 0 mismatches.</div></div>
+      <div class="result-cell warn"><div class="result-value">39.5%</div><div class="result-label">10M holdout accuracy &mdash; Q_BEND</div><div class="result-scope">Formally triggered while 950/950 executions completed successfully.</div></div>
+      <div class="result-cell"><div class="result-value">b &asymp; 0</div><div class="result-label">10-point scaling fit, 32K&ndash;10M</div><div class="result-scope">2.79&times;10&#8315;&#8310;, 95% CI includes zero (development data).</div></div>
+      <div class="result-cell"><div class="result-value">18.7s</div><div class="result-label">10M holdout retrieval P50</div><div class="result-scope">Under the pre-registered 50s ceiling. WSL2/Windows &mdash; not compared to A100 timing.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="lnes-section">
+  <div class="container-wide">
+    <div class="section-label">Objective</div>
+    <h2>Does active context grow with stored memory?</h2>
+    <p class="lede">Test the relationship K = a + bN: whether the scaling coefficient b remains statistically indistinguishable from zero as tested corpus size grows, while task correctness is monitored alongside it. The evidence includes a ten-point development ladder spanning 32K through 10M nominal tokens, plus separately sealed 4M and 10M holdout evaluations.</p>
+
+    <div class="term-list">
+      <div class="term"><strong>Campaign lineage</strong><span>LNES-82C.5K &rarr; .1M &rarr; .2M &rarr; .4M &rarr; .10M. These are campaign identifiers, not literal corpus-size labels &mdash; <code>.5K</code> denotes the 500,000-token corpus point, <code>.1M</code>/<code>.2M</code>/<code>.4M</code>/<code>.10M</code> denote 1M/2M/4M/10M-token points. This page uses actual corpus-size figures in every table below and reserves the dotted notation for naming the lineage only.</span></div>
+      <div class="term"><strong>Supersession</strong><span>Each lineage point is a separately sealed, hash-verified artifact. Later points do not supersede earlier ones &mdash; all remain valid, distinct evidence at their own tested scale. Only pre-consolidation report packages, not the data points themselves, were superseded.</span></div>
+      <div class="term"><strong>Model-serving configuration</strong><span><code>nvidia/nemotron-3-nano-omni-30b-a3b-reasoning</code> served via NVIDIA NIM &mdash; identical across the entire lineage, including the 10M genuine holdout.</span></div>
+      <div class="term"><strong>Retrieval/harness environment</strong><span>Development ladder and 4M holdout: 4&times; NVIDIA A100-SXM4-40GB native. 10M genuine holdout: WSL2/Windows, tunneled to the same model-serving endpoint &mdash; the model did not move, only the retrieval harness host differed.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="lnes-section">
+  <div class="container-wide">
+    <div class="section-label">Development Ladder</div>
+    <h2>Results by corpus point</h2>
+    <div class="data-table-wrap">
+      <table class="evidence">
+        <thead><tr><th>N (est. tokens)</th><th>n</th><th>Mean K</th><th>Median K</th><th>P95 K</th><th>Accuracy</th><th>Retrieval P50</th><th>Environment</th></tr></thead>
+        <tbody>
+          <tr><td>32,000</td><td>190</td><td>908</td><td>932</td><td>&mdash;</td><td>45.3%</td><td>177 ms</td><td>A100</td></tr>
+          <tr><td>64,000</td><td>380</td><td>892</td><td>925</td><td>&mdash;</td><td>42.6%</td><td>290 ms</td><td>A100</td></tr>
+          <tr><td>128,000</td><td>570</td><td>867</td><td>863</td><td>&mdash;</td><td>43.7%</td><td>337 ms</td><td>A100</td></tr>
+          <tr><td>285,000</td><td>760</td><td>870</td><td>879</td><td>&mdash;</td><td>42.9%</td><td>566 ms</td><td>A100</td></tr>
+          <tr><td>384,000</td><td>950</td><td>876</td><td>890</td><td>&mdash;</td><td>42.6%</td><td>651 ms</td><td>A100</td></tr>
+          <tr><td>500,000</td><td>1,140</td><td>876</td><td>890</td><td>&mdash;</td><td>42.2%</td><td>1,164 ms</td><td>A100</td></tr>
+          <tr><td>1,000,000</td><td>190</td><td>764</td><td>744</td><td>&mdash;</td><td>42.6%</td><td>4,978 ms</td><td>A100</td></tr>
+          <tr><td>2,000,000</td><td>190</td><td>816</td><td>801</td><td>&mdash;</td><td>45.3%</td><td>9,879 ms</td><td>A100</td></tr>
+          <tr><td>4,000,000</td><td>190</td><td>902</td><td>925</td><td>&mdash;</td><td>46.3%</td><td>19,771 ms</td><td>A100</td></tr>
+          <tr class="highlight"><td>10,000,000 (dev sweep)</td><td>190</td><td>897</td><td>908</td><td>983</td><td>41.1%</td><td>49,049 ms</td><td>A100</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12.5px;color:var(--text-faint);">Development-set ladder, single run per point except where noted as cumulative. P95 is only recorded in source for the 10M dev sweep and both holdout evaluations; earlier ladder points show &mdash; rather than an estimate.</p>
+  </div>
+</section>
+
+<section class="lnes-section">
+  <div class="container-wide">
+    <div class="section-label">Sealed Holdouts</div>
+    <h2>4M and 10M genuine holdout evidence</h2>
+
+    <h3 style="margin-top:1.5rem;">4M holdout &middot; 5 deterministic repetitions &middot; sealed 2026-08-31</h3>
+    <div class="data-table-wrap">
+      <table class="evidence">
+        <thead><tr><th>Runs</th><th>Mean K</th><th>Median K</th><th>P95 K</th><th>Accuracy</th><th>Records</th><th>Mismatches</th></tr></thead>
+        <tbody><tr><td>1&ndash;5 (identical)</td><td>902.81</td><td>925</td><td>972</td><td>45.3%</td><td>190/190 each</td><td>0</td></tr></tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--text-soft);">Deterministic across all 5 repetitions &mdash; zero variance at the per-query level.</p>
+
+    <h3 style="margin-top:2rem;">10M genuine holdout &middot; 5 repeated shuffled-order runs &middot; sealed 2026-09-04 &middot; WSL2/Windows</h3>
+    <div class="data-table-wrap">
+      <table class="evidence">
+        <tbody>
+          <tr><td>Nominal target</td><td>10,000,000 tokens</td></tr>
+          <tr><td>Actual corpus</td><td>31,361,425 characters &rarr; <strong>10,116,589 estimated tokens</strong></td></tr>
+          <tr><td>n (aggregate, 5 runs &times; 190 queries)</td><td>950</td></tr>
+          <tr class="highlight"><td>Mean K</td><td>895.96 tokens</td></tr>
+          <tr class="highlight"><td>Median K</td><td>908 tokens</td></tr>
+          <tr class="highlight"><td>P95 K</td><td>985 tokens</td></tr>
+          <tr><td>P99 K</td><td>Not available &mdash; not captured in the sealed artifact this page draws from</td></tr>
+          <tr><td>Deterministic runs</td><td>5/5 &mdash; zero per-query variance</td></tr>
+          <tr><td>Per-query mismatches</td><td>0</td></tr>
+          <tr><td>Overall accuracy</td><td>39.5% &mdash; 75/190 unique queries correct (source-quoted); the 5 repetitions reproduce this identically, so the n=950 aggregate reflects 375 correct instances (75&times;5, a derived extension, not a separately-measured count)</td></tr>
+          <tr class="warn"><td><strong>Result</strong></td><td><strong>Q_BEND formally triggered at 39.5% accuracy while 950/950 executions completed successfully.</strong></td></tr>
+          <tr><td>Retrieval P50</td><td>18.7 seconds &mdash; under the pre-registered 50-second ceiling</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 style="margin-top:1.75rem;font-family:var(--display);font-size:1.1rem;">Q-class breakdown (10M holdout, n=950)</h4>
+    <div class="data-table-wrap">
+      <table class="evidence">
+        <thead><tr><th>Class</th><th>Description</th><th>n</th><th>Accuracy</th><th>Mean K</th></tr></thead>
+        <tbody>
+          <tr><td>Q1</td><td>Single-fact lookup</td><td>500</td><td>43.0%</td><td>887.8</td></tr>
+          <tr><td>Q2</td><td>Multi-evidence synthesis / distractor rejection</td><td>200</td><td>62.5%</td><td>957.2</td></tr>
+          <tr class="warn"><td>Q3</td><td>Temporal authority</td><td>125</td><td>12.0%</td><td>950.9</td></tr>
+          <tr><td>Q4</td><td>Adversarial ambiguity</td><td>125</td><td>16.0%</td><td>775.5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--text-soft);max-width:820px;">At the 10M holdout, Q3 was the lowest-performing class and the largest contributor to the low aggregate accuracy. Q2 was higher than the 4M development reference. These cross-scale references compare different evaluation populations and should not be interpreted as matched holdout deltas.</p>
+  </div>
+</section>
+
+<section class="lnes-section">
+  <div class="container-wide">
+    <div class="section-label">Claim Discipline</div>
+    <h2>What is measured, derived, and not established</h2>
+
+    <div class="status-grid">
+      <div class="status-tile">
+        <b>Measured</b>
+        <ul>
+          <li>Every mean/median/P95 K value and accuracy figure in the tables above.</li>
+          <li>5/5 determinism (zero per-query variance) at both the 4M and 10M holdout points.</li>
+          <li>0 per-query mismatches at both holdout points.</li>
+          <li>Retrieval timing recorded at the points where captured in source (P50 at every ladder point; P95 only at the 10M dev sweep and both holdout evaluations).</li>
+          <li>Corpus construction: 10M nominal target produced 31,361,425 actual characters (10,116,589 estimated tokens) via a deterministic, seeded construction function.</li>
+        </ul>
+      </div>
+      <div class="status-tile">
+        <b>Derived</b>
+        <ul>
+          <li>The 9-point (32K&ndash;4M) and 10-point (32K&ndash;10M, development data) OLS regression fits. Ten-point fit: b &asymp; 2.79&times;10&#8315;&#8310; tokens/token, R&sup2; = 0.0384, 95% CI [&minus;8.59&times;10&#8315;&#8310;, 1.42&times;10&#8315;&#8309;] (includes zero). Sourced to the 10M development sweep seal, not the genuine holdout, which does not itself contain a regression fit.</li>
+          <li>Delta-K comparisons between adjacent corpus points (e.g. 2M&rarr;4M: +85.18 tokens; 4M&rarr;10M dev: &minus;5 tokens).</li>
+        </ul>
+      </div>
+      <div class="status-tile not-established">
+        <b>Not established</b>
+        <ul>
+          <li><strong>Asymptotic behavior beyond the tested range.</strong> This campaign tests 32K through 10M nominal tokens only.</li>
+          <li><strong>100MB or 1GB corpus behavior.</strong> Not yet measured on this campaign.</li>
+          <li><strong>A same-hardware 4M-to-10M retrieval-timing ratio.</strong> The genuine holdout's retrieval/harness host differs from the A100 ladder.</li>
+          <li><strong>That Q_BEND indicates a system defect.</strong> All 950 holdout executions returned <code>status=ok</code> with valid output.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lnes-section">
+  <div class="container-wide">
+    <div class="section-label">Claim Boundary</div>
+    <div class="warning-card">
+      <p style="margin:0;font-size:14px;line-height:1.7;color:var(--text-soft);">All results on this page are bounded to the stated <strong>model-serving configuration</strong> (<code>nvidia/nemotron-3-nano-omni-30b-a3b-reasoning</code> via NVIDIA NIM), the development ladder's <strong>retrieval/harness environment</strong> (4&times; A100-SXM4-40GB native), and the adversarial synthetic corpus construction described in the source evidence. The 10M genuine holdout used the same model-serving endpoint but a different retrieval/harness host (WSL2/Windows, tunneled to that endpoint) &mdash; this page does not imply the model itself moved between environments, only that the retrieval harness did, which is why retrieval-timing figures from that holdout are not treated as comparable to the native A100 ladder. Results do not generalize to other models, other hardware, or other corpus construction methods without separate validation.</p>
+    </div>
+  </div>
+</section>
+
+<section class="lnes-section">
+  <div class="container-wide">
+    <div class="section-label">Reproducibility</div>
+    <h2>Evidence hashes</h2>
+    <p class="lede">Frozen harness <code>xlmp_500k_scaling_bench.py</code>, the sealed holdout query set, and the 10M corpus construction each carry their own SHA-256, printed at runner startup and independently re-verifiable. The 10M holdout seal records six output artifacts as passing the three-way SHA verification chain (VM-computed hash, independently recomputed local hash, and GCS-download hash) &mdash; the five named run files are hashed below; the sixth recorded object is the evidence-seal document itself, for which the reviewed source material does not record a separate hash.</p>
+
+    <div class="hash-block">
+<span class="k">frozen_harness_sha256</span>    = <span class="v">c5b7849d2906b200554a345ae3fa11adfd2ccd63b2b2e49120d6982f0e4d17a1</span>
+<span class="k">holdout_query_set_sha256</span> = <span class="v">341acf7d5a82018ea1c1080cce4d8d9c060d70a361fe019299bfa63eea1ec966</span>
+<span class="k">corpus_10m_sha256</span>        = <span class="v">1d3d0ab7ce6b42e2f2dc9aa6c57c50a6292ae7da93dc6d275bf0cf1277fcee03</span>
+<span class="k">report_document_sha256</span>   = <span class="v">95b7b6ed39eae1c868eb8f0e6d8c0b5f7596a506d81e652226f1856cea24e4c1</span>
+<span class="k">evidence_seal_4m_sha256</span>  = <span class="v">4ce518cadc515010ab02d7dfceb6494434b1edb7897d576fab42bbd0d0ebaae2</span>
+
+<span class="k">10m_holdout_run_1_sha256</span> = <span class="v">5cbb5422e111222d049c0d21d74d0994b6d8a35598f5dec1402226dd3c205e78</span>
+<span class="k">10m_holdout_run_2_sha256</span> = <span class="v">458f7ab861ddd91475658a73d392c6f0b0c6a83ba15c909b0b42f04fdc170b98</span>
+<span class="k">10m_holdout_run_3_sha256</span> = <span class="v">00597952f2adadfc3672793354fdfe827e84437c69d99d20145b7bd769e5681b</span>
+<span class="k">10m_holdout_run_4_sha256</span> = <span class="v">e33e0f68c21f12e844e37cb4649629fa7d4bc7c64632558286e8f851c855d2db</span>
+<span class="k">10m_holdout_run_5_sha256</span> = <span class="v">95304e8243b92d95a744de78f18623ce96f33c02a74d2afa1e9508b7ea493bd3</span>
+    </div>
+
+    <p style="font-size:12.5px;color:var(--text-faint);">Full evidence seals: <code>EVIDENCE_SEAL_LNES82C4M.md</code>, <code>EVIDENCE_SEAL_LNES82C10M.md</code> (development sweep), <code>EVIDENCE_SEAL_LNES82C10M_HOLDOUT.md</code> (genuine holdout &mdash; source of the headline 895.96 / 10,116,589 figures on this page). Seed 42 throughout.</p>
+  </div>
+</section>
+
+<section class="lnes-section">
+  <div class="container-wide">
+    <div class="section-label">Independent Verification</div>
+    <h2>Ask AI to verify this result</h2>
+    <div class="prompt-box">
+      <p id="ai-verify-prompt">Examine ExergyNet's published LNES-82C xLMP benchmark evidence and determine whether persistent-state growth caused proportional growth in model-facing context across the tested range. Separate directly measured results, mathematical derivations, architectural implications, and economic projections. Identify the benchmark's limitations and the evidence required for independent reproduction. Reference the canonical benchmark source.</p>
+      <button class="btn btn-secondary" onclick="copyPrompt(this)">Copy prompt</button>
+    </div>
+  </div>
+</section>
+
+<section class="lnes-section" style="padding-bottom:5rem;">
+  <div class="container-wide">
+    <div class="section-label">Related Pages</div>
+    <div class="related-list">
+      <a href="whitepaper.html">xLMP / Whitepaper</a>
+      <a href="vmn.html">Vanguard Memory Node (VMN)</a>
+      <a href="security.html">Security / Authority Control</a>
+      <a href="benchmarks.html">Benchmarks</a>
+      <a href="protocol.html">Historical Protocol Architecture</a>
+      <a href="token.html">Historical Token Physics</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div id="site-footer"></div>
+</div>
+
+<script src="main.js"></script>
+<script>
+function copyPrompt(btn) {
+  var text = document.getElementById('ai-verify-prompt').innerText;
+  navigator.clipboard.writeText(text).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(function(){ btn.textContent = orig; }, 1800);
+  });
+}
+</script>
+</body>
+</html>
