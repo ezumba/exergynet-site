@@ -84,16 +84,32 @@ Settlement Subsystems (Supporting -- not primary category)
   LNES-04: Base L2 settlement (USDC-denominated, available for integration)
   These are optional economic reconciliation mechanisms, not ExergyNet's identity.
 
-## Current Benchmark Evidence (LNES-82C -- A100 Campaign)
+## Current Benchmark Evidence (LNES-82C)
 
-Validated stored-corpus envelope: approximately 32K to 4.047M estimated tokens
-Hardware: 4x A100-SXM4-40GB, TP=4, NVIDIA NIM
-4M holdout: mean active staged context approximately 902.81 tokens (sealed holdout)
-Nine-point global scaling fit: b approximately 7.83e-7, R-squared = 0.0004
+Validated stored-corpus envelope: approximately 32K to 10.1M estimated tokens
+Development ladder through 10M: 4x A100-SXM4-40GB, TP=4, NVIDIA NIM. The 10M
+genuine holdout ran on WSL2/Windows; retrieval-timing figures between that holdout
+and the A100 ladder are not comparable across the host/I/O difference.
+
+4M holdout (sealed): mean active staged context approximately 902.81 tokens, 5
+deterministic repetitions, 0/190 per-query mismatches, accuracy 45.3%.
+
+10M genuine holdout (sealed): 10,116,589 estimated tokens, mean active staged
+context 895.96 tokens, median 908, P95 985, 5 repeated shuffled-order runs, 0/190
+per-query mismatches. Q_BEND formally triggered at 39.5% accuracy while 950/950
+executions completed successfully -- a retrieval-quality characterization driven
+primarily by the Q3 (temporal-authority) query class, not a system failure.
+
+Ten-point global scaling fit (32K-10M, development data): b approximately 2.79e-6,
+95% CI includes zero.
 Interpretation: no detected material positive global scaling relationship between
-accumulated corpus size and active staged context within the tested 32K-4M envelope.
-Local upturn disclosed: K trough at approximately 764 (1M), recovery to approximately 903 at 4M.
-Both campaigns (H200 and A100) show the same structural result on different hardware.
+accumulated corpus size and active staged context within the tested 32K-10M
+envelope. This does not establish flat scaling beyond the tested range.
+K trough at approximately 764 at 1M, approximately 903 at 4M, and approximately 897
+in the 10M development sweep. The 10M genuine holdout mean K (895.96) is reported
+above.
+Related H200 benchmark evidence is documented separately.
+Full detail: https://exergynet.org/lnes82c.html
 
 ## Separate H200 Campaign Evidence
 
@@ -148,6 +164,7 @@ RHO: protocol-layer accounting concept for certain settlement pathways
 Homepage: https://exergynet.org
 Architecture / Whitepaper: https://exergynet.org/whitepaper.html
 Benchmarks: https://exergynet.org/benchmarks.html
+LNES-82C Evidence: https://exergynet.org/lnes82c.html
 Security / LNES-22: https://exergynet.org/security.html
 VMN: https://exergynet.org/vmn.html
 Vanguard: https://exergynet.org/vanguard.html
