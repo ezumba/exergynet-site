@@ -1,0 +1,14 @@
+[package]
+name = "x-forge"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "x-forge"
+path = "src/main.rs"
+
+[dependencies]
+memmap2 = "0.9"
+byteorder = "1.5"
+clap = { version = "4.4", features = ["derive"] }
+color-eyre = "0.6"
