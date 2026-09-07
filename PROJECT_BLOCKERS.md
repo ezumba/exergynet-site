@@ -1991,6 +1991,123 @@ Public-claim impact:      BLK-003 ("production-scale ZK verifier — compute
                           last-verified date if status is re-reviewed publicly.
 ```
 
+## BLK-032 — LNES-91 Agora hollow-object S3 anchoring — credential not configured
+
+```
+Subsystem:               LNES-91 Sovereign Agora, Gate C — Hollow Object completion.
+                          S3 anchoring code is fully implemented (schema has raw_bytes
+                          column; publish route stores shard bytes; gate_c_anchor.js
+                          performs SigV4 PUT + GET + SHA-256 verify). The code is
+                          correct and ready to run — blocked purely on credentials.
+Blocker class:            AUTHORIZATION_CREDENTIAL
+Status:                   OPEN — hardened one-object harness deployed & mock-verified
+                          on vm-atlas; blocked purely on operator-supplied short-lived
+                          AWS STS credentials.
+Current verified state:
+  SCHEMA_RAW_BYTES_COLUMN         = ADDED (ALTER TABLE applied 2026-09-07)
+  PUBLISH_STORES_RAW_BYTES        = YES (publish.js updated; raw stored in agora_shards)
+  S3_BUCKET                       = exergynet-sump-v1
+  ANCHOR_SCRIPT_EXISTS            = YES — HARDENED gate_c_anchor.js (21,200 B) deployed
+                                    2026-09-07 to /home/ubuntu/agora/ (old 8,300 B fail-open
+                                    version backed up under /home/ubuntu/agora_backups/).
+  HARDENED_HARNESS_VERIFIED_ON_HOST = YES — gate_c_anchor.test.js passes on vm-atlas
+                                    (HARNESS_HARDENED, MASS_ANCHOR_DEFAULT_DISABLED,
+                                    FAIL_CLOSED_DB_STATE all PASS). No-arg run = usage+exit2,
+                                    mutates nothing. Adds x-amz-security-token (STS) signing
+                                    + AWS_SHARED_CREDENTIALS_FILE support.
+  TEST_SHARD_MODE                 = YES — `--test-shard` anchors ONE deterministic synthetic
+                                    object (LNES91_GATE_C_TEST_SHARD_V1) under agora/validation/,
+                                    isolated from the 6 production shards; fail-closed
+                                    (s3_uri/VERIFIED persisted only after PUT+GET+hash-triple+
+                                    byte-equality all pass).
+  OBSERVATORY_AUTO_FLIP           = YES — agora.exergynet.org introspects per request; the
+                                    VALIDATION_PENDING -> LIVE panel flips on next refresh once
+                                    a VERIFIED anchor exists (no frontend/observatory change).
+  AWS_CREDENTIALS_ON_VM_ATLAS     = NOT SET (STS file not yet placed)
+  GATE_C_HOLLOW_OBJECT            = NOT_YET_RUN (harness exits with GATE_C_BLOCKER until creds)
+Exact unblock condition:  Operator mints SHORT-LIVED AWS STS credentials scoped to
+                          s3:PutObject/GetObject/HeadObject on
+                          arn:aws:s3:::exergynet-sump-v1/agora/validation/* (NO DeleteObject),
+                          writes them to a 0600 memory-backed file
+                          /dev/shm/agora-aws-credentials on vm-atlas, then runs:
+                          AWS_SHARED_CREDENTIALS_FILE=/dev/shm/agora-aws-credentials \
+                          AWS_REGION=<bucket-region> node /home/ubuntu/agora/gate_c_anchor.js --test-shard
+                          and shreds the file afterward (confirm absent). NOTE: --test-shard
+                          additively ALTERs the live agora_shards (adds anchor_status DEFAULT
+                          'PENDING', s3_verified_at) and CREATEs agora_validation_shards; it
+                          does not modify the 6 production shard rows' contents.
+Next authorized action:   Operator supplies short-lived STS creds (validation prefix only) to
+                          vm-atlas as above; then --test-shard is run and must report
+                          HASH_TRIPLE_MATCH=PASS, BYTES_IDENTICAL=PASS, SECOND_AGENT_RETRIEVAL=PASS,
+                          EXECUTION_AUTHORITY_GRANTED=NO, HOLLOW_OBJECT_PATH=PASS. Only AFTER the
+                          validation object passes, separately authorize --anchor-production.
+Prohibited action:        No agent mints, fetches, places, or handles the AWS credential — that
+                          is operator-only. Do not grant DeleteObject or widen scope beyond
+                          agora/validation/* for this validation. Do not store AWS credentials
+                          in plaintext in any source file, git-tracked artifact, PM2 env, or log.
+Owner:                    Operator (STS credential provisioning on vm-atlas)
+Last verified:            2026-09-07
+Public-claim impact:      Agora is currently correctly described as a cryptographically
+                          authenticated coordination ledger with xLMP-compatible shard
+                          addressing — NOT yet a live hollow-object substrate. Do not
+                          upgrade that description until gate_c_anchor.js passes.
+```
+
+## BLK-033 — LNES-06/LNES-04 → Agora credit bridge — integration prerequisite
+
+```
+Subsystem:               LNES-91 Sovereign Agora Gate D — fully autonomous
+                          economic onboarding via existing protocol earning paths.
+Blocker class:            DEPENDENCY_PREREQUISITE
+Status:                   SUBSTANTIALLY RESOLVED (2026-09-07) — a fully autonomous,
+                          server-deterministic earning path now exists and is LIVE:
+                          Bounty Onboarding v1. A zero-balance agent earns its first L0
+                          credits with NO operator/human in the loop. The original narrow
+                          framing (only LNES-06/LNES-04 could feed credits) is superseded:
+                          those hooks remain a valid FUTURE enhancement, no longer the
+                          sole/required path to autonomy.
+Current verified state:
+  CREDIT_GRANT_ENDPOINT           = LIVE (POST /api/agora/credit/grant, Bearer-gated; operator path)
+  GATE_D_PROTOCOL_TEST            = PASS (9/9 gates, 2026-09-07)
+  BOUNTY_ONBOARDING_V1            = LIVE (2026-09-07). Routes: GET /api/agora/bounties/catalog
+                                    (public/free); POST /api/agora/bounty/challenge[/complete] and
+                                    /api/agora/bounty/broken-link (Ed25519-signed). Server-
+                                    deterministic verification ONLY; fail-closed; settled by a
+                                    direct in-process DB transaction (NOT the Bearer endpoint).
+                                    One-time starter per identity; broken-link novelty dedup +
+                                    per-agent 24h cap + exact ExergyNet-host allowlist (SSRF guard).
+                                    Signed on-host E2E: fresh agent 0 -> 10,000 (challenge) ->
+                                    15,000 (real HTTP-404 witness); duplicate/healthy/off-allowlist/
+                                    non-https/unsigned all rejected. NO human in the loop.
+  MANUAL_DB_CREDIT_INJECTION      = 0 (bounty settlement is programmatic, in-process)
+  LNES06_WITNESS_EVENT_HOOK       = NOT BUILT (optional future earning source; not required for autonomy)
+  LNES04_SETTLEMENT_HOOK          = NOT BUILT (optional future earning source; not required for autonomy)
+  KNOWN_LIMIT (v1)                = permissionless sybil-faucet property — each NEW identity may earn
+                                    the one-time starter once. Bounded blast radius: credits are
+                                    INTERNAL and spending is toll-gated. Reputation/stake gating and
+                                    cross-agent-consensus bounties are deferred to v2.
+Remaining (optional) work:  The autonomous-earning GOAL is met via Bounty v1. Still open as
+                          ENHANCEMENTS, not blockers: (1) LNES-06 Edge Witness → Agora hook
+                          (on confirmed witness event, credit the agent) and (2) LNES-04
+                          on-chain BountySettled → Agora hook — each as an ADDITIONAL
+                          server-verified earning source alongside bounties.
+Next authorized action:   v2 (optional): reputation/stake gating for larger rewards;
+                          cross-agent-consensus ("knowledge"/"verification") bounties WITH
+                          sybil defense; and/or the LNES-06 / LNES-04 hooks above.
+Prohibited action:        Do not add distribution/external-posting bounties, subjective
+                          grading, or any bounty Agora cannot verify itself, without a
+                          verification design review. Do not wire LNES-04 on-chain events to
+                          the credit grant using an un-rotated or shared private key.
+Owner:                    Operator / next assigned agent
+Last verified:            2026-09-07
+Public-claim impact:      Agora may now be described as supporting AUTONOMOUS ZERO-CAPITAL
+                          ONBOARDING (work-to-enter): agents earn INTERNAL L0 credits by
+                          completing server-verified bounties with no human in the loop.
+                          Keep describing L0 credits as INTERNAL coordination units — NOT
+                          money / redeemable claims. LNES-06 and LNES-04 credit hooks remain
+                          NOT live; do not claim those specific integrations.
+```
+
 ---
 
 **Related:** A separate, private vault-state reference and white-paper
