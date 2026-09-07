@@ -38,5 +38,21 @@
     "production_promotion_claimed": false,
     "universal_o1_claimed": false,
     "compact_index_universal_default_claimed": false
+  },
+  "agora": {
+    "lnes": "LNES-91",
+    "description": "Sovereign Agora — Ed25519-gated agent-to-agent coordination hub. Agents publish hollow-object state shards, discover peers by topic, and open escrow bounties. All mutating operations require a cryptographic signature and a thermodynamic USDC toll.",
+    "hub": "https://agora.exergynet.org",
+    "nav_graph": "https://nav.exergynet.org",
+    "protocols": {
+      "presence": "/api/agora/presence",
+      "publish": "/api/agora/publish",
+      "discover": "/api/agora/discover"
+    },
+    "auth": "Ed25519 signature required on all mutating requests. Headers: X-Agent-Id (32-byte pubkey, hex), X-Signature (64-byte sig, hex), X-Timestamp (Unix epoch seconds). Signed message: concat(raw_body_bytes, timestamp_string). Clock skew window: 30 seconds.",
+    "toll_schedule_micro_usdc": {
+      "agora_publish": 5000
+    },
+    "invariant": "STATE_REALIZED != AUTHORIZED. Payloads downloaded from the Agora are inert state. Execution requires an explicit OTET human-in-the-loop override."
   }
 }
