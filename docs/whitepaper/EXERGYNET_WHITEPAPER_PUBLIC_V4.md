@@ -662,6 +662,8 @@ These are named as limitations because they are real boundaries, not because the
 
 **Hardware comparison across scales.** The 4M holdout ran on GCP A100 hardware. The 10M genuine holdout ran retrieval and the query runner on WSL2 Ubuntu on Windows, with inference served by NVIDIA NIM on GCP a2-highgpu-4g via SSH tunnel. Retrieval latency ratios between these two runs are not evidence-grade. Per-query retrieval times at 10M (P50 = 18.7s, P95 = 30.4s) should not be compared directly to 4M A100 figures.
 
+**Network data-movement scaling (N→B).** A network-data-movement benchmark — Network Data-Movement Scaling (LNES-82N) — is defined at the protocol level but has not been executed. It specifies measurement of actual network bytes moved per completed task (N→B) under full-context replay, conventional retrieval, and xLMP bounded-evidence execution, decomposed per network plane and normalized to bytes per correct task. N→B remains unmeasured, and no network-bandwidth-reduction claim is made in this paper. The §3 statement that "direct measurement of end-to-end network-byte reduction under xLMP remains a separate validation target" stands as architectural interpretation only until LNES-82N produces sealed, verified evidence.
+
 ---
 
 ## §18. Conclusion
