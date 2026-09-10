@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Memory Server | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="An MCP server that gives any Model Context Protocol client persistent, content-verified memory — run it locally with no API key, or connect over the gateway. Add long-term memory to Claude, ElizaOS, and MCP agents.">
+<link rel="canonical" href="https://exergynet.org/mcp-memory-server.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Model Context Protocol</div>
+      <h1>MCP<br><span class="accent">Memory Server</span></h1>
+      <p class="hero-sub">Persistent, content-verified memory for any Model Context Protocol client. Give Claude, ElizaOS, and other MCP agents long-term recall that survives across sessions — running locally on your own disk, or over the ExergyNet gateway.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- WHAT IT IS -->
+    <section>
+      <div class="section-label">What It Is</div>
+      <h2>Memory as an MCP tool</h2>
+      <p style="max-width:680px;">The Model Context Protocol lets an agent call external tools through a standard interface. An MCP <em>memory</em> server exposes persistent storage and retrieval as those tools — so the agent can write what it learns and read it back later, without you hand-rolling a memory layer or stuffing history into the prompt. ExergyNet provides this as content-addressed memory: what you store is retrieved by the hash of its content, so the same query over the same committed state returns the same bytes, every time.</p>
+    </section>
+
+    <!-- TWO WAYS -->
+    <section>
+      <div class="section-label">Two Deployments</div>
+      <h2>Local or gateway</h2>
+      <div class="card-grid">
+        <div class="card accent-border">
+          <h4>Local — Vanguard Memory Node (VMN)</h4>
+          <p style="font-size:14px;">A local stdio MCP server that runs on your own NVMe. No API key, no cloud round-trip, your data stays on your machine. The fastest way to add durable memory to an MCP client.</p>
+          <p style="margin-top:0.75rem;"><a href="vmn.html" style="color:var(--accent);font-weight:600;">VMN details &rarr;</a></p>
+        </div>
+        <div class="card">
+          <h4>Gateway — MCP over HTTP</h4>
+          <p style="font-size:14px;">Connect to the ExergyNet substrate over the Model Context Protocol for persistent memory, bounded evidence, and authority-scoped tools. Ed25519-authenticated.</p>
+          <p style="margin-top:0.75rem;"><a href="mcp.html" style="color:var(--accent);font-weight:600;">MCP Gateway reference &rarr;</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY CONTENT-ADDRESSED -->
+    <section>
+      <div class="section-label">Why It's Different</div>
+      <h2>Content-verified, not best-effort</h2>
+      <div class="card">
+        <ul class="spec-list">
+          <li><span class="spec-key">Deterministic</span> <span class="spec-val">Same query, same committed state &rarr; same evidence window. No run-to-run drift.</span></li>
+          <li><span class="spec-key">Verifiable</span>    <span class="spec-val">Every memory-query result carries a SHA-256 content hash you can check.</span></li>
+          <li><span class="spec-key">Bounded</span>       <span class="spec-val">What reaches the model stays small as the store grows — memory, not prompt bloat.</span></li>
+          <li><span class="spec-key">Model-agnostic</span><span class="spec-val">Swap the reasoning engine; the memory substrate is unchanged.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONNECT -->
+    <section>
+      <div class="section-label">Connect</div>
+      <h2>Add memory to your agent</h2>
+      <p style="max-width:640px;">For ElizaOS agents, the official plugin handles the MCP handshake automatically:</p>
+      <div class="card">
+        <pre><code>pnpm install @elizaos/plugin-exergynet</code></pre>
+      </div>
+      <p style="max-width:680px;margin-top:1.25rem;">New to why an agent needs this at all? See <a href="ai-agent-memory.html" style="color:var(--accent);">AI Agent Memory</a> and <a href="context-window-vs-memory.html" style="color:var(--accent);">Context Window vs. Memory</a>.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Connect your first MCP agent</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="mcp.html"  class="btn btn-primary">MCP Gateway Reference</a>
+          <a href="vmn.html"  class="btn btn-secondary">Run VMN Locally</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

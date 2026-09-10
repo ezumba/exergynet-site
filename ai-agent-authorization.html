@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Authorization | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Separate what an AI agent can propose from what it can authorize. ExergyNet's authority layer evaluates consequential agent actions deterministically — reasoning proposes, a separate authority decides.">
+<link rel="canonical" href="https://exergynet.org/ai-agent-authorization.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Authority &amp; Guardrails</div>
+      <h1>AI Agent<br><span class="accent">Authorization</span></h1>
+      <p class="hero-sub">An agent that can reason is not the same as an agent that should be trusted to act. ExergyNet separates the two: the model proposes an action, and a separate, deterministic authority layer decides whether it may proceed — so a persuaded or compromised model cannot authorize its own consequences.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- PROBLEM -->
+    <section>
+      <div class="section-label">The Problem</div>
+      <h2>Reasoning compliance is not authorization</h2>
+      <p style="max-width:680px;">When the same model both decides what to do and grants itself permission to do it, its guardrails are only as strong as its own judgment in the moment — and that judgment can be talked out of position by a clever prompt, poisoned context, or an injection buried in a tool result. If the reasoning engine is the last line of defense before a consequential action, then every jailbreak is also an authorization bypass.</p>
+    </section>
+
+    <!-- THE BOUNDARY -->
+    <section>
+      <div class="section-label">The Approach</div>
+      <h2>A consequence boundary</h2>
+      <p style="max-width:680px;margin-bottom:1.25rem;">ExergyNet puts a deterministic authority layer between the agent's proposal and the action it would trigger. The model can propose anything; the boundary evaluates the request against explicit policy, independently of the model's own reasoning, and returns an allow, hold, or reject. Credentials and consequential capabilities live behind that boundary — structurally out of reach of whatever reaches the model.</p>
+      <div class="card accent-border">
+        <ul class="spec-list">
+          <li><span class="spec-key">Propose</span> <span class="spec-val">The reasoning engine suggests an action</span></li>
+          <li><span class="spec-key">Evaluate</span><span class="spec-val">A separate, deterministic policy layer judges it — not the model</span></li>
+          <li><span class="spec-key">Decide</span>  <span class="spec-val">Allow, hold, or reject — with a durable, signed record of the decision</span></li>
+          <li><span class="spec-key">Isolate</span> <span class="spec-val">Keys and consequential capabilities never reach the model's context</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SEPARATION -->
+    <section>
+      <div class="section-label">The Principle</div>
+      <h2>Intelligence and authority are different functions</h2>
+      <p style="max-width:680px;">A reasoning model can fail — be wrong, be jailbroken, be injected — without the authority system failing with it, because authority does not depend on the model's judgment. That separation is the point. It is what lets you give an agent real capability without giving its worst moment real consequences.</p>
+    </section>
+
+    <!-- PHYSICAL -->
+    <section>
+      <div class="section-label">Why It Matters More Over Time</div>
+      <h2>From wrong answers to real consequences</h2>
+      <p style="max-width:680px;">For a chatbot, a bad decision is a bad answer. For an agent that moves money, changes records, or controls machines, a bad decision is a transaction or a physical event. As agents move from advice to action, the gap between "the model complied" and "the action was authorized" stops being academic. ExergyNet is built for the side of that line where mistakes have consequences.</p>
+      <p style="margin-top:1rem;font-size:13px;color:var(--text-faint);">The authority control plane is part of the broader ExergyNet substrate — see <a href="vanguard.html" style="color:var(--accent);">Vanguard</a> for the coordination and routing layer.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Give agents capability, not carte blanche</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="vanguard.html" class="btn btn-primary">Vanguard Control Plane</a>
+          <a href="docs.html"     class="btn btn-secondary">Read the Docs</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

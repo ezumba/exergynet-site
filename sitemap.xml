@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://exergynet.org/</loc></url>
+  <url><loc>https://exergynet.org/ai-memory-control-plane.html</loc></url>
+  <url><loc>https://exergynet.org/ai-agent-memory.html</loc></url>
+  <url><loc>https://exergynet.org/context-window-vs-memory.html</loc></url>
+  <url><loc>https://exergynet.org/mcp-memory-server.html</loc></url>
+  <url><loc>https://exergynet.org/ai-agent-authorization.html</loc></url>
+  <url><loc>https://exergynet.org/verifiable-ai-compute.html</loc></url>
+  <url><loc>https://exergynet.org/rag-vs-agent-memory.html</loc></url>
+  <url><loc>https://exergynet.org/agent-memory-comparison.html</loc></url>
+  <url><loc>https://exergynet.org/exergynet-vs-mem0.html</loc></url>
+  <url><loc>https://exergynet.org/exergynet-vs-zep.html</loc></url>
+  <url><loc>https://exergynet.org/exergynet-vs-letta.html</loc></url>
+  <url><loc>https://exergynet.org/exergynet-vs-langmem.html</loc></url>
   <url><loc>https://exergynet.org/x402-security-brief.html</loc></url>
   <url><loc>https://exergynet.org/benchmarks.html</loc></url>
   <url><loc>https://exergynet.org/vanguard.html</loc></url>

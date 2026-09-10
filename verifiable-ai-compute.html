@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verifiable AI Compute | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Verifiable off-chain compute for autonomous agents — results an agent can check by cryptographic proof rather than trust, with on-chain settlement. Part of the ExergyNet evidence-and-authority substrate.">
+<link rel="canonical" href="https://exergynet.org/verifiable-ai-compute.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Proof &amp; Settlement</div>
+      <h1>Verifiable<br><span class="accent">AI Compute</span></h1>
+      <p class="hero-sub">When an autonomous agent acts on the result of a computation, it is trusting whoever ran it. Verifiable compute replaces that trust with a check: the result arrives with a cryptographic proof the agent — or a smart contract — can verify before acting or settling.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- STATUS NOTICE -->
+    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
+      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE</strong></p>
+      <p style="font-size:13px;margin:0.5rem 0 0;">ExergyNet's compute-settlement layer is operating in testnet mode. This page describes the target verifiable-compute architecture. For which contracts currently enforce on-chain proof verification versus recording a receipt pending it, see <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a>.</p>
+    </div>
+
+    <!-- PROBLEM -->
+    <section>
+      <div class="section-label">The Problem</div>
+      <h2>Agents act on results they can't check</h2>
+      <p style="max-width:680px;">An agent that outsources a computation — a model inference, a data lookup, a settlement calculation — normally has no way to know the result is correct. It trusts the provider. As agents begin to move value and trigger consequences on those results, "trust the provider" becomes the weakest link: a wrong or tampered result becomes a wrong transaction.</p>
+    </section>
+
+    <!-- APPROACH -->
+    <section>
+      <div class="section-label">The Approach</div>
+      <h2>Prove the result, then settle on it</h2>
+      <p style="max-width:680px;margin-bottom:1.25rem;">ExergyNet's target model binds a computation to verifiable evidence: work is performed off-chain, and the result is accompanied by a proof that can be checked independently — by the agent, or on-chain by a verifier contract — before anyone acts on it. Settlement is gated on that verification, so an unproven or invalid result does not clear.</p>
+      <div class="card accent-border">
+        <ul class="spec-list">
+          <li><span class="spec-key">Compute</span>  <span class="spec-val">Work performed off-chain, away from the agent's trust boundary</span></li>
+          <li><span class="spec-key">Attest</span>   <span class="spec-val">Result accompanied by a proof designed for independent verification</span></li>
+          <li><span class="spec-key">Verify</span>   <span class="spec-val">Checked by the agent or an on-chain verifier before it is acted on</span></li>
+          <li><span class="spec-key">Settle</span>   <span class="spec-val">Settlement gated on verification — unproven results do not clear</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- WHY -->
+    <section>
+      <div class="section-label">Why It Fits Agents</div>
+      <h2>Evidence bound to consequence</h2>
+      <p style="max-width:680px;">Verifiable compute is the same idea as ExergyNet's memory layer, applied to work instead of state: don't trust, check. Where <a href="ai-agent-memory.html" style="color:var(--accent);">agent memory</a> makes retrieved evidence content-verifiable, verifiable compute makes computed results proof-verifiable — so the operations an agent takes on the world are backed by evidence, not by faith in a provider.</p>
+      <p style="margin-top:1rem;font-size:13px;color:var(--text-faint);">For current contract addresses and on-chain verification status, see <a href="proof.html" style="color:var(--accent);">On-Chain Proof</a>. For measured performance evidence, see <a href="benchmarks.html" style="color:var(--accent);">Benchmarks &amp; Evidence</a>.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>See what's proven on-chain today</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="proof.html"      class="btn btn-primary">On-Chain Proof Status</a>
+          <a href="benchmarks.html" class="btn btn-secondary">Benchmarks &amp; Evidence</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

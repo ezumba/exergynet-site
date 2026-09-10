@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExergyNet vs. Letta (MemGPT) | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="ExergyNet vs. Letta (MemGPT): a stateful agent framework versus a memory-and-authority substrate that sits under any framework. An honest comparison — and why they can be complementary.">
+<link rel="canonical" href="https://exergynet.org/exergynet-vs-letta.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){var t=localStorage.getItem('exg-theme');if(!t){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Compare</div>
+      <h1>ExergyNet<br><span class="accent">vs. Letta (MemGPT)</span></h1>
+      <p class="hero-sub">This is a comparison across categories. Letta is a framework you build a stateful agent <em>inside</em>; ExergyNet is a substrate that sits <em>under</em> any agent or framework. Understanding that distinction is more useful than a feature race — and it's why the two can work together.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <section>
+      <div class="section-label">What Letta Is</div>
+      <h2>A stateful agent framework</h2>
+      <p style="max-width:680px;">Letta, formerly the MemGPT research project from UC Berkeley, is an open-source framework for building stateful LLM agents. Its core idea is an operating-system-inspired memory hierarchy — a main context the model sees each turn, recall storage for recent history, and archival storage for long-term knowledge — with the agent managing its own memory through tool calls. It is a strong choice when you want a complete, self-managing agent runtime with transparent, self-editing memory built in.</p>
+    </section>
+
+    <section>
+      <div class="section-label">The Core Difference</div>
+      <h2>A framework vs. a substrate</h2>
+      <p style="max-width:680px;margin-bottom:1.25rem;">Letta is where the agent lives: it owns the loop, the memory tiers, and the self-editing behavior. ExergyNet is not an agent framework — it is the persistent-state, evidence, and authority layer beneath whatever framework you use. Its retrieval is deterministic and content-addressed with hash-verifiable results, and it treats the authority to act as a separate, deterministic decision independent of the model. Because they occupy different layers, an agent built in Letta could use ExergyNet as its verifiable memory-and-authority substrate.</p>
+      <div class="card" style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>&nbsp;</th><th>Letta (MemGPT)</th><th>ExergyNet</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Category</strong></td><td>Stateful agent framework</td><td>Memory + authority substrate</td></tr>
+            <tr><td><strong>Layer</strong></td><td>The agent runtime itself</td><td>Under any agent / framework</td></tr>
+            <tr><td><strong>Memory model</strong></td><td>OS-inspired tiers, self-managed</td><td>Committed, content-addressed evidence</td></tr>
+            <tr><td><strong>Result verifiability</strong></td><td>Not a stated feature</td><td>SHA-256 content hash per result</td></tr>
+            <tr><td><strong>Authority to act</strong></td><td>Out of scope</td><td>Separate deterministic layer</td></tr>
+            <tr><td><strong>Relationship</strong></td><td colspan="2" style="text-align:center;">Complementary — different layers of the stack</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Choosing</div>
+      <h2>When to use which</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Choose Letta when&hellip;</h4>
+          <p style="font-size:14px;">You want a complete agent framework with self-managing, OS-style memory built in, and you're happy to build your agent within its runtime.</p>
+        </div>
+        <div class="card accent-border">
+          <h4>Choose ExergyNet when&hellip;</h4>
+          <p style="font-size:14px;">You want a framework-independent substrate for verifiable memory and separated authority — usable under Letta, ElizaOS, MCP clients, or your own stack.</p>
+        </div>
+      </div>
+      <p style="max-width:680px;margin-top:1.25rem;font-size:13px;color:var(--text-faint);">See all five tools in <a href="agent-memory-comparison.html" style="color:var(--accent);">AI Agent Memory Tools Compared</a>.</p>
+    </section>
+
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Add a verifiable substrate to any agent</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="mcp-memory-server.html" class="btn btn-primary">MCP Memory Server</a>
+          <a href="ai-memory-control-plane.html" class="btn btn-secondary">Memory Control Plane</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+  <div id="site-footer"></div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
