@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExergyNet vs. Zep | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="ExergyNet vs. Zep: a temporal knowledge-graph memory versus deterministic, content-addressed memory with a separate authority layer. An honest comparison of two approaches to AI agent memory.">
+<link rel="canonical" href="https://exergynet.org/exergynet-vs-zep.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){var t=localStorage.getItem('exg-theme');if(!t){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Compare</div>
+      <h1>ExergyNet<br><span class="accent">vs. Zep</span></h1>
+      <p class="hero-sub">Both give agents durable memory beyond the context window. Zep models memory as a temporal knowledge graph of evolving facts and relationships; ExergyNet retrieves deterministically by content address and adds a separate authority layer. They are strong at different things.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <section>
+      <div class="section-label">What Zep Is</div>
+      <h2>Temporal knowledge-graph memory</h2>
+      <p style="max-width:680px;">Zep is agent memory built on Graphiti, its open-source temporal knowledge-graph engine. It represents memory as a "Context Graph" of entities, relationships, and facts, with a bi-temporal model that tracks both when an event occurred and when it was ingested — so facts can be invalidated and superseded over time. Retrieval fuses semantic, full-text, and graph search. Zep is a genuinely strong choice when relationships between entities and how facts change over time are central to your application; Graphiti is open source, with Zep offered as an enterprise-scale service.</p>
+    </section>
+
+    <section>
+      <div class="section-label">The Core Difference</div>
+      <h2>Graph of facts vs. content-addressed evidence</h2>
+      <p style="max-width:680px;margin-bottom:1.25rem;">Zep's power is in structure: it extracts entities and relationships into a graph and reasons over how they evolve. ExergyNet takes a different stance — it retrieves committed evidence deterministically by content address, returning the same hash-verifiable bytes for the same query, and treats the authority to act on that evidence as a separate, deterministic decision. Where Zep excels at temporal-relational reasoning, ExergyNet excels at verifiable retrieval and consequence control.</p>
+      <div class="card" style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>&nbsp;</th><th>Zep / Graphiti</th><th>ExergyNet</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Category</strong></td><td>Temporal knowledge-graph memory</td><td>Memory + authority control plane</td></tr>
+            <tr><td><strong>Model of memory</strong></td><td>Graph of entities, relationships, facts</td><td>Committed, content-addressed evidence</td></tr>
+            <tr><td><strong>Retrieval</strong></td><td>Bi-temporal graph + hybrid search</td><td>Deterministic, content-addressed</td></tr>
+            <tr><td><strong>Result verifiability</strong></td><td>Fact validity intervals</td><td>SHA-256 content hash per result</td></tr>
+            <tr><td><strong>Authority to act</strong></td><td>Out of scope</td><td>Separate deterministic layer</td></tr>
+            <tr><td><strong>Licensing</strong></td><td>Graphiti OSS; Zep enterprise</td><td>Local MCP node (VMN) or gateway</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Choosing</div>
+      <h2>When to use which</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Choose Zep when&hellip;</h4>
+          <p style="font-size:14px;">Your problem is relational and temporal — tracking how entities and facts connect and change over time — and a knowledge-graph model with fact invalidation is exactly the shape you want.</p>
+        </div>
+        <div class="card accent-border">
+          <h4>Choose ExergyNet when&hellip;</h4>
+          <p style="font-size:14px;">You need retrieval to be deterministic and hash-verifiable, context to stay bounded as the store grows, and a separate authority layer to govern what the agent may act on.</p>
+        </div>
+      </div>
+      <p style="max-width:680px;margin-top:1.25rem;font-size:13px;color:var(--text-faint);">See all five tools in <a href="agent-memory-comparison.html" style="color:var(--accent);">AI Agent Memory Tools Compared</a>.</p>
+    </section>
+
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Try verifiable agent memory</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="ai-agent-memory.html" class="btn btn-primary">AI Agent Memory</a>
+          <a href="vmn.html" class="btn btn-secondary">Run VMN Locally</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+  <div id="site-footer"></div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

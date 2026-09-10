@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Memory Control Plane | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="An AI memory control plane governs how autonomous agents store, retrieve, verify, and are authorized to act on persistent memory — separating what an agent remembers from what it is permitted to do. This is the layer ExergyNet provides.">
+<link rel="canonical" href="https://exergynet.org/ai-memory-control-plane.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Category</div>
+      <h1>AI Memory<br><span class="accent">Control Plane</span></h1>
+      <p class="hero-sub">A memory library stores bytes. A memory <em>control plane</em> governs them — deciding what an agent can retrieve, whether that evidence is verifiable, and whether the agent is authorized to act on it. ExergyNet is that control plane: the system around the model, not another store bolted onto it.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- WHAT IT IS -->
+    <section>
+      <div class="section-label">The Idea</div>
+      <h2>What is a memory control plane?</h2>
+      <p style="max-width:680px;">Borrowed from networking, a "control plane" is the layer that decides <em>how</em> things move, separate from the layer that moves them. Applied to agent memory, it is the governance layer between an autonomous agent and its accumulated state: it decides what evidence reaches the model, guarantees that evidence is what it claims to be, and keeps the authority to <em>act</em> on that evidence separate from the reasoning that proposes the action. Most "agent memory" today is just a store. A control plane is what you need once an agent's memory drives consequences.</p>
+    </section>
+
+    <!-- THREE SEPARATIONS -->
+    <section>
+      <div class="section-label">The Core Separation</div>
+      <h2>Integrity &ne; Provenance &ne; Authority</h2>
+      <p style="max-width:680px;margin-bottom:1.5rem;">The reason a control plane matters is that three questions people collapse into "memory" are actually different, and each needs its own guarantee:</p>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Integrity</h4>
+          <p style="font-size:14px;">Is this evidence intact and unaltered? Answered by content addressing — every result carries a SHA-256 hash you can check.</p>
+        </div>
+        <div class="card">
+          <h4>Provenance</h4>
+          <p style="font-size:14px;">Where did it come from, and is it the currently authoritative version? Answered by version-aware, deterministic resolution over committed state.</p>
+        </div>
+        <div class="card accent-border">
+          <h4>Authority</h4>
+          <p style="font-size:14px;">May the agent <em>act</em> on it? Answered by a separate, deterministic authority layer — never by the reasoning model itself.</p>
+        </div>
+      </div>
+      <p style="max-width:680px;margin-top:1.25rem;">Conflating these is how agents end up trusting stale specs, acting on tampered evidence, or authorizing their own consequences. Keeping them separate is the whole point of a control plane.</p>
+    </section>
+
+    <!-- FOUR FUNCTIONS -->
+    <section>
+      <div class="section-label">What It Governs</div>
+      <h2>Store, retrieve, verify, authorize</h2>
+      <div class="card accent-border">
+        <ul class="spec-list">
+          <li><span class="spec-key">Store</span>     <span class="spec-val">Persistent state held outside the inference request &mdash; durable across sessions, models, and machines</span></li>
+          <li><span class="spec-key">Retrieve</span>  <span class="spec-val">A bounded, deterministic evidence window per query &mdash; small regardless of how large the store grows</span></li>
+          <li><span class="spec-key">Verify</span>    <span class="spec-val">Content-addressed results, checkable by hash &mdash; integrity and provenance, not best-effort recall</span></li>
+          <li><span class="spec-key">Authorize</span> <span class="spec-val">A separate, deterministic decision on whether the agent may act &mdash; independent of the model's judgment</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- HOW EXERGYNET -->
+    <section>
+      <div class="section-label">How ExergyNet Provides It</div>
+      <h2>One substrate, four guarantees</h2>
+      <p style="max-width:680px;margin-bottom:1.25rem;">Each function of the control plane is a piece of the ExergyNet substrate you can adopt on its own or together:</p>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Persistent memory</h4>
+          <p style="font-size:14px;">Durable, content-verified agent memory that outlives sessions.</p>
+          <p style="margin-top:0.6rem;"><a href="ai-agent-memory.html" style="color:var(--accent);font-weight:600;">AI Agent Memory &rarr;</a></p>
+        </div>
+        <div class="card">
+          <h4>Bounded delivery</h4>
+          <p style="font-size:14px;">A small evidence window per query, even as the store grows large.</p>
+          <p style="margin-top:0.6rem;"><a href="context-window-vs-memory.html" style="color:var(--accent);font-weight:600;">Context vs. Memory &rarr;</a></p>
+        </div>
+        <div class="card">
+          <h4>Authority control</h4>
+          <p style="font-size:14px;">Reasoning proposes; a separate layer decides what may proceed.</p>
+          <p style="margin-top:0.6rem;"><a href="ai-agent-authorization.html" style="color:var(--accent);font-weight:600;">Agent Authorization &rarr;</a></p>
+        </div>
+        <div class="card">
+          <h4>Verifiable operations</h4>
+          <p style="font-size:14px;">Results an agent can check by proof before acting or settling.</p>
+          <p style="margin-top:0.6rem;"><a href="verifiable-ai-compute.html" style="color:var(--accent);font-weight:600;">Verifiable Compute &rarr;</a></p>
+        </div>
+      </div>
+      <p style="margin-top:1.25rem;font-size:13px;color:var(--text-faint);">Want the fastest path in? Run a local memory node &mdash; see <a href="mcp-memory-server.html" style="color:var(--accent);">MCP Memory Server</a> and <a href="vmn.html" style="color:var(--accent);">Vanguard Memory Node</a>.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>The system around the model</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="ai-agent-memory.html" class="btn btn-primary">Start with Agent Memory</a>
+          <a href="whitepaper.html"      class="btn btn-secondary">Architecture Overview</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
