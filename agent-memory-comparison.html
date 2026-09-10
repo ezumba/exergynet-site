@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Memory Tools Compared | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="A fair comparison of AI agent memory tools — mem0, Zep, Letta (MemGPT), LangMem, and ExergyNet. Memory layers, temporal graphs, agent frameworks, SDKs, and the memory-plus-authority control plane, side by side.">
+<link rel="canonical" href="https://exergynet.org/agent-memory-comparison.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Compare</div>
+      <h1>AI Agent Memory<br><span class="accent">Tools Compared</span></h1>
+      <p class="hero-sub">"Agent memory" covers several different kinds of product — a memory layer, a temporal knowledge graph, a stateful agent framework, an SDK, and a memory-plus-authority control plane. They are not interchangeable. This is an honest map of where mem0, Zep, Letta, LangMem, and ExergyNet each fit.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- CATEGORIES -->
+    <section>
+      <div class="section-label">First, The Categories</div>
+      <h2>Five tools, not one category</h2>
+      <p style="max-width:700px;">Before comparing features, it helps to see that these tools answer different questions. Some manage <em>what an agent remembers</em>; one is a framework you build the whole agent inside; ExergyNet governs memory <em>and</em> the authority to act on it.</p>
+    </section>
+
+    <!-- MAIN TABLE -->
+    <section>
+      <div class="section-label">Side By Side</div>
+      <h2>The landscape at a glance</h2>
+      <div class="card" style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Tool</th><th>What it is</th><th>Retrieval basis</th><th>Result verifiability</th><th>Authority control</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>mem0</strong></td>
+              <td>Open-source memory layer (managed option)</td>
+              <td>LLM-extracted "salient" memories; optional graph</td>
+              <td>Not a stated feature</td>
+              <td>Out of scope</td>
+            </tr>
+            <tr>
+              <td><strong>Zep / Graphiti</strong></td>
+              <td>Temporal knowledge-graph memory (Graphiti OSS; Zep enterprise)</td>
+              <td>Bi-temporal graph + hybrid semantic/text search</td>
+              <td>Fact validity intervals; not content-hash</td>
+              <td>Out of scope</td>
+            </tr>
+            <tr>
+              <td><strong>Letta (MemGPT)</strong></td>
+              <td>Open-source stateful agent framework</td>
+              <td>OS-inspired tiers; agent self-manages via tools</td>
+              <td>Not a stated feature</td>
+              <td>Out of scope</td>
+            </tr>
+            <tr>
+              <td><strong>LangMem</strong></td>
+              <td>LangChain SDK for long-term memory</td>
+              <td>LLM extraction of semantic memories; backend-agnostic</td>
+              <td>Not a stated feature</td>
+              <td>Out of scope</td>
+            </tr>
+            <tr>
+              <td><strong>ExergyNet</strong></td>
+              <td>Memory + authority control plane</td>
+              <td>Deterministic, content-addressed</td>
+              <td>SHA-256 content hash on each result</td>
+              <td>Separate deterministic authority layer</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:700px;margin-top:1rem;font-size:13px;color:var(--text-faint);">"Out of scope" is not a criticism — mem0, Zep, Letta, and LangMem are memory tools and do not claim to be authorization layers. It marks a difference in what the product is for, so you can combine them correctly rather than expect one to do the other's job.</p>
+    </section>
+
+    <!-- HEAD TO HEADS -->
+    <section>
+      <div class="section-label">Head To Head</div>
+      <h2>Detailed comparisons</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>ExergyNet vs. mem0</h4>
+          <p style="font-size:14px;">LLM-extracted memories vs. deterministic, content-verified retrieval.</p>
+          <p style="margin-top:0.6rem;"><a href="exergynet-vs-mem0.html" style="color:var(--accent);font-weight:600;">Compare &rarr;</a></p>
+        </div>
+        <div class="card">
+          <h4>ExergyNet vs. Zep</h4>
+          <p style="font-size:14px;">Temporal knowledge graph vs. content-addressed memory + authority.</p>
+          <p style="margin-top:0.6rem;"><a href="exergynet-vs-zep.html" style="color:var(--accent);font-weight:600;">Compare &rarr;</a></p>
+        </div>
+        <div class="card">
+          <h4>ExergyNet vs. Letta</h4>
+          <p style="font-size:14px;">Agent framework vs. substrate that sits under any framework.</p>
+          <p style="margin-top:0.6rem;"><a href="exergynet-vs-letta.html" style="color:var(--accent);font-weight:600;">Compare &rarr;</a></p>
+        </div>
+        <div class="card">
+          <h4>ExergyNet vs. LangMem</h4>
+          <p style="font-size:14px;">LangChain SDK vs. framework-independent memory control plane.</p>
+          <p style="margin-top:0.6rem;"><a href="exergynet-vs-langmem.html" style="color:var(--accent);font-weight:600;">Compare &rarr;</a></p>
+        </div>
+      </div>
+      <p style="max-width:700px;margin-top:1.5rem;">Comparing memory to retrieval instead? See <a href="rag-vs-agent-memory.html" style="color:var(--accent);">RAG vs. Agent Memory</a>. New to the category itself? Start with <a href="ai-agent-memory.html" style="color:var(--accent);">AI Agent Memory</a>.</p>
+    </section>
+
+    <!-- WHERE EXERGYNET FITS -->
+    <section>
+      <div class="section-label">Where ExergyNet Fits</div>
+      <h2>Memory you can verify, and act on safely</h2>
+      <p style="max-width:700px;">ExergyNet is the option to reach for when the memory drives consequences: retrieval is deterministic and content-addressed (the same query over the same committed state returns the same, hash-checkable bytes), the evidence window stays bounded as the store grows, and the authority to act on that evidence is a separate, deterministic decision — not the model's. Several of these tools can even sit alongside it; ExergyNet is the <a href="ai-memory-control-plane.html" style="color:var(--accent);">control plane</a>, not another store.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>See the architecture for yourself</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="ai-agent-memory.html" class="btn btn-primary">AI Agent Memory</a>
+          <a href="benchmarks.html"      class="btn btn-secondary">Benchmarks &amp; Evidence</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

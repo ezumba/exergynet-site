@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Memory | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Give autonomous AI agents durable, verifiable long-term memory that persists across sessions — beyond the context window. ExergyNet externalizes agent state so memory can grow without inflating the prompt.">
+<link rel="canonical" href="https://exergynet.org/ai-agent-memory.html">
+<link rel="stylesheet" href="style.css">
+<script>
+// Inline theme init to prevent flash
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <!-- Header will be injected here -->
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Persistent Memory</div>
+      <h1>AI Agent<br><span class="accent">Memory</span></h1>
+      <p class="hero-sub">Autonomous agents need memory that outlives a single session and a single prompt. ExergyNet gives agents durable, content-verified long-term memory that persists across runs, machines, and time — without stuffing an ever-growing history into the context window.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- PROBLEM -->
+    <section>
+      <div class="section-label">The Problem</div>
+      <h2>A context window is not memory</h2>
+      <p style="max-width:680px;">The most common way to give an agent "memory" is to paste its history back into the prompt on every turn. This breaks down as the agent accumulates state: the context window has a hard ceiling, prefill cost rises with every token you re-send, and older evidence gets truncated or silently dropped. Bigger context windows postpone the wall; they do not remove it. Memory that lives only inside the active prompt is memory you pay for, in full, on every single request.</p>
+      <p style="max-width:680px;margin-top:1rem;">The deeper issue is a conflation: an agent's <strong>accumulated state</strong> (everything it has ever learned or done) and its <strong>active context</strong> (what the model needs for the query in front of it) are treated as the same resource. They are not.</p>
+    </section>
+
+    <!-- WHAT PERSISTENT MEMORY REQUIRES -->
+    <section>
+      <div class="section-label">What Real Agent Memory Requires</div>
+      <h2>Four properties</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Durable</h4>
+          <p style="font-size:14px;">State survives across sessions, process restarts, and machine boundaries — not just within one conversation.</p>
+        </div>
+        <div class="card">
+          <h4>Bounded at inference</h4>
+          <p style="font-size:14px;">What reaches the model per query stays small and relevant, even as the underlying corpus grows large.</p>
+        </div>
+        <div class="card">
+          <h4>Verifiable</h4>
+          <p style="font-size:14px;">Retrieved evidence is content-addressed — the same query over the same committed state returns the same bytes, checkable by hash.</p>
+        </div>
+        <div class="card accent-border">
+          <h4>Portable</h4>
+          <p style="font-size:14px;">Memory is not welded to one model. Swap the reasoning engine; the persistent substrate stays.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW EXERGYNET DOES IT -->
+    <section>
+      <div class="section-label">How ExergyNet Does It</div>
+      <h2>Externalize the state, bound the evidence</h2>
+      <p style="max-width:680px;margin-bottom:1.5rem;">ExergyNet keeps the agent's accumulated state <em>outside</em> the inference request. For each query it retrieves a bounded, content-verified evidence window from that state and hands only that window to the model. The persistent corpus can keep growing; what the model reads per query stays bounded by what retrieval selects — not by how much the agent has accumulated.</p>
+      <div class="card accent-border">
+        <ul class="spec-list">
+          <li><span class="spec-key">Store</span>       <span class="spec-val">Root-addressed, content-verified persistent evidence (Exergy Vault / xLMP)</span></li>
+          <li><span class="spec-key">Retrieve</span>    <span class="spec-val">Deterministic, content-addressed — no probabilistic similarity guesswork in the path</span></li>
+          <li><span class="spec-key">Deliver</span>     <span class="spec-val">A bounded evidence window to the model, independent of corpus size</span></li>
+          <li><span class="spec-key">Verify</span>      <span class="spec-val">SHA-256 content hash on every memory-query result</span></li>
+        </ul>
+      </div>
+      <p style="margin-top:1rem;font-size:13px;color:var(--text-faint);">For the measured scaling behavior behind this design — how active model-facing context holds bounded as the corpus grows — see the <a href="benchmarks.html" style="color:var(--accent);">Benchmarks &amp; Evidence</a> page.</p>
+    </section>
+
+    <!-- WHERE TO START -->
+    <section>
+      <div class="section-label">Where To Start</div>
+      <h2>Two ways to add memory</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Local — Vanguard Memory Node</h4>
+          <p style="font-size:14px;">A local stdio MCP server that runs on your own NVMe. No API key, no cloud round-trip. Add persistent memory to any MCP client.</p>
+          <p style="margin-top:0.75rem;"><a href="vmn.html" style="color:var(--accent);font-weight:600;">Vanguard Memory Node &rarr;</a></p>
+        </div>
+        <div class="card">
+          <h4>Protocol — MCP Memory Server</h4>
+          <p style="font-size:14px;">Connect Claude, ElizaOS, or any Model Context Protocol agent to persistent, content-verified memory over MCP.</p>
+          <p style="margin-top:0.75rem;"><a href="mcp-memory-server.html" style="color:var(--accent);font-weight:600;">MCP Memory Server &rarr;</a></p>
+        </div>
+      </div>
+      <p style="max-width:680px;margin-top:1.5rem;">New to the distinction between a bigger prompt and real memory? Start with <a href="context-window-vs-memory.html" style="color:var(--accent);">Context Window vs. Memory</a>, or compare approaches in <a href="rag-vs-agent-memory.html" style="color:var(--accent);">RAG vs. Agent Memory</a>.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Give your agent memory that lasts</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="vmn.html"   class="btn btn-primary">Run a Local Memory Node</a>
+          <a href="docs.html"  class="btn btn-secondary">Read the Docs</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <!-- Footer will be injected here -->
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

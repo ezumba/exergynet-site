@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG vs. Agent Memory | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="RAG retrieves documents to answer a question; agent memory persists an agent's own evolving state across sessions. Compare retrieval-augmented generation and vector databases with persistent, verifiable agent memory — and when to use each.">
+<link rel="canonical" href="https://exergynet.org/rag-vs-agent-memory.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Compare</div>
+      <h1>RAG vs.<br><span class="accent">Agent Memory</span></h1>
+      <p class="hero-sub">They are often confused, but they solve different problems. RAG pulls relevant documents into a prompt to answer a question. Agent memory persists an agent's own evolving state — what it has learned, decided, and done — across sessions. Most real agents need both.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- WHAT EACH IS -->
+    <section>
+      <div class="section-label">Definitions</div>
+      <h2>Two jobs, not one</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>RAG / vector search</h4>
+          <p style="font-size:14px;">Retrieval-augmented generation embeds a corpus of documents and, at query time, pulls the semantically nearest chunks into the prompt. It is a way to <em>ground answers in a knowledge base</em> — typically read-only reference material the agent did not author.</p>
+        </div>
+        <div class="card">
+          <h4>Agent memory</h4>
+          <p style="font-size:14px;">Persistent memory is the agent's <em>own</em> accumulated state — prior decisions, outcomes, and evidence — written by the agent and read back later. It is durable, it evolves with the agent, and it must stay consistent across sessions.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARISON TABLE -->
+    <section>
+      <div class="section-label">Side By Side</div>
+      <h2>How they differ</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>&nbsp;</th><th>RAG / Vector DB</th><th>Agent Memory (ExergyNet)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Primary job</strong></td><td>Ground answers in a document corpus</td><td>Persist the agent's own evolving state</td></tr>
+            <tr><td><strong>Who writes it</strong></td><td>Usually pre-loaded, read-only</td><td>The agent, continuously, as it operates</td></tr>
+            <tr><td><strong>Retrieval basis</strong></td><td>Approximate semantic similarity</td><td>Deterministic, content-addressed</td></tr>
+            <tr><td><strong>Repeatability</strong></td><td>Can drift as index/embeddings change</td><td>Same query + committed state &rarr; same bytes</td></tr>
+            <tr><td><strong>Verifiability</strong></td><td>Typically none on the result</td><td>SHA-256 content hash on each result</td></tr>
+            <tr><td><strong>At scale</strong></td><td>Recall/precision tuning as corpus grows</td><td>Active context stays bounded as state grows</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:680px;margin-top:1rem;font-size:13px;color:var(--text-faint);">This is a distinction of purpose, not a verdict — a well-built RAG pipeline and persistent agent memory are complementary, and many systems run both.</p>
+    </section>
+
+    <!-- WHEN TO USE WHICH -->
+    <section>
+      <div class="section-label">Choosing</div>
+      <h2>When to use which</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Reach for RAG when&hellip;</h4>
+          <p style="font-size:14px;">You need to answer questions over a body of reference documents — docs, tickets, a knowledge base — and approximate semantic recall is exactly what you want.</p>
+        </div>
+        <div class="card accent-border">
+          <h4>Reach for agent memory when&hellip;</h4>
+          <p style="font-size:14px;">The agent must remember its own history reliably across sessions, you need the same query to return the same evidence every time, and you want that evidence to be verifiable rather than best-effort.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW EXERGYNET FITS -->
+    <section>
+      <div class="section-label">How ExergyNet Fits</div>
+      <h2>Deterministic memory, not another vector store</h2>
+      <p style="max-width:680px;">ExergyNet is built for the memory job: content-addressed, deterministic retrieval of an agent's persistent state, with a bounded evidence window so the prompt does not grow with the history. It complements a RAG layer rather than replacing it — RAG grounds answers in reference knowledge; ExergyNet keeps the agent's own state durable, consistent, and checkable.</p>
+      <p style="margin-top:1rem;font-size:13px;color:var(--text-faint);">See <a href="ai-agent-memory.html" style="color:var(--accent);">AI Agent Memory</a> for the architecture, or <a href="context-window-vs-memory.html" style="color:var(--accent);">Context Window vs. Memory</a> for why prompt-stuffing isn't the answer.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>Add durable memory to your agent</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="ai-agent-memory.html" class="btn btn-primary">AI Agent Memory</a>
+          <a href="mcp-memory-server.html" class="btn btn-secondary">MCP Memory Server</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

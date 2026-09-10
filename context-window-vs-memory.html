@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Context Window vs. Memory | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="A bigger context window is not long-term memory. Understand the difference between an LLM's context window and persistent agent memory — and why decoupling stored state from active context is the scalable path.">
+<link rel="canonical" href="https://exergynet.org/context-window-vs-memory.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+
+  <div id="site-header"></div>
+
+<main class="page">
+
+  <div class="page-header">
+    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
+    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
+
+    <div class="container">
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Concepts</div>
+      <h1>Context Window<br><span class="accent">vs. Memory</span></h1>
+      <p class="hero-sub">"Just use a bigger context window" is the most common answer to agent memory — and the most misleading. A context window is working space for one request. Memory is state that persists across all of them. Confusing the two is why agents forget, and why prompts get expensive.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- DEFINITIONS -->
+    <section>
+      <div class="section-label">Definitions</div>
+      <h2>Two different things</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Context window</h4>
+          <p style="font-size:14px;">The fixed maximum number of tokens a model can read in a single request. It is temporary, per-call working space. When the request ends, it is gone. Everything in it is paid for — in latency and cost — every time you send it.</p>
+        </div>
+        <div class="card">
+          <h4>Persistent memory</h4>
+          <p style="font-size:14px;">The durable, growing body of what an agent has learned and done, held outside any single request. It survives sessions and restarts, and it can grow far larger than any context window.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY BIGGER DOESN'T FIX IT -->
+    <section>
+      <div class="section-label">Why Bigger Windows Don't Solve It</div>
+      <h2>Three reasons scale wins the argument</h2>
+      <div class="card">
+        <ul class="spec-list">
+          <li><span class="spec-key">Hard ceiling</span> <span class="spec-val">Every model has a maximum. Past it, injecting the full history is simply rejected — the request cannot run.</span></li>
+          <li><span class="spec-key">Rising cost</span>  <span class="spec-val">Re-sending accumulated state means paying prefill cost for the whole history on every turn. Growth compounds.</span></li>
+          <li><span class="spec-key">Signal loss</span>  <span class="spec-val">As you pack more in, the relevant evidence competes with everything else. More context is not more precision.</span></li>
+        </ul>
+      </div>
+      <p style="max-width:680px;margin-top:1.25rem;">A larger window raises the ceiling. It does not change the shape of the problem: if memory lives inside the prompt, its cost grows with everything the agent has ever accumulated.</p>
+    </section>
+
+    <!-- THE DECOUPLING PRINCIPLE -->
+    <section>
+      <div class="section-label">The Principle</div>
+      <h2>Decouple stored state from active context</h2>
+      <p style="max-width:680px;margin-bottom:1.25rem;">The scalable move is to stop treating accumulated state and active context as the same resource. Let stored state grow without bound. For each query, resolve a small, relevant slice of it and hand only that to the model. The persistent corpus can expand indefinitely while what the model actually reads per query stays bounded by relevance, not by history.</p>
+      <div class="card accent-border">
+        <p style="font-size:14px;margin:0;"><strong>Stored state grows. Active context does not have to.</strong> This is the design principle behind ExergyNet's <a href="ai-agent-memory.html" style="color:var(--accent);">agent memory</a>: externalize the state, retrieve a bounded evidence window, keep the inference payload small regardless of how much the agent has accumulated.</p>
+      </div>
+      <p style="margin-top:1rem;font-size:13px;color:var(--text-faint);">For the measured behavior of active model-facing context as the underlying corpus scales, see <a href="benchmarks.html" style="color:var(--accent);">Benchmarks &amp; Evidence</a>.</p>
+    </section>
+
+    <!-- WHAT IT ENABLES -->
+    <section>
+      <div class="section-label">What This Enables</div>
+      <h2>Small prompts, long memory</h2>
+      <p style="max-width:680px;">When state is externalized, an agent can accumulate an effectively unlimited history while each inference call stays lean and predictable. Cost stops tracking total history and starts tracking per-query relevance. The accelerator processes a bounded evidence window instead of an ever-growing transcript — which is the difference between an agent that scales and one that hits a wall.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" style="border-top:1px solid var(--border);">
+      <div class="container">
+        <h2>See the architecture</h2>
+        <div class="btn-row" style="justify-content:center;">
+          <a href="ai-agent-memory.html" class="btn btn-primary">AI Agent Memory</a>
+          <a href="rag-vs-agent-memory.html" class="btn btn-secondary">RAG vs. Agent Memory</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+  <div id="site-footer"></div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
