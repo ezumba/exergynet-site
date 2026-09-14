@@ -1,0 +1,44 @@
+{
+  "_note": "Executed evidence. Module logic + REAL PostgreSQL 18.4 (embedded) + the REAL biological_proxy booted over HTTP. No mainnet tx, no funds, no keys.",
+  "generated": "2026-09-13",
+  "engine": { "node": "v26.1.0", "postgres": "PostgreSQL 18.4 (embedded-postgres, real server, no Docker)" },
+  "module_logic_tests": { "config_fail_closed": "PASS 8/8", "deposit_idempotency_atomicity": "PASS 12/12", "concurrent_and_health": "PASS 5/5", "total": "25/25" },
+  "real_postgres_db_layer": {
+    "runner": "artifacts/day1-mainnet-release/ci/pg-deposit-tests.mjs", "result": "PASS", "failures": 0,
+    "checks": ["migration_up","schema_assertions","migration_down","migration_reapply","atomicity_failure_injection(partial_credit_states=0)","atomicity_credit_once","concurrency_16_parallel(credits=1)","concurrency_after_reconnect","same_tx_different_logindex"]
+  },
+  "real_backend_http_integration": {
+    "_note": "The ACTUAL biological_proxy/index.js was booted (fresh embedded Postgres, controllable local JSON-RPC double, test config, NO production secrets) and its real /api/deposit/claim route exercised over HTTP. Booted 3x (incl. restart).",
+    "runner": "artifacts/day1-mainnet-release/ci/boot-integration.mjs",
+    "result": "PASS", "failures": 0, "checks_passed": 15,
+    "checks": {
+      "health_CONFIG_INCOMPLETE_no_wallet": "PASS",
+      "claim_503_when_no_wallet": "PASS (no crash, no testnet fallback)",
+      "backend_boot_fresh_db": "PASS",
+      "health_READY_with_wallet": "PASS",
+      "valid_confirmed_transfer_credit_once": "PASS",
+      "replay_no_double_credit": "PASS",
+      "same_tx_different_logindex_independent": "PASS",
+      "wrong_token_rejected": "PASS",
+      "wrong_receiver_rejected": "PASS",
+      "reverted_tx_rejected": "PASS",
+      "insufficient_confirmations_pending": "PASS",
+      "wrong_chain_rejected": "PASS",
+      "unknown_account_fail_closed_no_partial_state": "PASS",
+      "concurrent_replay_exactly_one_credit": "PASS",
+      "restart_replay_no_double_credit": "PASS"
+    }
+  },
+  "integration_changes": {
+    "files": {
+      "portal/biological_proxy/day1_mainnet.js": { "sha256_16": "9780fb1be9831e3e", "role": "day-1 mainnet config + deposit verification/idempotency + Express router + ensureSchema" },
+      "portal/biological_proxy/index.js": { "sha256_16": "78d3b07b29cd2e8c", "role": "integrated: testnet constants removed, /api/deposit/claim delegated to day1 module, initDb calls ensureSchema" }
+    },
+    "removed_testnet_liabilities": ["hardcoded test USDC (was :89)","retired OPERATOR_WALLET (was :90)","BASE_SEPOLIA_RPC (was :91)","BASE_CHAIN_ID||'84532' (was :2045)","BASE_USDC_CONTRACT||testUSDC (was :2044)"],
+    "also_fixed": "latent fresh-init ordering bug in initDb (ALTER TABLE meet_join_requests before its CREATE) — only bit a truly fresh DB; production's table pre-existed"
+  },
+  "invariants": { "DEPOSIT_RECEIVER_PRIVATE_KEY_REQUIRED_BY_BACKEND": false, "DAY1_HELIUS_DEPENDENCY": false, "RUNTIME_TESTNET_DEFAULTS_IN_INTEGRATED_BACKEND": 0 },
+  "NOT_run": {
+    "portal_production_build": "BLOCKED — FRONTEND_SOURCE_INCOMPLETE: the Next.js portal build definition (package.json/next.config/tsconfig/lockfile) exists in NO ref/object/deploy-remote. See docs/FRONTEND_SOURCE_RECOVERY.md."
+  }
+}

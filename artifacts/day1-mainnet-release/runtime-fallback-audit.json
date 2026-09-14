@@ -1,0 +1,20 @@
+{
+  "_note": "Runtime-fallback audit. Standalone day-1 modules are clean; the LIVE backend still carries testnet fallbacks that integration MUST remove.",
+  "generated": "2026-09-13",
+  "standalone_day1_modules": {
+    "scanned": ["base-mainnet.config.js", "deposit-indexer.js", "health.js"],
+    "RUNTIME_84532_DEFAULTS": 0,
+    "RUNTIME_TEST_USDC_DEFAULTS": 0,
+    "RUNTIME_RETIRED_WALLET_DEFAULTS": 0,
+    "SILENT_TESTNET_FALLBACKS": 0
+  },
+  "integrated_biological_proxy": {
+    "file": "portal/biological_proxy/index.js + portal/biological_proxy/day1_mainnet.js",
+    "status": "INTEGRATED + VERIFIED CLEAN 2026-09-13",
+    "RUNTIME_84532_DEFAULTS": 0,
+    "RUNTIME_TEST_USDC_DEFAULTS": 0,
+    "RUNTIME_RETIRED_WALLET_DEFAULTS": 0,
+    "SILENT_TESTNET_FALLBACKS": 0,
+    "note": "Removed hardcoded test USDC / retired OPERATOR_WALLET / BASE_SEPOLIA_RPC and the BASE_CHAIN_ID||'84532' / BASE_USDC_CONTRACT||testUSDC fallbacks. /api/deposit/claim now delegates to day1_mainnet.js (chain 8453, canonical USDC, DEPOSIT_RECEIVING_WALLET, (chain_id,tx_hash,log_index) idempotency). The retired wallet remains ONLY as a denylist guard (day1_mainnet.js:17), which is correct."
+  }
+}

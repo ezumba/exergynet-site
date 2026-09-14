@@ -1,0 +1,44 @@
+{
+  "_note": "Machine-readable day-1 module test results (actually executed this session).",
+  "generated": "2026-09-13",
+  "config_fail_closed": {
+    "runner": "node (base-mainnet.config.js)",
+    "result": "PASS", "passed": 8, "failed": 0,
+    "cases": {
+      "reject_empty": true, "reject_chain_84532": true, "reject_test_usdc": true,
+      "reject_retired_wallet_0xbd1e": true, "reject_zero_wallet": true, "reject_missing_wallet": true,
+      "reject_rpc_chain_disagreement": true, "accept_valid_mainnet": true
+    }
+  },
+  "deposit_idempotency_atomicity": {
+    "runner": "node deposit.test.js",
+    "result": "PASS", "passed": 12, "failed": 0,
+    "highlights": {
+      "credit_once": true, "replay_no_double_credit": true, "two_logs_one_tx_independent_by_logIndex": true,
+      "wrong_token_reject": true, "wrong_recipient_reject": true, "failed_tx_reject": true,
+      "unconfirmed_no_credit": true, "zero_value_reject": true, "unknown_account_fail_closed": true,
+      "atomicity_failure_no_mutation": true, "usdc_6dec_exact": true
+    }
+  },
+  "concurrent_and_health": {
+    "runner": "node extra.test.js",
+    "result": "PASS", "passed": 5, "failed": 0,
+    "CONCURRENT_REPLAY_CREDITS": 1,
+    "health_config_incomplete_when_wallet_absent": true,
+    "health_config_incomplete_when_wallet_retired": true,
+    "health_ready_with_valid_wallet": true,
+    "health_no_secret_leak": true
+  },
+  "totals": { "module_tests_passed": 25, "module_tests_failed": 0 },
+  "invariants": {
+    "DEPOSIT_RECEIVER_PRIVATE_KEY_REQUIRED_BY_BACKEND": false,
+    "DAY1_HELIUS_DEPENDENCY": false
+  },
+  "UPDATE_2026-09-13": {
+    "real_postgres_migration_up_down_reapply": "RESOLVED — ran against real PostgreSQL 18.4 (embedded-postgres, userspace, no Docker). PASS. See integration-test-results.json + migration-manifest.json.",
+    "real_postgres_atomicity_and_concurrency": "RESOLVED — PASS (partial_credit_states=0, concurrent_replay_credits=1). See concurrency-test-results.json.",
+    "mainnet_readonly_smoke": "RESOLVED — PASS against live Base mainnet. See mainnet-readonly-smoke.json.",
+    "integrated_backend_HTTP_server_tests": "STILL NOT DONE — DB layer proven; full Express server (7030-line dirty-tree biological_proxy) not booted/integrated here.",
+    "portal_production_build": "STILL NOT POSSIBLE IN TREE — no portal/package.json or next.config.* present."
+  }
+}

@@ -6,6 +6,7 @@
 // what the Android app actually calls in production — that's a separate Rust
 // service on Carrier EC2 (see deployed-snapshots/carrier-exergynet_api/).
 require('dotenv').config({ path: __dirname + '/.env' });
+require('dotenv').config({ path: __dirname + '/.env.authority' });
 'use strict';
 const multer = require('multer');
 const path   = require('path');
@@ -85,9 +86,9 @@ setInterval(() => { const now = Date.now(); for (const [k, v] of _meetHits) { if
 // ── Constants ─────────────────────────────────────────────────────────────────
 const JWT_SECRET    = process.env.JWT_SECRET || 'dev-secret-CHANGE-IN-PROD';
 const SALT_ROUNDS   = 12;
-const USDC_ADDRESS  = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
-const OPERATOR_WALLET = '0xbd1e790f6040FA62797671B84a50025a0133109C';
-const BASE_SEPOLIA_RPC = 'https://sepolia.base.org';
+// Day-1 Base Mainnet: deposit config/verification/crediting live in ./day1_mainnet.js.
+// Testnet USDC / retired operator wallet / Sepolia RPC constants removed (no prod fallback).
+const day1 = require('./day1_mainnet.js');
 const ERC20_TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 const APEX_BASE_URL    = process.env.APEX_BASE_URL || 'https://explorer-api.exergynet.org';
 const APEX_TOPUP_KEY   = process.env.APEX_TOPUP_KEY || 'SOVEREIGN_BYPASS';
@@ -138,24 +139,115 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
     if (developerId && amountCents > 0) {
       // 1 USD = 1,000,000 micro-USDC; 1 cent = 10,000 micro-USDC
       const microUsdc = amountCents * 10000;
-      await pool.query(
-        `UPDATE biological_developers
-           SET usdc_micro_balance = usdc_micro_balance + $1,
-               active = TRUE
-         WHERE id = $2`,
-        [microUsdc, developerId]
+
+      // ── Billing idempotency: skip if this Stripe event was already processed ──
+      // billing_events.stripe_event_id is PRIMARY KEY — INSERT…ON CONFLICT DO NOTHING
+      // returns 0 rowCount when the event was already handled (retry/duplicate delivery).
+      const idem = await pool.query(
+        `INSERT INTO billing_events (stripe_event_id, event_type, developer_id, amount_micro)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (stripe_event_id) DO NOTHING`,
+        [event.id, event.type, developerId, microUsdc]
       );
-      console.log(`[webhook/stripe] credited ${microUsdc} micro-USDC to ${developerId}`);
-      await pool.query(
-        `UPDATE biological_developers SET stripe_session_credited = COALESCE(stripe_session_credited, '[]'::jsonb) || $1::jsonb WHERE id = $2`,
-        [JSON.stringify([session.id]), developerId]
-      ).catch(() => {}); // best-effort; column may not exist yet
-      // Sync to L0 miners ledger so the siphon sees the balance.
-      const devRow = await pool.query(`SELECT node_id FROM biological_developers WHERE id = $1`, [developerId]);
-      const nodeId = devRow.rows[0]?.node_id;
-      if (nodeId) creditApexMiner(nodeId, microUsdc);
+      if (idem.rowCount === 0) {
+        console.log(`[webhook/stripe] duplicate event ${event.id} — skipping credit`);
+      } else {
+        await pool.query(
+          `UPDATE biological_developers
+             SET usdc_micro_balance = usdc_micro_balance + $1,
+                 active = TRUE
+           WHERE id = $2`,
+          [microUsdc, developerId]
+        );
+        // Append to funding_events ledger for audit trail
+        await pool.query(
+          `INSERT INTO funding_events (developer_id, event_type, amount_micro, stripe_event_id, note)
+           VALUES ($1, 'STRIPE_CREDIT', $2, $3, $4)`,
+          [developerId, microUsdc, event.id, `Stripe checkout session ${session.id}`]
+        ).catch(e => console.error('[webhook/stripe] funding_events insert failed:', e.message));
+        console.log(`[webhook/stripe] credited ${microUsdc} micro-USDC to ${developerId}`);
+        await pool.query(
+          `UPDATE biological_developers SET stripe_session_credited = COALESCE(stripe_session_credited, '[]'::jsonb) || $1::jsonb WHERE id = $2`,
+          [JSON.stringify([session.id]), developerId]
+        ).catch(() => {}); // best-effort; column may not exist yet
+        // Sync to L0 miners ledger so the siphon sees the balance.
+        const devRow = await pool.query(`SELECT node_id FROM biological_developers WHERE id = $1`, [developerId]);
+        const nodeId = devRow.rows[0]?.node_id;
+        if (nodeId) creditApexMiner(nodeId, microUsdc);
+      }
     }
   }
+
+  // ── charge.refunded — debit refunded amount from developer balance ──────────
+  if (event.type === 'charge.refunded') {
+    const charge = event.data.object;
+    const refundedAmountCents = charge.amount_refunded ?? 0;
+    if (refundedAmountCents > 0) {
+      const refundMicro = refundedAmountCents * 10000;
+      // Find developer via charge metadata or customer id
+      const devId = charge.metadata?.developer_id;
+      if (devId) {
+        // Idempotency: use event.id in billing_events
+        const idemRefund = await pool.query(
+          `INSERT INTO billing_events (stripe_event_id, event_type, developer_id, amount_micro)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT (stripe_event_id) DO NOTHING`,
+          [event.id, event.type, devId, -refundMicro]
+        );
+        if (idemRefund.rowCount > 0) {
+          // Debit the refunded amount from balance (floor at 0)
+          await pool.query(
+            `UPDATE biological_developers
+               SET usdc_micro_balance = GREATEST(0, usdc_micro_balance - $1)
+             WHERE id = $2`,
+            [refundMicro, devId]
+          );
+          await pool.query(
+            `INSERT INTO funding_events (developer_id, event_type, amount_micro, stripe_event_id, note)
+             VALUES ($1, 'REFUND', $2, $3, $4)`,
+            [devId, -refundMicro, event.id, `Stripe refund charge ${charge.id} amount_refunded=${refundedAmountCents}¢`]
+          ).catch(e => console.error('[webhook/stripe/refund] funding_events:', e.message));
+          console.log(`[webhook/stripe] refund processed: -${refundMicro} µUSDC for developer ${devId}`);
+        } else {
+          console.log(`[webhook/stripe] duplicate refund event ${event.id} — skipping`);
+        }
+      } else {
+        console.warn(`[webhook/stripe] charge.refunded: no developer_id in charge metadata for charge ${charge.id}`);
+      }
+    }
+  }
+
+  // ── charge.dispute.created — freeze account immediately ────────────────────
+  if (event.type === 'charge.dispute.created') {
+    const dispute = event.data.object;
+    const chargeId = dispute.charge;
+    const devId = dispute.metadata?.developer_id;
+    if (devId) {
+      await pool.query(
+        `UPDATE biological_developers
+           SET account_frozen = TRUE,
+               frozen_reason  = $1,
+               frozen_at      = now()
+         WHERE id = $2 AND (account_frozen IS NULL OR account_frozen = FALSE)`,
+        ['CHARGEBACK_PENDING', devId]
+      );
+      await pool.query(
+        `INSERT INTO billing_events (stripe_event_id, event_type, developer_id, amount_micro)
+         VALUES ($1, $2, $3, 0)
+         ON CONFLICT (stripe_event_id) DO NOTHING`,
+        [event.id, event.type, devId]
+      );
+      await pool.query(
+        `INSERT INTO funding_events (developer_id, event_type, amount_micro, stripe_event_id, note)
+         VALUES ($1, 'CHARGEBACK_FREEZE', 0, $2, $3)`,
+        [devId, event.id, `Dispute created for charge ${chargeId}`]
+      ).catch(e => console.error('[webhook/stripe/dispute] funding_events:', e.message));
+      console.warn(`[webhook/stripe] account ${devId} FROZEN — chargeback dispute on charge ${chargeId}`);
+    } else {
+      console.warn(`[webhook/stripe] charge.dispute.created: no developer_id in dispute metadata for charge ${chargeId}`);
+    }
+  }
+
   res.json({ received: true });
 });
 
@@ -176,6 +268,7 @@ const pool = new Pool({
 });
 
 async function initDb() {
+  await day1.ensureSchema(pool); // Day-1 Base Mainnet deposit ledger (usdc_deposits)
   await pool.query(`
     CREATE TABLE IF NOT EXISTS biological_developers (
       id               TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -365,7 +458,6 @@ async function initDb() {
     CREATE INDEX IF NOT EXISTS meet_messages_room_idx ON meet_messages(room_id, created_at ASC);
 
     ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS is_private BOOLEAN DEFAULT false;
-    ALTER TABLE meet_join_requests ADD COLUMN IF NOT EXISTS requester_ip TEXT NOT NULL DEFAULT 'unknown';
     ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ;
     ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS duration_minutes INTEGER DEFAULT 60;
     ALTER TABLE meet_rooms ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'UTC';
@@ -384,6 +476,7 @@ async function initDb() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
     CREATE INDEX IF NOT EXISTS meet_join_req_room_idx ON meet_join_requests(room_id, status);
+    ALTER TABLE meet_join_requests ADD COLUMN IF NOT EXISTS requester_ip TEXT NOT NULL DEFAULT 'unknown';
 
     CREATE TABLE IF NOT EXISTS device_bindings (
       fingerprint       TEXT PRIMARY KEY,
@@ -439,6 +532,23 @@ async function initDb() {
     );
     CREATE UNIQUE INDEX IF NOT EXISTS cowork_vault_links_unique_idx ON cowork_vault_links(session_id, xlmp_root);
     ALTER TABLE cowork_vault_links ADD COLUMN IF NOT EXISTS label TEXT;
+
+    CREATE TABLE IF NOT EXISTS omega_verification_receipts (
+      verification_request_hash  TEXT PRIMARY KEY,
+      application_id             TEXT NOT NULL,
+      challenge_id               TEXT NOT NULL,
+      rules_hash                 TEXT NOT NULL,
+      developer_id               TEXT NOT NULL,
+      winner                     TEXT NOT NULL,
+      winning_score              BIGINT NOT NULL,
+      result_code                TEXT NOT NULL,
+      result_hash                TEXT NOT NULL,
+      authority_sig              TEXT NOT NULL,
+      receipt_json               JSONB NOT NULL,
+      created_at                 TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_ovr_developer_id ON omega_verification_receipts(developer_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ovr_challenge_id ON omega_verification_receipts(challenge_id);
   `);
   console.log('[DB] Tables ready');
 }
@@ -1891,132 +2001,12 @@ app.get('/developer/stats', requireAuth, async (req, res) => {
   }
 });
 
-// ── POST /api/deposit/claim ───────────────────────────────────────────────────
-app.post('/api/deposit/claim', requireAuth, async (req, res) => {
-  const { tx_hash, usdc_amount_micro } = req.body || {};
-  if (!tx_hash || usdc_amount_micro == null) {
-    return res.status(400).json({ error: 'tx_hash and usdc_amount_micro required' });
-  }
-
-  // Quick dedup check before hitting the RPC
-  try {
-    const dup = await pool.query(
-      'SELECT tx_hash FROM claimed_deposits WHERE tx_hash = $1',
-      [tx_hash]
-    );
-    if (dup.rows.length > 0) {
-      return res.status(409).json({ error: 'Deposit already claimed' });
-    }
-  } catch (err) {
-    console.error('[deposit/claim dedup]', err);
-    return res.status(500).json({ error: 'Deposit verification failed' });
-  }
-
-  // Verify on Base Sepolia
-  try {
-    const rpcRes = await fetch(BASE_SEPOLIA_RPC, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0', id: 1,
-        method:  'eth_getTransactionReceipt',
-        params:  [tx_hash],
-      }),
-    });
-    const rpcData = await rpcRes.json();
-    const receipt = rpcData.result;
-
-    if (!receipt)            return res.status(400).json({ error: 'Transaction not found or not yet confirmed' });
-    if (receipt.status !== '0x1') return res.status(400).json({ error: 'Transaction reverted on-chain' });
-
-    // Find USDC Transfer log with operator as recipient (topic[2])
-    const operatorPadded = OPERATOR_WALLET.slice(2).toLowerCase().padStart(64, '0');
-    const transferLog = (receipt.logs || []).find(
-      (log) =>
-        log.address?.toLowerCase() === USDC_ADDRESS.toLowerCase() &&
-        log.topics?.[0] === ERC20_TRANSFER_TOPIC &&
-        log.topics?.[2]?.slice(2).toLowerCase() === operatorPadded
-    );
-
-    if (!transferLog) {
-      return res.status(400).json({ error: 'No USDC transfer to operator wallet found in this transaction' });
-    }
-
-    const onChainMicro = parseInt(transferLog.data, 16);
-    const claimed      = parseInt(usdc_amount_micro);
-
-    // Allow ±1 micro-USDC for rounding
-    if (Math.abs(onChainMicro - claimed) > 1) {
-      return res.status(400).json({
-        error: `Amount mismatch — on-chain: ${onChainMicro} µUSDC, claimed: ${claimed} µUSDC`,
-      });
-    }
-
-    // Atomic insert + credit (dedup on tx_hash PK prevents double-claim races)
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      await client.query(
-        'INSERT INTO claimed_deposits (tx_hash, developer_id) VALUES ($1, $2)',
-        [tx_hash, req.developerId]
-      );
-      await client.query(
-        `UPDATE biological_developers
-            SET usdc_micro_balance = usdc_micro_balance + $1,
-                active = TRUE
-          WHERE id = $2`,
-        [onChainMicro, req.developerId]
-      );
-      await client.query('COMMIT');
-    } catch (err) {
-      await client.query('ROLLBACK');
-      if (err.code === '23505') {
-        return res.status(409).json({ error: 'Deposit already claimed (concurrent request)' });
-      }
-      throw err;
-    } finally {
-      client.release();
-    }
-
-    console.log(`[deposit/claim] credited ${onChainMicro} µUSDC → developer ${req.developerId}`);
-    // Sync to L0 miners ledger so the siphon sees the balance.
-    const devRow = await pool.query(`SELECT node_id, email FROM biological_developers WHERE id = $1`, [req.developerId]);
-    const nodeId = devRow.rows[0]?.node_id;
-    if (nodeId) creditApexMiner(nodeId, onChainMicro);
-
-    // LNES-65/LNES-66: credit portal voice credits proportionally to the USDC deposit.
-    // 1 USD = 10,000 voice credits (same rate as Stripe billing/confirm/route.ts).
-    // Fire-and-forget — biological_proxy DB is already credited; portal sync is best-effort.
-    const devEmail = devRow.rows[0]?.email;
-    const billingAdminToken = process.env.BILLING_ADMIN_TOKEN;
-    if (devEmail && billingAdminToken) {
-      const voiceCredits = Math.round((onChainMicro / 1_000_000) * 10_000);
-      if (voiceCredits > 0) {
-        fetch('https://portal.exergynet.org/api/billing/add-credits', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-billing-admin-token': billingAdminToken,
-          },
-          body: JSON.stringify({ email: devEmail, credits: voiceCredits }),
-        })
-          .then(r => r.ok
-            ? console.log(`[deposit/claim] voice-credits synced ${voiceCredits} → ${devEmail}`)
-            : r.text().then(t => console.error(`[deposit/claim] voice-credits HTTP ${r.status}: ${t.slice(0, 120)}`))
-          )
-          .catch(e => console.error('[deposit/claim] voice-credits sync failed:', e.message));
-      }
-    }
-    res.json({
-      ok:           true,
-      credited_micro: onChainMicro,
-      credited_usd:   (onChainMicro / 1_000_000).toFixed(4),
-    });
-  } catch (err) {
-    console.error('[deposit/claim]', err);
-    res.status(500).json({ error: 'Deposit verification failed' });
-  }
-});
+// ── Day-1 Base Mainnet deposit route (mainnet, watch-only) ─────────────────────
+// POST /api/deposit/claim + GET /api/deposit/health, mounted from ./day1_mainnet.js.
+// Verifies chain 8453 + canonical USDC + receiving wallet + confirmations; credits
+// atomically, idempotent on (chain_id, tx_hash, log_index). CONFIG_INCOMPLETE until
+// DEPOSIT_RECEIVING_WALLET is supplied (server still boots). No testnet fallback.
+day1.mountDeposit(app, { pool, requireAuth });
 
 // ── POST /api/create-checkout-session ─────────────────────────────────────────
 app.post('/api/create-checkout-session', requireAuth, async (req, res) => {
@@ -2199,21 +2189,38 @@ app.post('/v1/chat/completions', async (req, res) => {
   }
 
   // Helper: record job + deduct balance after a successful inference
+  // Uses SELECT FOR UPDATE to prevent concurrent-spend race conditions.
   async function recordJob(tokensYielded, prompt) {
     if (!devId || tokensYielded <= 0) return;
     const microUsdcCost = Math.max(1, Math.floor(tokensYielded * 400));
     const promptHash = prompt ? crypto.createHash('sha256').update(String(prompt)).digest('hex').slice(0, 16) : null;
+    const jobClient = await pool.connect();
     try {
-      await pool.query(
+      await jobClient.query('BEGIN');
+      const { rows: lockRows } = await jobClient.query(
+        'SELECT usdc_micro_balance, account_frozen FROM biological_developers WHERE id = $1 FOR UPDATE',
+        [devId]
+      );
+      if (!lockRows.length) { await jobClient.query('ROLLBACK'); return; }
+      if (lockRows[0].account_frozen) {
+        await jobClient.query('ROLLBACK');
+        console.warn(`[v1/chat record] account ${devId} is frozen — billing skipped`);
+        return;
+      }
+      await jobClient.query(
         `UPDATE biological_developers SET usdc_micro_balance = GREATEST(0, usdc_micro_balance - $1) WHERE id = $2`,
         [microUsdcCost, devId]
       );
-      await pool.query(
+      await jobClient.query(
         `INSERT INTO en_jobs (developer_id, prompt_hash, tokens_yielded, zk_proof_status) VALUES ($1, $2, $3, 'settled')`,
         [devId, promptHash, tokensYielded]
       );
+      await jobClient.query('COMMIT');
     } catch (e) {
+      await jobClient.query('ROLLBACK').catch(() => {});
       console.error('[v1/chat record]', e.message);
+    } finally {
+      jobClient.release();
     }
   }
 
@@ -5401,6 +5408,24 @@ app.get('/api/admin/blog/articles', requireAuth, async (req, res) => {
   }
 });
 
+// GET /api/admin/blog/articles/:id — admin single article (full editable record)
+// Returns the COMPLETE row (including content + category), which the list
+// endpoint above intentionally omits. The article editor loads from here so it
+// always has the real body to edit and can never overwrite it with an empty one.
+app.get('/api/admin/blog/articles/:id', requireAuth, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT * FROM articles WHERE id = $1`,
+      [req.params.id]
+    );
+    if (!rows[0]) return res.status(404).json({ error: 'Article not found' });
+    res.json({ article: rows[0] });
+  } catch (e) {
+    console.error('[BLOG] admin get error:', e);
+    res.status(500).json({ error: 'Failed to fetch article' });
+  }
+});
+
 // POST /api/admin/blog/review — Vanguard content safety review before publish
 // Body: { title, subtitle?, content, tags? }
 // Returns: { approved, verdict, reason, suggestions? }
@@ -5675,6 +5700,1184 @@ app.get('/api/admin/build/build-log', requireAdmin('super_admin', 'ops'), (req, 
     res.status(500).json({ error: e.message });
   }
 });
+
+// ── LNES-118: Omega Agent Economic Lifecycle ─────────────────────────────────
+// APPLICATION UNIT SEPARATION (LNES-118.1 audit fix):
+//   APPLICATION_RHO_UNIT = µRHO (micro-RHO). 1 display RHO = 1,000,000 µRHO.
+//   ONCHAIN_RHO_DECIMALS = 18 (ERC20 standard, completely separate convention).
+//   These are NOT the same base unit. µRHO is an application accounting unit.
+//   Never conflate µRHO with EVM wei-style on-chain RHO token decimals.
+//
+// ARITHMETIC RULE: all authoritative economic arithmetic uses BigInt.
+// pg returns PostgreSQL BIGINT columns as strings (to avoid IEEE-754 loss).
+// Always BigInt() those strings before comparing or computing.
+// Only convert to Number at the API display boundary (toRho).
+// ─────────────────────────────────────────────────────────────────────────────
+
+const OMEGA_RHO_SCALE_B = 1_000_000n;       // BigInt, used for arithmetic
+
+// OMEGA_AUTHORITY_MODE guard: MOCK authority is only created in LOCAL_TEST environments.
+// Production servers must NOT set this to LOCAL_TEST. Without it, budget creation
+// does not manufacture MOCK authority.
+const OMEGA_AUTHORITY_MODE = process.env.OMEGA_AUTHORITY_MODE || 'NONE';
+
+// Exact string-based parser: decimal RHO string/number → µRHO BigInt. No floating point.
+// "1" → 1000000n, "1.5" → 1500000n, "0.000001" → 1n
+// Rejects: NaN, Infinity, scientific notation, >6 fractional digits.
+function parseRhoToMicroRho(value) {
+  const s = String(value == null ? '' : value).trim();
+  if (!s) throw new Error('RHO value is required');
+  if (s === 'NaN' || s === 'Infinity' || s === '-Infinity') throw new Error(`Invalid RHO value: ${s}`);
+  if (/[eE]/.test(s)) throw new Error('Scientific notation not supported for RHO values');
+  const negative = s.startsWith('-');
+  const abs = negative ? s.slice(1) : s;
+  const dotCount = (abs.match(/\./g) || []).length;
+  if (dotCount > 1) throw new Error('Invalid decimal format');
+  const dotIdx = abs.indexOf('.');
+  let intPart, fracPart;
+  if (dotIdx === -1) { intPart = abs; fracPart = ''; }
+  else { intPart = abs.slice(0, dotIdx); fracPart = abs.slice(dotIdx + 1); }
+  if (!/^\d*$/.test(intPart) || !/^\d*$/.test(fracPart)) throw new Error('Invalid characters in RHO value');
+  if ((intPart + fracPart).length === 0) throw new Error('RHO value is empty');
+  if (fracPart.length > 6) throw new Error(`Too many fractional digits: ${fracPart.length} (max 6)`);
+  const padded = fracPart.padEnd(6, '0');
+  const microStr = (intPart || '0') + padded;
+  const result = BigInt(microStr);
+  return negative ? -result : result;
+}
+
+// Exact BigInt → decimal RHO string. No Number() conversion.
+// 0n → "0", 1n → "0.000001", 1000000n → "1", 1500000n → "1.5"
+function formatMicroRho(micro) {
+  const b = BigInt(micro);
+  const negative = b < 0n;
+  const abs = negative ? -b : b;
+  const scale = 1_000_000n;
+  const intPart = abs / scale;
+  const fracPart = abs % scale;
+  const fracStr = String(fracPart).padStart(6, '0').replace(/0+$/, '');
+  const decimal = fracStr ? `${intPart}.${fracStr}` : `${intPart}`;
+  return negative ? `-${decimal}` : decimal;
+}
+
+// Display-boundary converter: µRHO → Number (for activity/memory cost_rho display only).
+// Do NOT use for authoritative budget values — use formatMicroRho() instead.
+function toRho(microRho) {
+  return Number(formatMicroRho(microRho));
+}
+
+// Testnet tariffs in µRHO (BigInt — used in authoritative arithmetic only)
+const OMEGA_TARIFF_MICRO = {
+  QUERY:  150n * OMEGA_RHO_SCALE_B,   // 150,000,000 µRHO
+  RECALL: 100n * OMEGA_RHO_SCALE_B,   // 100,000,000 µRHO
+  WRITE:  250n * OMEGA_RHO_SCALE_B,   // 250,000,000 µRHO
+};
+
+// Deterministic operation authorization. All money arithmetic is BigInt.
+// No state is mutated. Safe to call repeatedly for pre-flight checks.
+async function evaluateOmegaOperation(agentId, operation, developerId, client) {
+  const db = client || pool;
+
+  const { rows: [agent] } = await db.query(
+    `SELECT id, lifecycle_state, developer_id FROM omega_agents WHERE id = $1`, [agentId]
+  );
+  if (!agent) return { authorized: false, reason: 'AGENT_NOT_FOUND' };
+  if (agent.developer_id !== developerId) return { authorized: false, reason: 'AGENT_NOT_OWNED' };
+  if (agent.lifecycle_state !== 'READY') return { authorized: false, reason: `AGENT_NOT_READY:${agent.lifecycle_state}` };
+
+  const { rows: [budget] } = await db.query(
+    `SELECT id, allocation_rho_micro, spent_rho_micro, max_per_op_rho_micro, daily_limit_rho_micro
+     FROM omega_agent_budgets WHERE agent_id = $1 AND status = 'ACTIVE'
+     ORDER BY created_at DESC LIMIT 1`,
+    [agentId]
+  );
+  if (!budget) return { authorized: false, reason: 'NO_ACTIVE_BUDGET' };
+
+  const { rows: [cap] } = await db.query(
+    `SELECT id FROM omega_agent_capabilities WHERE budget_id = $1 AND operation = $2`,
+    [budget.id, operation]
+  );
+  if (!cap) return { authorized: false, reason: `CAPABILITY_NOT_GRANTED:${operation}` };
+
+  // BigInt arithmetic — no Number conversion for authoritative checks
+  const tariff      = OMEGA_TARIFF_MICRO[operation];
+  const maxPerOp    = BigInt(budget.max_per_op_rho_micro);
+  const allocation  = BigInt(budget.allocation_rho_micro);
+  const spent       = BigInt(budget.spent_rho_micro);
+  const dailyLimit  = BigInt(budget.daily_limit_rho_micro);
+
+  if (tariff > maxPerOp)            return { authorized: false, reason: 'EXCEEDS_PER_OP_LIMIT' };
+  if (tariff > allocation - spent)  return { authorized: false, reason: 'INSUFFICIENT_BUDGET' };
+
+  const today = new Date().toISOString().slice(0, 10);
+  const { rows: [dailyRow] } = await db.query(
+    `SELECT COALESCE(SUM(cost_rho_micro), 0)::text AS daily_spent
+     FROM omega_activity WHERE agent_id = $1 AND created_at >= $2::date AND status = 'SETTLED'`,
+    [agentId, today]
+  );
+  const dailySpent = BigInt(dailyRow.daily_spent);
+  if (dailySpent + tariff > dailyLimit) return { authorized: false, reason: 'EXCEEDS_DAILY_LIMIT' };
+
+  return { authorized: true, budget_id: budget.id, cost_rho_micro: tariff.toString() };
+}
+
+// Atomic idempotency: INSERT the key record inside the caller's transaction.
+// If the key already exists (COMMITTED): return { owned: false, result }.
+// If the key exists but PENDING (race): return { owned: false, conflict: true }.
+// If we inserted successfully: return { owned: true }.
+// The caller must ROLLBACK and return the existing result if owned === false.
+async function claimIdempotencyTx(client, key, developerId, operation) {
+  if (!key) return { owned: true };
+  if (key.length > 128) return { owned: false, tooLong: true };
+  const { rowCount } = await client.query(
+    `INSERT INTO omega_idempotency_keys (key, developer_id, operation, status)
+     VALUES ($1, $2, $3, 'PENDING') ON CONFLICT (key, developer_id) DO NOTHING`,
+    [key, developerId, operation]
+  );
+  if (rowCount === 1) return { owned: true };
+  const { rows: [row] } = await client.query(
+    `SELECT status, result FROM omega_idempotency_keys
+     WHERE key = $1 AND developer_id = $2 AND expires_at > NOW()`,
+    [key, developerId]
+  );
+  if (!row) return { owned: true }; // expired — treat as new
+  if (row.status === 'COMMITTED') return { owned: false, result: row.result };
+  return { owned: false, conflict: true };
+}
+
+async function commitIdempotencyTx(client, key, developerId, result) {
+  if (!key) return;
+  await client.query(
+    `UPDATE omega_idempotency_keys SET status = 'COMMITTED', result = $3
+     WHERE key = $1 AND developer_id = $2`,
+    [key, developerId, JSON.stringify(result)]
+  );
+}
+
+// Budget shape for API responses: monetary fields are decimal strings (formatMicroRho).
+// No Number() conversion on authoritative monetary values.
+function budgetShape(b, capabilities) {
+  if (!b) return null;
+  const alloc = BigInt(b.allocation_rho_micro);
+  const spent  = BigInt(b.spent_rho_micro);
+  const avail  = alloc > spent ? alloc - spent : 0n;
+  return {
+    id: b.id,
+    allocation_rho:  formatMicroRho(alloc),
+    spent_rho:       formatMicroRho(spent),
+    available_rho:   formatMicroRho(avail),
+    max_per_op_rho:  formatMicroRho(BigInt(b.max_per_op_rho_micro)),
+    daily_limit_rho: formatMicroRho(BigInt(b.daily_limit_rho_micro)),
+    version:         b.version || b.budget_version,
+    capabilities,
+  };
+}
+
+// GET /api/omega/account
+app.get('/api/omega/account', requireAuth, async (req, res) => {
+  try {
+    const devId = req.developerId;
+    await pool.query(
+      `INSERT INTO omega_accounts (id, developer_id) VALUES ($1, $2) ON CONFLICT (developer_id) DO NOTHING`,
+      [uuidv4(), devId]
+    );
+    const { rows: [account] } = await pool.query(
+      `SELECT oa.id, oa.network, oa.status, oa.created_at,
+              d.rho_micro_balance::text AS rho_micro_balance
+       FROM omega_accounts oa
+       JOIN biological_developers d ON d.id = oa.developer_id
+       WHERE oa.developer_id = $1`,
+      [devId]
+    );
+    if (!account) return res.status(404).json({ error: 'Developer account not found' });
+    const { rows: [alloc] } = await pool.query(
+      `SELECT COALESCE(SUM(b.allocation_rho_micro), 0)::text AS allocated
+       FROM omega_agent_budgets b JOIN omega_agents a ON a.id = b.agent_id
+       WHERE a.developer_id = $1 AND b.status = 'ACTIVE'`,
+      [devId]
+    );
+    // All balance arithmetic in BigInt — no IEEE-754 loss
+    const totalMicro = BigInt(account.rho_micro_balance);
+    const allocMicro = BigInt(alloc.allocated);
+    const availMicro = totalMicro > allocMicro ? totalMicro - allocMicro : 0n;
+    res.json({
+      id: account.id, network: account.network, status: account.status,
+      total_balance_rho: formatMicroRho(totalMicro),
+      allocated_rho:     formatMicroRho(allocMicro),
+      available_rho:     formatMicroRho(availMicro),
+      authority_mode:    OMEGA_AUTHORITY_MODE,
+      created_at:        account.created_at,
+    });
+  } catch (e) {
+    console.error('[omega/account]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET /api/omega/agents
+app.get('/api/omega/agents', requireAuth, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT a.id, a.name, a.description, a.model_provider, a.model_name, a.model_id,
+              a.lifecycle_state, a.created_at, a.updated_at, a.last_active_at,
+              a.paused_at, a.revoked_at, a.expires_at,
+              b.id AS budget_id,
+              b.allocation_rho_micro::text, b.spent_rho_micro::text,
+              b.max_per_op_rho_micro::text, b.daily_limit_rho_micro::text,
+              b.version AS budget_version,
+              ea.status AS authority_status, ea.authority_source
+       FROM omega_agents a
+       LEFT JOIN omega_agent_budgets b ON b.agent_id = a.id AND b.status = 'ACTIVE'
+       LEFT JOIN omega_economic_authority ea
+         ON ea.agent_id = a.id AND ea.status NOT IN ('REVOKED','EXPIRED')
+       WHERE a.developer_id = $1 ORDER BY a.created_at DESC`,
+      [req.developerId]
+    );
+    const agents = await Promise.all(rows.map(async (r) => {
+      let capabilities = [];
+      if (r.budget_id) {
+        const { rows: caps } = await pool.query(
+          `SELECT operation FROM omega_agent_capabilities WHERE budget_id = $1`, [r.budget_id]
+        );
+        capabilities = caps.map(c => c.operation);
+      }
+      return {
+        id: r.id, name: r.name, description: r.description,
+        model: { provider: r.model_provider, name: r.model_name, id: r.model_id },
+        lifecycle_state: r.lifecycle_state,
+        created_at: r.created_at, updated_at: r.updated_at,
+        last_active_at: r.last_active_at,
+        paused_at: r.paused_at, revoked_at: r.revoked_at, expires_at: r.expires_at,
+        budget: r.budget_id ? budgetShape(r, capabilities) : null,
+        economic_authority: {
+          status: r.authority_status || 'NONE',
+          source: r.authority_source || 'NONE',
+        },
+      };
+    }));
+    res.json({ agents });
+  } catch (e) {
+    console.error('[omega/agents GET]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// POST /api/omega/agents — atomic idempotency (claim inside tx, commit inside tx)
+app.post('/api/omega/agents', requireAuth, async (req, res) => {
+  const { name, description, model_provider, model_name, model_id } = req.body || {};
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ error: 'name is required and must be non-empty' });
+  }
+  if (name.trim().length > 255) return res.status(400).json({ error: 'name too long (max 255)' });
+  const idemKey = req.headers['idempotency-key'] || null;
+  if (idemKey && idemKey.length > 128) return res.status(400).json({ error: 'Idempotency-Key too long (max 128)' });
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const devId = req.developerId;
+
+    // Atomic idempotency claim — inside the transaction
+    const idem = await claimIdempotencyTx(client, idemKey, devId, 'create_agent');
+    if (!idem.owned) {
+      await client.query('ROLLBACK');
+      if (idem.result) return res.status(200).json({ ...idem.result, _idempotent: true });
+      if (idem.conflict) return res.status(429).json({ error: 'Idempotency conflict: retry shortly' });
+      if (idem.tooLong) return res.status(400).json({ error: 'Idempotency-Key too long (max 128)' });
+    }
+
+    const agentId = uuidv4();
+    const { rows: [agent] } = await client.query(
+      `INSERT INTO omega_agents
+         (id, developer_id, name, description, model_provider, model_name, model_id, lifecycle_state, created_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'DRAFT', $2)
+       RETURNING id, name, description, model_provider, model_name, model_id, lifecycle_state, created_at`,
+      [agentId, devId, name.trim(), description || null, model_provider || null, model_name || null, model_id || null]
+    );
+    await client.query(
+      `INSERT INTO omega_audit_events (id, developer_id, actor_user_id, agent_id, event_type, previous_state, next_state)
+       VALUES ($1, $2, $2, $3, 'AGENT_CREATED', NULL, 'DRAFT')`,
+      [uuidv4(), devId, agentId]
+    );
+    const result = {
+      id: agent.id, name: agent.name, description: agent.description,
+      model: { provider: agent.model_provider, name: agent.model_name, id: agent.model_id },
+      lifecycle_state: agent.lifecycle_state, created_at: agent.created_at,
+    };
+    await commitIdempotencyTx(client, idemKey, devId, result);
+    await client.query('COMMIT');
+    res.status(201).json(result);
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.error('[omega/agents POST]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
+
+// GET /api/omega/agents/:agentId
+app.get('/api/omega/agents/:agentId', requireAuth, async (req, res) => {
+  try {
+    const { rows: [agent] } = await pool.query(
+      `SELECT id, name, description, model_provider, model_name, model_id,
+              lifecycle_state, created_at, updated_at, last_active_at,
+              paused_at, revoked_at, expires_at
+       FROM omega_agents WHERE id = $1 AND developer_id = $2`,
+      [req.params.agentId, req.developerId]
+    );
+    if (!agent) return res.status(404).json({ error: 'Agent not found' });
+    const { rows: [budget] } = await pool.query(
+      `SELECT id, allocation_rho_micro::text, spent_rho_micro::text,
+              max_per_op_rho_micro::text, daily_limit_rho_micro::text, version
+       FROM omega_agent_budgets WHERE agent_id = $1 AND status = 'ACTIVE' LIMIT 1`,
+      [agent.id]
+    );
+    let capabilities = [];
+    if (budget) {
+      const { rows: caps } = await pool.query(
+        `SELECT operation FROM omega_agent_capabilities WHERE budget_id = $1`, [budget.id]
+      );
+      capabilities = caps.map(c => c.operation);
+    }
+    const { rows: [authority] } = await pool.query(
+      `SELECT status, authority_source, issued_at, expires_at FROM omega_economic_authority
+       WHERE agent_id = $1 AND status NOT IN ('REVOKED','EXPIRED')
+       ORDER BY created_at DESC LIMIT 1`,
+      [agent.id]
+    );
+    res.json({
+      id: agent.id, name: agent.name, description: agent.description,
+      model: { provider: agent.model_provider, name: agent.model_name, id: agent.model_id },
+      lifecycle_state: agent.lifecycle_state,
+      created_at: agent.created_at, updated_at: agent.updated_at,
+      last_active_at: agent.last_active_at,
+      paused_at: agent.paused_at, revoked_at: agent.revoked_at, expires_at: agent.expires_at,
+      budget: budget ? budgetShape(budget, capabilities) : null,
+      economic_authority: {
+        status: authority?.status || 'NONE',
+        source: authority?.authority_source || 'NONE',
+        issued_at: authority?.issued_at || null,
+        expires_at: authority?.expires_at || null,
+      },
+    });
+  } catch (e) {
+    console.error('[omega/agents/:id GET]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// POST /api/omega/agents/:agentId/budget — create or replace active budget (atomic idempotency)
+app.post('/api/omega/agents/:agentId/budget', requireAuth, async (req, res) => {
+  const { allocation_rho, max_per_op_rho, daily_limit_rho, capabilities } = req.body || {};
+  // Exact decimal parsing — no Number()/parseFloat/Math.round for authoritative conversion
+  const errors = [];
+  let _newAllocMicro, _maxOpMicro, _dailyLimMicro;
+  if (allocation_rho == null) { errors.push('allocation_rho is required'); }
+  else { try { _newAllocMicro = parseRhoToMicroRho(allocation_rho); if (_newAllocMicro <= 0n) errors.push('allocation_rho must be > 0'); } catch(e) { errors.push(`allocation_rho: ${e.message}`); } }
+  if (max_per_op_rho == null) { errors.push('max_per_op_rho is required'); }
+  else { try { _maxOpMicro = parseRhoToMicroRho(max_per_op_rho); if (_maxOpMicro <= 0n) errors.push('max_per_op_rho must be > 0'); } catch(e) { errors.push(`max_per_op_rho: ${e.message}`); } }
+  if (daily_limit_rho == null) { errors.push('daily_limit_rho is required'); }
+  else { try { _dailyLimMicro = parseRhoToMicroRho(daily_limit_rho); if (_dailyLimMicro <= 0n) errors.push('daily_limit_rho must be > 0'); } catch(e) { errors.push(`daily_limit_rho: ${e.message}`); } }
+  if (!Array.isArray(capabilities) || capabilities.length === 0) errors.push('capabilities must be a non-empty array');
+  if (Array.isArray(capabilities) && !capabilities.every(c => ['QUERY','RECALL','WRITE'].includes(c))) {
+    errors.push('capabilities must be QUERY, RECALL, or WRITE');
+  }
+  if (errors.length) return res.status(400).json({ error: errors.join('; ') });
+  // Already parsed above — use pre-validated BigInt values
+  const newAllocMicro = _newAllocMicro, maxOpMicro = _maxOpMicro, dailyLimMicro = _dailyLimMicro;
+  const idemKey = req.headers['idempotency-key'] || null;
+  if (idemKey && idemKey.length > 128) return res.status(400).json({ error: 'Idempotency-Key too long (max 128)' });
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const devId = req.developerId;
+
+    const idem = await claimIdempotencyTx(client, idemKey, devId, 'set_budget');
+    if (!idem.owned) {
+      await client.query('ROLLBACK');
+      if (idem.result) return res.status(200).json({ ...idem.result, _idempotent: true });
+      if (idem.conflict) return res.status(429).json({ error: 'Idempotency conflict: retry shortly' });
+    }
+
+    const { rows: [agent] } = await client.query(
+      `SELECT id, lifecycle_state FROM omega_agents WHERE id = $1 AND developer_id = $2`,
+      [req.params.agentId, devId]
+    );
+    if (!agent) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'Agent not found' }); }
+    if (agent.lifecycle_state === 'REVOKED') {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: 'Cannot set budget on revoked agent' });
+    }
+
+    // BigInt balance check with SELECT FOR UPDATE to prevent race overallocation
+    const { rows: [dev] } = await client.query(
+      `SELECT rho_micro_balance::text FROM biological_developers WHERE id = $1 FOR UPDATE`, [devId]
+    );
+    const { rows: [otherAlloc] } = await client.query(
+      `SELECT COALESCE(SUM(b.allocation_rho_micro), 0)::text AS allocated
+       FROM omega_agent_budgets b JOIN omega_agents a ON a.id = b.agent_id
+       WHERE a.developer_id = $1 AND b.status = 'ACTIVE' AND b.agent_id != $2`,
+      [devId, req.params.agentId]
+    );
+    const otherAllocBig  = BigInt(otherAlloc.allocated);
+    const devBalBig      = BigInt(dev.rho_micro_balance);
+    if (otherAllocBig + newAllocMicro > devBalBig) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: 'Insufficient available RHO balance for this allocation' });
+    }
+
+    const { rows: [prev] } = await client.query(
+      `SELECT id, version FROM omega_agent_budgets WHERE agent_id = $1 AND status = 'ACTIVE'
+       ORDER BY created_at DESC LIMIT 1`,
+      [req.params.agentId]
+    );
+    const nextVersion = prev ? prev.version + 1 : 1;
+    if (prev) {
+      await client.query(`UPDATE omega_agent_budgets SET status = 'SUPERSEDED' WHERE id = $1`, [prev.id]);
+    }
+
+    const budgetId = uuidv4();
+    const { rows: [budget] } = await client.query(
+      `INSERT INTO omega_agent_budgets
+         (id, agent_id, allocation_rho_micro, max_per_op_rho_micro, daily_limit_rho_micro, version, created_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, allocation_rho_micro::text, max_per_op_rho_micro::text,
+                 daily_limit_rho_micro::text, version, created_at`,
+      [budgetId, req.params.agentId, newAllocMicro, maxOpMicro, dailyLimMicro, nextVersion, devId]
+    );
+
+    const uniqueCaps = [...new Set(capabilities)];
+    for (const op of uniqueCaps) {
+      await client.query(
+        `INSERT INTO omega_agent_capabilities (id, budget_id, operation) VALUES ($1, $2, $3)`,
+        [uuidv4(), budgetId, op]
+      );
+    }
+
+    if (agent.lifecycle_state === 'DRAFT') {
+      await client.query(
+        `UPDATE omega_agents SET lifecycle_state = 'READY', updated_at = NOW() WHERE id = $1`,
+        [req.params.agentId]
+      );
+    }
+    // MOCK authority is only created in LOCAL_TEST mode — never in production.
+    if (OMEGA_AUTHORITY_MODE === 'LOCAL_TEST') {
+      await client.query(
+        `INSERT INTO omega_economic_authority (id, agent_id, budget_id, authority_source, status)
+         VALUES ($1, $2, $3, 'LOCAL_TEST', 'MOCK')`,
+        [uuidv4(), req.params.agentId, budgetId]
+      );
+    }
+    await client.query(
+      `INSERT INTO omega_audit_events (id, developer_id, actor_user_id, agent_id, event_type, previous_state, next_state)
+       VALUES ($1, $2, $2, $3, 'BUDGET_SET', $4, 'ACTIVE')`,
+      [uuidv4(), devId, req.params.agentId, prev ? `version_${prev.version}` : null]
+    );
+
+    // Monetary fields as decimal strings — no floating-point conversion
+    const result = {
+      id: budget.id, agent_id: req.params.agentId,
+      allocation_rho:  formatMicroRho(BigInt(budget.allocation_rho_micro)),
+      max_per_op_rho:  formatMicroRho(BigInt(budget.max_per_op_rho_micro)),
+      daily_limit_rho: formatMicroRho(BigInt(budget.daily_limit_rho_micro)),
+      version: budget.version, capabilities: uniqueCaps, created_at: budget.created_at,
+    };
+    await commitIdempotencyTx(client, idemKey, devId, result);
+    await client.query('COMMIT');
+    res.status(201).json(result);
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.error('[omega/agents/:id/budget POST]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
+
+// POST /api/omega/agents/:agentId/pause
+app.post('/api/omega/agents/:agentId/pause', requireAuth, async (req, res) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const devId = req.developerId;
+    const { rows: [agent] } = await client.query(
+      `SELECT id, lifecycle_state FROM omega_agents WHERE id = $1 AND developer_id = $2 FOR UPDATE`,
+      [req.params.agentId, devId]
+    );
+    if (!agent) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'Agent not found' }); }
+    if (agent.lifecycle_state !== 'READY') {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: `Cannot pause agent in state: ${agent.lifecycle_state}` });
+    }
+    await client.query(
+      `UPDATE omega_agents SET lifecycle_state = 'PAUSED', paused_at = NOW(), updated_at = NOW() WHERE id = $1`,
+      [req.params.agentId]
+    );
+    await client.query(
+      `INSERT INTO omega_audit_events (id, developer_id, actor_user_id, agent_id, event_type, previous_state, next_state)
+       VALUES ($1, $2, $2, $3, 'AGENT_PAUSED', 'READY', 'PAUSED')`,
+      [uuidv4(), devId, req.params.agentId]
+    );
+    await client.query('COMMIT');
+    res.json({ agent_id: req.params.agentId, lifecycle_state: 'PAUSED' });
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.error('[omega/agents/:id/pause]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
+
+// POST /api/omega/agents/:agentId/resume
+app.post('/api/omega/agents/:agentId/resume', requireAuth, async (req, res) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const devId = req.developerId;
+    const { rows: [agent] } = await client.query(
+      `SELECT id, lifecycle_state FROM omega_agents WHERE id = $1 AND developer_id = $2 FOR UPDATE`,
+      [req.params.agentId, devId]
+    );
+    if (!agent) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'Agent not found' }); }
+    if (agent.lifecycle_state !== 'PAUSED') {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: `Cannot resume agent in state: ${agent.lifecycle_state}` });
+    }
+    await client.query(
+      `UPDATE omega_agents SET lifecycle_state = 'READY', paused_at = NULL, updated_at = NOW() WHERE id = $1`,
+      [req.params.agentId]
+    );
+    await client.query(
+      `INSERT INTO omega_audit_events (id, developer_id, actor_user_id, agent_id, event_type, previous_state, next_state)
+       VALUES ($1, $2, $2, $3, 'AGENT_RESUMED', 'PAUSED', 'READY')`,
+      [uuidv4(), devId, req.params.agentId]
+    );
+    await client.query('COMMIT');
+    res.json({ agent_id: req.params.agentId, lifecycle_state: 'READY' });
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.error('[omega/agents/:id/resume]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
+
+// POST /api/omega/agents/:agentId/revoke — terminal state, no recovery
+app.post('/api/omega/agents/:agentId/revoke', requireAuth, async (req, res) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const devId = req.developerId;
+    const { rows: [agent] } = await client.query(
+      `SELECT id, lifecycle_state FROM omega_agents WHERE id = $1 AND developer_id = $2 FOR UPDATE`,
+      [req.params.agentId, devId]
+    );
+    if (!agent) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'Agent not found' }); }
+    if (agent.lifecycle_state === 'REVOKED') {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: 'Agent is already revoked' });
+    }
+    const prevState = agent.lifecycle_state;
+    await client.query(
+      `UPDATE omega_agents SET lifecycle_state = 'REVOKED', revoked_at = NOW(), updated_at = NOW() WHERE id = $1`,
+      [req.params.agentId]
+    );
+    await client.query(
+      `UPDATE omega_agent_budgets SET status = 'REVOKED' WHERE agent_id = $1 AND status = 'ACTIVE'`,
+      [req.params.agentId]
+    );
+    await client.query(
+      `UPDATE omega_economic_authority SET status = 'REVOKED', revoked_at = NOW(), updated_at = NOW()
+       WHERE agent_id = $1 AND status NOT IN ('REVOKED','EXPIRED')`,
+      [req.params.agentId]
+    );
+    await client.query(
+      `INSERT INTO omega_audit_events (id, developer_id, actor_user_id, agent_id, event_type, previous_state, next_state)
+       VALUES ($1, $2, $2, $3, 'AGENT_REVOKED', $4, 'REVOKED')`,
+      [uuidv4(), devId, req.params.agentId, prevState]
+    );
+    await client.query('COMMIT');
+    res.json({ agent_id: req.params.agentId, lifecycle_state: 'REVOKED' });
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.error('[omega/agents/:id/revoke]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
+
+// PATCH /api/omega/agents/:agentId/model — model identity change → reauth required
+app.patch('/api/omega/agents/:agentId/model', requireAuth, async (req, res) => {
+  const { model_provider, model_name, model_id } = req.body || {};
+  if (!model_id && !model_name && !model_provider) {
+    return res.status(400).json({ error: 'At least one of model_id, model_name, model_provider is required' });
+  }
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const devId = req.developerId;
+    const { rows: [agent] } = await client.query(
+      `SELECT id, lifecycle_state, model_id, model_name, model_provider
+       FROM omega_agents WHERE id = $1 AND developer_id = $2 FOR UPDATE`,
+      [req.params.agentId, devId]
+    );
+    if (!agent) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'Agent not found' }); }
+    if (agent.lifecycle_state === 'REVOKED') {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: 'Cannot change model on revoked agent' });
+    }
+
+    const updates = [];
+    const vals = [];
+    let idx = 1;
+    if (model_provider !== undefined) { updates.push(`model_provider = $${idx++}`); vals.push(model_provider || null); }
+    if (model_name !== undefined)     { updates.push(`model_name = $${idx++}`);     vals.push(model_name || null); }
+    if (model_id !== undefined)       { updates.push(`model_id = $${idx++}`);       vals.push(model_id || null); }
+    updates.push(`updated_at = NOW()`);
+    vals.push(req.params.agentId);
+    await client.query(`UPDATE omega_agents SET ${updates.join(', ')} WHERE id = $${idx}`, vals);
+
+    // Model change invalidates existing economic authority — REAUTH_REQUIRED
+    await client.query(
+      `UPDATE omega_economic_authority SET status = 'REAUTH_REQUIRED', updated_at = NOW()
+       WHERE agent_id = $1 AND status NOT IN ('REVOKED','EXPIRED','REAUTH_REQUIRED')`,
+      [req.params.agentId]
+    );
+    await client.query(
+      `INSERT INTO omega_audit_events (id, developer_id, actor_user_id, agent_id, event_type, previous_state, next_state, metadata)
+       VALUES ($1, $2, $2, $3, 'MODEL_CHANGED', $4, 'REAUTH_REQUIRED', $5)`,
+      [uuidv4(), devId, req.params.agentId,
+       JSON.stringify({ model_id: agent.model_id, model_name: agent.model_name }),
+       JSON.stringify({ model_id: model_id || null, model_name: model_name || null })]
+    );
+    await client.query('COMMIT');
+    res.json({
+      agent_id: req.params.agentId,
+      model: { provider: model_provider ?? agent.model_provider, name: model_name ?? agent.model_name, id: model_id ?? agent.model_id },
+      authority_status: 'REAUTH_REQUIRED',
+    });
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.error('[omega/agents/:id/model PATCH]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
+
+// GET /api/omega/activity
+app.get('/api/omega/activity', requireAuth, async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 50, 200);
+    const offset = parseInt(req.query.offset) || 0;
+    const { rows } = await pool.query(
+      `SELECT act.id, act.operation, act.resource, act.cost_rho_micro::text,
+              act.pricing_method, act.receipt_hash, act.status, act.created_at,
+              a.name AS agent_name
+       FROM omega_activity act JOIN omega_agents a ON a.id = act.agent_id
+       WHERE a.developer_id = $1 ORDER BY act.created_at DESC LIMIT $2 OFFSET $3`,
+      [req.developerId, limit, offset]
+    );
+    res.json({
+      activity: rows.map(r => ({
+        id: r.id, agent_name: r.agent_name, operation: r.operation,
+        resource: r.resource, cost_rho: toRho(BigInt(r.cost_rho_micro)),
+        pricing_method: r.pricing_method, receipt_hash: r.receipt_hash,
+        status: r.status, timestamp: r.created_at,
+      })),
+    });
+  } catch (e) {
+    console.error('[omega/activity]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET /api/omega/memory
+app.get('/api/omega/memory', requireAuth, async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 50, 200);
+    const { rows } = await pool.query(
+      `SELECT act.id, act.operation, act.resource, act.cost_rho_micro::text,
+              act.pricing_method, act.status, act.created_at, a.name AS agent_name
+       FROM omega_activity act JOIN omega_agents a ON a.id = act.agent_id
+       WHERE a.developer_id = $1 AND act.operation IN ('QUERY','RECALL','WRITE')
+       ORDER BY act.created_at DESC LIMIT $2`,
+      [req.developerId, limit]
+    );
+    res.json({
+      operations: rows.map(r => ({
+        id: r.id, agent_name: r.agent_name, operation: r.operation,
+        resource: r.resource, cost_rho: toRho(BigInt(r.cost_rho_micro)),
+        pricing_method: r.pricing_method, status: r.status, timestamp: r.created_at,
+      })),
+    });
+  } catch (e) {
+    console.error('[omega/memory]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// POST /api/omega/authorize — pre-flight check. Zero state mutations. Zero chain writes.
+app.post('/api/omega/authorize', requireAuth, async (req, res) => {
+  const { agent_id, operation } = req.body || {};
+  if (!agent_id) return res.status(400).json({ error: 'agent_id is required' });
+  if (!['QUERY','RECALL','WRITE'].includes(operation)) {
+    return res.status(400).json({ error: 'operation must be QUERY, RECALL, or WRITE' });
+  }
+  try {
+    const result = await evaluateOmegaOperation(agent_id, operation, req.developerId);
+    res.json({
+      ...result, operation,
+      tariff_rho: result.authorized ? toRho(OMEGA_TARIFF_MICRO[operation]) : null,
+    });
+  } catch (e) {
+    console.error('[omega/authorize]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET /api/omega/agents/:agentId/audit
+app.get('/api/omega/agents/:agentId/audit', requireAuth, async (req, res) => {
+  try {
+    const { rows: [agent] } = await pool.query(
+      `SELECT id FROM omega_agents WHERE id = $1 AND developer_id = $2`,
+      [req.params.agentId, req.developerId]
+    );
+    if (!agent) return res.status(404).json({ error: 'Agent not found' });
+    const { rows } = await pool.query(
+      `SELECT id, event_type, previous_state, next_state, metadata, created_at
+       FROM omega_audit_events WHERE agent_id = $1 ORDER BY created_at DESC LIMIT 100`,
+      [req.params.agentId]
+    );
+    res.json({ audit: rows });
+  } catch (e) {
+    console.error('[omega/agents/:id/audit]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ── ExergyNet Verification Authority ─────────────────────────────────────────
+// Generic application-agnostic primitive. Consumers register an application_id
+// and a verifier function. The authority executes the verifier, canonicalizes
+// the result, signs it, and stores the receipt for idempotent re-retrieval.
+//
+// Input format: VerificationEnvelopeV0 objects (schema: 'exergy.verification.envelope.v0')
+// as sent by Omega's LiveExergyNetVerificationProvider. NOT a custom format.
+//
+// Current registrations:
+//   OMEGA_FITNESS — Omega Fitness challenge resolution (first consumer, BLK-027)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// canonicalHash: JS reimplementation of Omega's canonicalization package.
+// Produces the same result as hashCanonical() in packages/canonicalization/src/index.ts.
+// Recursively sorts object keys alphabetically, then JSON.stringify, then SHA-256 with 0x prefix.
+function normalizeForHash(value) {
+  if (Array.isArray(value)) return value.map(normalizeForHash);
+  if (value !== null && typeof value === 'object') {
+    const sorted = {};
+    for (const k of Object.keys(value).sort((a, b) => a.localeCompare(b))) {
+      sorted[k] = normalizeForHash(value[k]);
+    }
+    return sorted;
+  }
+  return value;
+}
+
+function canonicalHash(value) {
+  return '0x' + crypto.createHash('sha256').update(JSON.stringify(normalizeForHash(value))).digest('hex');
+}
+
+// Omega Fitness verifier: highest derived_distance_mm among GPS_DISPLACEMENT_VALID
+// participants wins. Ties broken by participant_id lexicographic order (stable, deterministic).
+// Envelopes are VerificationEnvelopeV0 — uses physical_validation_result (not validation_result).
+function omegaFitnessVerifier(sortedEnvelopes) {
+  const valid = sortedEnvelopes.filter(e => e.physical_validation_result === 'GPS_DISPLACEMENT_VALID');
+  if (valid.length === 0) {
+    return { result_code: 'NO_VALID_PARTICIPANTS' };
+  }
+  const ranked = [...valid].sort((a, b) => {
+    if (b.derived_distance_mm !== a.derived_distance_mm) return b.derived_distance_mm - a.derived_distance_mm;
+    return a.participant_id.localeCompare(b.participant_id);
+  });
+  const top = ranked[0];
+  return {
+    result_code: 'VALID',
+    winner: top.participant_id,
+    winning_score: top.derived_distance_mm,
+  };
+}
+
+const VERIFIER_REGISTRY = {
+  'OMEGA_FITNESS': omegaFitnessVerifier,
+};
+
+// POST /api/omega/verify — ExergyNet Verification Authority endpoint
+// Accepts VerificationEnvelopeV0 objects from Omega's LiveExergyNetVerificationProvider
+// and returns an ExergyNetRawReceipt. Idempotent: same evidence → same receipt.
+//
+// Input: { application_id, challenge_id, rules_hash, envelopes: VerificationEnvelopeV0[] }
+// The envelopes use the VerificationEnvelopeV0 schema (physical_validation_result, not
+// validation_result) — this matches what Omega's live provider sends.
+//
+// Security invariants:
+//   - requireAuth: valid ExergyNet JWT or API key required
+//   - Unknown application_id → 422 (not a silent fallback)
+//   - REAL_VALUE_MOVED=NO — no transfers, no on-chain calls
+//   - envelope_hash computed from received envelope via canonicalHash()
+//     (matches Omega's hashEnvelope() — same SHA-256 of canonical sorted JSON)
+//   - result_hash computed as canonicalHash of the authority result object
+//     (Omega's live provider overrides this with a locally-derived hash before
+//     the binding check — see LiveExergyNetVerificationProvider)
+//   - No raw GPS coordinates: inputs are hashes and scalars only
+app.post('/api/omega/verify', requireAuth, async (req, res) => {
+  try {
+    // VERIFICATION_AUTHORITY_SECRET is required — no fallback to JWT_SECRET allowed.
+    // If absent, this route returns 503 (service configuration error) until the operator sets it.
+    const veritySecret = process.env.VERIFICATION_AUTHORITY_SECRET;
+    if (!veritySecret) {
+      console.error('[omega/verify] FATAL: VERIFICATION_AUTHORITY_SECRET is not set — returning 503');
+      return res.status(503).json({
+        error: 'SERVICE_CONFIGURATION_ERROR',
+        message: 'VERIFICATION_AUTHORITY_SECRET is not configured — operator must set this env var before this route is operational',
+      });
+    }
+
+    const { challenge_id, rules_hash, envelopes } = req.body || {};
+
+    // application_id: use body value if provided; otherwise infer from route path.
+    // This route is scoped to OMEGA_FITNESS — LiveExergyNetVerificationProvider does not
+    // send application_id in the body (body carries verification_request_hash, challenge_id,
+    // rules_hash, evidence_root, envelopes only). Body override is accepted for explicit callers and tests.
+    const body_application_id = (req.body || {}).application_id;
+    const application_id = (typeof body_application_id === 'string' && body_application_id)
+      ? body_application_id
+      : 'OMEGA_FITNESS';
+
+    if (!VERIFIER_REGISTRY[application_id]) {
+      return res.status(422).json({
+        error: 'UNKNOWN_APPLICATION',
+        message: `No registered verifier for application_id="${application_id}"`,
+      });
+    }
+
+    // Challenge envelope validation
+    if (!challenge_id || typeof challenge_id !== 'string' || !challenge_id.startsWith('0x')) {
+      return res.status(422).json({ error: 'challenge_id must be a 0x-prefixed hex string' });
+    }
+    if (!rules_hash || typeof rules_hash !== 'string' || !rules_hash.startsWith('0x')) {
+      return res.status(422).json({ error: 'rules_hash must be a 0x-prefixed hex string' });
+    }
+
+    // evidence_root: client-computed Merkle root of AdmissiblePhysicalEvidence set.
+    // Required for canonical result_hash computation (resolution.v0 schema).
+    // The server uses this verbatim — Omega independently re-derives it and verifies binding.
+    const evidence_root = (req.body || {}).evidence_root;
+    if (!evidence_root || typeof evidence_root !== 'string' || !evidence_root.startsWith('0x')) {
+      return res.status(422).json({ error: 'evidence_root must be a 0x-prefixed hex string — required for canonical result_hash computation' });
+    }
+
+    if (!Array.isArray(envelopes) || envelopes.length === 0) {
+      return res.status(422).json({ error: 'envelopes must be a non-empty array' });
+    }
+    if (envelopes.length > 10) {
+      return res.status(422).json({ error: 'envelopes exceeds maximum of 10 participants' });
+    }
+
+    // Per-envelope validation (VerificationEnvelopeV0 format)
+    const VALID_PHYSICAL_RESULTS = ['GPS_DISPLACEMENT_VALID', 'GPS_DISPLACEMENT_INVALID'];
+    for (let i = 0; i < envelopes.length; i++) {
+      const e = envelopes[i];
+      if (!e || typeof e !== 'object' || Array.isArray(e)) {
+        return res.status(422).json({ error: `envelope[${i}] is not an object` });
+      }
+      if (!e.participant_id || typeof e.participant_id !== 'string') {
+        return res.status(422).json({ error: `envelope[${i}].participant_id is required` });
+      }
+      if (!e.observation_root || typeof e.observation_root !== 'string' || !e.observation_root.startsWith('0x')) {
+        return res.status(422).json({ error: `envelope[${i}].observation_root must be a 0x-prefixed hex string` });
+      }
+      if (!e.kinematic_root || typeof e.kinematic_root !== 'string' || !e.kinematic_root.startsWith('0x')) {
+        return res.status(422).json({ error: `envelope[${i}].kinematic_root must be a 0x-prefixed hex string` });
+      }
+      if (typeof e.derived_distance_mm !== 'number' || !Number.isInteger(e.derived_distance_mm) || e.derived_distance_mm < 0) {
+        return res.status(422).json({ error: `envelope[${i}].derived_distance_mm must be a non-negative integer` });
+      }
+      // physical_validation_result (VerificationEnvelopeV0 field name — not validation_result)
+      if (!VALID_PHYSICAL_RESULTS.includes(e.physical_validation_result)) {
+        return res.status(422).json({ error: `envelope[${i}].physical_validation_result must be one of: ${VALID_PHYSICAL_RESULTS.join(', ')}` });
+      }
+    }
+
+    // Duplicate participant_id check
+    const participantIds = envelopes.map(e => e.participant_id);
+    if (new Set(participantIds).size !== participantIds.length) {
+      return res.status(422).json({ error: 'Duplicate participant_id in envelopes' });
+    }
+
+    // Sort envelopes by participant_id for deterministic canonicalization
+    const sortedEnvelopes = [...envelopes].sort((a, b) => a.participant_id.localeCompare(b.participant_id));
+
+    // verification_request_hash: computed using canonicalHash() to match Omega's verificationRequestHash().
+    // Omega computes it as hashCanonical({ schema: 'exergy.verification.request.v0', envelopes: sorted })
+    // where each envelope is the full VerificationEnvelopeV0 object. We receive those same objects,
+    // so canonicalHash() on the same structure produces the same hash.
+    //
+    // If the caller sends verification_request_hash in the body (Omega's live provider does),
+    // we ignore it and recompute to ensure integrity. The hash is deterministic.
+    const verificationRequestHash = canonicalHash({
+      schema: 'exergy.verification.request.v0',
+      envelopes: sortedEnvelopes,
+    });
+
+    // Idempotency: same evidence → same hash → return cached receipt
+    const { rows: cached } = await pool.query(
+      `SELECT receipt_json FROM omega_verification_receipts WHERE verification_request_hash = $1`,
+      [verificationRequestHash]
+    );
+    if (cached.length > 0) {
+      return res.json({ ...cached[0].receipt_json, idempotent: true });
+    }
+
+    // Execute the registered verifier
+    const verifier = VERIFIER_REGISTRY[application_id];
+    const verifierResult = verifier(sortedEnvelopes);
+
+    if (verifierResult.result_code !== 'VALID') {
+      return res.status(422).json({
+        error: verifierResult.result_code,
+        verification_request_hash: verificationRequestHash,
+      });
+    }
+
+    // Build participant attestations from envelopes.
+    // envelope_hash = canonicalHash(envelope) — matches Omega's hashEnvelope(makeEnvelope(...))
+    // because the live provider sends the exact same VerificationEnvelopeV0 that makeEnvelope produces.
+    // score: derived from physical_validation_result + derived_distance_mm (same logic as Omega's scoreEvidence).
+    // validation_result: physical_validation_result (the field name in ExergyNetParticipantAttestation
+    //   is validation_result, holding the value from physical_validation_result — see §6 contract).
+    const participantAttestations = sortedEnvelopes.map(e => ({
+      participant_id: e.participant_id,
+      observation_root: e.observation_root,
+      kinematic_root: e.kinematic_root,
+      derived_distance_mm: e.derived_distance_mm,
+      validation_result: e.physical_validation_result,
+      score: e.physical_validation_result === 'GPS_DISPLACEMENT_VALID' ? e.derived_distance_mm : 0,
+      envelope_hash: canonicalHash(e),
+    }));
+
+    // result_hash: canonical authority receipt hash using the resolution.v0 schema.
+    // This matches verifyExergyNetRawReceipt() — same fields, same schema, same key order.
+    // evidence_root came from the client (physicalEvidenceRoot(evidenceSet)) and is the
+    // Merkle root of AdmissiblePhysicalEvidence objects sorted by participant_id.
+    // Omega independently re-derives evidence_root locally and verifies this binding.
+    const coreForResultHash = {
+      receipt_version: 'resolution.v0',
+      challenge_id,
+      rules_hash,
+      evidence_root,
+      verifier: 'PHYSICAL_V0',
+      verifier_version: '0.1.0',
+      winner: verifierResult.winner,
+      winning_score: verifierResult.winning_score,
+      result_code: verifierResult.result_code,
+    };
+    const resultHash = canonicalHash(coreForResultHash);
+
+    // Authority signature: HMAC-SHA256(VERIFICATION_AUTHORITY_SECRET, vrh+'|'+result_hash).
+    // Verifiable by Omega if EXERGYNET_AUTHORITY_SECRET (same value) is set client-side.
+    // Transitional symmetric-key attestation — NOT public-key cryptography.
+    const authoritySig = crypto.createHmac('sha256', veritySecret)
+      .update(verificationRequestHash + '|' + resultHash)
+      .digest('hex');
+
+    const receipt = {
+      winner: verifierResult.winner,
+      winning_score: verifierResult.winning_score,
+      result_code: verifierResult.result_code,
+      result_hash: resultHash,
+      verifier_version: '0.1.0',
+      verification_request_hash: verificationRequestHash,
+      authority_sig: authoritySig,
+      participant_attestations: participantAttestations,
+    };
+
+    // Persist: ON CONFLICT DO NOTHING handles concurrent identical requests.
+    // After insert, always SELECT the canonical persisted record to return —
+    // ensures concurrent requests (both past the early SELECT) return identical data.
+    await pool.query(
+      `INSERT INTO omega_verification_receipts
+         (verification_request_hash, application_id, challenge_id, rules_hash, developer_id,
+          winner, winning_score, result_code, result_hash, authority_sig, receipt_json)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       ON CONFLICT (verification_request_hash) DO NOTHING`,
+      [
+        verificationRequestHash,
+        application_id,
+        challenge_id,
+        rules_hash,
+        req.developerId,
+        verifierResult.winner,
+        verifierResult.winning_score,
+        verifierResult.result_code,
+        resultHash,
+        authoritySig,
+        JSON.stringify(receipt),
+      ]
+    );
+
+    const { rows: persisted } = await pool.query(
+      `SELECT receipt_json FROM omega_verification_receipts WHERE verification_request_hash = $1`,
+      [verificationRequestHash]
+    );
+    const canonicalReceipt = persisted.length > 0 ? persisted[0].receipt_json : receipt;
+
+    console.log(`[omega/verify] application_id=${application_id} winner=${verifierResult.winner} hash=${verificationRequestHash.slice(0, 18)}…`);
+    return res.json(canonicalReceipt);
+
+  } catch (e) {
+    console.error('[omega/verify]', e.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ── End LNES-118 Omega routes (v2 — BigInt arithmetic, atomic idempotency) ────
+
+// ── Billing Unification — Portal ↔ Omega Carrier (Migration 009) ─────────────
+//
+// POST /api/billing/omega-debit
+// Internal-only endpoint called by omega_carrier_mcp.py before executing VMN work.
+// Auth: OMEGA_BILLING_TOKEN header (never developer-facing).
+// Atomically debits µUSDC from usdc_micro_balance and writes a rho_obligations row.
+// Idempotent on request_id (UNIQUE constraint in DB).
+//
+// RHO → µUSDC conversion: 1 USDC = 1,000,000 µUSDC = 1,000 RHO
+//   Therefore: 1 RHO = 1,000 µUSDC
+//   RECALL=100 RHO → 100,000 µUSDC (0.10 USDC)
+//   QUERY =150 RHO → 150,000 µUSDC (0.15 USDC)
+//   WRITE =250 RHO → 250,000 µUSDC (0.25 USDC)
+const _RHO_PRICES = { RECALL: 100, QUERY: 150, WRITE: 250 };
+const _RHO_TO_USDC_MICRO = 1000; // 1 RHO = 1,000 µUSDC
+const _RHO_WEI = 1e18;           // rho_amount stored in RHO-wei for on-chain compatibility
+
+app.post('/api/billing/omega-debit', async (req, res) => {
+  // Service-to-service auth — not developer-facing
+  const token = req.headers['x-omega-billing-token'];
+  if (!token || token !== process.env.OMEGA_BILLING_TOKEN) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { request_id, account_id, operation, api_key_preview, agent_id, receipt_hash } = req.body || {};
+  if (!request_id) return res.status(400).json({ error: 'request_id required' });
+  if (!account_id) return res.status(400).json({ error: 'account_id required' });
+  const rho = _RHO_PRICES[operation];
+  if (!rho) return res.status(400).json({ error: `Invalid operation "${operation}" — must be RECALL, QUERY, or WRITE` });
+
+  const usdc_micro_cost = rho * _RHO_TO_USDC_MICRO;
+  const rho_amount_wei  = Math.round(rho * _RHO_WEI);
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Idempotency: if request_id already exists, return early without double-debit
+    const existing = await client.query(
+      'SELECT id FROM rho_obligations WHERE request_id = $1',
+      [request_id]
+    );
+    if (existing.rows.length > 0) {
+      await client.query('ROLLBACK');
+      return res.status(200).json({ authorized: true, idempotent: true, request_id });
+    }
+
+    // Lock and read account — SELECT FOR UPDATE prevents concurrent-spend races
+    const { rows } = await client.query(
+      'SELECT id, usdc_micro_balance, account_frozen FROM biological_developers WHERE id = $1 FOR UPDATE',
+      [account_id]
+    );
+    if (!rows.length) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Account not found' });
+    }
+    const dev = rows[0];
+    if (dev.account_frozen) {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ error: 'Account frozen — contact support' });
+    }
+    if (Number(dev.usdc_micro_balance) < usdc_micro_cost) {
+      await client.query('ROLLBACK');
+      return res.status(402).json({
+        error: 'Insufficient balance',
+        available: Number(dev.usdc_micro_balance),
+        required: usdc_micro_cost,
+      });
+    }
+
+    // Atomic debit
+    await client.query(
+      'UPDATE biological_developers SET usdc_micro_balance = usdc_micro_balance - $1 WHERE id = $2',
+      [usdc_micro_cost, account_id]
+    );
+
+    // Append obligation row — one-row-per-operation audit trail
+    await client.query(
+      `INSERT INTO rho_obligations
+         (account_id, api_key_preview, agent_id, request_id, operation,
+          rho_amount, usdc_micro_debited, receipt_hash, billing_status, settlement_status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'AUTHORIZED', 'PENDING')`,
+      [
+        account_id, api_key_preview || null, agent_id || null,
+        request_id, operation,
+        rho_amount_wei, usdc_micro_cost,
+        receipt_hash || null,
+      ]
+    );
+
+    await client.query('COMMIT');
+    console.log(`[billing/omega-debit] ${operation} ${rho} RHO (${usdc_micro_cost}µUSDC) debited from ${account_id} req=${request_id}`);
+    return res.status(200).json({
+      authorized:          true,
+      rho_amount:          rho,
+      usdc_micro_debited:  usdc_micro_cost,
+      request_id,
+    });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    console.error('[billing/omega-debit]', err.message);
+    return res.status(500).json({ error: 'Internal billing error' });
+  } finally {
+    client.release();
+  }
+});
+
+// GET /api/billing/omega-obligations
+// Developer-facing: returns their Omega RHO obligation ledger (last 100 rows).
+// Auth: standard requireAuth (portal JWT or API key).
+app.get('/api/billing/omega-obligations', requireAuth, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT id, api_key_preview, agent_id, request_id, operation,
+              rho_amount, usdc_micro_debited, receipt_hash,
+              billing_status, settlement_status,
+              created_at, settled_at, settlement_reference
+         FROM rho_obligations
+        WHERE account_id = $1
+        ORDER BY created_at DESC
+        LIMIT 100`,
+      [req.developerId]
+    );
+    res.json({ obligations: rows });
+  } catch (err) {
+    console.error('[billing/omega-obligations]', err.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ── End Billing Unification (Migration 009) ───────────────────────────────────
 
 initDb()
   .then(() => {

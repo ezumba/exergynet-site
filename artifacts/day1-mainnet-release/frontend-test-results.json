@@ -1,0 +1,31 @@
+{
+  "_note": "Executed results for the static Day-1 deposit UI. jsdom-driven state tests + static smoke. No real USDC, no keys.",
+  "generated": "2026-09-13",
+  "frontend_generation": "STATIC (deposit.html + deposit.js + deposit.config.js added to the deployed static portal; NO Next.js, NO build system)",
+  "frontend_state_tests": {
+    "runner": "artifacts/day1-mainnet-release/ci/frontend-tests.mjs (jsdom)", "result": "PASS", "passed": 10, "failed": 0,
+    "cases": {
+      "receiver_unset_unavailable": "PASS", "receiver_zero_unavailable": "PASS", "receiver_retired_unavailable": "PASS",
+      "valid_receiver_form_shown": "PASS", "wrong_network_switch_then_ok": "PASS", "balance_and_enable_gating": "PASS",
+      "deposit_submit_credit_flow": "PASS (correct transfer(address,uint256) encoding + BaseScan link + single claim)",
+      "backend_rejection_error_state": "PASS", "duplicate_no_second_credit": "PASS", "pending_confirming_state": "PASS"
+    }
+  },
+  "static_smoke": {
+    "runner": "artifacts/day1-mainnet-release/ci/static-smoke.mjs", "result": "PASS", "passed": 9, "failed": 0,
+    "cases": {
+      "html_parses": "PASS", "referenced_assets_exist": "PASS (6 refs)",
+      "js_syntax_deposit.js": "PASS", "js_syntax_deposit.config.js": "PASS",
+      "forbidden_token_scan_clean": "PASS (no 84532 / sepolia / test USDC / localhost / AERIS/MMS/LNES13/x402 / secret material)",
+      "config_receiver_blank": "PASS (OPERATOR_INPUT_REQUIRED, no fallback)",
+      "config_canonical_usdc": "PASS", "config_chainid_8453": "PASS",
+      "static_http_serve_200": "PASS (deposit.html/js/config + main.js + style.css served 200)"
+    }
+  },
+  "wallet_security_model": {
+    "client_needs": "PUBLIC receiving address only",
+    "client_never_handles": ["private key", "seed phrase", "mnemonic", "operator signer"],
+    "user_signs": "their own USDC transfer via their own wallet",
+    "backend": "WATCH-ONLY; authoritative for chain/USDC/recipient/confirmations/parsing/idempotency/account-mapping/crediting"
+  }
+}

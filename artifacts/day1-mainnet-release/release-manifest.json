@@ -1,0 +1,56 @@
+{
+  "_note": "Day-1 Base Mainnet release-candidate manifest. Honest status. DB/logic/scan/smoke = real executed evidence; backend HTTP integration + portal build remain.",
+  "generated": "2026-09-13",
+  "git": {
+    "repo": "github.com/ezumba/exergynet-site",
+    "branch": "feat/seo-agent-memory-cluster",
+    "base_commit": "53188afd355f1a7bffc7d377b426a0c52fd64098",
+    "release_branch_ref": "release/base-mainnet-production-closure",
+    "release_commit": "NOT_CUT (requires user go-ahead to commit + a reconciled clean worktree)"
+  },
+  "network": { "chainId": 8453, "usdc": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", "usdc_verified_live": true, "usdc_name": "USD Coin", "usdc_symbol": "USDC", "usdc_decimals": 6 },
+  "candidate_files": {
+    "db/migrations/20260913_day1_deposit_idempotency.sql": "c5caf33e51bde0d3",
+    "db/migrations/20260913_day1_deposit_idempotency.rollback.sql": "80a713b69584f3b1",
+    "artifacts/day1-mainnet/base-mainnet.config.js": "339f4aec46a56b87",
+    "artifacts/day1-mainnet/deposit-indexer.js": "9d18219bbde87bdd",
+    "artifacts/day1-mainnet/health.js": "caa008a81e59d1bf",
+    "artifacts/day1-mainnet-release/ci/pg-deposit-tests.mjs": "aa989ce53b814c40"
+  },
+  "ci": { "workflow": ".github/workflows/day1-mainnet-release.yml", "runner": "ubuntu-latest + postgres:18 service", "executed_from_this_session": false, "reason_not_executed": "gh not authenticated here; workflow is authored + its DB/scan/smoke steps validated locally against real Postgres" },
+  "status": {
+    "config_tests": "PASS 8/8",
+    "deposit_logic_tests": "PASS 12/12",
+    "concurrent_health_tests": "PASS 5/5",
+    "real_postgres_migration_up_down_reapply": "PASS",
+    "real_postgres_atomicity_failure_injection": "PASS (partial_credit_states=0)",
+    "real_postgres_concurrency": "PASS (concurrent_replay_credits=1, incl. after reconnect)",
+    "backend_http_integration": "PASS 15/15 (real biological_proxy booted over HTTP, 3x incl. restart)",
+    "biological_proxy_integrated": "YES (testnet constants removed; /api/deposit/claim -> day1_mainnet.js; initDb ensureSchema; fresh-init bug fixed)",
+    "secret_audit": "EMBEDDED_PRODUCTION_SECRETS=0",
+    "runtime_fallback_audit_integrated_backend": "0 (integrated index.js + day1 module clean)",
+    "mainnet_readonly_smoke": "PASS (live Base mainnet)",
+    "frontend_generation": "STATIC (deployed generation) — Next.js portal/src DEFERRED/SOURCE_INCOMPLETE",
+    "static_deposit_ui": "IMPLEMENTED + TESTED (deposit.html/js/config; jsdom state tests 10/10; static smoke 9/9)",
+    "portal_build": "NOT_REQUIRED (static)",
+    "release_commit": "CURATED COMMIT on dedicated branch release/base-mainnet-day1 (see git block); whole-tree porcelain NOT empty by design (576 unrelated dirty files excluded)"
+  },
+  "integrated_backend_files": {
+    "portal/biological_proxy/day1_mainnet.js": "9780fb1be9831e3e",
+    "portal/biological_proxy/index.js": "78d3b07b29cd2e8c"
+  },
+  "invariants": { "DEPOSIT_RECEIVER_PRIVATE_KEY_REQUIRED_BY_BACKEND": false, "DAY1_HELIUS_DEPENDENCY": false, "EMBEDDED_PRODUCTION_SECRETS": 0, "RUNTIME_TESTNET_DEFAULTS_IN_INTEGRATED_BACKEND": 0 },
+  "deposit_receiving_wallet": "OPERATOR_INPUT_REQUIRED",
+  "wallet_injection_points": {
+    "backend": "env DEPOSIT_RECEIVING_WALLET (biological_proxy day1_mainnet.js reads it; no code change)",
+    "frontend": "deposit.config.js DEPOSIT_RECEIVING_WALLET (single value; blank until supplied; no code change)"
+  },
+  "ready_for_wallet_injection": true,
+  "ready_for_wallet_injection_basis": "All software gates PASS; the exact candidate needs only the DEPOSIT_RECEIVING_WALLET public value (one env + one config value). No code change required.",
+  "remaining_software_blockers": [],
+  "remaining_operator_blockers": [
+    "Supply secure DEPOSIT_RECEIVING_WALLET public address (env + deposit.config.js)",
+    "Confirm production host runtime identity (read-only runbook delivered)",
+    "Real-USDC canary after wallet injection + deploy"
+  ]
+}

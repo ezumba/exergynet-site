@@ -1,0 +1,10 @@
+{
+  "_note": "Day-1 deposit-ledger migration, validated up/down/reapply against real PostgreSQL 18.4.",
+  "generated": "2026-09-13",
+  "up":       { "path": "db/migrations/20260913_day1_deposit_idempotency.sql",          "sha256_16": "c5caf33e51bde0d3" },
+  "rollback": { "path": "db/migrations/20260913_day1_deposit_idempotency.rollback.sql", "sha256_16": "80a713b69584f3b1" },
+  "table": "usdc_deposits",
+  "unique_constraint": "uq_usdc_deposit_identity UNIQUE (chain_id, tx_hash, log_index)",
+  "columns": ["id","chain_id","tx_hash","log_index","block_number","token_address","from_address","to_address","amount_base_units","confirmation_count","status","developer_id","credited_at","created_at"],
+  "validation": { "MIGRATION_UP": "PASS", "SCHEMA_ASSERTIONS": "PASS", "MIGRATION_DOWN": "PASS", "MIGRATION_REAPPLY": "PASS" }
+}
