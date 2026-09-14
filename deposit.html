@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExergyNet — USDC Deposit</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<meta name="description" content="Deposit USDC on Base Mainnet to fund your ExergyNet compute balance.">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){ var t = localStorage.getItem('exg-theme'); if(!t){ t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light'; } document.documentElement.setAttribute('data-theme', t); })();
+</script>
+<style>
+  .dep-wrap { max-width: 640px; margin: 0 auto; padding: 3rem 0 4rem; }
+  .dep-card { background:var(--bg-card); border:1px solid var(--border-mid); border-radius:16px; padding:1.75rem; margin-top:1.25rem; }
+  .dep-row { display:grid; grid-template-columns:140px 1fr; gap:1rem; padding:0.7rem 0; border-bottom:1px solid var(--border); align-items:center; }
+  .dep-row:last-child { border-bottom:none; }
+  .dep-key { font-family:var(--mono); font-size:10px; letter-spacing:0.09em; text-transform:uppercase; color:var(--text-faint); }
+  .dep-val { color:var(--text); font-size:13px; word-break:break-all; font-family:var(--mono); }
+  .dep-field { width:100%; padding:0.6rem 0.75rem; background:var(--bg); border:1px solid var(--border-mid); border-radius:8px; color:var(--text); font-size:14px; }
+  .dep-actions { display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:1.25rem; }
+  .dep-status { margin-top:1.1rem; padding:0.85rem 1rem; border-radius:8px; font-size:13px; line-height:1.55; border-left:3px solid var(--border-mid); background:var(--bg); color:var(--text-soft); }
+  .dep-ok { border-left-color:var(--accent); background:var(--accent-dim); color:var(--text); }
+  .dep-err { border-left-color:#e5484d; background:rgba(229,72,77,0.08); color:var(--text); }
+  .dep-pending { border-left-color:#f5a623; background:rgba(245,166,35,0.08); }
+  #dep-unavailable { text-align:center; padding:2rem 1rem; color:var(--text-soft); }
+  .dep-note { font-size:12px; color:var(--text-faint); margin-top:1rem; line-height:1.6; }
+</style>
+</head>
+<body>
+<div id="site-header"></div>
+
+<main class="container">
+  <div class="dep-wrap">
+    <h1>Deposit USDC</h1>
+    <p style="color:var(--text-soft);line-height:1.6;">Fund your ExergyNet compute balance with USDC on <strong>Base Mainnet</strong>. You sign your own transfer from your own wallet; ExergyNet credits your account after the transfer confirms on-chain.</p>
+
+    <div id="dep-unavailable" hidden>
+      <h3>Deposits temporarily unavailable</h3>
+      <p>The deposit receiving address is not configured yet. Please check back shortly.</p>
+    </div>
+
+    <div id="dep-form" hidden>
+      <div class="dep-card">
+        <div class="dep-row"><span class="dep-key">Network</span><span class="dep-val" id="dep-network">not connected</span></div>
+        <div class="dep-row"><span class="dep-key">Your wallet</span><span class="dep-val" id="dep-account">--</span></div>
+        <div class="dep-row"><span class="dep-key">USDC balance</span><span class="dep-val" id="dep-balance">--</span></div>
+        <div class="dep-row"><span class="dep-key">USDC contract</span><span class="dep-val" id="dep-usdc">--</span></div>
+        <div class="dep-row"><span class="dep-key">Send to</span><span class="dep-val" id="dep-receiver">--</span></div>
+      </div>
+
+      <div class="dep-card">
+        <div class="dep-row"><span class="dep-key">ExergyNet API key</span><input class="dep-field" id="dep-apikey" type="password" placeholder="sk-exergy-… (from your ExergyNet dashboard)" autocomplete="off"></div>
+        <div class="dep-row"><span class="dep-key">Amount (USDC)</span><input class="dep-field" id="dep-amount" type="text" inputmode="decimal" placeholder="e.g. 25.00"></div>
+        <div class="dep-actions">
+          <button class="btn btn-ghost" id="dep-connect" type="button">Connect wallet</button>
+          <button class="btn btn-ghost" id="dep-switch" type="button" hidden>Switch to Base Mainnet</button>
+          <button class="btn btn-primary" id="dep-send" type="button" disabled>Send USDC deposit</button>
+        </div>
+        <div id="dep-txlink" class="dep-note" hidden></div>
+        <div id="dep-status" class="dep-status">Connect your wallet to begin.</div>
+        <p class="dep-note">ExergyNet never asks for your private key, seed phrase, or recovery words. You approve the transfer in your own wallet. Crediting is verified on-chain by ExergyNet after the transaction confirms.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+<script src="main.js"></script>
+<script src="deposit.config.js"></script>
+<script src="deposit.js"></script>
+</body>
+</html>

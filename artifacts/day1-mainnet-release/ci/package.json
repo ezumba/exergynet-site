@@ -1,0 +1,16 @@
+{
+  "name": "exergynet-day1-release-ci",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Day-1 Base Mainnet release validation helpers (real-Postgres tests, scans, read-only mainnet smoke).",
+  "type": "module",
+  "scripts": {
+    "pg-tests": "node pg-deposit-tests.mjs",
+    "secret-scan": "node secret-scan.mjs",
+    "fallback-scan": "node fallback-scan.mjs",
+    "mainnet-smoke": "node mainnet-readonly-smoke.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.13.0"
+  }
+}
