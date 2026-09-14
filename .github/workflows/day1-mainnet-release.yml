@@ -1,0 +1,84 @@
+# Day-1 Base Mainnet release validation.
+# Runs on a build-capable runner with a REAL PostgreSQL service. The CI run is the
+# release evidence (§10). No mainnet tx, no funds, no private keys — read-only chain calls only.
+name: day1-mainnet-release
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ "release/base-mainnet-production-closure" ]
+
+jobs:
+  release-validation:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: exergynet_ci
+        ports: [ "5432:5432" ]
+        options: >-
+          --health-cmd "pg_isready -U ci"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgres://ci:ci@localhost:5432/exergynet_ci
+      # Read-only Base Mainnet RPC (public) — used ONLY for eth_chainId / eth_getCode / USDC metadata.
+      BASE_RPC_URL: https://mainnet.base.org
+      BASE_CHAIN_ID: "8453"
+      BASE_USDC_CONTRACT: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+      # NOTE: DEPOSIT_RECEIVING_WALLET is intentionally UNSET here. Config module must report
+      # CONFIG_INCOMPLETE, and tests supply a clearly-synthetic TEST-ONLY address in test env only.
+      DEPOSIT_MIN_CONFIRMATIONS: "12"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+
+      - name: Install release-test deps
+        run: npm ci --prefix artifacts/day1-mainnet-release/ci || npm install --prefix artifacts/day1-mainnet-release/ci pg
+
+      # 1. Module logic tests (config 8 / deposit 12 / concurrent+health 5 = 25)
+      - name: Backend module unit tests (25/25)
+        run: |
+          node artifacts/day1-mainnet/base-mainnet.config.selftest.js
+          node artifacts/day1-mainnet/deposit.test.js
+          node artifacts/day1-mainnet/extra.test.js
+
+      # 2. Real Postgres: migration up/down/reapply + atomicity + concurrency
+      - name: Postgres migration + atomicity + concurrency (real DB)
+        run: node artifacts/day1-mainnet-release/ci/pg-deposit-tests.mjs
+
+      # 3. Secret + runtime-fallback scans over the exact candidate
+      - name: Secret audit (no keys/mnemonics/RPC creds embedded)
+        run: node artifacts/day1-mainnet-release/ci/secret-scan.mjs
+      - name: Runtime fallback audit (no 84532 / test-USDC / retired-wallet defaults)
+        run: node artifacts/day1-mainnet-release/ci/fallback-scan.mjs
+
+      # 4. Read-only Base Mainnet smoke from the exact candidate config
+      - name: Mainnet read-only smoke (chainId 8453, USDC metadata)
+        run: node artifacts/day1-mainnet-release/ci/mainnet-readonly-smoke.mjs
+
+      # 5. Portal build gate — runs ONLY once the frontend build config is reconciled into the tree.
+      #    As of 2026-09-13 there is no portal/package.json or next.config.* in the repo, so this
+      #    step no-ops with an explicit PENDING marker rather than a misleading red failure.
+      - name: Portal lint / typecheck / production build
+        run: |
+          if [ -f portal/package.json ]; then
+            cd portal
+            npm ci
+            npm run lint --if-present
+            npm run typecheck --if-present || npx tsc --noEmit
+            npm run build
+          else
+            echo "PORTAL_BUILD=PENDING: portal/package.json absent — frontend build config not yet reconciled into the tree"
+            exit 1
+          fi
+
+      - name: Upload release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: day1-release-evidence
+          path: artifacts/day1-mainnet-release/*.json

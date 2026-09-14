@@ -1,0 +1,10 @@
+{
+  "_note": "Concurrent-replay results against REAL PostgreSQL 18.4 (not the in-memory model).",
+  "generated": "2026-09-13",
+  "identity": "(chain_id, tx_hash, log_index)",
+  "mechanism": "INSERT ... ON CONFLICT (chain_id,tx_hash,log_index) DO NOTHING RETURNING id, inside one tx with the balance UPDATE (both-or-neither)",
+  "run_1_cold": { "parallel_attempts": 16, "successful_credits": 1, "duplicate_rows": 0, "final_balance_micro": "1000000" },
+  "run_2_after_reconnect": { "parallel_attempts": 16, "successful_credits": 1, "final_balance_micro": "1000000", "note": "fresh connections simulate service restart/reconnect" },
+  "CONCURRENT_REPLAY_CREDITS": 1,
+  "PARTIAL_CREDIT_STATES": 0
+}

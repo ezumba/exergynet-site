@@ -1,0 +1,16 @@
+{
+  "_note": "Live read-only Base Mainnet smoke, executed this session. No transaction, no funds, no keys.",
+  "generated": "2026-09-13",
+  "rpc": "https://mainnet.base.org",
+  "checks": {
+    "eth_chainId_is_8453": { "pass": true, "value": 8453 },
+    "usdc_has_code": { "pass": true, "value": "0x6080604052... len=3706" },
+    "usdc_name_USD_Coin": { "pass": true, "value": "USD Coin" },
+    "usdc_symbol_USDC": { "pass": true, "value": "USDC" },
+    "usdc_decimals_6": { "pass": true, "value": 6 },
+    "latest_block_ok": { "pass": true, "value": 51279600 },
+    "transfer_log_query_ok": { "pass": true, "value": "logs=273" }
+  },
+  "usdc_contract": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "MAINNET_READONLY_SMOKE": "PASS"
+}
