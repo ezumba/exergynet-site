@@ -1,6 +1,6 @@
 {
   "name": "ExergyNet",
-  "category": "Infrastructure for Useful Machine Work — Model-Independent State, Interoperability, and Verification",
+  "category": "Execution infrastructure for machine intelligence — model-independent state, identity, authority, transport, provenance, and evidence for verifiable delegated action",
   "identity": "Infrastructure that gives AI systems a model-independent way to hold authoritative state, measure the resource cost of a validated task against a workload's own optimized baseline, and interoperate across administrative boundaries. Models reason; ExergyNet preserves the state, binds evidence to the decisions that used it, and verifies consequential operations across models, machines, and time. Authority coordination exists but is not the entry point.",
   "planes": {
     "state": "Persistent knowledge across sessions, machines, agents, and models (Exergy Vault / xLMP; VMN local).",
@@ -10,12 +10,12 @@
     "verification": "Independent evidence that an operation occurred as represented (RISC Zero receipts; on-chain anchoring)."
   },
   "canonical_terms": {
-    "xLMP": "persistent state + bounded evidence substrate (the memory plane; a component, not the whole system)",
-    "Exergy Vault": "persistent memory store",
+    "xLMP": "persistent-state delivery for reasoning — supplies bounded evidence without keeping the whole corpus in model context (a component, not the whole system)",
+    "Exergy Vault": "persistent, addressable machine state and evidence substrate",
     "VMN": "local/private deployment of xLMP",
     "Vanguard": "reasoning / orchestration / execution coordination",
     "Omega Carrier": "persistent state and evidence transport (transport does not grant execution authority)",
-    "LNES-22": "authority / Consequence Boundary control plane",
+    "LNES-22": "authenticated, policy-bound machine-event transport and authority (Consequence Boundary)",
     "settlement_rails": "Solana / Base — infrastructure beneath the architecture, not the product identity"
   },
   "public_pages": {

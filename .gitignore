@@ -35,3 +35,6 @@ node_modules/
 *.apk
 *.apk.idsig
 deployed-snapshots/
+
+# local tooling (preview server config)
+.claude/
