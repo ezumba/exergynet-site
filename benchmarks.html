@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Benchmarks - Measured AI Memory Results | ExergyNet</title>
+<title>Benchmarks - Measured Systems Evidence | ExergyNet</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Measured ExergyNet benchmark results for AI memory control, deterministic retrieval, adaptive routing, VMN resilience, and authority separation.">
-<meta name="keywords" content="AI memory benchmarks, persistent AI memory, AI Memory Control Plane, xLMP, ExergyNet, deterministic retrieval, evidence parity, inference efficiency">
+<meta name="description" content="Measured ExergyNet evidence across three classes: computational efficiency, execution integrity, and state/evidence — each bounded to its tested envelope.">
+<meta name="keywords" content="ExergyNet benchmarks, computational efficiency, execution integrity, state and evidence, xLMP, deterministic retrieval, evidence parity, verified delegated action">
 <link rel="canonical" href="https://exergynet.org/benchmarks.html">
-<meta property="og:title" content="Benchmarks - Measured AI Memory Results | ExergyNet">
+<meta property="og:title" content="Benchmarks - Measured Systems Evidence | ExergyNet">
 <meta property="og:description" content="Bounded benchmark evidence for xLMP, Compact Index retrieval, VMN resilience, adaptive deterministic routing, and authority separation.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://exergynet.org/benchmarks.html">
@@ -59,7 +59,7 @@
   "@type": "SoftwareApplication",
   "name": "ExergyNet xLMP",
   "applicationCategory": "DeveloperApplication",
-  "description": "xLMP is the persistent-memory plane of ExergyNet, a state, evidence, and authority substrate for autonomous intelligence. Measured benchmark results for persistent memory, bounded evidence retrieval, adaptive routing, and authority separation, each bounded to its tested envelope.",
+  "description": "xLMP is the persistent-memory plane of ExergyNet, a state, evidence, and authority substrate for machine intelligence. Measured benchmark results for persistent memory, bounded evidence retrieval, adaptive routing, and authority separation, each bounded to its tested envelope.",
   "url": "https://exergynet.org/benchmarks.html"
 }
 </script>
@@ -76,7 +76,7 @@
   <div class="container-wide">
     <div class="bench-kicker">Measured Systems Results</div>
     <h1>Memory should not scale like the problem.</h1>
-    <p class="hero-sub" style="max-width:780px;">ExergyNet measures the work required to retrieve, reason over, and act on persistent AI memory, then redesigns the control plane to reduce unnecessary computation without surrendering evidence integrity.</p>
+    <p class="hero-sub" style="max-width:780px;">ExergyNet measures the work required to retrieve, reason over, and act on persistent state, then redesigns the state-delivery path to reduce unnecessary computation without surrendering evidence integrity. Evidence is organized in three classes — computational efficiency, execution integrity, and state/evidence — each bounded to its tested envelope.</p>
     <div class="btn-row" style="margin-top:1.5rem;">
       <a href="#results" class="btn btn-primary">Explore the Results</a>
       <a href="whitepaper.html" class="btn btn-secondary">White Paper (Preview)</a>
@@ -94,9 +94,9 @@
 
 <section id="results">
   <div class="container-wide">
-    <div class="section-label">Benchmark Families</div>
+    <div class="section-label">Evidence Class 1 &middot; Computational Efficiency</div>
     <h2>Separate experiments. Separate envelopes.</h2>
-    <p style="max-width:780px;">These results are not combined into one synthetic score. Each card states the measured result, the principle it supports, the test envelope, and the known limitation.</p>
+    <p style="max-width:820px;">These results are not combined into one synthetic score. Each card states the measured result, the principle it supports, the test envelope, and the known limitation. This first class measures the <strong>cost of useful work</strong>: context utilization, corpus scaling, throughput, and hardware results. Execution-integrity and state/evidence results follow below. Every number is bounded to its tested hardware, corpus, and workload; H200 and A100 campaigns are reported independently and never blended.</p>
 
     <div class="bench-grid">
       <article class="bench-card accent-border">
@@ -193,15 +193,16 @@
 
 <section style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
   <div class="container-wide">
-    <div class="section-label">Resilience and Authority</div>
-    <h2>A memory system must stay correct while state changes.</h2>
-    <div class="status-grid">
-      <div class="status-tile"><b>PASS</b>Mutation consistency</div>
-      <div class="status-tile"><b>PASS</b>Restart persistence</div>
-      <div class="status-tile"><b>PASS</b>Corruption recovery</div>
-      <div class="status-tile"><b>PASS</b>Deterministic rebuild</div>
-      <div class="status-tile"><b>PASS</b>Authority separation</div>
-      <div class="status-tile"><b>C16</b>Concurrency validated in isolated testing</div>
+    <div class="section-label">Evidence Class 2 &middot; Execution Integrity &nbsp;·&nbsp; Evidence Class 3 &middot; State &amp; Evidence</div>
+    <h2>A system must stay correct while state changes.</h2>
+    <p style="max-width:820px; color:var(--text-soft);"><strong>Execution integrity</strong> covers authority separation, transport/authenticated behavior, and rejection of unauthorized action. <strong>State &amp; evidence</strong> covers durable, root-addressed state and its reconstruction. The checks below map to those two classes.</p>
+    <div class="status-grid" style="margin-top:1rem;">
+      <div class="status-tile"><b>STATE/EVIDENCE · PASS</b>Restart persistence</div>
+      <div class="status-tile"><b>STATE/EVIDENCE · PASS</b>Corruption recovery</div>
+      <div class="status-tile"><b>STATE/EVIDENCE · PASS</b>Deterministic rebuild</div>
+      <div class="status-tile"><b>STATE/EVIDENCE · PASS</b>Mutation consistency</div>
+      <div class="status-tile"><b>EXEC INTEGRITY · PASS</b>Authority separation</div>
+      <div class="status-tile"><b>EXEC INTEGRITY · C16</b>Concurrency validated in isolated testing</div>
     </div>
     <div class="bench-grid" style="align-items:center;margin-top:1.5rem;">
       <div>
@@ -229,7 +230,7 @@
     <div class="section-label">Terminology</div>
     <h2>A new system needs precise language.</h2>
     <div class="term-list">
-      <div class="term"><strong>xLMP</strong><span>The AI Memory Control Plane.</span></div>
+      <div class="term"><strong>xLMP</strong><span>Persistent-state delivery to reasoning events &mdash; the smallest complete set of authoritative evidence required for a task.</span></div>
       <div class="term"><strong>Work Compression</strong><span>Reducing persistent memory into the minimum evidence work required for a task.</span></div>
       <div class="term"><strong>Correct-Task Throughput</strong><span>Rate of successfully completed tasks, not raw token generation.</span></div>
       <div class="term"><strong>Evidence Parity</strong><span>Whether alternative retrieval paths return equivalent authoritative evidence.</span></div>
@@ -237,6 +238,25 @@
       <div class="term"><strong>Oracle Gap</strong><span>Distance between measured routing cost and an oracle that already knows the faster path.</span></div>
       <div class="term"><strong>Authority Separation</strong><span>Memory can inform an action without granting permission to perform it.</span></div>
       <div class="term"><strong>Persistent Memory</strong><span>Durable memory that survives inference sessions and process boundaries.</span></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container-wide">
+    <div class="section-label">Next Evaluation Frontier &middot; Delegated Action</div>
+    <h2>The metrics a verified delegated action will be measured by.</h2>
+    <p style="max-width:820px;color:var(--text-soft);">The three classes above measure efficiency, integrity, and state. The frontier is measuring the <a href="architecture.html" style="color:var(--accent);">verified delegated action</a> end to end. The metrics below are <strong>proposed evaluation targets</strong>, not completed benchmarks &mdash; no result is claimed for them until measured under a stated envelope.</p>
+    <div class="term-list" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:1.25rem;">
+      <div class="term"><strong>Action success <span style="color:var(--text-faint);font-family:var(--mono);font-size:10px;">TARGET</span></strong><span>Share of delegated actions completed correctly end to end.</span></div>
+      <div class="term"><strong>Authorization integrity <span style="color:var(--text-faint);font-family:var(--mono);font-size:10px;">TARGET</span></strong><span>Authorized actions permitted; unauthorized actions rejected.</span></div>
+      <div class="term"><strong>Provenance completeness <span style="color:var(--text-faint);font-family:var(--mono);font-size:10px;">TARGET</span></strong><span>Fraction of actions with a complete state-to-result chain.</span></div>
+      <div class="term"><strong>Attribution completeness <span style="color:var(--text-faint);font-family:var(--mono);font-size:10px;">TARGET</span></strong><span>Actions traceable to an identified actor and authority.</span></div>
+      <div class="term"><strong>Evidence completeness <span style="color:var(--text-faint);font-family:var(--mono);font-size:10px;">TARGET</span></strong><span>Retained evidence sufficient to reconstruct the event.</span></div>
+      <div class="term"><strong>Policy overhead <span style="color:var(--text-faint);font-family:var(--mono);font-size:10px;">TARGET</span></strong><span>Cost added by authority and policy enforcement.</span></div>
+      <div class="term"><strong>Supervision requirement <span style="color:var(--text-faint);font-family:var(--mono);font-size:10px;">TARGET</span></strong><span>Human-in-the-loop rate for a given risk class.</span></div>
+      <div class="term"><strong>Failure containment &amp; recovery <span style="color:var(--text-faint);font-family:var(--mono);font-size:10px;">TARGET</span></strong><span>Blast radius of a bad action and recovery behavior.</span></div>
+      <div class="term"><strong>Cost per verified action <span style="color:var(--text-faint);font-family:var(--mono);font-size:10px;">TARGET</span></strong><span>Total resource cost of one fully verified delegated action.</span></div>
     </div>
   </div>
 </section>

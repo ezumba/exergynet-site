@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossary | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Plain-English glossary of ExergyNet terminology: xLMP, Exergy Vault, xISA, LNES-22, Vanguard, Omega Carrier and more — each with its role, comparable industry concepts, and an explicit boundary of what it is not.">
+<meta name="keywords" content="ExergyNet glossary, xLMP, xISA, Exergy Vault, LNES-22, Vanguard, Omega Carrier, machine authority, capability vs authority">
+<meta property="og:title" content="ExergyNet Glossary">
+<meta property="og:description" content="Every proprietary term with a plain-English definition, its role, comparable concepts, and what it is not.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/glossary.html">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+  .term { border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); padding:1.4rem 1.5rem; margin-bottom:1rem; }
+  .term.key { border-left:3px solid var(--accent); }
+  .term h3 { font-size:1.15rem; margin-bottom:0.15rem; }
+  .term .full { font-family:var(--mono); font-size:11px; color:var(--text-faint); letter-spacing:0.04em; margin-bottom:0.75rem; }
+  .term dl { display:grid; grid-template-columns:130px 1fr; gap:0.4rem 1rem; margin:0; }
+  .term dt { font-family:var(--mono); font-size:10px; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-faint); padding-top:0.15rem; }
+  .term dd { margin:0; color:var(--text-soft); font-size:13.5px; line-height:1.55; }
+  .term dd.not { color:var(--text); }
+  @media (max-width:640px){ .term dl { grid-template-columns:1fr; gap:0.15rem; } .term dt { margin-top:0.5rem; } }
+</style>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+  <div id="site-header"></div>
+
+  <main class="page">
+
+    <section class="home-hero" style="padding:5rem 0 2.5rem;">
+      <div class="glow-accent" style="width:480px;height:420px;top:-120px;left:-160px;"></div>
+      <div class="container-wide">
+        <div class="hero-eyebrow"><span class="dot"></span>Glossary</div>
+        <h1 style="max-width:820px;">ExergyNet terminology,<br><span class="accent">in plain English.</span></h1>
+        <p class="hero-sub" style="max-width:700px;">Every proprietary term with a one-sentence definition, its architectural role, the industry concepts it resembles, and an explicit boundary of what it is <em>not</em>.</p>
+        <p style="max-width:720px; color:var(--text-soft);">Foundational distinction used throughout: <strong style="color:var(--text);">capability</strong> is what an actor technically can do; <strong style="color:var(--text);">authority</strong> is what it is permitted to do under defined conditions.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container-wide" style="max-width:900px;">
+
+        <div class="term key">
+          <h3>xLMP</h3>
+          <div class="full">ExergyNet Ledger Memory Protocol</div>
+          <dl>
+            <dt>Plain English</dt><dd>A persistent-state delivery architecture for model reasoning.</dd>
+            <dt>Role</dt><dd>Supplies the relevant state to a reasoning event without requiring the complete stored corpus to remain active in model context.</dd>
+            <dt>Comparable</dt><dd>Context management, memory architecture, state retrieval.</dd>
+            <dt>Not merely</dt><dd class="not">Not vector search or conventional prompt-stuffing, and not measured as an energy or HBM-byte reduction &mdash; token and active-context behavior are reported as measured on their tested envelopes.</dd>
+          </dl>
+        </div>
+
+        <div class="term key">
+          <h3>Exergy Vault</h3>
+          <div class="full">Persistent state and evidence substrate</div>
+          <dl>
+            <dt>Plain English</dt><dd>Persistent, addressable state for intelligent systems, and a substrate for retaining the evidence associated with machine reasoning and action.</dd>
+            <dt>Role</dt><dd>Stores state as durable, integrity-rooted objects that survive sessions, models, and restarts.</dd>
+            <dt>Comparable</dt><dd>Content-addressed storage, object store, an evidence/audit store.</dd>
+            <dt>Not merely</dt><dd class="not">Not just another AI memory or object-storage product, and it does not assert compliance or immutability guarantees beyond what is validated.</dd>
+          </dl>
+        </div>
+
+        <div class="term key">
+          <h3>xISA</h3>
+          <div class="full">Machine identity and capability architecture</div>
+          <dl>
+            <dt>Plain English</dt><dd>Defines what a machine actor is capable of doing and provides a foundation for expressing the authority under which those capabilities may be used.</dd>
+            <dt>Role</dt><dd>Represents and bounds machine identities and capabilities; the anchor for the capability-versus-authority distinction.</dd>
+            <dt>Comparable</dt><dd>Capability registry, machine identity, an authorization schema.</dd>
+            <dt>Not merely</dt><dd class="not">Not a user-login/IAM product, and capability alone is never treated as permission to act.</dd>
+          </dl>
+        </div>
+
+        <div class="term key">
+          <h3>LNES-22</h3>
+          <div class="full">Authenticated, policy-bound machine-event layer</div>
+          <dl>
+            <dt>Plain English</dt><dd>The transport and transaction layer through which authenticated, policy-bound machine events can move.</dd>
+            <dt>Role</dt><dd>Carries an event structure answering: who acted, what was requested, under what authority, against what state, under what policy, what result occurred, and what evidence remains.</dd>
+            <dt>Comparable</dt><dd>Authenticated messaging, a policy engine, a transaction/audit bus.</dd>
+            <dt>Not merely</dt><dd class="not">Not a claim that agents become "completely secure." Signature verification, policy gates, and rejection conditions are validated within their tested implementation only.</dd>
+          </dl>
+        </div>
+
+        <div class="term key">
+          <h3>Vanguard</h3>
+          <div class="full">Cognitive execution engine</div>
+          <dl>
+            <dt>Plain English</dt><dd>Performs reasoning and tool execution within an architecture designed to preserve state, apply authority boundaries, and produce attributable actions.</dd>
+            <dt>Role</dt><dd>Consumes bounded evidence from the state plane and operates under explicit authority constraints. The important characteristic is bounded machine authority, not maximum autonomy.</dd>
+            <dt>Comparable</dt><dd>An agent runtime, an orchestration/execution engine, an inference execution mode.</dd>
+            <dt>Not merely</dt><dd class="not">Not "our frontier model" and not a required replacement for your existing model provider &mdash; it is one execution mode inside the architecture.</dd>
+          </dl>
+        </div>
+
+        <div class="term">
+          <h3>Consequence Boundary</h3>
+          <div class="full">Authorization layer for autonomous agents</div>
+          <dl>
+            <dt>Plain English</dt><dd>An independent identity, capability, freshness, and integrity check placed between an agent's reasoning and any system that reasoning can affect.</dd>
+            <dt>Role</dt><dd>Enforces that AI can propose a consequence but cannot authorize its own consequence.</dd>
+            <dt>Comparable</dt><dd>A policy decision point, an authorization gateway.</dd>
+            <dt>Not merely</dt><dd class="not">Not a guarantee that eliminates all AI risk. Live-tested against a real prompt-injection red team; patent pending (U.S. Provisional Application No. 64/134,973).</dd>
+          </dl>
+        </div>
+
+        <div class="term">
+          <h3>Omega Carrier</h3>
+          <div class="full">Memory transport architecture</div>
+          <dl>
+            <dt>Plain English</dt><dd>Moves persistent memory between nodes while preserving identity, provenance, integrity, and freshness.</dd>
+            <dt>Role</dt><dd>Portability of state across nodes and environments.</dd>
+            <dt>Comparable</dt><dd>A replication/transport layer for stateful memory.</dd>
+            <dt>Not merely</dt><dd class="not">Memory portability does not grant execution authority.</dd>
+          </dl>
+        </div>
+
+        <div class="term">
+          <h3>VMN</h3>
+          <div class="full">Vanguard Memory Node</div>
+          <dl>
+            <dt>Plain English</dt><dd>An open-source local node implementing xLMP-style deterministic, content-addressed memory over MCP.</dd>
+            <dt>Role</dt><dd>Runs the memory plane locally, with no cloud required.</dd>
+            <dt>Comparable</dt><dd>A local memory server, an MCP memory backend.</dd>
+            <dt>Not merely</dt><dd class="not">A local node, not the full hosted platform; results are workload-dependent and bounded to tested scales.</dd>
+          </dl>
+        </div>
+
+        <div class="term">
+          <h3>LNES</h3>
+          <div class="full">ExergyNet internal work-unit / release numbering</div>
+          <dl>
+            <dt>Plain English</dt><dd>The internal identifiers ExergyNet uses to label specific systems, experiments, and releases (for example LNES-22 authority, LNES-04 settlement, LNES-82C scaling).</dd>
+            <dt>Role</dt><dd>Traceability between a public claim and the specific validated work behind it.</dd>
+            <dt>Comparable</dt><dd>Internal component or RFC numbering.</dd>
+            <dt>Not merely</dt><dd class="not">Not product names for end users; each maps to a documented scope in the benchmark and claim ledgers.</dd>
+          </dl>
+        </div>
+
+        <div class="quiet-callout" style="margin-top:1.5rem;">
+          Component names describe responsibilities and interfaces. They do not define ExergyNet's category: <strong>execution infrastructure for machine intelligence</strong>. Mechanism-level detail is intentionally omitted.
+        </div>
+
+        <div class="btn-row" style="margin-top:1.5rem;">
+          <a href="architecture.html" class="btn btn-primary">See the Architecture</a>
+          <a href="benchmarks.html" class="btn btn-secondary">Measured Evidence</a>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-footer"></div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
