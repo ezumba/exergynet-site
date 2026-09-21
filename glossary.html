@@ -8,8 +8,8 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Plain-English glossary of ExergyNet terminology: xLMP, Exergy Vault, xISA, LNES-22, Vanguard, Omega Carrier and more — each with its role, comparable industry concepts, and an explicit boundary of what it is not.">
-<meta name="keywords" content="ExergyNet glossary, xLMP, xISA, Exergy Vault, LNES-22, Vanguard, Omega Carrier, machine authority, capability vs authority">
+<meta name="description" content="Plain-English glossary of ExergyNet terminology: xLMP, Exergy Vault, xISA, LNES-22, Vanguard, RHO, Omega Carrier and more — each with its role, comparable industry concepts, and an explicit boundary of what it is not.">
+<meta name="keywords" content="ExergyNet glossary, xLMP, xISA, Exergy Vault, LNES-22, Vanguard, RHO, Omega Carrier, machine authority, capability vs authority">
 <meta property="og:title" content="ExergyNet Glossary">
 <meta property="og:description" content="Every proprietary term with a plain-English definition, its role, comparable concepts, and what it is not.">
 <meta property="og:type" content="website">
@@ -56,7 +56,7 @@
     <section>
       <div class="container-wide" style="max-width:900px;">
 
-        <div class="term key">
+        <div class="term key" id="xlmp">
           <h3>xLMP</h3>
           <div class="full">ExergyNet Ledger Memory Protocol</div>
           <dl>
@@ -67,7 +67,7 @@
           </dl>
         </div>
 
-        <div class="term key">
+        <div class="term key" id="vault">
           <h3>Exergy Vault</h3>
           <div class="full">Persistent state and evidence substrate</div>
           <dl>
@@ -78,7 +78,7 @@
           </dl>
         </div>
 
-        <div class="term key">
+        <div class="term key" id="xisa">
           <h3>xISA</h3>
           <div class="full">Machine identity and capability architecture</div>
           <dl>
@@ -89,7 +89,7 @@
           </dl>
         </div>
 
-        <div class="term key">
+        <div class="term key" id="lnes22">
           <h3>LNES-22</h3>
           <div class="full">Authenticated, policy-bound machine-event layer</div>
           <dl>
@@ -100,7 +100,7 @@
           </dl>
         </div>
 
-        <div class="term key">
+        <div class="term key" id="vanguard">
           <h3>Vanguard</h3>
           <div class="full">Cognitive execution engine</div>
           <dl>
@@ -108,6 +108,17 @@
             <dt>Role</dt><dd>Consumes bounded evidence from the state plane and operates under explicit authority constraints. The important characteristic is bounded machine authority, not maximum autonomy.</dd>
             <dt>Comparable</dt><dd>An agent runtime, an orchestration/execution engine, an inference execution mode.</dd>
             <dt>Not merely</dt><dd class="not">Not "our frontier model" and not a required replacement for your existing model provider &mdash; it is one execution mode inside the architecture.</dd>
+          </dl>
+        </div>
+
+        <div class="term key" id="rho">
+          <h3>RHO</h3>
+          <div class="full">Normalized computational resource-accounting unit</div>
+          <dl>
+            <dt>Plain English</dt><dd>ExergyNet&rsquo;s normalized unit for attributing computational resource consumption to an execution event. RHO measures computational resource use and is distinct from price, currency, and financial settlement.</dd>
+            <dt>Role</dt><dd>Gives an execution a measured, traceable resource footprint before any pricing or payment is applied. Flow: execution &rarr; measurement &rarr; RHO &rarr; pricing &rarr; obligation &rarr; settlement.</dd>
+            <dt>Comparable</dt><dd>A metering unit, such as a kilowatt-hour for electricity: it measures consumption and is not the bill.</dd>
+            <dt>Not merely</dt><dd class="not">Not a cryptocurrency, stablecoin, dollar balance, joule, or redeemable asset, and it has no market price. Currently an accounting and normalization construct; see the <a href="rho.html" style="color:var(--accent);">full RHO page</a> for the definition and implementation status.</dd>
           </dl>
         </div>
 
@@ -144,7 +155,7 @@
           </dl>
         </div>
 
-        <div class="term">
+        <div class="term" id="lnes">
           <h3>LNES</h3>
           <div class="full">ExergyNet internal work-unit / release numbering</div>
           <dl>
