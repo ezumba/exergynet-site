@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RHO: Measuring Computational Work | ExergyNet</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Learn how RHO provides ExergyNet with a normalized way to attribute computational resource consumption to specific execution events, while keeping measurement, pricing, and settlement separate.">
+<meta name="keywords" content="RHO, computational resource accounting, execution metering, resource attribution, ExergyNet, measurement vs pricing, machine execution accounting">
+<link rel="canonical" href="https://exergynet.org/rho">
+<meta property="og:title" content="RHO: Measuring Computational Work | ExergyNet">
+<meta property="og:description" content="A normalized unit for attributing computational resource consumption to specific execution events. Measurement, pricing, and settlement stay separate.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://exergynet.org/rho">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RHO: Measuring Computational Work | ExergyNet">
+<meta name="twitter:description" content="RHO measures attributable computational resource use. It is not money, not a price, and not a settlement asset.">
+<link rel="stylesheet" href="style.css">
+<script>
+(function(){
+  var t = localStorage.getItem('exg-theme');
+  if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+  .prose { max-width:780px; color:var(--text-soft); line-height:1.7; font-size:1rem; }
+  .prose p { margin-bottom:1rem; }
+  .prose strong { color:var(--text); }
+  .prose ul { margin:0 0 1rem 1.2rem; }
+  .prose li { margin-bottom:0.4rem; }
+
+  /* Pipeline visual: measurement (green) / commercial policy (blue) / monetary settlement (amber) */
+  .flow { list-style:none; margin:2rem 0 0.75rem; padding:0; display:flex; flex-wrap:wrap; align-items:stretch; gap:0.5rem; }
+  .flow li { display:flex; align-items:center; gap:0.5rem; }
+  .flow .node { border:1px solid var(--border-mid); background:var(--bg-card); border-radius:10px; padding:0.65rem 0.95rem; font-family:var(--mono); font-size:12px; letter-spacing:0.04em; color:var(--text); text-align:center; min-width:104px; }
+  .flow .node small { display:block; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-soft); margin-top:0.2rem; }
+  .flow .n-measure { border-color:var(--accent); background:var(--accent-dim); }
+  .flow .n-price { border-color:var(--blue); background:var(--blue-dim); }
+  .flow .n-settle { border-color:var(--amber); background:var(--amber-dim); }
+  .flow .ar { color:var(--text-soft); font-size:1.05rem; }
+  .flow .ar-v { display:none; }
+  .flow-key { display:flex; flex-wrap:wrap; gap:1.25rem; font-size:12.5px; color:var(--text-soft); margin-bottom:0.5rem; }
+  .flow-key span::before { content:""; display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; vertical-align:-1px; border:1px solid; }
+  .flow-key .k-measure::before { border-color:var(--accent); background:var(--accent-dim); }
+  .flow-key .k-price::before { border-color:var(--blue); background:var(--blue-dim); }
+  .flow-key .k-settle::before { border-color:var(--amber); background:var(--amber-dim); }
+
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1.5rem 0; }
+  .qa { border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); padding:1.15rem 1.3rem; }
+  .qa .q { font-family:var(--mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent); margin-bottom:0.45rem; }
+  .qa.price .q { color:var(--blue); }
+  .qa p { color:var(--text); margin:0; font-size:1.02rem; line-height:1.55; }
+
+  .formula { font-family:var(--mono); background:var(--bg-card); border:1px solid var(--border-mid); border-left:3px solid var(--accent); border-radius:var(--radius); padding:1rem 1.25rem; margin:1.25rem 0; overflow-x:auto; font-size:13.5px; line-height:1.7; color:var(--text); white-space:pre; -webkit-overflow-scrolling:touch; }
+  .formula.plain { border-left-color:var(--blue); }
+  .formula .dim { color:var(--text-soft); }
+
+  .pull { border-left:3px solid var(--accent); background:var(--accent-dim); border-radius:0 var(--radius) var(--radius) 0; padding:1.25rem 1.4rem; margin:1.5rem 0; font-size:1.12rem; line-height:1.55; color:var(--text); max-width:780px; }
+  .pull.warn { border-left-color:var(--amber); background:var(--amber-dim); }
+
+  .analogy { display:grid; grid-template-columns:auto 1fr; gap:0.5rem 1rem; align-items:center; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); padding:1.1rem 1.3rem; margin:1.25rem 0; max-width:780px; }
+  .analogy .lbl { font-family:var(--mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-soft); }
+  .analogy code { font-family:var(--mono); font-size:13px; color:var(--text); overflow-wrap:anywhere; }
+
+  .steps { list-style:none; counter-reset:step; margin:1.25rem 0; padding:0; max-width:780px; }
+  .steps li { counter-increment:step; display:grid; grid-template-columns:2rem 1fr; gap:0.75rem; padding:0.6rem 0; border-bottom:1px solid var(--border); color:var(--text-soft); line-height:1.55; }
+  .steps li::before { content:counter(step); font-family:var(--mono); color:var(--accent); font-size:12px; padding-top:0.15rem; }
+  .steps li strong { color:var(--text); }
+
+  .terms { display:grid; grid-template-columns:auto 1fr; gap:0.35rem 1rem; margin:1rem 0 1.5rem; max-width:780px; }
+  .terms dt { font-family:var(--mono); font-size:13px; color:var(--accent); }
+  .terms dd { margin:0; color:var(--text-soft); line-height:1.55; }
+
+  .rules { display:grid; grid-template-columns:repeat(2,1fr); gap:0.85rem; margin-top:1.25rem; }
+  .rule { border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); padding:1rem 1.15rem; }
+  .rule h3 { font-size:0.98rem; margin-bottom:0.3rem; }
+  .rule p { color:var(--text-soft); font-size:13.5px; line-height:1.55; margin:0; }
+
+  .not-list { display:grid; grid-template-columns:repeat(2,1fr); gap:0.5rem 1.5rem; list-style:none; margin:1rem 0 0; padding:0; max-width:780px; }
+  .not-list li { color:var(--text-soft); font-size:14px; padding-left:1.4rem; position:relative; }
+  .not-list li::before { content:"\2715"; position:absolute; left:0; color:var(--amber); font-size:12px; }
+
+  .status-wrap { overflow-x:auto; margin-top:1.25rem; border:1px solid var(--border); border-radius:var(--radius); }
+  table.status { width:100%; border-collapse:collapse; font-size:13.5px; min-width:640px; }
+  table.status th, table.status td { text-align:left; vertical-align:top; padding:0.75rem 0.95rem; border-bottom:1px solid var(--border); color:var(--text-soft); line-height:1.5; }
+  table.status th { font-family:var(--mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-soft); background:var(--bg-card); }
+  table.status td:first-child { color:var(--text); font-weight:600; width:26%; }
+  table.status tr:last-child td { border-bottom:none; }
+  .chip { display:inline-block; font-family:var(--mono); font-size:9.5px; letter-spacing:0.07em; text-transform:uppercase; padding:0.14rem 0.5rem; border-radius:5px; border:1px solid; white-space:nowrap; }
+  .chip.validated { color:var(--accent); background:var(--accent-dim); border-color:rgba(0,232,135,0.35); }
+  .chip.testnet { color:var(--blue); background:var(--blue-dim); border-color:rgba(78,158,255,0.35); }
+  .chip.shadow { color:var(--amber); background:var(--amber-dim); border-color:rgba(255,184,48,0.4); }
+  .chip.inactive { color:var(--text-soft); background:var(--bg-card); border-color:var(--border-mid); }
+
+  .link-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem; margin-top:1.25rem; }
+  .link-grid a { display:block; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); padding:0.95rem 1.1rem; text-decoration:none; }
+  .link-grid a:hover { border-color:var(--accent); }
+  .link-grid a strong { display:block; color:var(--text); font-size:0.95rem; margin-bottom:0.2rem; }
+  .link-grid a span { color:var(--text-soft); font-size:13px; line-height:1.45; }
+
+  .tuple { font-family:var(--mono); }
+
+  @media (max-width:760px){
+    .two-col, .rules, .not-list, .link-grid { grid-template-columns:1fr; }
+    .flow { flex-direction:column; align-items:stretch; }
+    .flow li { flex-direction:column; align-items:stretch; }
+    .flow .ar-h { display:none; }
+    .flow .ar-v { display:block; text-align:center; }
+    .flow .node { text-align:left; }
+    .analogy { grid-template-columns:1fr; }
+  }
+</style>
+<script type="application/ld+json">
+{ "@context":"https://schema.org","@type":"TechArticle","headline":"RHO: Measuring Computational Work",
+  "about":{"@type":"DefinedTerm","name":"RHO","description":"ExergyNet's normalized unit for attributing computational resource consumption to an execution event. RHO measures computational resource use and is distinct from price, currency, and financial settlement."},
+  "url":"https://exergynet.org/rho" }
+</script>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<div class="site-wrap">
+  <div id="site-header"></div>
+
+  <main class="page">
+
+    <!-- 1. HERO -->
+    <section class="home-hero" style="padding:5rem 0 3rem;">
+      <div class="glow-accent" style="width:520px;height:460px;top:-140px;left:-160px;"></div>
+      <div class="container-wide">
+        <div class="hero-eyebrow"><span class="dot"></span>Foundational Concept</div>
+        <h1 style="max-width:880px;">RHO: <span class="accent">Measuring Computational Work</span></h1>
+        <p class="hero-sub" style="max-width:740px;">A normalized way to attribute computational resource consumption to specific execution events.</p>
+        <p class="prose" style="max-width:760px;">AI systems can tell you what they produced. Cloud systems can tell you what infrastructure cost. RHO connects those layers by attributing computational resource consumption to the execution event that caused it.</p>
+
+        <div class="flow-key" aria-hidden="true">
+          <span class="k-measure">Measured</span>
+          <span class="k-price">Commercial policy</span>
+          <span class="k-settle">Monetary settlement</span>
+        </div>
+        <ol class="flow" aria-label="RHO flow: Execution, Measurement, RHO, Pricing, Obligation, Settlement">
+          <li><div class="node n-measure">Execution<small>what ran</small></div><span class="ar ar-h" aria-hidden="true">&rarr;</span></li>
+          <li><span class="ar ar-v" aria-hidden="true">&darr;</span><div class="node n-measure">Measurement<small>resources used</small></div><span class="ar ar-h" aria-hidden="true">&rarr;</span></li>
+          <li><span class="ar ar-v" aria-hidden="true">&darr;</span><div class="node n-measure">RHO<small>normalized unit</small></div><span class="ar ar-h" aria-hidden="true">&rarr;</span></li>
+          <li><span class="ar ar-v" aria-hidden="true">&darr;</span><div class="node n-price">Pricing<small>tariff policy</small></div><span class="ar ar-h" aria-hidden="true">&rarr;</span></li>
+          <li><span class="ar ar-v" aria-hidden="true">&darr;</span><div class="node n-price">Obligation<small>what is owed</small></div><span class="ar ar-h" aria-hidden="true">&rarr;</span></li>
+          <li><span class="ar ar-v" aria-hidden="true">&darr;</span><div class="node n-settle">Settlement<small>money moves</small></div></li>
+        </ol>
+        <p style="font-size:13px; color:var(--text-soft); max-width:760px;">Six distinct stages. RHO is the third. Everything to its right is a separate policy or monetary system.</p>
+      </div>
+    </section>
+
+    <!-- 2. WHAT IS RHO -->
+    <section style="background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <div class="container-wide">
+        <div class="section-label">What is RHO?</div>
+        <h2 style="margin-bottom:0.8rem;">A unit of measurement, not a unit of money.</h2>
+        <div class="pull"><strong>RHO is ExergyNet&rsquo;s normalized resource-accounting unit for computational work.</strong> It gives resources attributed to an execution a common accounting representation.</div>
+        <div class="prose">
+          <p>A kilowatt-hour measures electricity consumption. It is not itself the customer&rsquo;s bill. A tariff converts measured consumption into a financial charge. RHO is designed to relate to computation the way the kilowatt-hour relates to electricity.</p>
+        </div>
+        <div class="analogy" role="group" aria-label="Electricity analogy">
+          <span class="lbl">Electricity</span><code>Energy consumed &rarr; kWh &rarr; tariff &rarr; bill</code>
+          <span class="lbl">ExergyNet</span><code>Computational execution &rarr; RHO &rarr; tariff &rarr; financial obligation</code>
+        </div>
+        <p class="prose"><strong>RHO measures. Pricing decides what that measurement is worth commercially.</strong></p>
+
+        <p class="prose" style="margin-top:1.5rem; margin-bottom:0.25rem;">RHO is not:</p>
+        <ul class="not-list">
+          <li>a cryptocurrency or speculative token</li>
+          <li>a stablecoin or dollar balance</li>
+          <li>a security or monetary asset</li>
+          <li>a joule or unit of energy</li>
+          <li>redeemable for dollars</li>
+          <li>a market-priced commodity</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3. WHY RHO EXISTS -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">Why RHO Exists</div>
+        <h2 style="margin-bottom:0.8rem;">Bills describe infrastructure. RHO describes executions.</h2>
+        <div class="prose">
+          <p>Conventional infrastructure accounting can usually answer questions like: How much did this GPU instance cost? How many API tokens were consumed? What was the monthly cloud bill? How much did a customer pay?</p>
+          <p>ExergyNet is addressing a more specific question:</p>
+        </div>
+        <div class="pull">What computational resources were attributable to <em>this particular</em> execution event?</div>
+        <div class="prose">
+          <p>That question matters more as machines act on their own behalf. It applies to:</p>
+          <ul>
+            <li>autonomous agents and multi-step workflows</li>
+            <li>model calls, retrieval, and verification</li>
+            <li>tool execution and distributed infrastructure</li>
+            <li>machine-to-machine services and automated economic activity</li>
+          </ul>
+          <p>RHO is ExergyNet&rsquo;s architecture for this problem. It is not presented as the only possible one.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. WHAT CREATES VALUE -->
+    <section style="background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <div class="container-wide">
+        <div class="section-label">What Creates Value?</div>
+        <h2 style="margin-bottom:0.8rem;">Useful computation creates value. RHO measures its resource cost.</h2>
+        <div class="pull"><strong>RHO does not create economic value simply by existing. Useful computation creates economic value.</strong></div>
+        <div class="prose">
+          <p>Value comes from work the network performs: inference, retrieval, validated computation, authorized execution, data transformation, tool invocation, state transitions, automation, verification, or completing a computational service.</p>
+          <p>RHO standardizes how the resources behind that work are measured. The relationship runs in this direction only:</p>
+        </div>
+        <div class="formula plain" role="img" aria-label="Useful execution leads to resource consumption leads to RHO measurement">Useful execution  &rarr;  resource consumption  &rarr;  RHO measurement</div>
+        <div class="prose">
+          <p>A highly valuable computation can consume very little RHO. A worthless one can consume a great deal. Measurement and economic value are different quantities. Converting one into the other is a separate pricing function, described below.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. RHO IS NOT THE PRICE -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">RHO Is Not the Price</div>
+        <h2 style="margin-bottom:0.8rem;">Two different questions, two different variables.</h2>
+        <div class="two-col">
+          <div class="qa"><div class="q">RHO answers</div><p>How much normalized computational resource was attributed to this execution?</p></div>
+          <div class="qa price"><div class="q">Price answers</div><p>What does the provider charge for that execution?</p></div>
+        </div>
+        <div class="prose">
+          <p>An execution may consume 25 RHO. A pricing policy, or tariff, determines the corresponding financial charge. The same RHO quantity could carry different tariffs for different services, just as 100&nbsp;kWh is one quantity of energy regardless of the rate on the bill.</p>
+        </div>
+        <div class="formula" role="img" aria-label="Agent request, verified execution, 25 RHO, tariff, dollar X">Agent request  &rarr;  verified execution  &rarr;  25 RHO  &rarr;  tariff  &rarr;  $X</div>
+        <p class="prose" style="font-size:13px;">The figure of 25 RHO is illustrative. <strong>$X</strong> is deliberately unspecified: this page does not state a production price.</p>
+      </div>
+    </section>
+
+    <!-- 6. WHO PAYS WHOM -->
+    <section style="background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <div class="container-wide">
+        <div class="section-label">Who Pays Whom?</div>
+        <h2 style="margin-bottom:0.8rem;">The customer pays for a service. RHO is the measurement in between.</h2>
+        <ol class="steps">
+          <li><span><strong>Request.</strong> A customer requests or authorizes a computational service.</span></li>
+          <li><span><strong>Execution.</strong> The service executes.</span></li>
+          <li><span><strong>Measurement.</strong> ExergyNet measures the resource consumption attributable to that execution.</span></li>
+          <li><span><strong>RHO.</strong> RHO records that normalized resource use.</span></li>
+          <li><span><strong>Pricing.</strong> A pricing policy converts the measurement into a financial obligation.</span></li>
+          <li><span><strong>Settlement.</strong> Existing monetary infrastructure can settle that obligation.</span></li>
+          <li><span><strong>Allocation.</strong> Authorized economic participants receive the amounts defined by the applicable settlement policy.</span></li>
+        </ol>
+        <div class="formula plain" role="img" aria-label="Customer, execution, RHO, tariff, financial obligation, settlement">Customer  &rarr;  Execution  &rarr;  RHO  &rarr;  Tariff  &rarr;  Financial Obligation  &rarr;  Settlement</div>
+        <div class="pull"><strong>RHO itself does not need to be the settlement asset.</strong> Payments are expected to move through conventional monetary systems. How the amount is split among participants is a settlement-policy question, not part of the definition of RHO.</div>
+        <p class="prose" style="font-size:13.5px;">Today, customer usage on the ExergyNet Portal is billed against USDC-denominated account balances. A RHO-based tariff is not active. See <a href="#status" style="color:var(--accent);">Current Implementation Status</a>.</p>
+      </div>
+    </section>
+
+    <!-- 7. WHY NOT EXISTING ACCOUNTING -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">Why Not Just Use Existing Accounting?</div>
+        <h2 style="margin-bottom:0.8rem;">We do. RHO addresses a different problem.</h2>
+        <div class="prose">
+          <p>ExergyNet is not attempting to replace financial accounting. Payment records, ledgers, and invoices remain the right tools for money.</p>
+          <p>A conventional ledger can record that <em>Customer A paid $4.82.</em> It typically does not natively preserve the computational causal chain: which authorized machine execution produced that obligation, under what authority and policy, and against what state. ExergyNet extends accounting toward the computational event itself:</p>
+        </div>
+        <div class="formula" role="img" aria-label="State i, authorized execution, resource attribution, RHO, charge, settlement, state i plus 1"><span class="dim">S</span>&#7522;  &rarr;  authorized execution  &rarr;  resource attribution  &rarr;  RHO  &rarr;  charge  &rarr;  settlement  &rarr;  <span class="dim">S</span>&#7522;&#8330;&#8321;</div>
+        <div class="prose"><p>In ExergyNet&rsquo;s execution model, a single machine action can be written as:</p></div>
+        <div class="formula plain" role="img" aria-label="E sub i equals S sub i, A, M, C, P, X, R, S sub i plus 1">E&#7522; = (S&#7522;, A, M, C, P, X, R, S&#7522;&#8330;&#8321;)</div>
+        <dl class="terms">
+          <dt>S&#7522;</dt><dd>initial state</dd>
+          <dt>A</dt><dd>authority: what the actor is permitted to do</dd>
+          <dt>M</dt><dd>model or runtime performing the work</dd>
+          <dt>C</dt><dd>capabilities available to the actor</dd>
+          <dt>P</dt><dd>governing policy</dd>
+          <dt>X</dt><dd>the execution event</dd>
+          <dt>R</dt><dd>resulting observation or output</dd>
+          <dt>S&#7522;&#8330;&#8321;</dt><dd>resulting state</dd>
+        </dl>
+        <div class="pull"><strong>Financial accounting records the transaction. RHO helps account for the computation that caused the transaction.</strong></div>
+      </div>
+    </section>
+
+    <!-- 8. HOW RHO IS CALCULATED -->
+    <section style="background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <div class="container-wide">
+        <div class="section-label">How RHO Is Calculated</div>
+        <h2 style="margin-bottom:0.8rem;">The validated G0 normalization.</h2>
+        <div class="prose"><p>For the genesis accounting epoch (G0), the currently validated definition is:</p></div>
+        <div class="formula" role="img" aria-label="RHO cost-equivalent equals total non-overlapping cost in US dollars divided by 0.0001000000">RHO<span class="dim"> cost-equivalent</span>  =  C<span class="dim"> total non-overlapping (USD)</span>  /  0.0001000000</div>
+        <dl class="terms">
+          <dt>RHO</dt><dd>the normalized quantity attributed to an operation.</dd>
+          <dt>C (total non-overlapping, USD)</dt><dd>the measured infrastructure cost attributable to the operation, in US dollars, counted once. Where the same underlying resource use appears in more than one accounting view, it is not added twice.</dd>
+          <dt>0.0001000000</dt><dd>a fixed reference constant, defined for epoch G0.</dd>
+        </dl>
+        <div class="pull warn"><strong>The denominator is a normalization constant.</strong> It does not establish a market price, exchange rate, redemption right, or dollar value for RHO.</div>
+        <div class="prose">
+          <p>Internally, G0 also fixes 1,000,000 &micro;RHO per RHO, so small operations can be expressed as whole numbers. The measurement basis behind G0 covers two infrastructure classes. Its limits are stated in the status section below: notably, the GPU-inference cost term is modeled from pricing data rather than directly measured, and energy is not measured.</p>
+          <p>The public description stops here on purpose. Detailed cost-component definitions and attribution methods are maintained in ExergyNet&rsquo;s internal metrology specification.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. RULES -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">Accounting Invariants</div>
+        <h2 style="margin-bottom:0.8rem;">Rules RHO must obey.</h2>
+        <div class="rules">
+          <div class="rule"><h3>Attribution</h3><p>Every RHO record must be connected to an attributable computational resource or execution event.</p></div>
+          <div class="rule"><h3>No double counting</h3><p>The same underlying resource expenditure must not be counted more than once merely because it appears in multiple telemetry or accounting sources.</p></div>
+          <div class="rule"><h3>Measurement is not price</h3><p>A RHO quantity does not independently determine commercial price.</p></div>
+          <div class="rule"><h3>Measurement is not settlement</h3><p>Creating a RHO accounting record does not itself transfer money.</p></div>
+          <div class="rule"><h3>Traceability</h3><p>A RHO value should be derivable from its associated measurement and accounting evidence.</p></div>
+          <div class="rule"><h3>Explicit policy</h3><p>Pricing, settlement, discounts, margins, and provider allocations belong to explicit policy layers, not to the definition of RHO.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. VALUE CONSERVATION -->
+    <section style="background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <div class="container-wide">
+        <div class="section-label">Consistency, Not Conservation of Value</div>
+        <h2 style="margin-bottom:0.8rem;">RHO preserves accounting consistency, not economic value.</h2>
+        <div class="prose"><p>The invariant RHO is designed to satisfy is one of traceability:</p></div>
+        <div class="formula" role="img" aria-label="Sum of RHO per job equals sum of attributable normalized resource measurements">&Sigma; RHO<span class="dim"> job</span>  =  &Sigma; attributable normalized resource measurements</div>
+        <div class="prose">
+          <p>This holds subject to the defined measurement policy and accounting epoch. Nothing is added to a RHO total because someone declares it: every quantity must be derivable from an attributable execution record.</p>
+          <p>Economic value may be created, destroyed, transferred, or priced independently of this identity. Its purpose is consistency and traceability, not a claim that value is conserved.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. STATUS -->
+    <section id="status">
+      <div class="container-wide">
+        <div class="section-label">Current Implementation Status</div>
+        <h2 style="margin-bottom:0.8rem;">What exists, and what does not.</h2>
+        <div class="pull warn"><strong>RHO currently operates as an accounting and normalization construct within ExergyNet&rsquo;s measured execution architecture.</strong> Production economic issuance, external exchange, market pricing, token-based settlement, or redemption should not be inferred unless explicitly documented as implemented and validated.</div>
+
+        <div class="status-wrap">
+          <table class="status">
+            <thead><tr><th scope="col">Capability</th><th scope="col">Status</th><th scope="col">What that means</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>G0 normalization definition</td>
+                <td><span class="chip validated">Validated</span></td>
+                <td>The formula and reference constant are fixed for genesis epoch G0 (effective 2026-08-23). The constant is a normalization denominator only.</td>
+              </tr>
+              <tr>
+                <td>G0 measured cost basis</td>
+                <td><span class="chip validated">Validated, bounded</span></td>
+                <td>Measured on one AWS c6a.large host and one Azure A10-class GPU host. Base equivalents were recorded for three operation types (RECALL, WRITE, QUERY). The GPU-inference term, which dominates QUERY, is <strong>modeled from pricing data, not measured</strong>. Energy was <strong>not measured</strong>. Token counts used a word-count proxy. Pilot stage.</td>
+              </tr>
+              <tr>
+                <td>Tariff schedules</td>
+                <td><span class="chip shadow">Shadow only</span></td>
+                <td>Candidate tariff schedules exist for analysis. They are not settlement authority, use uncalibrated assumptions, and do not drive any charge.</td>
+              </tr>
+              <tr>
+                <td>Settlement test with RHO on a test network</td>
+                <td><span class="chip testnet">Testnet only</span></td>
+                <td>A RHO token contract on Base Sepolia (a public test network) was used to settle three metered memory operations end to end: 500 test RHO in total, with allowances spent to zero and replay attempts rejected. This exercised a settlement pathway. It carries no monetary value.</td>
+              </tr>
+              <tr>
+                <td>Mainnet issuance</td>
+                <td><span class="chip inactive">Not active</span></td>
+                <td>No RHO has been minted on a production network. Mainnet minting is not authorized.</td>
+              </tr>
+              <tr>
+                <td>Market price, exchange, redemption</td>
+                <td><span class="chip inactive">Not defined</span></td>
+                <td>RHO has no market price, no dollar peg, and no redemption right. It does not trade.</td>
+              </tr>
+              <tr>
+                <td>Production RHO-based tariff and billing</td>
+                <td><span class="chip inactive">Not active</span></td>
+                <td>Customer usage on the Portal is billed against USDC-denominated balances today. Converting RHO into customer charges in production has not been activated.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="prose" style="font-size:13.5px; margin-top:1rem;">The next validation stage is direct GPU-side and energy instrumentation, followed by demonstrating the complete chain from measured execution to obligation to settlement. Until then, treat everything to the right of RHO in the flow above as designed, not deployed.</p>
+      </div>
+    </section>
+
+    <!-- 12. DEVELOPERS -->
+    <section style="background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <div class="container-wide">
+        <div class="section-label">For Developers</div>
+        <h2 style="margin-bottom:0.8rem;">Go deeper.</h2>
+        <p class="prose">RHO sits alongside ExergyNet&rsquo;s other foundational concepts. Each has its own plain-English definition and evidence boundary.</p>
+        <div class="link-grid">
+          <a href="architecture.html"><strong>Architecture</strong><span>The execution path from reasoning to accountable action.</span></a>
+          <a href="glossary.html#xlmp"><strong>xLMP</strong><span>How persistent state is delivered to reasoning events.</span></a>
+          <a href="glossary.html#xisa"><strong>xISA</strong><span>Machine capability and authority: what an actor can do versus may do.</span></a>
+          <a href="glossary.html#vault"><strong>Exergy Vault</strong><span>Persistent, addressable machine state and evidence.</span></a>
+          <a href="security.html"><strong>LNES-22</strong><span>Authenticated, policy-bound machine events.</span></a>
+          <a href="glossary.html#lnes"><strong>LNES</strong><span>How ExergyNet specifications and evidence are numbered.</span></a>
+          <a href="docs.html"><strong>Documentation</strong><span>Developer documentation index.</span></a>
+          <a href="api-integration.html"><strong>API Integration</strong><span>Endpoints and integration guides.</span></a>
+          <a href="glossary.html#rho"><strong>Glossary entry</strong><span>The 30-second definition of RHO.</span></a>
+        </div>
+        <p class="prose" style="font-size:13.5px; margin-top:1rem;">A standalone public RHO accounting specification has not been published. This page is the canonical public definition. Implementation internals are intentionally omitted.</p>
+      </div>
+    </section>
+
+    <!-- CANONICAL MESSAGE -->
+    <section>
+      <div class="container-wide">
+        <div class="section-label">The Model to Remember</div>
+        <div class="pull" style="font-size:1.2rem;"><strong>RHO measures computational resource attribution. It is not itself money.</strong> Useful computation creates value, RHO measures attributable resource consumption, pricing policy determines the commercial obligation, and monetary infrastructure performs settlement.</div>
+        <div class="formula" role="img" aria-label="Execution, Measurement, RHO, Pricing, Obligation, Settlement">Execution  &rarr;  Measurement  &rarr;  RHO  &rarr;  Pricing  &rarr;  Obligation  &rarr;  Settlement</div>
+        <div class="btn-row" style="margin-top:1.5rem;">
+          <a href="architecture.html" class="btn btn-primary">See the Architecture</a>
+          <a href="glossary.html" class="btn btn-secondary">Terminology Glossary</a>
+          <a href="benchmarks.html" class="btn btn-ghost">Measured Evidence &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-footer"></div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

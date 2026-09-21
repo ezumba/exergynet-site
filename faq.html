@@ -250,7 +250,17 @@
           </summary>
           <div class="mt-4 text-[15px] text-soft">
             <p style="font-size:12px; color:var(--amber,#ffb830); margin-bottom:0.75rem; padding:0.5rem 0.75rem; border-left:3px solid var(--amber,#ffb830); background:rgba(255,184,48,0.05);">LEGACY TOKEN &mdash; $EXG was the internal accounting token for the LNES-03 Solana settlement subsystem. Current portal economics use USDC-denominated account balances.</p>
-            $EXG was a transient internal accounting token used with the LNES-03 Solana settlement path. It was minted when capital was locked and burned upon successful settlement &mdash; never tradable, no speculative value. The current ExergyNet Portal uses USDC-denominated account balances (micro-USDC) for Vanguard API, Omega Carrier, and agent economics. RHO is the protocol-layer accounting concept for certain settlement pathways &mdash; it is not a stablecoin, not USD-redeemable, and has no canonical market price. See <a href="token.html">Token Info</a> for the historical LNES-03 accounting model.
+            $EXG was a transient internal accounting token used with the LNES-03 Solana settlement path. It was minted when capital was locked and burned upon successful settlement &mdash; never tradable, no speculative value. The current ExergyNet Portal uses USDC-denominated account balances (micro-USDC) for Vanguard API, Omega Carrier, and agent economics. RHO is ExergyNet&rsquo;s normalized unit for attributing computational resource consumption to an execution event &mdash; a measurement unit, distinct from price, currency, and settlement. It is not a stablecoin, not USD-redeemable, and has no market price. See <a href="rho.html">RHO: Measuring Computational Work</a> and <a href="token.html">Token Info</a> for the historical LNES-03 accounting model.
+          </div>
+        </details>
+
+        <details class="card">
+          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
+            What is RHO? Is it a cryptocurrency?
+            <span class="text-accent text-xl leading-none">+</span>
+          </summary>
+          <div class="mt-4 text-[15px] text-soft">
+            No. RHO is ExergyNet&rsquo;s normalized unit for measuring and attributing computational resource use to a specific execution event. It is not a cryptocurrency, stablecoin, dollar balance, or joule, and it does not trade or have a market price. Useful computation creates value; RHO measures the resources attributable to it; a separate pricing policy turns that measurement into an obligation; and conventional monetary systems settle it. RHO currently operates as an accounting and normalization construct. See <a href="rho.html">RHO: Measuring Computational Work</a> for the full definition and current implementation status.
           </div>
         </details>
 

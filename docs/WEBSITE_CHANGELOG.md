@@ -168,3 +168,26 @@ Repository Reconciliation." Authorized to deploy P0 fixes only; explicitly not D
 
 (Remainder of this entry — P0 fixes, verification, deployment, and repository-reconciliation
 map — appended below as Directive 003 completes.)
+
+
+---
+
+## 2026-09-21 — Canonical RHO page (`/rho`)
+
+**Agent/session:** Claude Code session (interactive), operator Seven Ezumba / ExergyNet.
+**Exact strategic directive invoked:** `Agent Directive_ Create and Deploy Canonical RHO Page.md` (with `RHO DISCUSSION.txt` as the positioning source).
+
+**Files created:** `rho.html` (canonical page; served at `/rho` by GitHub Pages, canonical URL `https://exergynet.org/rho`).
+**Files modified:** `glossary.html` (RHO entry + anchor ids), `architecture.html` (Resource Accounting section), `docs.html`, `developers.html` (core-concepts links), `faq.html` and `token.html` (RHO wording canonicalized), `llms.txt` (RHO definition + authoritative-page entry), `omega-carrier.html` (RHO Sump boundary note), `sitemap.xml`.
+
+**Evidence used for the Current Implementation Status section (read directly from the `exergynet` repo, not from the discussion):**
+- `docs/whitepaper/WHITEPAPER_CLAIM_LEDGER_V3.md` frozen RHO invariant and WP-C011/WP-C012; `docs/whitepaper_vnext_recon/LNES116_EVIDENCE_CLOSURE_2026-08-25.md` (G0 constant, epoch, GPU/energy/token observability limits).
+- `docs/MAINNET_MIGRATION_BLUEPRINT.md` section 6 (RHO claim-boundary audit; mainnet supply 0; Sepolia supply 2500) and `docs/BASE_MAINNET_MINIMUM_PRODUCTION_SET.md` (no mainnet RHO mint).
+- `LNES116D_FINAL_COMPLETION_REPORT.md` (tariffs shadow-only; production tariff activation not ready).
+
+**Deliberately NOT stated on the page:** the fixed `1 USDC = 1,000 RHO` billing/issuance ratio. The operator decision of 2026-09-13 permits it only as an issuance/metering schedule, and its canonical wording is still recorded as PENDING in the migration blueprint. Publishing it would pre-empt that gate.
+
+**Tests performed:** static site, no build step and no site test suite. Verified locally: page renders, header/footer inject, zero console errors, all internal links and glossary anchors resolve (HTTP 200), no horizontal overflow at 375px, formulas scroll inside their own container. `contract_regression_tests.sh` targets the live Vanguard API stack and was not run (unrelated to this change).
+**Deployment status / commit hash:** see the git commit titled "Add canonical RHO page (/rho) and integrate across site"; production verification recorded in the session completion report.
+**Unresolved items:** (1) RHO Sump / `POST /api/rho/sump` copy on `omega-carrier.html` and `api-integration.html` describes a market-strike capital loop; the `exergynet` repo contains a P0.2 containment version of the sump route that refuses all requests, and live status was not verified in this pass. (2) Pending canonical wording for the USDC-to-RHO issuance ratio. (3) No standalone public RHO accounting specification exists yet.
+**Rollback:** `git revert` the commit; `rho.html` is additive and all other edits are small, self-contained insertions.
