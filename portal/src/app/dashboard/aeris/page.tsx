@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useCallback } from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
@@ -247,7 +247,7 @@ function PoolRow({
   };
 
   const metricColors: Record<string, string> = {
-    PRECIP: '#58A6FF', TEMP: '#F59E0B', WIND: '#A78BFA', HUMIDITY: '#3FB950',
+    PRECIP: '#58A6FF', TEMP: 'var(--amber)', WIND: '#A78BFA', HUMIDITY: '#3FB950',
   };
 
   return (
@@ -286,7 +286,7 @@ function PoolRow({
           {canClaim ? (
             <button
               onClick={claim}
-              style={{ padding: '3px 10px', borderRadius: 6, background: '#F59E0B', color: '#000', fontWeight: 700, fontSize: 12, border: 'none', cursor: 'pointer' }}
+              style={{ padding: '3px 10px', borderRadius: 6, background: 'var(--amber)', color: '#000', fontWeight: 700, fontSize: 12, border: 'none', cursor: 'pointer' }}
             >
               Claim
             </button>

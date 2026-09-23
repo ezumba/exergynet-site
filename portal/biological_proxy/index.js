@@ -5383,8 +5383,176 @@ app.get('/api/blog/articles/:slug', async (req, res) => {
   }
 });
 
+// ── Developer-owned blog API (restored 2026-09-21) ────────────────────────────
+// Owner-scoped: every read/write is constrained to articles.author_id = the
+// authenticated developer. /api/admin/blog/* below is admin-only.
+// GET /api/user/blog/articles — list caller's own articles (all statuses)
+app.get('/api/user/blog/articles', requireAuth, async (req, res) => {
+  try {
+    const limit  = Math.min(parseInt(req.query.limit)  || 50, 100);
+    const offset = parseInt(req.query.offset) || 0;
+    const status = req.query.status || null;
+
+    let where = `WHERE a.author_id = $1`;
+    const params = [req.developerId];
+    if (status) { where += ` AND a.status = $2`; params.push(status); }
+
+    const devRow = await pool.query(
+      'SELECT display_name, username, email FROM biological_developers WHERE id = $1',
+      [req.developerId]
+    );
+    const resolvedName = devRow.rows[0]?.display_name || devRow.rows[0]?.username || devRow.rows[0]?.email || 'ExergyNet';
+
+    const { rows } = await pool.query(
+      `SELECT a.id, a.slug, a.title, a.subtitle, a.excerpt, a.cover_url,
+              a.tags, a.status, a.featured, a.reading_time_mins, a.published_at, a.created_at, a.updated_at
+       FROM articles a
+       ${where}
+       ORDER BY a.updated_at DESC
+       LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      [...params, limit, offset]
+    );
+    const articlesWithName = rows.map(r => ({ ...r, author_name: resolvedName }));
+    const total = await pool.query(`SELECT COUNT(*) FROM articles a ${where}`, params);
+    res.json({ articles: articlesWithName, total: parseInt(total.rows[0].count) });
+  } catch (e) {
+    console.error('[/api/user/blog/articles GET]', e);
+    res.status(500).json({ error: 'Failed to fetch articles' });
+  }
+});
+
+// POST /api/user/blog/articles — create article owned by caller
+app.post('/api/user/blog/articles', requireAuth, async (req, res) => {
+  try {
+    const { title, subtitle, content, excerpt, cover_url, tags, status, featured, reading_time_mins, category, audio_url } = req.body;
+    if (!title) return res.status(400).json({ error: 'title required' });
+
+    const dev = await pool.query('SELECT display_name, username, email FROM biological_developers WHERE id = $1', [req.developerId]);
+    const author_name = dev.rows[0]?.display_name || dev.rows[0]?.username || dev.rows[0]?.email || 'ExergyNet';
+
+    const slug = (title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'article') +
+                 '-' + Date.now().toString(36);
+
+    const published_at = (status === 'published') ? new Date().toISOString() : null;
+
+    const { rows } = await pool.query(
+      `INSERT INTO articles
+         (slug, title, subtitle, content, excerpt, cover_url, author_name, author_id,
+          tags, status, featured, reading_time_mins, published_at, category, audio_url)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+       RETURNING *`,
+      [slug, title, subtitle || null, content || '', excerpt || null, cover_url || null,
+       author_name, req.developerId,
+       tags || [], status || 'draft', featured || false, reading_time_mins || 1,
+       published_at, category || null, audio_url || null]
+    );
+    res.status(201).json({ article: rows[0] });
+  } catch (e) {
+    console.error('[/api/user/blog/articles POST]', e);
+    res.status(500).json({ error: 'Failed to create article' });
+  }
+});
+
+// GET /api/user/blog/articles/:id — get single article (must be owned by caller)
+app.get('/api/user/blog/articles/:id', requireAuth, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      'SELECT * FROM articles WHERE id = $1 AND author_id = $2',
+      [req.params.id, req.developerId]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Not found' });
+    res.json({ article: rows[0] });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to fetch article' });
+  }
+});
+
+// PUT /api/user/blog/articles/:id — update (must be owned by caller)
+app.put('/api/user/blog/articles/:id', requireAuth, async (req, res) => {
+  try {
+    const { title, subtitle, content, excerpt, cover_url, tags, status, featured, reading_time_mins, category, audio_url } = req.body;
+
+    const existing = await pool.query(
+      'SELECT id, status FROM articles WHERE id = $1 AND author_id = $2',
+      [req.params.id, req.developerId]
+    );
+    if (!existing.rows.length) return res.status(404).json({ error: 'Not found' });
+
+    const wasPublished = existing.rows[0].status === 'published';
+    const nowPublished = status === 'published';
+    // Only touch published_at when the caller actually changes status; a PUT
+    // that omits status (e.g. toggling featured) must leave it unchanged.
+    let published_at;
+    if (status !== undefined) {
+      published_at = (!wasPublished && nowPublished) ? new Date().toISOString()
+                   : (nowPublished ? undefined : null);
+    }
+
+    const fields = [];
+    const vals   = [];
+    const add = (col, val) => { if (val !== undefined) { fields.push(`${col} = $${vals.length + 1}`); vals.push(val); } };
+
+    add('title',             title);
+    add('subtitle',          subtitle);
+    add('content',           content);
+    add('excerpt',           excerpt);
+    add('cover_url',         cover_url);
+    add('tags',              tags);
+    add('status',            status);
+    add('featured',          featured);
+    add('reading_time_mins', reading_time_mins);
+    add('category',          category);
+    add('audio_url',         audio_url);
+    if (published_at !== undefined) add('published_at', published_at);
+    add('updated_at', new Date().toISOString());
+
+    if (!fields.length) return res.json({ article: existing.rows[0] });
+
+    vals.push(req.params.id, req.developerId);
+    const { rows } = await pool.query(
+      `UPDATE articles SET ${fields.join(', ')}
+       WHERE id = $${vals.length - 1} AND author_id = $${vals.length}
+       RETURNING *`,
+      vals
+    );
+    res.json({ article: rows[0] });
+  } catch (e) {
+    console.error('[/api/user/blog/articles PUT]', e);
+    res.status(500).json({ error: 'Failed to update article' });
+  }
+});
+
+// DELETE /api/user/blog/articles/:id — delete (must be owned by caller)
+app.delete('/api/user/blog/articles/:id', requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      'DELETE FROM articles WHERE id = $1 AND author_id = $2 RETURNING id',
+      [req.params.id, req.developerId]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Not found' });
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to delete article' });
+  }
+});
+
+// POST /api/user/blog/upload-cover — cover image upload (any authenticated developer)
+app.post('/api/user/blog/upload-cover', requireAuth, dropsUpload.single('cover'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const ext  = req.file.originalname.split('.').pop()?.toLowerCase() || 'jpg';
+    const name = `cover_${Date.now()}.${ext}`;
+    const dest = `/home/ubuntu/downloads/covers/${name}`;
+    require('fs').mkdirSync('/home/ubuntu/downloads/covers', { recursive: true });
+    require('fs').renameSync(req.file.path, dest);
+    res.json({ url: `/downloads/covers/${name}` });
+  } catch (e) {
+    res.status(500).json({ error: 'Upload failed' });
+  }
+});
+
 // GET /api/admin/blog/articles — admin list (all statuses)
-app.get('/api/admin/blog/articles', requireAuth, async (req, res) => {
+app.get('/api/admin/blog/articles', requireAdmin('super_admin', 'ops'), async (req, res) => {
   try {
     const limit  = Math.min(parseInt(req.query.limit)  || 50, 100);
     const offset = parseInt(req.query.offset) || 0;
@@ -5412,7 +5580,7 @@ app.get('/api/admin/blog/articles', requireAuth, async (req, res) => {
 // Returns the COMPLETE row (including content + category), which the list
 // endpoint above intentionally omits. The article editor loads from here so it
 // always has the real body to edit and can never overwrite it with an empty one.
-app.get('/api/admin/blog/articles/:id', requireAuth, async (req, res) => {
+app.get('/api/admin/blog/articles/:id', requireAdmin('super_admin', 'ops'), async (req, res) => {
   try {
     const { rows } = await pool.query(
       `SELECT * FROM articles WHERE id = $1`,
@@ -5429,7 +5597,7 @@ app.get('/api/admin/blog/articles/:id', requireAuth, async (req, res) => {
 // POST /api/admin/blog/review — Vanguard content safety review before publish
 // Body: { title, subtitle?, content, tags? }
 // Returns: { approved, verdict, reason, suggestions? }
-app.post('/api/admin/blog/review', requireAuth, async (req, res) => {
+app.post('/api/admin/blog/review', requireAdmin('super_admin', 'ops'), async (req, res) => {
   const { title, subtitle, content } = req.body || {};
   if (!title || !content) return res.status(400).json({ error: 'title and content required' });
 
@@ -5516,7 +5684,7 @@ ${content.slice(0, 8000)}`;
 });
 
 // POST /api/admin/blog/articles — create
-app.post('/api/admin/blog/articles', requireAuth, async (req, res) => {
+app.post('/api/admin/blog/articles', requireAdmin('super_admin', 'ops'), async (req, res) => {
   try {
     const { title, subtitle, content = '', excerpt, cover_url, author_name = 'ExergyNet',
             author_avatar, tags = [], status = 'draft', featured = false } = req.body || {};
@@ -5546,7 +5714,7 @@ app.post('/api/admin/blog/articles', requireAuth, async (req, res) => {
 });
 
 // PUT /api/admin/blog/articles/:id — update
-app.put('/api/admin/blog/articles/:id', requireAuth, async (req, res) => {
+app.put('/api/admin/blog/articles/:id', requireAdmin('super_admin', 'ops'), async (req, res) => {
   try {
     const { rows: existing } = await pool.query('SELECT * FROM articles WHERE id = $1', [req.params.id]);
     if (!existing[0]) return res.status(404).json({ error: 'Article not found' });
@@ -5581,7 +5749,7 @@ app.put('/api/admin/blog/articles/:id', requireAuth, async (req, res) => {
 });
 
 // DELETE /api/admin/blog/articles/:id
-app.delete('/api/admin/blog/articles/:id', requireAuth, async (req, res) => {
+app.delete('/api/admin/blog/articles/:id', requireAdmin('super_admin', 'ops'), async (req, res) => {
   try {
     const { rows } = await pool.query('DELETE FROM articles WHERE id=$1 RETURNING id', [req.params.id]);
     if (!rows[0]) return res.status(404).json({ error: 'Article not found' });
@@ -5592,7 +5760,7 @@ app.delete('/api/admin/blog/articles/:id', requireAuth, async (req, res) => {
 });
 
 // POST /api/admin/blog/upload-cover — cover image upload
-app.post('/api/admin/blog/upload-cover', requireAuth, dropsUpload.single('cover'), async (req, res) => {
+app.post('/api/admin/blog/upload-cover', requireAdmin('super_admin', 'ops'), dropsUpload.single('cover'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
     const ext  = req.file.originalname.split('.').pop()?.toLowerCase() || 'jpg';
@@ -6880,7 +7048,20 @@ app.get('/api/billing/omega-obligations', requireAuth, async (req, res) => {
 // ── End Billing Unification (Migration 009) ───────────────────────────────────
 
 initDb()
-  .then(() => {
+  .then(async () => {
+    // Ownership columns for the developer blog API. Deliberately NOT part of
+    // initDb(): a failure here must not stop the proxy from starting (initDb
+    // failures call process.exit). Idempotent; a failure only degrades /api/user/blog.
+    try {
+      await pool.query(`
+        ALTER TABLE articles ADD COLUMN IF NOT EXISTS author_id TEXT;
+        ALTER TABLE articles ADD COLUMN IF NOT EXISTS category  TEXT;
+        ALTER TABLE articles ADD COLUMN IF NOT EXISTS audio_url TEXT;
+        CREATE INDEX IF NOT EXISTS articles_author_idx ON articles(author_id);
+      `);
+    } catch (e) {
+      console.error('[blog schema] ownership columns not ensured (non-fatal):', e.message);
+    }
     app.listen(PORT, '127.0.0.1', () =>
       console.log(`[biological_proxy] listening on 127.0.0.1:${PORT}`)
     );

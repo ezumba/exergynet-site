@@ -6,9 +6,9 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { parseUnits } from 'viem';
 import { developer, Developer } from '@/lib/api';
 
-// Base Sepolia USDC + Operator Wallet
-const USDC_ADDRESS = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as const;
-const OPERATOR_WALLET = '0xbd1e790f6040FA62797671B84a50025a0133109C' as const;
+// Base Mainnet USDC + Deposit Receiver
+const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const;
+const OPERATOR_WALLET = '0xB1a34954Eb8bf79C65E6c7Dbd4265d9b6E0f0317' as const;
 
 const ERC20_TRANSFER_ABI = [
   {
@@ -107,13 +107,14 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
           const body = await res.json().catch(() => ({}));
           throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
         }
-        // Also credit voice ledger: $1 USDC = 10,000 voice credits
-        const voiceCreditsToAdd = Math.round(parseFloat(amount) * 10000);
-        fetch('/api/billing/add-credits', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ credits: voiceCreditsToAdd }),
-        }).catch(() => {});
+        // NOTE: voice-credit crediting for Web3 deposits does not happen here.
+        // /api/billing/add-credits is intentionally gated behind a server-only
+        // BILLING_ADMIN_TOKEN so a browser can't self-report an arbitrary credit
+        // amount (BRAVO-004) — a direct client call here always 403s. The correct
+        // fix is for biological_proxy to call add-credits server-side, with the
+        // admin token, right after it verifies the deposit in /api/deposit/claim
+        // above (same place it updates usdc_micro_balance). That's in
+        // biological_proxy/index.js on the Portal EC2, not in this repo.
         setStatus('done');
         onSuccess();
         setTimeout(() => { setStatus('idle'); setTxHash(undefined); }, 4000);
@@ -151,7 +152,7 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
   return (
     <div>
       <div style={{ fontSize: 11, color: '#475569', marginBottom: 12, lineHeight: 1.7 }}>
-        Transfer USDC directly from your Base Sepolia wallet. Credited instantly on confirmation.
+        Transfer USDC directly from your Base Mainnet wallet. Credited instantly on confirmation.
       </div>
 
       <div style={{ marginBottom: 12 }}>
@@ -197,7 +198,7 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
           <div style={{ fontSize: 10, color: '#334155', marginBottom: 12, lineHeight: 1.6 }}>
             → Destination: Operator Wallet {OPERATOR_WALLET.slice(0, 10)}...
             <br />
-            → Network: Base Sepolia · USDC {USDC_ADDRESS.slice(0, 10)}...
+            → Network: Base Mainnet · USDC {USDC_ADDRESS.slice(0, 10)}...
             <br />
             → Cost per 1K tokens: ~$0.40 USDC
           </div>
@@ -253,6 +254,15 @@ function StripeDepositRail({ onSuccess }: { onSuccess: () => void }) {
 
     try {
       const token = localStorage.getItem('en_token') ?? '';
+      // Reverted a wrong "fix": I initially assumed this was calling a dead
+      // route and pointed it at /api/stripe/checkout instead — but that path
+      // has no handler ANYWHERE (confirmed via biological_proxy source) and
+      // Caddy routes /api/stripe/* there, not to the Next.js app, so my new
+      // route.ts file was structurally unreachable. The ORIGINAL target here,
+      // /api/create-checkout-session, is a real, correctly-implemented
+      // handler in biological_proxy (index.js ~line 2117) — right field name
+      // (amount_usd), right cents math, Caddy routes it there correctly. This
+      // was never the bug. Restored to the original, correct call.
       const res = await fetch(`${API}/api/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -380,7 +390,7 @@ export default function BillingPage() {
       // Credit Voice Studio ledger via Next.js API
       fetch('/api/billing/confirm', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ session_id: sessionId }),
       }).then(() => refresh()).catch(() => setTimeout(refresh, 2000));
     } else {
@@ -448,9 +458,17 @@ export default function BillingPage() {
       {/* Integration note */}
       <div className="en-card" style={{ fontSize: 11, color: '#475569', lineHeight: 1.8 }}>
         <div style={{ fontSize: 10, color: '#334155', letterSpacing: '0.08em', marginBottom: 8 }}>SETTLEMENT NOTES</div>
-        Web3 deposits confirm in ~15s on Base Sepolia. Fiat deposits credit within 60s of Stripe confirmation.
+        Web3 deposits confirm in ~15s on Base Mainnet. Fiat deposits credit within 60s of Stripe confirmation.
         Billing is per-token at 0.4 micro-USDC/token (≈ $0.40 per 1,000 tokens). Balance never expires.
         Minimum activation threshold: $1 USDC.
+      </div>
+
+      {/* Omega Carrier note */}
+      <div className="en-card" style={{ fontSize: 11, color: '#475569', lineHeight: 1.8, marginTop: 0 }}>
+        <div style={{ fontSize: 10, color: '#334155', letterSpacing: '0.08em', marginBottom: 8 }}>OMEGA CARRIER</div>
+        Your ExergyNet account balance powers all authorized services, including Omega Carrier.
+        Memory operations (RECALL, QUERY, WRITE) debit your account at the RHO tariff rate:
+        1 USDC = 1,000 RHO · RECALL 100 RHO · QUERY 150 RHO · WRITE 250 RHO.
       </div>
     </div>
   );
