@@ -12,7 +12,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'ExergyNet Developer Portal',
-  description: 'Vanguard Engine · Base Sepolia · Developer API Portal',
+  description: 'Vanguard Engine · Base Mainnet · Developer API Portal',
   robots: { index: false },
 };
 
