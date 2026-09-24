@@ -7,7 +7,7 @@
     "R3_BILLING_SOURCE_MATCH": "PASS",
     "R4_AERIS_SOURCE_MATCH": "PASS",
     "R5_DEPOSIT_SOURCE_MATCH": "PASS",
-    "R6_DEPLOYMENT_RESIDUE_REMOVED": "NOT_COMPLETE — zero-byte tombstone via OTET is not physical deletion. Files exist at 0 bytes. Physical rm requires operator SSH with personal key. See 13_PRODUCTION_PROVENANCE.json for exact operator commands.",
+    "R6_DEPLOYMENT_RESIDUE_REMOVED": "PASS — operator physically deleted both files via SSH 2026-09-24. SEED_DELETED=PASS, GITKEEP_DELETED=PASS. deposit/page.tsx SHA fa05df75... confirmed unaffected. service_evolution_v2.json grep hits are OTET audit-log target_id records (historical write log), not runtime imports — non-breaking.",
     "R7_REBUILD_HARNESS_RESTORED": "PASS",
     "R8_BLOG_ORDINARY_USER_REJECTED": "BLOCKED_NO_SAFE_TEST_IDENTITY — prior HTTP 401 (no auth header) proves unauthenticated rejection only. Authenticated non-admin test requires developer credential not available in this agent session.",
     "R9_BLOG_ADMIN_ROLE_GATE": "PASS",
@@ -40,7 +40,7 @@
     "BACKEND_FORM": "ASSEMBLED_EMBEDDED_DAY1",
     "BACKEND_EQUALITY_NOT_REQUIRED": true
   },
-  "final_status": "PORTAL_MAINNET_RELEASE_CLOSURE_PENDING — R6 awaits operator physical deletion; R8 blocked pending operator-supplied developer test credential",
-  "final_status_after_r6_r8_resolved": "PORTAL_MAINNET_RELEASE_CLOSED_AND_PROVENANCE_SEALED",
-  "next_safe_action": "OPERATOR: (1) SSH to 52.44.165.199, rm _deposit_seed.sh + .gitkeep, verify with test !-e; (2) provide developer test credential for R8 authenticated non-admin test; (3) separate operator decision on REAL_USDC_CANARY"
+  "final_status": "PORTAL_MAINNET_RELEASE_CLOSURE_PENDING — R6 PASS (2026-09-24); R8 still blocked pending operator-supplied developer test credential",
+  "final_status_after_r8_resolved": "PORTAL_MAINNET_RELEASE_CLOSED_AND_PROVENANCE_SEALED",
+  "next_safe_action": "OPERATOR: (1) provide developer test credential for R8 authenticated non-admin test OR accept BLOCKED as permanent record; (2) separate operator decision on REAL_USDC_CANARY"
 }

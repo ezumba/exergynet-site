@@ -37,25 +37,20 @@
   "deployment_residue": {
     "_deposit_seed.sh": {
       "path": "/home/ubuntu/exergynet-portal/src/lib/_deposit_seed.sh",
-      "status": "ZERO_BYTE_TOMBSTONE — NOT PHYSICALLY DELETED",
-      "bytes_on_disk": 0,
-      "unreferenced": true,
-      "reconfirmed": "2026-09-23 via OTET witness",
-      "physical_deletion_requires_operator_ssh": true,
-      "r6_gate": "NOT_COMPLETE — file exists at 0 bytes; rm requires operator personal key",
-      "operator_command": "rm /home/ubuntu/exergynet-portal/src/lib/_deposit_seed.sh",
-      "operator_verify": "test ! -e /home/ubuntu/exergynet-portal/src/lib/_deposit_seed.sh && echo SEED_DELETED=PASS || echo SEED_DELETED=FAIL"
+      "status": "PHYSICALLY_DELETED",
+      "deleted_by": "operator ssh ubuntu@52.44.165.199",
+      "deleted_date": "2026-09-24",
+      "verification": "SEED_DELETED=PASS (test ! -e)",
+      "r6_gate": "PASS",
+      "dependency_check_note": "service_evolution_v2.json grep hit on target_id is OTET audit-log entry (historical write record), not a runtime import — non-breaking"
     },
     "deposit/.gitkeep": {
       "path": "/home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep",
-      "status": "ZERO_BYTE_TOMBSTONE — NOT PHYSICALLY DELETED",
-      "bytes_on_disk": 0,
-      "unreferenced": true,
-      "reconfirmed": "2026-09-23 via OTET witness",
-      "physical_deletion_requires_operator_ssh": true,
-      "r6_gate": "NOT_COMPLETE — file exists at 0 bytes; rm requires operator personal key",
-      "operator_command": "rm /home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep",
-      "operator_verify": "test ! -e /home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep && echo GITKEEP_DELETED=PASS || echo GITKEEP_DELETED=FAIL"
+      "status": "PHYSICALLY_DELETED",
+      "deleted_by": "operator ssh ubuntu@52.44.165.199",
+      "deleted_date": "2026-09-24",
+      "verification": "GITKEEP_DELETED=PASS (test ! -e)",
+      "r6_gate": "PASS"
     },
     "_rebuild.sh": {
       "path": "/home/ubuntu/exergynet-portal/src/lib/_rebuild.sh",
