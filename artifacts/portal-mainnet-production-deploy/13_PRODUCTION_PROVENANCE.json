@@ -37,23 +37,39 @@
   "deployment_residue": {
     "_deposit_seed.sh": {
       "path": "/home/ubuntu/exergynet-portal/src/lib/_deposit_seed.sh",
-      "status": "ZERO_BYTE_TOMBSTONE",
+      "status": "ZERO_BYTE_TOMBSTONE — NOT PHYSICALLY DELETED",
+      "bytes_on_disk": 0,
       "unreferenced": true,
-      "physical_deletion_requires_operator_ssh": true
+      "reconfirmed": "2026-09-23 via OTET witness",
+      "physical_deletion_requires_operator_ssh": true,
+      "r6_gate": "NOT_COMPLETE — file exists at 0 bytes; rm requires operator personal key",
+      "operator_command": "rm /home/ubuntu/exergynet-portal/src/lib/_deposit_seed.sh",
+      "operator_verify": "test ! -e /home/ubuntu/exergynet-portal/src/lib/_deposit_seed.sh && echo SEED_DELETED=PASS || echo SEED_DELETED=FAIL"
     },
     "deposit/.gitkeep": {
       "path": "/home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep",
-      "status": "ZERO_BYTE_CONFIRMED",
+      "status": "ZERO_BYTE_TOMBSTONE — NOT PHYSICALLY DELETED",
+      "bytes_on_disk": 0,
       "unreferenced": true,
-      "physical_deletion_requires_operator_ssh": true
+      "reconfirmed": "2026-09-23 via OTET witness",
+      "physical_deletion_requires_operator_ssh": true,
+      "r6_gate": "NOT_COMPLETE — file exists at 0 bytes; rm requires operator personal key",
+      "operator_command": "rm /home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep",
+      "operator_verify": "test ! -e /home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep && echo GITKEEP_DELETED=PASS || echo GITKEEP_DELETED=FAIL"
     },
     "_rebuild.sh": {
       "path": "/home/ubuntu/exergynet-portal/src/lib/_rebuild.sh",
       "status": "RESTORED_TO_PRE_RELEASE_CANONICAL",
       "sha256": "91d06a83202c434dbeea7b8007615037f195989f9e14538f8cb7f377413613de",
       "deposit_seed_refs": false
+    },
+    "deposit_page_sha_post_residue_recheck": {
+      "path": "/home/ubuntu/exergynet-portal/src/app/dashboard/deposit/page.tsx",
+      "sha256": "fa05df751772d08d35ab09a37e690171f0f868976638c43711d00cd6d88a784f",
+      "reconfirmed": "2026-09-23"
     }
   },
+  "r8_gate": "BLOCKED_NO_SAFE_TEST_IDENTITY — see 10_BLOG_AUTHORIZATION_VERIFICATION.json and 12_INCIDENT_AND_RECOVERY_ADDENDUM.md",
   "chain_id": 8453,
   "base_network": "Base Mainnet",
   "canonical_usdc": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
