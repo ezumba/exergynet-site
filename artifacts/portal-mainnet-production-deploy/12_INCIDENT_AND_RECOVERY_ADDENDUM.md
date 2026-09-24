@@ -63,3 +63,68 @@
 - Not a funds risk
 - Not a blockchain incident
 - Deployment tooling error: repository source / assembled artifact confusion
+
+---
+
+## Corrective Directive — Closure Gate Corrections (2026-09-23)
+
+**Issued by:** Operator / Trustee Corrective Directive — ExergyNet Portal Mainnet Release — Final Two-Gate Closure
+
+**Finding 1 — R6 prematurely marked PASS:**
+- First closure committed `30b40d14` called zero-byte tombstoning of `_deposit_seed.sh`
+  and `.gitkeep` "removal." The OTET write-only API surface has no `unlink`/`rm`
+  capability. Writing a zero-byte file is not physical deletion.
+- Corrected status: `R6 = NOT_COMPLETE`
+- Files exist on production at 0 bytes (re-verified 2026-09-23 via OTET witness).
+- Dependency check re-run: neither file is referenced by `_rebuild.sh`,
+  `biological_proxy/index.js`, or any other production file.
+- `deposit/page.tsx` SHA re-confirmed: `fa05df75...` — unaffected.
+- Physical deletion requires operator SSH with personal key. Exact commands:
+
+```bash
+# Pre-deletion dependency check (run first):
+grep -RIn '_deposit_seed\.sh\|dashboard/deposit/.gitkeep' \
+  /home/ubuntu/exergynet-portal \
+  /home/ubuntu/biological_proxy \
+  --exclude-dir=node_modules \
+  --exclude-dir=.next \
+  2>/dev/null
+# Expected: no output
+
+# Physical deletion:
+rm /home/ubuntu/exergynet-portal/src/lib/_deposit_seed.sh
+rm /home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep
+
+# Verification:
+test ! -e /home/ubuntu/exergynet-portal/src/lib/_deposit_seed.sh \
+  && echo "SEED_DELETED=PASS" || echo "SEED_DELETED=FAIL"
+test ! -e /home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep \
+  && echo "GITKEEP_DELETED=PASS" || echo "GITKEEP_DELETED=FAIL"
+sha256sum /home/ubuntu/exergynet-portal/src/app/dashboard/deposit/page.tsx
+# Must output: fa05df751772d08d35ab09a37e690171f0f868976638c43711d00cd6d88a784f
+```
+
+**Finding 2 — R8 prematurely marked PASS:**
+- First closure test_a (HTTP 401, no Authorization header) proved only that
+  UNAUTHENTICATED requests are rejected. The two HTTP 401 responses are distinct:
+  - Unauthenticated: `{"error": "Missing authorization header"}`
+  - Authenticated non-admin (required): `{"error": "Invalid or expired admin token"}`
+- Corrected status: `R8 = BLOCKED_NO_SAFE_TEST_IDENTITY`
+- The harness holds only super_admin credentials (`get_admin_token()`).
+  No developer email/password, developer JWT, or developer API key is available
+  in the agent session.
+- To unblock R8, the operator must either:
+  (a) Provide a safe developer test credential (API key or portal session JWT with
+      a non-super_admin, non-ops role), or
+  (b) Accept BLOCKED as the permanent record for R8.
+- R8 evidence required: HTTP 401 `{"error": "Invalid or expired admin token"}` or
+  HTTP 403 `{"error": "Insufficient role..."}` from POST /api/admin/blog/review
+  with a valid developer Bearer token.
+
+**Smoke re-run (post-correction):**
+- 5/5 portal routes HTTP 200 (re-confirmed)
+- `GET /api/deposit/health`: HTTP 200, status=READY, chain_id=8453
+- Backend SHA: `58702ae9...` — unchanged, matches prior evidence
+- Both residue files: 0 bytes (zero-byte tombstones, NOT physically deleted)
+- REAL_USDC_CANARY_EXECUTED = NO
+- MAINNET_TX_BROADCAST = NO

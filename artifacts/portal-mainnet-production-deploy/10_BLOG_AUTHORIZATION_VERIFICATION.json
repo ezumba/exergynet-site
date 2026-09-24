@@ -2,30 +2,44 @@
   "timestamp": "2026-09-23",
   "endpoint": "POST /api/admin/blog/review",
   "middleware": "requireAdmin('super_admin', 'ops')",
+  "corrective_note": "First closure commit 30b40d14 prematurely marked R8 PASS. test_a (HTTP 401, no auth header) proves UNAUTHENTICATED rejection only — not AUTHENTICATED_NON_ADMIN rejection. The two results are distinct: 401 'Missing authorization header' vs 401 'Invalid or expired admin token'. R8 requires a live Bearer token from a real authenticated developer. See corrective addendum in 12_INCIDENT_AND_RECOVERY_ADDENDUM.md.",
   "test_a": {
-    "name": "Ordinary developer / unauthenticated",
+    "name": "Unauthenticated request — no Authorization header",
     "credential": "NONE (no Authorization header)",
     "payload": {"article_id": "test-validation-only-not-a-real-article", "action": "validate", "publish": false},
     "http_status": 401,
     "response": {"error": "Missing authorization header"},
     "gate": "REJECTED",
-    "result": "PASS"
+    "proves": "UNAUTHENTICATED_REQUEST_REJECTED",
+    "does_NOT_prove": "AUTHENTICATED_NON_ADMIN_REJECTED",
+    "result": "PASS — for UNAUTHENTICATED gate only"
   },
   "test_b": {
-    "name": "Authorized admin (super_admin role)",
+    "name": "Authorized admin (super_admin role) — R9",
     "credential": "Admin JWT — super_admin role (token not printed)",
     "payload": {"article_id": "test-validation-only-not-a-real-article", "action": "validate", "publish": false},
     "http_status": 400,
     "response": {"error": "title and content required"},
     "gate": "ADMITTED",
     "note": "HTTP 400 proves requireAdmin passed the request. Downstream validation then rejected the incomplete payload. No content published.",
+    "proves": "AUTHORIZED_ADMIN_ROLE_GATE",
     "result": "PASS"
   },
-  "summary": {
-    "ORDINARY_DEVELOPER_ADMIN_REVIEW": "REJECTED",
-    "AUTHORIZED_ADMIN_ROLE_GATE": "PASS",
-    "both_gates": "PASS"
+  "test_c_r8": {
+    "name": "Authenticated ordinary developer (non-admin) — R8",
+    "credential": "REQUIRED: developer JWT or API key (NOT super_admin, NOT ops)",
+    "required_result": "HTTP 403 or HTTP 401 'Invalid or expired admin token'",
+    "status": "BLOCKED_NO_SAFE_TEST_IDENTITY",
+    "reason": "Harness holds only super_admin credentials. No developer email/password, developer JWT, or developer API key is available in this agent session. Creating a test developer account on production or resetting an existing developer's credentials is not authorized by this directive.",
+    "result": "BLOCKED"
   },
+  "summary": {
+    "UNAUTHENTICATED_REQUEST_REJECTED": "PASS (test_a, 401 'Missing authorization header')",
+    "AUTHORIZED_ADMIN_ROLE_GATE": "PASS (test_b, 400 downstream validation)",
+    "AUTHENTICATED_NON_ADMIN_REJECTED": "BLOCKED_NO_SAFE_TEST_IDENTITY"
+  },
+  "R8_gate": "BLOCKED_NO_SAFE_TEST_IDENTITY",
+  "R9_gate": "PASS",
   "content_published": false,
   "secrets_exposed": false
 }

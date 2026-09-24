@@ -1,19 +1,20 @@
 {
   "timestamp": "2026-09-23",
+  "corrective_note": "Corrective directive 2026-09-23: First closure (commit 30b40d14) prematurely marked R6 and R8 PASS. R6 was NOT physical deletion — zero-byte tombstoning via OTET write-only API is not equivalent to file removal. R8 evidence (HTTP 401, no auth header) proved only UNAUTHENTICATED rejection, not AUTHENTICATED_NON_ADMIN rejection. Both gates corrected below.",
   "gates": {
     "R1_RELEASE_BRANCH_PROVENANCE": "PASS",
     "R2_PRODUCTION_LAYOUT_RECONCILED": "PASS",
     "R3_BILLING_SOURCE_MATCH": "PASS",
     "R4_AERIS_SOURCE_MATCH": "PASS",
     "R5_DEPOSIT_SOURCE_MATCH": "PASS",
-    "R6_DEPLOYMENT_RESIDUE_REMOVED": "PASS",
+    "R6_DEPLOYMENT_RESIDUE_REMOVED": "NOT_COMPLETE — zero-byte tombstone via OTET is not physical deletion. Files exist at 0 bytes. Physical rm requires operator SSH with personal key. See 13_PRODUCTION_PROVENANCE.json for exact operator commands.",
     "R7_REBUILD_HARNESS_RESTORED": "PASS",
-    "R8_BLOG_ORDINARY_USER_REJECTED": "PASS",
+    "R8_BLOG_ORDINARY_USER_REJECTED": "BLOCKED_NO_SAFE_TEST_IDENTITY — prior HTTP 401 (no auth header) proves unauthenticated rejection only. Authenticated non-admin test requires developer credential not available in this agent session.",
     "R9_BLOG_ADMIN_ROLE_GATE": "PASS",
-    "R10_PORTAL_ZERO_VALUE_SMOKE": "PASS",
-    "R11_DEPOSIT_HEALTH": "PASS",
-    "R12_BIOLOGICAL_PROXY": "ONLINE",
-    "R13_EXERGYNET_PORTAL": "ONLINE",
+    "R10_PORTAL_ZERO_VALUE_SMOKE": "PASS — re-confirmed in corrective run: 5/5 routes HTTP 200, deposit health READY, backend SHA match",
+    "R11_DEPOSIT_HEALTH": "PASS — re-confirmed: chain_id=8453, status=READY, usdc_canonical=true",
+    "R12_BIOLOGICAL_PROXY": "ONLINE — re-confirmed: SHA 58702ae9... matches",
+    "R13_EXERGYNET_PORTAL": "ONLINE — re-confirmed: 5/5 routes HTTP 200",
     "R14_BACKEND_PRODUCTION_SHA_RECORDED": "PASS",
     "R15_INCIDENT_RECOVERY_DOCUMENTED": "PASS",
     "R16_MAIN_NOT_USED": "PASS"
@@ -39,6 +40,7 @@
     "BACKEND_FORM": "ASSEMBLED_EMBEDDED_DAY1",
     "BACKEND_EQUALITY_NOT_REQUIRED": true
   },
-  "final_status": "PORTAL_MAINNET_RELEASE_CLOSED_AND_PROVENANCE_SEALED",
-  "next_safe_action": "SEPARATE_OPERATOR_DECISION_ON_REAL_USDC_CANARY"
+  "final_status": "PORTAL_MAINNET_RELEASE_CLOSURE_PENDING — R6 awaits operator physical deletion; R8 blocked pending operator-supplied developer test credential",
+  "final_status_after_r6_r8_resolved": "PORTAL_MAINNET_RELEASE_CLOSED_AND_PROVENANCE_SEALED",
+  "next_safe_action": "OPERATOR: (1) SSH to 52.44.165.199, rm _deposit_seed.sh + .gitkeep, verify with test !-e; (2) provide developer test credential for R8 authenticated non-admin test; (3) separate operator decision on REAL_USDC_CANARY"
 }
