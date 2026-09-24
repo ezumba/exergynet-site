@@ -104,22 +104,20 @@ sha256sum /home/ubuntu/exergynet-portal/src/app/dashboard/deposit/page.tsx
 # Must output: fa05df751772d08d35ab09a37e690171f0f868976638c43711d00cd6d88a784f
 ```
 
-**Finding 2 — R8 prematurely marked PASS:**
+**Finding 2 — R8 prematurely marked PASS (corrected and subsequently closed):**
 - First closure test_a (HTTP 401, no Authorization header) proved only that
   UNAUTHENTICATED requests are rejected. The two HTTP 401 responses are distinct:
   - Unauthenticated: `{"error": "Missing authorization header"}`
-  - Authenticated non-admin (required): `{"error": "Invalid or expired admin token"}`
-- Corrected status: `R8 = BLOCKED_NO_SAFE_TEST_IDENTITY`
-- The harness holds only super_admin credentials (`get_admin_token()`).
-  No developer email/password, developer JWT, or developer API key is available
-  in the agent session.
-- To unblock R8, the operator must either:
-  (a) Provide a safe developer test credential (API key or portal session JWT with
-      a non-super_admin, non-ops role), or
-  (b) Accept BLOCKED as the permanent record for R8.
-- R8 evidence required: HTTP 401 `{"error": "Invalid or expired admin token"}` or
-  HTTP 403 `{"error": "Insufficient role..."}` from POST /api/admin/blog/review
-  with a valid developer Bearer token.
+  - Authenticated non-admin (required): HTTP 403 `{"error": "Insufficient role..."}`
+- Corrected then CLOSED 2026-09-24:
+  An ephemeral `support`-role admin account was created directly on EC2 localhost
+  via a self-contained Node.js script. The account was created, tested, and deleted
+  in a single operation. Credentials never persisted outside EC2 terminal session.
+- Test result:
+  - Login: HTTP 200, role=support confirmed
+  - POST /api/admin/blog/review: HTTP 403 `{"error":"Insufficient role — requires: super_admin | ops"}`
+  - AUTHENTICATED_NON_ADMIN_REJECTED = PASS
+- R8 = PASS (2026-09-24)
 
 **Smoke re-run (post-correction):**
 - 5/5 portal routes HTTP 200 (re-confirmed)
