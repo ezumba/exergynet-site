@@ -1,0 +1,28 @@
+{
+  "release_branch": "release/portal-mainnet-day1-closure",
+  "original_rc_commit": "3ce600d6d7ed84d94ea2a5cd37492ad2897b6520",
+  "final_release_commit": "989292c82f0dd0df6e593476cae3d25722c8f13c",
+  "remote_release_commit": "989292c82f0dd0df6e593476cae3d25722c8f13c",
+  "remote": "https://github.com/ezumba/exergynet-site.git",
+  "local_commit_eq_remote": true,
+  "commit_history": [
+    {
+      "sha": "989292c82f0dd0df6e593476cae3d25722c8f13c",
+      "message": "fix(portal): reconcile production layout font loader for mainnet release",
+      "files_changed": ["portal/src/app/layout.tsx"]
+    },
+    {
+      "sha": "3ce600d6d7ed84d94ea2a5cd37492ad2897b6520",
+      "message": "portal: mainnet RC — billing fix, deposit UI, layout meta, aeris revert, admin guard",
+      "files_changed": [
+        "portal/src/app/layout.tsx",
+        "portal/src/app/dashboard/billing/page.tsx",
+        "portal/src/app/dashboard/aeris/page.tsx",
+        "portal/src/app/dashboard/deposit/page.tsx",
+        "portal/biological_proxy/index.js"
+      ]
+    }
+  ],
+  "main_not_used": true,
+  "notes": "RC commit 3ce600d6 deployed to production. layout.tsx had one post-commit fix (remove unused JetBrains Mono font import that caused Turbopack build failure). biological_proxy/index.js is an assembled artifact — repository source is canonical for the admin guard change, but production artifact differs from repo file."
+}

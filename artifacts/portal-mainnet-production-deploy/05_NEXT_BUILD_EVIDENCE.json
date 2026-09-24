@@ -1,0 +1,26 @@
+{
+  "build_method": "POST /api/admin/build/trigger-rebuild",
+  "build_attempts": 2,
+  "builds": [
+    {
+      "attempt": 1,
+      "started": "2026-09-23T22:33:14.540Z",
+      "result": "FAILED",
+      "exit_code": 1,
+      "failure_reason": "Turbopack @vercel/turbopack-next font resolution failure — next/font/google JetBrains Mono module not resolvable in node_modules after layout.tsx cache invalidation",
+      "note": "layout.tsx was updated to add 'Vanguard Engine · Base Mainnet' description; this invalidated the Turbopack font cache and triggered a font module resolution failure"
+    },
+    {
+      "attempt": 2,
+      "started": "2026-09-23T22:40:43.229Z",
+      "finished": "2026-09-23T22:41:47.757Z",
+      "result": "SUCCESS",
+      "exit_code": 0,
+      "duration_seconds": 64,
+      "fix_applied": "Removed unused next/font/google JetBrains Mono import from layout.tsx; --font-mono CSS variable was unused (globals.css uses --font-code)",
+      "pm2_restart": "exergynet-portal restarted after successful build"
+    }
+  ],
+  "framework": "Next.js 16.2.6 (Turbopack)",
+  "build_tool": "npm run build"
+}
