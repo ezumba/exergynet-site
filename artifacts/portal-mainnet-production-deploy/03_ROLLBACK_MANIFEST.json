@@ -1,0 +1,29 @@
+{
+  "rollback_available": true,
+  "rollback_method": "OTET_APPLY_FROM_BACKUP",
+  "rollback_files": {
+    "layout.tsx": {
+      "backup_path": "C:\\tmp\\prod_backup_layout.tsx",
+      "sha256_preimage": "cc038666c2a6a0e07edcdcf57cee0b2aa42b85fdffcc0ce49e4b1b41a30f6bef",
+      "parent_sidecar": "C:\\tmp\\prod_backup_layout.tsx.parent"
+    },
+    "billing/page.tsx": {
+      "backup_path": "C:\\tmp\\prod_backup_billing.tsx",
+      "sha256_preimage": "5162bfaa",
+      "parent_sidecar": "C:\\tmp\\prod_backup_billing.tsx.parent"
+    },
+    "aeris/page.tsx": {
+      "backup_path": "C:\\tmp\\prod_backup_aeris.tsx",
+      "sha256_preimage": "e1b89103",
+      "parent_sidecar": "C:\\tmp\\prod_backup_aeris.tsx.parent"
+    },
+    "biological_proxy/index.js": {
+      "backup_path": "C:\\tmp\\prod_backup_index.js",
+      "sha256_preimage": "2277746e1a6a2dfb4fb57bcf3da2db062efdd44e59443aa66870522683cfa64a",
+      "parent_sidecar": "C:\\tmp\\prod_backup_index.js.parent",
+      "note": "Pre-deployment assembled artifact. Also used for incident recovery (MODULE_NOT_FOUND). See 12_INCIDENT_AND_RECOVERY_ADDENDUM.md."
+    }
+  },
+  "no_blockchain_rollback_needed": true,
+  "no_contract_upgrade_needed": true
+}

@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-09-23",
+  "release_branch": "release/portal-mainnet-day1-closure",
+  "final_release_commit": "989292c82f0dd0df6e593476cae3d25722c8f13c",
+  "remote_ref": "refs/heads/release/portal-mainnet-day1-closure @ github.com/ezumba/exergynet-site",
+  "production_files": {
+    "layout.tsx": {
+      "sha256": "a8bd070f64029be13dfa6611b46e566b968a26e579ea83e70cabf1ae70c471fd",
+      "release_sha256": "a8bd070f64029be13dfa6611b46e566b968a26e579ea83e70cabf1ae70c471fd",
+      "match": true,
+      "note": "Post-build font-loader fix reconciled to release branch in commit 989292c8"
+    },
+    "billing/page.tsx": {
+      "sha256": "2a53e4e947d94fb8f1bd86f8ccb942f56033a9ffefb783cc97c968a0ec2ea967",
+      "release_sha256": "2a53e4e947d94fb8f1bd86f8ccb942f56033a9ffefb783cc97c968a0ec2ea967",
+      "match": true
+    },
+    "aeris/page.tsx": {
+      "sha256": "cc72aefeb8ac3d8f3beb723d9310c761c2965f2c27103a2700e23663d49216b8",
+      "release_sha256": "cc72aefeb8ac3d8f3beb723d9310c761c2965f2c27103a2700e23663d49216b8",
+      "match": true
+    },
+    "deposit/page.tsx": {
+      "sha256": "fa05df751772d08d35ab09a37e690171f0f868976638c43711d00cd6d88a784f",
+      "release_sha256": "fa05df751772d08d35ab09a37e690171f0f868976638c43711d00cd6d88a784f",
+      "match": true
+    },
+    "biological_proxy/index.js": {
+      "sha256": "58702ae92acbe820285fc53d28577b0a086338f3bf11fe516f5fa7309d4db5fc",
+      "form": "ASSEMBLED_ARTIFACT",
+      "day1_form": "EMBEDDED",
+      "admin_guard_patch": "SURGICAL_RUNTIME_PATCH",
+      "repository_source_match_not_required": true,
+      "repository_source_canonical_for": "requireAdmin change on /api/admin/blog/review"
+    }
+  },
+  "deployment_residue": {
+    "_deposit_seed.sh": {
+      "path": "/home/ubuntu/exergynet-portal/src/lib/_deposit_seed.sh",
+      "status": "ZERO_BYTE_TOMBSTONE",
+      "unreferenced": true,
+      "physical_deletion_requires_operator_ssh": true
+    },
+    "deposit/.gitkeep": {
+      "path": "/home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep",
+      "status": "ZERO_BYTE_CONFIRMED",
+      "unreferenced": true,
+      "physical_deletion_requires_operator_ssh": true
+    },
+    "_rebuild.sh": {
+      "path": "/home/ubuntu/exergynet-portal/src/lib/_rebuild.sh",
+      "status": "RESTORED_TO_PRE_RELEASE_CANONICAL",
+      "sha256": "91d06a83202c434dbeea7b8007615037f195989f9e14538f8cb7f377413613de",
+      "deposit_seed_refs": false
+    }
+  },
+  "chain_id": 8453,
+  "base_network": "Base Mainnet",
+  "canonical_usdc": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+  "deposit_receiver": "0xb1a34954eb8bf79c65e6c7dbd4265d9b6e0f0317",
+  "real_usdc_canary": "NOT_EXECUTED",
+  "mainnet_tx_broadcast": "NO"
+}

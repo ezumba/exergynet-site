@@ -1,0 +1,49 @@
+{
+  "deployment_method": "OTET_LNES17_WRITE_PATH",
+  "write_endpoint": "POST https://portal.exergynet.org/api/admin/build/agent-edit",
+  "files_applied": [
+    {
+      "file": "portal/src/app/layout.tsx",
+      "remote_path": "/home/ubuntu/exergynet-portal/src/app/layout.tsx",
+      "change": "Updated description to 'Vanguard Engine · Base Mainnet · Developer API Portal'; post-build fix removed unused JetBrains Mono next/font/google import",
+      "pre_sha256": "cc038666c2a6a0e07edcdcf57cee0b2aa42b85fdffcc0ce49e4b1b41a30f6bef",
+      "post_sha256": "a8bd070f64029be13dfa6611b46e566b968a26e579ea83e70cabf1ae70c471fd",
+      "http_status": 200,
+      "verified": true
+    },
+    {
+      "file": "portal/src/app/dashboard/billing/page.tsx",
+      "remote_path": "/home/ubuntu/exergynet-portal/src/app/dashboard/billing/page.tsx",
+      "change": "Set OPERATOR_WALLET = '0xB1a34954Eb8bf79C65E6c7Dbd4265d9b6E0f0317' (live Base Mainnet deposit receiver)",
+      "post_sha256": "2a53e4e947d94fb8f1bd86f8ccb942f56033a9ffefb783cc97c968a0ec2ea967",
+      "http_status": 200,
+      "verified": true
+    },
+    {
+      "file": "portal/src/app/dashboard/aeris/page.tsx",
+      "remote_path": "/home/ubuntu/exergynet-portal/src/app/dashboard/aeris/page.tsx",
+      "change": "Reverted to baseSepolia / USDC_SEPOLIA (LNES-04 is testnet-only, not a mainnet contract)",
+      "post_sha256": "cc72aefeb8ac3d8f3beb723d9310c761c2965f2c27103a2700e23663d49216b8",
+      "http_status": 200,
+      "verified": true
+    },
+    {
+      "file": "portal/src/app/dashboard/deposit/.gitkeep",
+      "remote_path": "/home/ubuntu/exergynet-portal/src/app/dashboard/deposit/.gitkeep",
+      "change": "New zero-byte file to create deposit/ directory via mkdirSync(recursive) in agent-edit",
+      "post_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "http_status": 200,
+      "verified": true,
+      "note": "Temporary directory-creation artifact; tombstoned to zero-bytes in release-closure phase."
+    },
+    {
+      "file": "portal/src/app/dashboard/deposit/page.tsx",
+      "remote_path": "/home/ubuntu/exergynet-portal/src/app/dashboard/deposit/page.tsx",
+      "change": "New file — Base Mainnet USDC deposit UI (CHAIN_ID=8453, receiver from /api/deposit/health)",
+      "post_sha256": "fa05df751772d08d35ab09a37e690171f0f868976638c43711d00cd6d88a784f",
+      "http_status": 200,
+      "verified": true
+    }
+  ],
+  "proof_of_void_workaround": "deposit/ directory did not exist; applying .gitkeep first caused mkdirSync(recursive) to create the directory, then deposit/page.tsx was applied normally"
+}

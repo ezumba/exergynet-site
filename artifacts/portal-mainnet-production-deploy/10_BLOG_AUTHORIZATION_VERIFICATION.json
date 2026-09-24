@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-09-23",
+  "endpoint": "POST /api/admin/blog/review",
+  "middleware": "requireAdmin('super_admin', 'ops')",
+  "test_a": {
+    "name": "Ordinary developer / unauthenticated",
+    "credential": "NONE (no Authorization header)",
+    "payload": {"article_id": "test-validation-only-not-a-real-article", "action": "validate", "publish": false},
+    "http_status": 401,
+    "response": {"error": "Missing authorization header"},
+    "gate": "REJECTED",
+    "result": "PASS"
+  },
+  "test_b": {
+    "name": "Authorized admin (super_admin role)",
+    "credential": "Admin JWT — super_admin role (token not printed)",
+    "payload": {"article_id": "test-validation-only-not-a-real-article", "action": "validate", "publish": false},
+    "http_status": 400,
+    "response": {"error": "title and content required"},
+    "gate": "ADMITTED",
+    "note": "HTTP 400 proves requireAdmin passed the request. Downstream validation then rejected the incomplete payload. No content published.",
+    "result": "PASS"
+  },
+  "summary": {
+    "ORDINARY_DEVELOPER_ADMIN_REVIEW": "REJECTED",
+    "AUTHORIZED_ADMIN_ROLE_GATE": "PASS",
+    "both_gates": "PASS"
+  },
+  "content_published": false,
+  "secrets_exposed": false
+}

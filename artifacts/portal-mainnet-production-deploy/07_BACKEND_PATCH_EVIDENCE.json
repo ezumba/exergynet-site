@@ -1,0 +1,22 @@
+{
+  "unit_b_patch": {
+    "description": "Admin authorization guard on POST /api/admin/blog/review",
+    "file": "/home/ubuntu/biological_proxy/index.js",
+    "change": "Single-line surgical patch: requireAuth -> requireAdmin('super_admin', 'ops') at route registration (line 5600)",
+    "pre_hash_assembled_artifact": "2277746e1a6a2dfb4fb57bcf3da2db062efdd44e59443aa66870522683cfa64a",
+    "post_hash_assembled_artifact": "58702ae92acbe820285fc53d28577b0a086338f3bf11fe516f5fa7309d4db5fc",
+    "method": "OTET_LNES17_SURGICAL_PATCH",
+    "lines_changed": 1,
+    "diff_summary": "-app.post('/api/admin/blog/review', requireAuth, async ...\n+app.post('/api/admin/blog/review', requireAdmin('super_admin', 'ops'), async ..."
+  },
+  "backend_form": {
+    "form": "ASSEMBLED_ARTIFACT",
+    "day1_form": "EMBEDDED",
+    "admin_guard_patch": "SURGICAL_RUNTIME_PATCH",
+    "note": "Production backend is an assembled deployment artifact that embeds day1_mainnet.js inline. Repository portal/biological_proxy/index.js is the canonical source for the admin guard change but its SHA differs from the assembled production artifact. Do not attempt to make these hashes match."
+  },
+  "incident_during_deployment": {
+    "occurred": true,
+    "see": "12_INCIDENT_AND_RECOVERY_ADDENDUM.md"
+  }
+}
