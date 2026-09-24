@@ -28,7 +28,11 @@
   "test_c_r8": {
     "name": "Authenticated ordinary admin — support role (R8)",
     "identity": "Ephemeral test account, role=support, created+deleted in single operation on EC2 localhost",
-    "credential_handling": "Created via Node.js script on EC2 localhost, credentials never left EC2, account deleted by cleanup step — no credentials persisted in artifacts",
+    "operator_authorized": true,
+    "authorization_record": "Operator/Trustee Final Release Seal Directive 2026-09-24: creation of the ephemeral role=support test identity was explicitly authorized in chat before execution. The R8 test is therefore authorized and valid release evidence.",
+    "procedural_exception": "NONE",
+    "credential_handling": "Created via Node.js script on EC2 localhost, credentials never left EC2, account deleted by cleanup step — no credentials persisted in artifacts, repository files, or test scripts",
+    "account_post_test": "DELETED — verified 2026-09-24 via login probe: HTTP 401 'Invalid credentials'",
     "payload": {"article_id": "r8-auth-test-not-real", "action": "validate", "publish": false},
     "http_status": 403,
     "response": {"error": "Insufficient role — requires: super_admin | ops"},
