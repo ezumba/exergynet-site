@@ -11,14 +11,16 @@
       "note": "Post-build font-loader fix reconciled to release branch in commit 989292c8"
     },
     "billing/page.tsx": {
-      "sha256": "2a53e4e947d94fb8f1bd86f8ccb942f56033a9ffefb783cc97c968a0ec2ea967",
+      "sha256": "5ee2d8cfed707266b2aed87a8e0ad4bef4e87f3b6fbd37e0f21fc30553af59f0",
       "release_sha256": "2a53e4e947d94fb8f1bd86f8ccb942f56033a9ffefb783cc97c968a0ec2ea967",
-      "match": true
+      "match": false,
+      "repair_note": "2026-09-24: chainStatus='icon' changed to chainStatus='full' to fix RainbowKit client render crash 'invalid border=0'. OTET otet-551890ec4c54fc085ba3056edccf57666b75a3ba6f6b55de. Exactly 1 line changed."
     },
     "aeris/page.tsx": {
-      "sha256": "cc72aefeb8ac3d8f3beb723d9310c761c2965f2c27103a2700e23663d49216b8",
+      "sha256": "3a855455804891ee2fd9a94d1789e82e65f4a08e7c5cd55e3a45aae79e9ab543",
       "release_sha256": "cc72aefeb8ac3d8f3beb723d9310c761c2965f2c27103a2700e23663d49216b8",
-      "match": true
+      "match": false,
+      "repair_note": "2026-09-24: chainStatus='icon' changed to chainStatus='full' to fix RainbowKit client render crash 'invalid border=0'. OTET otet-0c3ceace90b4fc9fd7d4d8227bbd49ec7dbfa9a8099cd073. Exactly 1 line changed."
     },
     "deposit/page.tsx": {
       "sha256": "fa05df751772d08d35ab09a37e690171f0f868976638c43711d00cd6d88a784f",

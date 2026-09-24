@@ -410,7 +410,7 @@ export default function AerisPage() {
             TESTNET
           </span>
           <div style={{ marginLeft: 'auto' }}>
-            <ConnectButton chainStatus="icon" showBalance={false} />
+            <ConnectButton chainStatus="full" showBalance={false} />
           </div>
         </div>
         <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text-faint)', display: 'flex', gap: 20, flexWrap: 'wrap' }}>
