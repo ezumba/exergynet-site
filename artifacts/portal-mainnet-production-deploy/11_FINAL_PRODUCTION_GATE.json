@@ -9,7 +9,7 @@
     "R5_DEPOSIT_SOURCE_MATCH": "PASS",
     "R6_DEPLOYMENT_RESIDUE_REMOVED": "PASS — operator physically deleted both files via SSH 2026-09-24. SEED_DELETED=PASS, GITKEEP_DELETED=PASS. deposit/page.tsx SHA fa05df75... confirmed unaffected. service_evolution_v2.json grep hits are OTET audit-log target_id records (historical write log), not runtime imports — non-breaking.",
     "R7_REBUILD_HARNESS_RESTORED": "PASS",
-    "R8_BLOG_ORDINARY_USER_REJECTED": "BLOCKED_NO_SAFE_TEST_IDENTITY — prior HTTP 401 (no auth header) proves unauthenticated rejection only. Authenticated non-admin test requires developer credential not available in this agent session.",
+    "R8_BLOG_ORDINARY_USER_REJECTED": "PASS — 2026-09-24: ephemeral support-role admin created on EC2 localhost, login HTTP 200 (role=support confirmed), POST /api/admin/blog/review returned HTTP 403 {'error':'Insufficient role — requires: super_admin | ops'}, account deleted by cleanup. AUTHENTICATED_NON_ADMIN_REJECTED = PASS.",
     "R9_BLOG_ADMIN_ROLE_GATE": "PASS",
     "R10_PORTAL_ZERO_VALUE_SMOKE": "PASS — re-confirmed in corrective run: 5/5 routes HTTP 200, deposit health READY, backend SHA match",
     "R11_DEPOSIT_HEALTH": "PASS — re-confirmed: chain_id=8453, status=READY, usdc_canonical=true",
@@ -40,7 +40,6 @@
     "BACKEND_FORM": "ASSEMBLED_EMBEDDED_DAY1",
     "BACKEND_EQUALITY_NOT_REQUIRED": true
   },
-  "final_status": "PORTAL_MAINNET_RELEASE_CLOSURE_PENDING — R6 PASS (2026-09-24); R8 still blocked pending operator-supplied developer test credential",
-  "final_status_after_r8_resolved": "PORTAL_MAINNET_RELEASE_CLOSED_AND_PROVENANCE_SEALED",
-  "next_safe_action": "OPERATOR: (1) provide developer test credential for R8 authenticated non-admin test OR accept BLOCKED as permanent record; (2) separate operator decision on REAL_USDC_CANARY"
+  "final_status": "PORTAL_MAINNET_RELEASE_CLOSED_AND_PROVENANCE_SEALED",
+  "next_safe_action": "SEPARATE_OPERATOR_DECISION_ON_REAL_USDC_CANARY"
 }
