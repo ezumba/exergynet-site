@@ -158,7 +158,7 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
       <div style={{ marginBottom: 12 }}>
         <ConnectButton
           showBalance={false}
-          chainStatus="icon"
+          chainStatus="full"
           accountStatus="address"
         />
       </div>
