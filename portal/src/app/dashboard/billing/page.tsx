@@ -23,7 +23,7 @@ const ERC20_TRANSFER_ABI = [
   },
 ] as const;
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+const API = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -72,12 +72,15 @@ function BalanceBar({ dev }: { dev: Developer | null }) {
 
 // ── Rail A: Web3 Deposit ──────────────────────────────────────────────────────
 
-function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
+function Web3DepositRail({ onSuccess }: { onSuccess: () => Promise<void> }) {
   const { address, isConnected } = useAccount();
   const [amount, setAmount] = useState('5');
-  const [status, setStatus] = useState<'idle' | 'pending' | 'confirming' | 'crediting' | 'done' | 'error'>('idle');
+  // transfer_error: writeContractAsync failed — no tx was broadcast, safe to retry transfer.
+  // claim_error: tx was broadcast/confirmed but POST /api/deposit/claim failed — MUST NOT retry transfer.
+  const [status, setStatus] = useState<'idle' | 'pending' | 'confirming' | 'crediting' | 'done' | 'credit_pending' | 'claim_error' | 'transfer_error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
+  const [balanceRefreshed, setBalanceRefreshed] = useState(false);
 
   const { writeContractAsync } = useWriteContract();
 
@@ -86,43 +89,91 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
     query: { enabled: !!txHash },
   });
 
-  // Once tx confirmed on-chain → credit backend via authenticated claim endpoint
+  // Once tx confirmed on-chain (or on manual retry from credit_pending) → POST /api/deposit/claim.
+  //
+  // Backend response contract (day1_mainnet.js):
+  //   200 { ok: true, credited_micro: '<N>', events: [{status: 'credited'|'already_credited'}] }
+  //       — both new credit AND idempotent replay return 200.
+  //       — credited_micro === '0' means idempotent replay; onSuccess() refreshes either way.
+  //   202 { ok: false, status: 'pending', confirmations: N, required: M }
+  //       — backend has the TX but confirmations < minConfirmations. Retry with adaptive delay.
+  //   401 { error: '...' }  — missing/expired token (requireAuth never returns 403).
+  //   400/500               — validation or RPC error; preserve tx hash for support.
+  //
+  // NOTE: /api/billing/add-credits is gated behind BILLING_ADMIN_TOKEN (BRAVO-004);
+  // biological_proxy calls it server-side from /api/deposit/claim — not from here.
   useEffect(() => {
     if (!txConfirmed || !txHash || status !== 'confirming') return;
     setStatus('crediting');
 
+    const txHashVal = txHash;
     const usdcMicro = Math.round(parseFloat(amount) * 1_000_000);
-    const token = localStorage.getItem('en_token') ?? '';
+    const MAX_ATTEMPTS = 20; // up to ~3–5 min depending on adaptive delay
 
-    fetch(`${API}/api/deposit/claim`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ tx_hash: txHash, usdc_amount_micro: usdcMicro }),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
-        }
-        // NOTE: voice-credit crediting for Web3 deposits does not happen here.
-        // /api/billing/add-credits is intentionally gated behind a server-only
-        // BILLING_ADMIN_TOKEN so a browser can't self-report an arbitrary credit
-        // amount (BRAVO-004) — a direct client call here always 403s. The correct
-        // fix is for biological_proxy to call add-credits server-side, with the
-        // admin token, right after it verifies the deposit in /api/deposit/claim
-        // above (same place it updates usdc_micro_balance). That's in
-        // biological_proxy/index.js on the Portal EC2, not in this repo.
-        setStatus('done');
-        onSuccess();
-        setTimeout(() => { setStatus('idle'); setTxHash(undefined); }, 4000);
-      })
-      .catch((e: Error) => {
-        setErrorMsg(e.message ?? 'Credit failed — contact support with your tx hash');
-        setStatus('error');
+    async function attemptClaim(attempt: number): Promise<void> {
+      const token = localStorage.getItem('en_token');
+      if (!token) {
+        setErrorMsg('Not authenticated — please log in and retry');
+        setStatus('claim_error'); // txHash preserved — tx confirmed, retry claim after re-login
+        return;
+      }
+
+      const res = await fetch(`${API}/api/deposit/claim`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ tx_hash: txHashVal, usdc_amount_micro: usdcMicro }),
       });
+
+      if (res.status === 200) {
+        // credited_micro may be '0' (idempotent replay) or '>0' (new credit) — both are success.
+        // Await balance refresh before showing "Balance updated"; handle refresh failure gracefully.
+        setStatus('done');
+        setBalanceRefreshed(false);
+        try {
+          await onSuccess();
+          setBalanceRefreshed(true);
+        } catch {
+          // Credit succeeded on-chain and in the ledger. A refresh failure must NOT
+          // revert the done status or show an error — the deposit is confirmed.
+        }
+        setTimeout(() => { setStatus('idle'); setTxHash(undefined); setBalanceRefreshed(false); }, 4000);
+        return;
+      }
+
+      if (res.status === 202) {
+        // Backend has the TX but hasn't reached minConfirmations yet.
+        // Use backend-provided counts for adaptive delay (≈2s/block on Base).
+        const body = await res.json().catch(() => ({} as { confirmations?: number; required?: number }));
+        const blocksNeeded = (typeof body.required === 'number' && typeof body.confirmations === 'number')
+          ? Math.max(body.required - body.confirmations, 1)
+          : 6;
+        const retryMs = Math.min(blocksNeeded * 2_000 + 2_000, 30_000); // cap at 30s per attempt
+
+        if (attempt < MAX_ATTEMPTS - 1) {
+          await new Promise<void>(resolve => setTimeout(resolve, retryMs));
+          return attemptClaim(attempt + 1);
+        }
+        // Polling window exhausted. TX is valid on-chain; credit is pending backend processing.
+        // Do NOT show 'error' — the transfer succeeded. Let user retry the claim notification.
+        setStatus('credit_pending');
+        return;
+      }
+
+      if (res.status === 401 || res.status === 403) {
+        setErrorMsg('Authentication failed — please log in and retry');
+        setStatus('claim_error'); // txHash preserved — user must retry claim, not the transfer
+        return;
+      }
+
+      const body = await res.json().catch(() => ({} as { error?: string }));
+      setErrorMsg(body.error ?? `HTTP ${res.status} — contact support`);
+      setStatus('claim_error'); // txHash preserved — claim failed, transfer already occurred
+    }
+
+    attemptClaim(0).catch((e: Error) => {
+      setErrorMsg(e.message ?? 'Claim failed — contact support with your tx hash');
+      setStatus('claim_error'); // network/runtime error — txHash preserved
+    });
   }, [txConfirmed, txHash, status, amount, onSuccess]);
 
   async function handleDeposit() {
@@ -144,8 +195,10 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
       setTxHash(hash);
       setStatus('confirming');
     } catch (e: any) {
+      // writeContractAsync failed — tx was never broadcast. txHash is undefined here.
+      // transfer_error is safe to reset to idle since no USDC moved.
       setErrorMsg(e?.shortMessage ?? e?.message ?? 'Transaction failed');
-      setStatus('error');
+      setStatus('transfer_error');
     }
   }
 
@@ -178,7 +231,7 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 placeholder="5"
-                disabled={status === 'pending' || status === 'confirming' || status === 'crediting'}
+                disabled={status === 'pending' || status === 'confirming' || status === 'crediting' || status === 'claim_error' || status === 'credit_pending'}
               />
             </div>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4 }}>
@@ -203,7 +256,7 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
             → Cost per 1K tokens: ~$0.40 USDC
           </div>
 
-          {errorMsg && (
+          {errorMsg && status === 'transfer_error' && (
             <div style={{ background: '#2D0808', border: '1px solid #991B1B', borderRadius: 6, padding: '8px 12px', fontSize: 11, color: '#EF4444', marginBottom: 12 }}>
               {errorMsg}
             </div>
@@ -211,7 +264,18 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
 
           {status === 'done' && (
             <div style={{ background: '#042B27', border: '1px solid #0F766E', borderRadius: 6, padding: '8px 12px', fontSize: 11, color: '#0D9488', marginBottom: 12 }}>
-              ✓ Deposit confirmed. Balance updated.
+              {balanceRefreshed
+                ? '✓ Deposit credited. Balance updated.'
+                : '✓ Deposit credited. Balance refresh pending.'}
+            </div>
+          )}
+
+          {(status === 'credit_pending' || status === 'claim_error') && txHash && (
+            <div style={{ background: '#1C1A08', border: '1px solid #D97706', borderRadius: 6, padding: '8px 12px', fontSize: 11, color: '#F59E0B', marginBottom: 12 }}>
+              ✓ Your USDC transfer already occurred. Do not send another deposit.<br />
+              Retry credit notification for this transaction.<br />
+              <span style={{ color: '#78716C', wordBreak: 'break-all' }}>TX: {txHash}</span>
+              {errorMsg && <div style={{ marginTop: 4, color: '#EF4444' }}>{errorMsg}</div>}
             </div>
           )}
 
@@ -219,17 +283,21 @@ function Web3DepositRail({ onSuccess }: { onSuccess: () => void }) {
             className="en-btn en-btn-primary"
             style={{ width: '100%', justifyContent: 'center' }}
             onClick={
-              status === 'error'
+              status === 'transfer_error'
                 ? () => { setStatus('idle'); setErrorMsg(''); setTxHash(undefined); }
+                : (status === 'claim_error' || status === 'credit_pending')
+                ? () => { setStatus('confirming'); setErrorMsg(''); }
                 : handleDeposit
             }
-            disabled={status === 'pending' || status === 'confirming' || status === 'crediting'}
+            disabled={status === 'pending' || status === 'confirming' || status === 'crediting' || status === 'done'}
           >
-            {status === 'pending'    ? 'confirm in wallet…'   :
-             status === 'confirming' ? 'waiting for block…'   :
-             status === 'crediting'  ? 'crediting account…'   :
-             status === 'done'       ? '✓ deposit complete'   :
-             status === 'error'      ? '↺ try again'          :
+            {status === 'pending'        ? 'confirm in wallet…'          :
+             status === 'confirming'     ? 'waiting for block…'          :
+             status === 'crediting'      ? 'crediting account…'          :
+             status === 'done'           ? '✓ deposit complete'          :
+             status === 'credit_pending' ? '↺ retry credit notification' :
+             status === 'claim_error'    ? '↺ retry credit notification' :
+             status === 'transfer_error' ? '↺ try again'                 :
              `deposit $${amount} USDC via Web3`}
           </button>
         </>
@@ -348,8 +416,10 @@ export default function BillingPage() {
   const [activeRail, setActiveRail] = useState<'web3' | 'fiat'>('web3');
   const [authed, setAuthed] = useState<boolean | null>(null);
 
-  function refresh() {
-    developer.me().then(d => { setDev(d); setAuthed(true); }).catch(() => { setAuthed(false); });
+  function refresh(): Promise<void> {
+    return developer.me()
+      .then(d => { setDev(d); setAuthed(true); })
+      .catch(() => { setAuthed(false); });
   }
 
   // Seed en_token from ?_t= param injected by Android in-app WebView
@@ -413,7 +483,7 @@ export default function BillingPage() {
       <Section title="USDC BALANCE">
         <BalanceBar dev={dev} />
         <div style={{ marginTop: 12, display: 'flex', gap: 8, fontSize: 11, color: '#475569' }}>
-          <div>rate: <span style={{ color: '#94A3B8' }}>0.4 micro-USDC / token</span></div>
+          <div>rate: <span style={{ color: '#94A3B8' }}>$0.40 / 1K tokens</span></div>
           <div style={{ marginLeft: 'auto' }}>
             last updated: <span style={{ color: '#94A3B8' }}>now</span>
           </div>
@@ -459,7 +529,7 @@ export default function BillingPage() {
       <div className="en-card" style={{ fontSize: 11, color: '#475569', lineHeight: 1.8 }}>
         <div style={{ fontSize: 10, color: '#334155', letterSpacing: '0.08em', marginBottom: 8 }}>SETTLEMENT NOTES</div>
         Web3 deposits confirm in ~15s on Base Mainnet. Fiat deposits credit within 60s of Stripe confirmation.
-        Billing is per-token at 0.4 micro-USDC/token (≈ $0.40 per 1,000 tokens). Balance never expires.
+        Billing is per-token at $0.40 / 1K tokens (400 micro-USDC / token). Balance never expires.
         Minimum activation threshold: $1 USDC.
       </div>
 
