@@ -1,592 +1,341 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ExergyNet - State, Evidence & Authority Infrastructure for Machine Intelligence</title>
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-<link rel="shortcut icon" href="assets/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="ExergyNet is a persistent state, evidence, and authority substrate for machine intelligence. Models reason; ExergyNet preserves state, binds evidence, governs authority, and verifies consequential operations across models, machines, and time.">
-<meta name="keywords" content="ExergyNet, execution infrastructure for machine intelligence, verified delegated action, persistent AI state, evidence provenance, machine authority, Consequence Boundary, xLMP, Exergy Vault, xISA, LNES-22, Vanguard, VMN, MCP, Base L2, Solana">
-<meta property="og:title" content="ExergyNet - Infrastructure for Machine Intelligence">
-<meta property="og:description" content="Persistent state, independently checkable evidence, and authority control around the model — not another model wrapper.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://exergynet.org">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ExergyNet - Infrastructure for Machine Intelligence">
-<meta name="twitter:description" content="Persistent state, checkable evidence, and authority separated from the model. Measured benchmarks, bounded to their tested envelopes.">
-<link rel="stylesheet" href="style.css">
-<script>
-(function(){
-  var t = localStorage.getItem('exg-theme');
-  if (!t) {
-    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  document.documentElement.setAttribute('data-theme', t);
-})();
-</script>
-<meta name="base:app_id" content="69f9713442d4fe010f1c2922" />
-<style>
-  .home-hero { position: relative; overflow: hidden; padding: 6.5rem 0 5.5rem; }
-  .home-hero-grid { display:grid; grid-template-columns:1.1fr 0.9fr; gap:3.5rem; align-items:center; }
-  .stack-panel { background:var(--bg-card); border:1px solid var(--border-mid); border-radius:16px; padding:1.5rem; position:relative; overflow:hidden; }
-  .stack-panel::before { content:''; position:absolute; inset:0 0 auto auto; width:260px; height:260px; background:radial-gradient(circle at top right, rgba(0,232,135,0.10), transparent 66%); pointer-events:none; }
-  .stack-row { display:grid; grid-template-columns:120px 1fr; gap:1rem; padding:0.9rem 0; border-bottom:1px solid var(--border); position:relative; }
-  .stack-row:last-child { border-bottom:none; }
-  .stack-key { font-family:var(--mono); font-size:10px; letter-spacing:0.09em; text-transform:uppercase; color:var(--text-faint); }
-  .stack-value { color:var(--text); font-size:14px; line-height:1.55; }
-  .principle-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-top:2rem; }
-  .principle { padding:1rem 1.1rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); }
-  .principle strong { display:block; color:var(--text); margin-bottom:0.35rem; }
-  .principle span { color:var(--text-soft); font-size:13px; line-height:1.5; }
-  .layer-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0.8rem; align-items:stretch; }
-  .layer-card { padding:1.25rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); min-height:180px; }
-  .layer-card h3 { font-size:1rem; margin-bottom:0.6rem; }
-  .layer-num { font-family:var(--mono); font-size:10px; color:var(--accent); letter-spacing:0.08em; margin-bottom:0.75rem; }
-  .validation-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-top:1.75rem; }
-  .validation-card { border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; background:var(--bg-card); }
-  .validation-num { font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:700; color:var(--accent); line-height:1; margin-bottom:0.45rem; }
-  .validation-label { font-size:12px; color:var(--text-soft); line-height:1.55; }
-  .trust-table { width:100%; border-collapse:collapse; margin-top:1.5rem; }
-  .trust-table th, .trust-table td { text-align:left; padding:1rem; border-bottom:1px solid var(--border); vertical-align:top; }
-  .trust-table th { font-family:var(--mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); }
-  .trust-table td { color:var(--text-soft); font-size:13px; line-height:1.55; }
-  .trust-table td:first-child { color:var(--text); font-weight:600; width:22%; }
-  .quiet-callout { border-left:3px solid var(--accent); background:var(--accent-dim); padding:1.25rem 1.35rem; border-radius:0 var(--radius) var(--radius) 0; color:var(--text-soft); line-height:1.7; }
-  @media (max-width: 1023px) {
-    .home-hero-grid { grid-template-columns:1fr; gap:2rem; }
-    .layer-grid { grid-template-columns:repeat(2,1fr); }
-    .validation-grid, .principle-grid { grid-template-columns:repeat(2,1fr); }
-  }
-  @media (max-width: 640px) {
-    .home-hero { padding:4rem 0 3.5rem; }
-    .layer-grid, .validation-grid, .principle-grid { grid-template-columns:1fr; }
-    .stack-row { grid-template-columns:1fr; gap:0.3rem; }
-    .trust-table { display:block; overflow-x:auto; white-space:normal; }
-  }
-</style>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "ExergyNet",
-  "url": "https://exergynet.org",
-  "description": "ExergyNet is a persistent state, evidence, and authority substrate for machine intelligence: content-addressed state, bounded checkable evidence, and authority control that operates around the model, across models, devices, clouds, and accelerators."
-}
-</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>ExergyNet — Persistent machine infrastructure</title>
+<meta name="description" content="ExergyNet provides persistent state, bounded context delivery, and independent execution authority for machine intelligence systems.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="exgn-web006.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<canvas id="circuit-canvas"></canvas>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="ExergyNet home">
+      <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+    </a>
+    <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+      <a href="index.html#platform" aria-current="page">Platform</a>
+      <a href="docs.html">Developers</a>
+      <a href="whitepaper.html">Research</a>
+      <a href="index.html#company">Company</a>
+    </nav>
+    <div class="header-actions">
+      <button class="search-trigger" aria-label="Search" id="search-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+        <span class="s-label">Search</span>
+        <kbd>⌘K</kbd>
+      </button>
+      <a class="btn btn-primary" href="docs.html">Start building <span aria-hidden="true">↗</span></a>
+      <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
+  </div>
+</header>
 
-<div class="site-wrap">
-  <div id="site-header"></div>
+<main id="main">
 
-  <main class="page">
-
-    <!-- HERO -->
-    <section class="home-hero">
-      <div class="glow-accent" style="width:560px;height:520px;top:-140px;left:-180px;"></div>
-      <div class="glow-blue" style="width:620px;height:460px;top:-20px;right:-220px;"></div>
-
-      <div class="container-wide">
-        <div class="home-hero-grid">
-          <div>
-            <div class="hero-eyebrow"><span class="dot"></span>Infrastructure for Machine Intelligence</div>
-            <h1>Models Reason.<br><span class="accent">ExergyNet Is the System Around Them.</span></h1>
-            <p class="hero-sub">A persistent state, evidence, and authority substrate for machine intelligence.</p>
-            <p style="max-width:640px; color:var(--text-soft); line-height:1.7; margin-bottom:1.25rem;">Autonomous systems need durable state, evidence that stays independently checkable, and a separation between what a model can <em>propose</em> and what it can <em>authorize</em>. ExergyNet preserves state, binds evidence to the decisions that used it, governs authority, and verifies consequential operations — across models, machines, and time.</p>
-            <p style="max-width:640px; color:var(--text-soft); line-height:1.7; margin-bottom:1.75rem;">The model is a reasoning engine inside this environment, not the system itself. Persistent memory (xLMP) is one plane of it; every public benchmark number is bounded to its tested envelope.</p>
-            <div class="btn-row">
-              <a href="security.html" class="btn btn-primary">The Consequence Boundary</a>
-              <a href="benchmarks.html" class="btn btn-secondary">Explore Benchmarks</a>
-              <a href="docs.html" class="btn btn-ghost">Developer Quickstart</a>
-            </div>
-          </div>
-
-          <div class="stack-panel">
-            <div class="section-label" style="margin-bottom:0.75rem;">The ExergyNet Stack</div>
-            <div class="stack-row">
-              <div class="stack-key">Memory</div>
-              <div class="stack-value"><strong>Exergy Vault + xLMP</strong><br>Persistent, root-addressed machine memory with bounded evidence delivery. <a href="vmn.html" style="color:var(--accent);">VMN</a> is the open-source local node.</div>
-            </div>
-            <div class="stack-row">
-              <div class="stack-key">Control</div>
-              <div class="stack-value"><strong>Vanguard</strong><br>Reasoning, orchestration, and execution coordination over bounded evidence and authority constraints.</div>
-            </div>
-            <div class="stack-row">
-              <div class="stack-key">Transport</div>
-              <div class="stack-value"><strong>Omega Carrier</strong><br>Transport for persistent memory identity, provenance, integrity, and freshness. Memory portability does not grant execution authority.</div>
-            </div>
-            <div class="stack-row">
-              <div class="stack-key">Verification</div>
-              <div class="stack-value"><strong>PoX, AERIS, Edge Witness</strong><br>Receipts for computation, authenticated external data, and physical-world observations.</div>
-            </div>
-            <div class="stack-row">
-              <div class="stack-key">Settlement</div>
-              <div class="stack-value"><strong>Solana + Base</strong><br>Complementary rails for coordination, receipts, and economic finality.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="principle-grid">
-          <div class="principle"><strong>Persistent</strong><span>State survives sessions, models, and restarts.</span></div>
-          <div class="principle"><strong>Bounded</strong><span>Only the evidence required for the current operation enters active context.</span></div>
-          <div class="principle"><strong>Verifiable</strong><span>Outputs carry traceable evidence, integrity data, and receipts.</span></div>
-          <div class="principle"><strong>Portable</strong><span>The memory plane is not tied to one model, accelerator, or chain.</span></div>
-        </div>
+  <!-- HERO -->
+  <section class="hero" id="platform">
+    <div class="wrap">
+      <div class="eyebrow hero-eyebrow">
+        <span class="dot" aria-hidden="true"></span>
+        Persistent machine infrastructure
       </div>
-    </section>
-
-    <!-- THE GAP -->
-    <section style="background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:3.5rem 0;">
-      <div class="container-wide">
-        <div class="section-label">The Gap</div>
-        <h2 style="margin-bottom:0.75rem;">The bottleneck is moving from producing intelligence to delegating authority.</h2>
-        <p style="max-width:820px; color:var(--text-soft); line-height:1.7; margin-bottom:0.9rem;">As model capability becomes more widely available, models can increasingly reason, generate, and use tools. But consequential deployment requires more than model capability. Organizations still lack the infrastructure to let a machine <em>act</em> in ways they can authorize, observe, attribute, verify, audit, and reconstruct.</p>
-        <p style="max-width:820px; color:var(--text-soft); line-height:1.7; margin-bottom:1.75rem;">The problem is not only hallucination. It is machine identity, authority boundaries, persistent state, provenance, action attribution, execution evidence, policy enforcement, and reconstruction after an incident &mdash; the friction between an intelligent output and a trustworthy action.</p>
-
-        <div style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:11px; letter-spacing:0.04em;">
-          <span style="padding:0.5rem 0.85rem; border:1px solid var(--border-mid); border-radius:8px; background:var(--bg-card); color:var(--text);">Model intelligence</span>
-          <span style="color:var(--text-faint);">&rarr;</span>
-          <span style="padding:0.5rem 0.85rem; border:1px solid var(--border); border-radius:8px; color:var(--text-soft);">identity</span>
-          <span style="color:var(--text-faint);">&rarr;</span>
-          <span style="padding:0.5rem 0.85rem; border:1px solid var(--border); border-radius:8px; color:var(--text-soft);">relevant state</span>
-          <span style="color:var(--text-faint);">&rarr;</span>
-          <span style="padding:0.5rem 0.85rem; border:1px solid var(--border); border-radius:8px; color:var(--text-soft);">authority</span>
-          <span style="color:var(--text-faint);">&rarr;</span>
-          <span style="padding:0.5rem 0.85rem; border:1px solid var(--border); border-radius:8px; color:var(--text-soft);">policy</span>
-          <span style="color:var(--text-faint);">&rarr;</span>
-          <span style="padding:0.5rem 0.85rem; border:1px solid var(--border-mid); border-radius:8px; background:var(--accent-dim); color:var(--text);">action</span>
-          <span style="color:var(--text-faint);">&rarr;</span>
-          <span style="padding:0.5rem 0.85rem; border:1px solid var(--border); border-radius:8px; color:var(--text-soft);">evidence</span>
-          <span style="color:var(--text-faint);">&rarr;</span>
-          <span style="padding:0.5rem 0.85rem; border:1px solid var(--border); border-radius:8px; color:var(--text-soft);">audit / reconstruction</span>
-        </div>
-        <p style="margin-top:1.25rem;"><a href="architecture.html" class="btn btn-secondary" style="font-size:12px;">See the architecture &rarr;</a></p>
+      <h1>Persistent state.<br><em>Bounded context.</em><br>Independent authority.</h1>
+      <p class="hero-sub">ExergyNet decouples what agents remember from what models reason over — and separates what models propose from what systems execute.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="docs.html">Start building <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-outline btn-lg" href="whitepaper.html">Read V5 research <span aria-hidden="true">↓</span></a>
       </div>
-    </section>
-
-    <!-- WHAT EXERGYNET PROVIDES -->
-    <section>
-      <div class="container-wide">
-        <div class="section-label">What ExergyNet Provides</div>
-        <h2 style="margin-bottom:0.75rem;">Six functional primitives, before any product name.</h2>
-        <p style="max-width:820px; color:var(--text-soft); margin-bottom:2rem;">ExergyNet operates in the conversion layer between an AI model or agent and a consequential enterprise, software, financial, clinical, industrial, or physical system. It provides the primitives that turn an output into a verified delegated action.</p>
-
-        <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
-          <div class="card accent-border">
-            <h3>Identity</h3>
-            <p>Know which machine or human actor initiated an operation.</p>
-            <p style="font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:0.6rem;">xISA &middot; Edge Witness</p>
-          </div>
-          <div class="card">
-            <h3>State</h3>
-            <p>Supply persistent, relevant information to reasoning events without keeping the whole history in active context.</p>
-            <p style="font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:0.6rem;">Exergy Vault &middot; xLMP</p>
-          </div>
-          <div class="card blue-border">
-            <h3>Authority</h3>
-            <p>Define what actions an actor may perform &mdash; separate from what it is technically capable of doing.</p>
-            <p style="font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:0.6rem;">xISA &middot; LNES-22</p>
-          </div>
-          <div class="card">
-            <h3>Transport</h3>
-            <p>Move authenticated, policy-bound machine events between systems without granting execution authority in transit.</p>
-            <p style="font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:0.6rem;">LNES-22 &middot; Omega Carrier</p>
-          </div>
-          <div class="card">
-            <h3>Provenance</h3>
-            <p>Maintain the relationship between state, reasoning, action, and result.</p>
-            <p style="font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:0.6rem;">Exergy Vault &middot; PoX &middot; AERIS</p>
-          </div>
-          <div class="card accent-border">
-            <h3>Evidence</h3>
-            <p>Preserve enough information to reconstruct a consequential event afterward.</p>
-            <p style="font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:0.6rem;">Receipts &middot; Proof &middot; Settlement</p>
-          </div>
-        </div>
-        <p style="margin-top:1.5rem; color:var(--text-soft); font-size:13px;"><strong style="color:var(--text);">capability</strong> = what an actor technically can do. <strong style="color:var(--text);">authority</strong> = what it is permitted to do under defined conditions. ExergyNet keeps them separate. <a href="glossary.html" style="color:var(--accent);">Glossary &rarr;</a></p>
-      </div>
-    </section>
-
-    <!-- WHAT EXERGYNET IS -->
-    <section>
-      <div class="container-wide">
-        <div class="section-label">What ExergyNet Is</div>
-        <h2>A memory and execution fabric for autonomous systems.</h2>
-        <p style="max-width:820px; margin-bottom:2rem;">ExergyNet is not another model wrapper. It is infrastructure for preserving state, delivering complete evidence, coordinating intelligence, and producing independently checkable operational records.</p>
-
-        <div class="card-grid">
-          <div class="card accent-border">
-            <h3>Persistent Machine Memory</h3>
-            <p>Exergy Vault stores state as durable, integrity-rooted objects. xLMP retrieves the smallest complete set of authoritative evidence required for an operation.</p>
-          </div>
-          <div class="card blue-border">
-            <h3>Controlled Intelligence</h3>
-            <p>Vanguard consumes bounded evidence from the state plane, coordinates reasoning and execution, and operates under explicit authority constraints.</p>
-          </div>
-          <div class="card">
-            <h3>Verifiable Operations</h3>
-            <p>Computation, external data, hardware observations, and settlement produce distinct receipts with explicit trust boundaries.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- xLMP THREE PROPERTIES -->
-    <section style="background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:3.5rem 0;">
-      <div class="container-wide">
-        <div class="section-label" style="margin-bottom:1rem;">Memory Object Properties</div>
-        <h2 style="margin-bottom:0.75rem;">xLMP separates three memory properties.</h2>
-        <p style="max-width:780px; color:var(--text-soft); margin-bottom:2rem;">These properties are intentionally separate. A content hash is not provenance. Provenance is not authority. A model recommendation is not permission to act.</p>
-        <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
-          <div class="card accent-border">
-            <h3>Integrity</h3>
-            <p>A SHA-256 content root establishes the identity of committed content and makes later modification detectable.</p>
-          </div>
-          <div class="card blue-border">
-            <h3>Provenance</h3>
-            <p>Where a signed provenance record is present, the source and creation event can be checked against the signer's public key.</p>
-          </div>
-          <div class="card">
-            <h3>Authority</h3>
-            <p>Where the LNES-22 authority layer is enabled, policy and signed authorization determine whether retrieved state may result in a consequential action.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CORE SYSTEMS -->
-    <section>
-      <div class="container-wide">
-        <div class="section-label">Core Systems</div>
-        <h2>One architecture. Clear responsibilities.</h2>
-        <p style="max-width:780px; margin-bottom:1.75rem;">Each component addresses a different part of the autonomous-system lifecycle. Together they form a persistent operating layer beneath models and applications.</p>
-
-        <div class="card-grid">
-          <div class="card accent-border">
-            <h3>Exergy Vault</h3>
-            <p>Persistent, content-addressed storage for AI state, evidence, provenance, and long-lived operational memory.</p>
-            <div style="margin-top:1rem;"><a href="https://storage.exergynet.org" target="_blank" rel="noopener" class="btn btn-primary" style="font-size:12px;">Open Vault &rarr;</a></div>
-          </div>
-          <div class="card blue-border">
-            <h3>SEI-Vanguard</h3>
-            <p>The native execution plane for evidence selection, model execution, policy enforcement, and state transition.</p>
-            <div style="margin-top:1rem;"><a href="vanguard.html" class="btn btn-secondary" style="font-size:12px;">Vanguard &rarr;</a></div>
-          </div>
-          <div class="card accent-border">
-            <h3>Vanguard Memory Node</h3>
-            <p>Open-source local node for xLMP — persistent-state delivery for reasoning. Deterministic, content-addressed memory via MCP. No cloud required. Deploy in 60 seconds.</p>
-            <div style="margin-top:1rem;"><a href="vmn.html" class="btn btn-primary" style="font-size:12px;">VMN &rarr;</a></div>
-          </div>
-          <div class="card accent-border">
-            <h3>Omega Carrier</h3>
-            <p>A transport architecture for moving persistent memory between nodes while preserving identity, provenance, integrity, and freshness.</p>
-            <div style="margin-top:1rem;"><a href="omega-carrier.html" class="btn btn-primary" style="font-size:12px;">Omega Carrier &rarr;</a></div>
-          </div>
-          <div class="card">
-            <h3>AERIS</h3>
-            <p>Authenticated external-data ingestion for systems that must use web and enterprise data without abandoning provenance.</p>
-            <div style="margin-top:1rem;"><a href="docs.html" class="btn btn-secondary" style="font-size:12px;">Integration Docs &rarr;</a></div>
-          </div>
-          <div class="card">
-            <h3>Edge Witness</h3>
-            <p>Hardware-backed capture and signing for device observations, physical presence, and field-operational evidence.</p>
-            <div style="margin-top:1rem;"><a href="lnes06.html" class="btn btn-secondary" style="font-size:12px;">Edge Witness &rarr;</a></div>
-          </div>
-          <div class="card blue-border">
-            <h3>Proof and Settlement</h3>
-            <p>Computation receipts, proof aggregation, and multi-chain anchoring connect completed work to durable records and economic finality.</p>
-            <div style="margin-top:1rem;"><a href="protocol.html" class="btn btn-secondary" style="font-size:12px;">Protocol &rarr;</a></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ARCHITECTURE -->
-    <section class="mechanical-breakdown" style="padding:4rem 0; background:var(--bg-card); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
-      <div class="container-wide">
-        <div class="section-label" style="text-align:center; margin-bottom:1rem;">System Architecture</div>
-        <h2 style="text-align:center; font-size:2.2rem; margin-bottom:0.75rem;">Persistent knowledge. Bounded context. Verifiable action.</h2>
-        <p style="text-align:center; color:var(--text-soft); max-width:780px; margin:0 auto 3rem;">The objective is not to send the largest possible prompt. It is to preserve complete state outside active context and deliver only the authoritative evidence required for the current operation.</p>
-
-        <div class="layer-grid">
-          <div class="layer-card">
-            <div class="layer-num">01 / COMMIT</div>
-            <h3>Preserve state</h3>
-            <p>Source material is normalized into durable objects with provenance and integrity commitments.</p>
-          </div>
-          <div class="layer-card">
-            <div class="layer-num">02 / ADDRESS</div>
-            <h3>Locate evidence</h3>
-            <p>xLMP resolves the complete object or record set required for the current question or task.</p>
-          </div>
-          <div class="layer-card">
-            <div class="layer-num">03 / ORCHESTRATE</div>
-            <h3>Execute with control</h3>
-            <p>Vanguard selects the model, tool, policy, and execution path without binding the system to one provider.</p>
-          </div>
-          <div class="layer-card">
-            <div class="layer-num">04 / VERIFY</div>
-            <h3>Issue a receipt</h3>
-            <p>The operation returns evidence, integrity metadata, and the appropriate computational or hardware-backed receipt.</p>
-          </div>
-          <div class="layer-card">
-            <div class="layer-num">05 / PRESERVE</div>
-            <h3>Update durable state</h3>
-            <p>The result is written back into persistent memory and, where required, anchored or settled across supported rails.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TRUST MODEL -->
-    <section>
-      <div class="container-wide">
-        <div class="section-label">Trust Model</div>
-        <h2>Different claims require different proofs.</h2>
-        <p style="max-width:800px;">ExergyNet does not collapse computation, hardware identity, physical observation, and settlement into one vague idea of truth. Each layer exposes a specific guarantee and a specific boundary.</p>
-
-        <div class="card" style="margin-top:1.5rem; overflow-x:auto;">
-          <table class="trust-table">
-            <thead>
-              <tr>
-                <th>Layer</th>
-                <th>What it establishes</th>
-                <th>What it does not establish</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>xLMP root</td>
-                <td>The identity, integrity, and provenance of the addressed memory object.</td>
-                <td>That a model will interpret the object correctly.</td>
-              </tr>
-              <tr>
-                <td>ZK receipt</td>
-                <td>That a defined computation executed according to the committed program and inputs.</td>
-                <td>That external inputs were semantically correct.</td>
-              </tr>
-              <tr>
-                <td>Hardware signature</td>
-                <td>That an authorized device or enclave signed the observation or execution record.</td>
-                <td>That every sensor or external environment was truthful.</td>
-              </tr>
-              <tr>
-                <td>Ledger anchor</td>
-                <td>Ordering, timestamping, and durable settlement finality.</td>
-                <td>The semantic correctness of off-chain claims.</td>
-              </tr>
-              <tr>
-                <td>Vanguard audit</td>
-                <td>The evidence, policy, and execution path used for an operation.</td>
-                <td>Absolute model infallibility.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-  <!-- CONSEQUENCE BOUNDARY -->
-  <section style="padding: 3.5rem 0;">
-    <div class="container-wide">
-      <div class="section-label">Machine Authority Control Infrastructure</div>
-      <h2 style="margin-bottom:0.75rem;">AI can propose consequences. AI cannot authorize its own consequences.</h2>
-      <p style="max-width:780px; color:var(--text-soft); margin-bottom:1.75rem;">The Consequence Boundary is ExergyNet's authorization layer for autonomous agents &mdash; an independent identity, capability, freshness, and integrity check placed between an agent's reasoning and any system that reasoning can affect. Patent pending (U.S. Provisional Application No. 64/134,973). Live-tested against a real prompt-injection red team.</p>
-      <div class="btn-row">
-        <a href="security.html" class="btn btn-primary">The Consequence Boundary &rarr;</a>
-        <a href="security.html#verify" class="btn btn-ghost">See the Evidence &rarr;</a>
-      </div>
+      <p class="hero-tagline">STATE · CONTEXT · IDENTITY · AUTHORITY</p>
     </div>
   </section>
 
-  <!-- SECURITY RESEARCH -->
-  <section style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 3.5rem 0;">
-    <div class="container-wide">
-      <div class="section-label">Security Research</div>
-      <h2>Architectural response to the x402 vulnerability matrix.</h2>
-      <p style="max-width:700px; margin-bottom:2rem; color:var(--text-soft);">Security research accepted for USENIX Security 2026 identifies facilitator-mediated failure modes in x402 deployments. ExergyNet&rsquo;s architectural answer: capital locked before compute, proof verified before settlement, asset authority constrained by contract.</p>
+  <!-- V5 METRICS STRIP -->
+  <div class="metrics-strip" aria-label="V5 research key results">
+    <div class="wrap">
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-num">101<span class="metric-unit">M</span></div>
+          <div class="metric-label">Estimated state tokens<br>100M development point</div>
+          <div class="metric-note">V5 · single run</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-num">800</div>
+          <div class="metric-label">Median context tokens<br>delivered per query</div>
+          <div class="metric-note">K = 800 · 190 executions</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-num">220<span class="metric-unit">.5×</span></div>
+          <div class="metric-label">Median paired retrieval<br>speedup</div>
+          <div class="metric-note">190 matched queries</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-num">45<span class="metric-unit">.3%</span></div>
+          <div class="metric-label">Baseline answer accuracy<br>development cohort</div>
+          <div class="metric-note">adversarial synthetic benchmark</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <div class="card accent-border" style="max-width:820px; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:0; right:0; padding:0.35rem 0.85rem; background:var(--accent); color:#000; font-family:var(--display); font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; border-bottom-left-radius:var(--radius);">Whitepaper</div>
-        <div style="margin-bottom:1rem; margin-top:0.25rem;">
-          <span class="badge badge-green" style="font-size:0.72rem; padding:0.2rem 0.6rem; margin-right:0.5rem;">USENIX 2026</span>
-          <span class="badge badge-blue" style="font-size:0.72rem; padding:0.2rem 0.6rem;">x402 Security</span>
+  <!-- THREE PILLARS -->
+  <section class="section" id="pillars" aria-labelledby="pillars-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>01 / The three layers</div>
+        <h2 id="pillars-heading">Clear roles.<br>Connected infrastructure.</h2>
+        <p>Three independent layers, each with a defined responsibility. Start with any one; the architecture is designed to compose.</p>
+      </div>
+      <div class="pillars-grid">
+        <div class="pillar">
+          <div class="pillar-num">01</div>
+          <h3>Persistent State</h3>
+          <p>State that grows without bound. At the 100M development operating point, ExergyNet stores approximately 101 million estimated state tokens — without delivering them all to the model at once.</p>
+          <div class="pillar-value">N ≈ 101,152,694 tokens</div>
         </div>
-        <h3 style="font-size:1.3rem; margin-bottom:0.6rem;">Resolving the x402 Vulnerability Matrix</h3>
-        <p style="color:var(--text-soft); font-size:0.93rem; line-height:1.7; max-width:660px; margin-bottom:1.25rem;">
-          Free Shopping, Gas Abuse, Asset Theft, Service Denial &mdash; ExergyNet&rsquo;s deterministic settlement architecture maps each attack class to a bounded architectural control: EVM escrow gating, local proof validation before gas spend, unidirectional asset authority, and replayable settlement audit trails.
-        </p>
-        <div class="btn-row">
-          <a href="x402-security-brief.html" class="btn btn-primary">Read the Security Brief &rarr;</a>
-          <a href="security.html" class="btn btn-secondary">Security Architecture</a>
+        <div class="pillar">
+          <div class="pillar-num">02</div>
+          <h3>Bounded Context</h3>
+          <p>Relevant state, not all state. ExergyNet selects and delivers what matters from the persistent store, keeping the model's working context bounded regardless of how much is stored.</p>
+          <div class="pillar-value">K = 800 median tokens / query</div>
         </div>
-        <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid var(--border); font-family:var(--mono); font-size:0.75rem; color:var(--text-soft);">
-          Audit ID: SEI-OMEGA-DEBRIEF-RESOLUTION-0803-WHITEPAPER &nbsp;&bull;&nbsp; Wang et al., arXiv:2607.19545, USENIX Security 2026
+        <div class="pillar">
+          <div class="pillar-num">03</div>
+          <h3>Independent Authority</h3>
+          <p>A model's proposal is not permission. In a reported live environment, a deterministic authority layer rejected an adversarial instruction that the reasoning model had accepted.</p>
+          <div class="pillar-value">Proposal ≠ Execution</div>
         </div>
       </div>
     </div>
   </section>
 
-    <!-- VALIDATION -->
-    <section>
-      <div class="container-wide">
-        <div class="section-label">Measured Progress</div>
-        <h2>Architecture supported by benchmark evidence.</h2>
-        <p style="max-width:800px;">The public benchmark program focuses on measured behavior, explicit limitations, and reproducible results. The numbers below apply to the tested workloads and conditions. ExergyNet does not require a model change or cloud migration; the corpus scaling evidence (32K–10M) was measured on existing infrastructure.</p>
-
-        <div class="validation-grid">
-          <div class="validation-card">
-            <div class="validation-num">11.3&times;</div>
-            <div class="validation-label">Correct-task throughput over full-context replay on the tested H200 memory workload.</div>
-          </div>
-          <div class="validation-card">
-            <div class="validation-num">52,753.8&times;</div>
-            <div class="validation-label">Median paired retrieval speedup in the tested 1GB / 100-query LNES-84.3 enterprise population.</div>
-          </div>
-          <div class="validation-card">
-            <div class="validation-num">1.886&times;</div>
-            <div class="validation-label">Adaptive deterministic work routing versus always-legacy in the frozen LNES-86.2 holdout population.</div>
-          </div>
-          <div class="validation-card">
-            <div class="validation-num">C16</div>
-            <div class="validation-label">Concurrency validated in isolated VMN testing with evidence parity and authority separation preserved.</div>
-          </div>
-          <div class="validation-card">
-            <div class="validation-num">32K–10M</div>
-            <div class="validation-label">N&rarr;K corpus scaling envelope: no material positive global K growth detected across a 312.5&times; corpus range. Genuine 10M holdout: 5/5 runs deterministic, mean K = 895.96.</div>
-          </div>
+  <!-- ARCHITECTURE -->
+  <section class="section section-alt" id="workflow" aria-labelledby="arch-heading">
+    <div class="wrap">
+      <div class="arch-layout">
+        <div class="arch-text">
+          <div class="eyebrow" style="margin-bottom:var(--s-4)"><span class="dot" aria-hidden="true"></span>02 / How it works</div>
+          <h2 id="arch-heading">Four layers.<br>Each independent.</h2>
+          <p>Persistent state, context delivery, model reasoning, and execution authority operate as separate concerns. Each layer does exactly one thing.</p>
+          <p style="margin-top:var(--s-6)">The separation between N (what is stored) and K (what is delivered) is the core architectural property. The separation between model reasoning and execution authority is the core security property.</p>
         </div>
-
-        <div class="quiet-callout" style="margin-top:1.5rem;">
-          The public release describes interfaces, trust boundaries, methodology, and measured outcomes. Segment construction, retrieval heuristics, orchestration policies, private circuits, and security-sensitive implementation details remain confidential.
-        </div>
-
-        <div class="btn-row" style="margin-top:1.5rem;">
-          <a href="benchmarks.html" class="btn btn-primary">Open Benchmarks</a>
-          <a href="whitepaper.html" class="btn btn-secondary">White Paper (Preview)</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- WHO IT SERVES -->
-    <section class="pillars-section">
-      <div class="container-wide">
-        <div class="section-label">Who Builds Here</div>
-        <h2>Infrastructure for systems that cannot afford to forget what happened.</h2>
-        <div class="card-grid" style="margin-top:1.75rem;">
-          <div class="card pillar-card">
-            <div class="pillar-num">01 / DEVELOPERS</div>
-            <h3>Build persistent agents</h3>
-            <p>Connect memory, models, external data, tools, and receipts through APIs, SDKs, and MCP-compatible interfaces.</p>
-            <div class="pillar-stat"><span class="pillar-stat-val green">API / MCP</span><span class="pillar-stat-label">machine-readable integration</span></div>
+        <div class="arch-diagram" role="img" aria-label="Architecture flow: Persistent State to Bounded Context to Model Reasoning to Authority Gate">
+          <div class="arch-node">
+            <div class="arch-step">01</div>
+            <div class="arch-node-body">
+              <h4>Persistent State</h4>
+              <div class="arch-val">N ≈ 101M tokens stored</div>
+              <p>Content-addressed storage for state, evidence, and identity. Grows with the system. Never delivered in full to the model.</p>
+            </div>
           </div>
-          <div class="card pillar-card">
-            <div class="pillar-num">02 / ENTERPRISE</div>
-            <h3>Operate with provenance</h3>
-            <p>Preserve authoritative state, control evidence access, and produce audit-ready records for high-value workflows.</p>
-            <div class="pillar-stat"><span class="pillar-stat-val blue">Evidence</span><span class="pillar-stat-label">traceable operational state</span></div>
+          <div class="arch-connector" aria-hidden="true"></div>
+          <div class="arch-node">
+            <div class="arch-step">02</div>
+            <div class="arch-node-body">
+              <h4>Context Delivery</h4>
+              <div class="arch-val">K = 800 median tokens</div>
+              <p>Bounded context retrieved per query. Relevant evidence selected from the persistent store and delivered to the model's working context window.</p>
+            </div>
           </div>
-          <div class="card pillar-card">
-            <div class="pillar-num">03 / OPERATORS</div>
-            <h3>Run sovereign infrastructure</h3>
-            <p>Contribute execution, storage, transport, or witness capacity to the network under explicit protocol roles.</p>
-            <div class="pillar-stat"><span class="pillar-stat-val accent">Nodes</span><span class="pillar-stat-label">proof-capable participation</span></div>
+          <div class="arch-connector" aria-hidden="true"></div>
+          <div class="arch-node">
+            <div class="arch-step">03</div>
+            <div class="arch-node-body">
+              <h4>Model Reasoning</h4>
+              <div class="arch-val">REASONING LAYER</div>
+              <p>The model reasons over the delivered context and proposes a response or action. Proposal is not execution. Reasoning does not have authority.</p>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- DEVELOPERS -->
-    <section class="machine-layer">
-      <div class="container-wide">
-        <div class="section-label">Machine Interfaces</div>
-        <h2>Built to be discovered and used by software.</h2>
-        <p style="max-width:760px; margin-bottom:2rem; color:var(--text-soft);">ExergyNet exposes public integration surfaces without exposing the implementation mechanisms that create the system's advantage.</p>
-
-        <div class="card-grid">
-          <div class="card accent-border">
-            <h4>MCP</h4>
-            <h3>Agent Tooling</h3>
-            <p>Connect compatible agents to ExergyNet memory, execution, and verification capabilities. For local stdio MCP memory, deploy <a href="vmn.html" style="color:var(--accent);">VMN</a>.</p>
-            <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;"><a href="mcp.html" class="btn btn-primary" style="font-size:12px;">MCP Gateway &rarr;</a><a href="vmn.html" class="btn btn-ghost" style="font-size:12px;">VMN Local &rarr;</a></div>
-          </div>
-          <div class="card">
-            <h4>SDK</h4>
-            <h3>Application Integration</h3>
-            <p>Use documented APIs and SDKs to create jobs, resolve memory, monitor execution, and verify receipts.</p>
-            <div style="margin-top:1rem;"><a href="docs.html" class="btn btn-secondary" style="font-size:12px;">Developer Docs &rarr;</a></div>
-          </div>
-          <div class="card blue-border">
-            <h4>Discovery</h4>
-            <h3>Machine-Readable Manifests</h3>
-            <p>Protocol coordinates, capabilities, and integration surfaces are available through canonical discovery files.</p>
-            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1rem;">
-              <a href=".well-known/exergynet.json" class="btn btn-ghost" style="font-size:12px;">exergynet.json</a>
-              <a href="llms.txt" class="btn btn-ghost" style="font-size:12px;">llms.txt</a>
+          <div class="arch-connector" aria-hidden="true"></div>
+          <div class="arch-node">
+            <div class="arch-step">04</div>
+            <div class="arch-node-body">
+              <h4>Authority Gate</h4>
+              <div class="arch-val">INDEPENDENT CONTROL</div>
+              <p>Consequential actions are evaluated against an independent authorization layer, separate from model reasoning. Allow or deny based on policy, not inference.</p>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="card accent-border" style="margin-top:1rem;">
-          <h4>ElizaOS</h4>
-          <div class="code-label" style="margin-top:0.5rem;">INSTALL</div>
-          <pre><code>npm install @elizaos/plugin-exergynet</code></pre>
-          <div class="btn-row" style="margin-top:1rem;">
-            <a href="docs.html" class="btn btn-primary">Integration Guide</a>
-            <a href="docs.html" class="btn btn-ghost">Agent Manifest &rarr;</a>
+  <!-- PLATFORM CAPABILITIES -->
+  <section class="section" id="capabilities" aria-labelledby="cap-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>03 / Platform</div>
+        <h2 id="cap-heading">What ExergyNet provides.</h2>
+        <p>Start with local open-source memory. Extend to the full platform as your requirements grow.</p>
+      </div>
+      <div class="capabilities-grid">
+        <div class="cap-card">
+          <div class="cap-icon" aria-hidden="true">
+            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m6 13 16-8 16 8-16 8zM6 21l16 8 16-8M6 29l16 8 16-8"/></svg>
+          </div>
+          <span class="cap-badge">Local · open source</span>
+          <h3>Vanguard Memory Node</h3>
+          <p>Local, content-addressed persistent state for compatible MCP agents. Install in minutes. No server infrastructure required. Connect through Claude Desktop or any MCP client.</p>
+          <a class="cap-link" href="docs.html">Connect local memory <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="cap-card">
+          <div class="cap-icon" aria-hidden="true">
+            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="8" width="12" height="12" rx="2"/><rect x="24" y="8" width="12" height="12" rx="2"/><rect x="8" y="24" width="12" height="12" rx="2"/><rect x="24" y="24" width="12" height="12" rx="2"/><path d="M14 20v4m16 0v-4M20 14h4m0 16h-4"/></svg>
+          </div>
+          <span class="cap-badge neutral">Architecture</span>
+          <h3>xLMP Persistent State</h3>
+          <p>The ExergyNet persistent-state layer behind the V5 research results. Demonstrated at the 100M token development operating point with 220.5× median retrieval speedup.</p>
+          <a class="cap-link" href="https://exergynet.org/vanguard.html">Explore the architecture <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="cap-card">
+          <div class="cap-icon" aria-hidden="true">
+            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 4 36 10v12c0 9-14 17-14 17S8 31 8 22V10z"/><path d="m15 21 5 5 10-11"/></svg>
+          </div>
+          <span class="cap-badge neutral">Tested environment</span>
+          <h3>Independent Authority</h3>
+          <p>Execution control independent of model inference. In the reported live authority-review environment, a deterministic layer rejected an adversarial action after the reasoning model had accepted the instruction.</p>
+          <a class="cap-link" href="whitepaper.html#authority">Review the finding <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEARCH DARK SECTION -->
+  <section class="research-dark" id="research" aria-labelledby="research-heading">
+    <div class="wrap">
+      <div class="research-dark-inner">
+        <div class="paper-cover" aria-label="V5 white paper cover">
+          <div class="cover-brand">
+            <span>EXERGYNET</span>
+            <span class="cover-v5-tag">V5</span>
+          </div>
+          <div class="cover-title">Memory Grows.<br>Context Does<br>Not Have To.</div>
+          <div class="cover-bottom">
+            <div class="cover-authors">Seven Ezumba<br>Veena Bontu</div>
+            <div class="cover-date">October<br>2026</div>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>04 / Research · V5 · October 2026</div>
+          <h2 id="research-heading">Memory grows.<br>Context does not<br>have to.</h2>
+          <p class="lead">V5 examines persistent state at a 100M-token development operating point, alongside retrieval performance, accelerator findings, and a live authority-layer result.</p>
+          <div class="rk-metrics">
+            <div class="rk-metric">
+              <strong>≈101M</strong>
+              <span>Estimated persistent-state tokens</span>
+            </div>
+            <div class="rk-metric">
+              <strong>800</strong>
+              <span>Median active-context tokens per query</span>
+            </div>
+            <div class="rk-metric">
+              <strong>220.5×</strong>
+              <span>Median paired retrieval speedup</span>
+            </div>
+            <div class="rk-metric">
+              <strong>11.3×</strong>
+              <span>H200 correct-task throughput</span>
+            </div>
+          </div>
+          <p class="fine-note">Development cohort · single run · adversarial synthetic benchmark · NVIDIA A100. Baseline answer accuracy: 45.3%. The separate sealed holdout reaches 10.1M tokens. Results represent a tested environment, not a general claim.</p>
+          <div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
+            <a class="btn btn-primary" href="whitepaper.html">Explore the research <span aria-hidden="true">↗</span></a>
+            <a class="btn btn-ghost-light" href="downloads/EXERGYNET_WHITEPAPER_PUBLIC_V5.pdf" download>Download V5 <span aria-hidden="true">↓</span></a>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- NETWORK DETAILS -->
-    <section>
-      <div class="container-wide">
-        <div class="section-label">Public Network Coordinates</div>
-        <h2>Clear interfaces. Stable identifiers.</h2>
-        <p style="max-width:720px; margin-bottom:1.5rem;">The public site exposes the identifiers and interfaces needed to evaluate and integrate with the network. Internal topology, credentials, and security-sensitive implementation details are not published.</p>
-
-        <details class="card">
-          <summary style="cursor:pointer; font-family:var(--display); font-weight:700; text-transform:uppercase; color:var(--text);">Network Details</summary>
-          <ul class="spec-list" style="margin-top:1rem;">
-            <li><span class="spec-key">Solana Program</span><span class="spec-val"><code>7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
-            <li><span class="spec-key">EVM Contract</span><span class="spec-val"><code>LNES04Membrane.sol (Base Mainnet)</code></span></li>
-            <li><span class="spec-key">Settlement Rails</span><span class="spec-val">Solana / Base L2</span></li>
-            <li><span class="spec-key">MCP Gateway</span><span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
-            <li><span class="spec-key">npm Package</span><span class="spec-val"><code>@elizaos/plugin-exergynet</code></span></li>
-          </ul>
-        </details>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section">
-      <div class="glow-accent" style="width:600px;height:300px;bottom:-100px;left:50%;transform:translateX(-50%);"></div>
-      <div class="container">
-        <h2>Build systems that remember what matters.</h2>
-        <p>Explore the architecture, evaluate the interfaces, or begin integrating ExergyNet into an autonomous workflow.</p>
-        <div class="btn-row" style="justify-content:center;">
-          <a href="whitepaper.html" class="btn btn-primary">White Paper (Preview)</a>
-          <a href="docs.html" class="btn btn-secondary">Developer Docs</a>
-          <a href="nodes.html" class="btn btn-blue">Node Operations</a>
+  <!-- DEVELOPER BAND -->
+  <section class="dev-band" id="developer" aria-labelledby="dev-heading">
+    <div class="wrap">
+      <div class="dev-band-inner">
+        <div>
+          <div class="eyebrow" style="margin-bottom:var(--s-4)"><span class="dot" aria-hidden="true"></span>05 / For developers</div>
+          <h2 id="dev-heading">Your next session<br>shouldn't start<br>from zero.</h2>
+          <p>Connect a local memory node to your MCP client. Begin with one piece of information — store it, recall it, build from it.</p>
+          <div class="dev-actions">
+            <a class="btn btn-primary" href="docs.html">Follow the quickstart <span aria-hidden="true">→</span></a>
+            <a class="btn btn-outline" href="https://github.com/ezumba/vanguard-memory-node">View on GitHub <span aria-hidden="true">↗</span></a>
+          </div>
         </div>
-        <div class="cta-community">
-          <a href="https://discord.com/channels/1500548202384986203/1500548202959732970" target="_blank" rel="noopener" class="community-link"><span class="community-icon">&#x2666;</span> Discord Community</a>
-          <a href="https://x.com/ExergyNet" target="_blank" rel="noopener" class="community-link"><span class="community-icon">&#x1D54F;</span> @ExergyNet</a>
+        <div>
+          <div class="terminal-block" aria-label="Installation example">
+            <div class="tc"># Install the memory node</div>
+            <div><span class="tp">$</span> <span class="tx">npm install -g vanguard-memory-node</span></div>
+            <br>
+            <div class="tc"># Connect through your MCP client</div>
+            <div class="tc"># (see docs for Claude Desktop config)</div>
+            <br>
+            <div><span class="tp">$</span> <span class="tx">vmn_ingest "Project context..."</span></div>
+            <div class="to">→ Stored · sha256:4a7f…b2e1</div>
+            <br>
+            <div class="tc">store → retrieve → reason</div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-  </main>
+</main>
 
-  <div id="site-footer"></div>
-</div>
+<footer class="site-footer" id="company">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="ExergyNet home">
+          <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+        </a>
+        <p>Persistent state. Bounded context.<br>Independent authority for machine intelligence.</p>
+      </div>
+      <div class="foot-col">
+        <strong>Explore</strong>
+        <a href="index.html#platform">Platform overview</a>
+        <a href="index.html#workflow">Architecture</a>
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="https://exergynet.org/security.html">Security ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Build</strong>
+        <a href="docs.html">Documentation</a>
+        <a href="https://github.com/ezumba/vanguard-memory-node">Open source ↗</a>
+        <a href="https://exergynet.org/api-integration.html">API reference ↗</a>
+        <a href="https://exergynet.org/proof.html">Verification status ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Research</strong>
+        <a href="whitepaper.html">White paper V5</a>
+        <a href="https://exergynet.org/benchmarks.html">Benchmarks ↗</a>
+        <a href="https://exergynet.org/vanguard.html">Vanguard ↗</a>
+        <a href="https://x.com/ExergyNet">Follow ExergyNet ↗</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ExergyNet · Infrastructure for machine intelligence.</span>
+      <span><a href="https://exergynet.org/legal.html">Legal ↗</a></span>
+    </div>
+  </div>
+</footer>
 
-<script src="main.js"></script>
+<dialog class="search-dialog" id="search-dialog" aria-label="Search">
+  <div class="search-top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+    <label class="sr-only" for="site-search">Search pages and guides</label>
+    <input id="site-search" type="search" placeholder="Search pages and guides…" autocomplete="off">
+    <button class="search-esc" aria-label="Close search">Esc</button>
+  </div>
+  <div class="search-results" role="listbox"></div>
+  <div class="search-footer-bar">Tab to navigate · Enter to open · Esc to close</div>
+</dialog>
+
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script src="app.js"></script>
 </body>
 </html>

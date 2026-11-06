@@ -1,519 +1,487 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Developer Docs | ExergyNet</title>
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-<link rel="shortcut icon" href="assets/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Integrate ExergyNet's model-independent state and evidence layer into your AI agents via x402/Base, ElizaOS plugin, MCP Gateway, or VMN local memory. LNES-06 v1.2 · Desktop Compute Grid · Omega Relay.">
-<link rel="stylesheet" href="style.css">
-<script>
-(function(){
-  var t = localStorage.getItem('exg-theme');
-  if (!t) {
-    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  document.documentElement.setAttribute('data-theme', t);
-})();
-</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>Local memory quickstart — ExergyNet Documentation</title>
+<meta name="description" content="Get a persistent memory node running locally with your MCP client in minutes. Connect Claude Desktop or any MCP-compatible agent to Vanguard Memory Node.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="exgn-web006.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<canvas id="circuit-canvas"></canvas>
-
-<div class="site-wrap">
-
-  <div id="site-header"></div>
-
-<main class="page">
-
-  <!-- PAGE HEADER -->
-  <div class="page-header">
-    <div class="glow-accent" style="width:520px;height:400px;top:-100px;right:-180px;"></div>
-    <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-140px;"></div>
-    <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Developer Integration Reference</div>
-      <h1>Build Agents on<br><span class="accent">State, Evidence &amp; Authority</span></h1>
-      <p class="hero-sub">ExergyNet developer integration reference. Give agents persistent state, retrieve bounded evidence with provenance, coordinate through Vanguard, and request authorized actions — via VMN, MCP, the ElizaOS plugin, or x402/Base. The capability path: state &rarr; evidence &rarr; orchestration &rarr; authority &rarr; verification &rarr; receipts.</p>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="ExergyNet home">
+      <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+    </a>
+    <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+      <a href="index.html#platform">Platform</a>
+      <a href="docs.html" aria-current="page">Developers</a>
+      <a href="whitepaper.html">Research</a>
+      <a href="index.html#company">Company</a>
+    </nav>
+    <div class="header-actions">
+      <button class="search-trigger" aria-label="Search" id="search-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+        <span class="s-label">Search</span>
+        <kbd>⌘K</kbd>
+      </button>
+      <a class="btn btn-primary" href="docs.html">Start building <span aria-hidden="true">↗</span></a>
+      <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">
+        <span aria-hidden="true">☰</span>
+      </button>
     </div>
   </div>
+</header>
 
-  <div class="container">
+<main id="main">
+  <div class="docs-layout">
 
-    <!-- STATUS NOTICE: ZK Compute Settlement -->
-    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — Settlement &amp; Verification</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">The Base Mainnet LNES-04 contract is deployed and is the recommended settlement layer for new integrations, but is currently operating in mock-only mode — do not route real capital through it yet. Base Sepolia is available for test and demonstration use today. Solana Mainnet-Beta (LNES-03) has settled successfully before but is currently under active investigation for transaction failures. On-chain ZK proof verification for the compute grid is in development; endpoints below that return a settlement record do not yet independently prove execution on-chain. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract addresses and verification status.</p>
-    </div>
+    <!-- SIDEBAR -->
+    <aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation navigation">
+      <button class="docs-mobile-btn" aria-expanded="false" aria-controls="docs-sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+        On this page
+      </button>
+      <nav class="doc-subnav" aria-label="Section navigation">
+        <span class="sidebar-label">Getting started</span>
+        <a href="#overview">Overview</a>
+        <a href="#prerequisites">Prerequisites</a>
+        <a href="#install">Install</a>
+        <a href="#connect">Connect</a>
+        <a href="#first-memory">Your first memory</a>
+        <a href="#usage-patterns">Usage patterns</a>
+        <span class="sidebar-label" style="margin-top:var(--s-6)">Reference</span>
+        <a href="#tools-reference">Tools reference</a>
+        <a href="#configuration">Configuration</a>
+        <a href="#open-source">Open source</a>
+      </nav>
+    </aside>
 
-    <!-- CORE CONCEPTS -->
-    <div class="card" style="margin:0 0 2rem;">
-      <p style="font-size:13px;margin:0;"><strong>Core concepts:</strong> <a href="architecture.html" style="color:var(--accent);">Architecture</a> &middot; <a href="glossary.html" style="color:var(--accent);">Glossary</a> &middot; <a href="rho.html" style="color:var(--accent);">RHO: Measuring Computational Work</a> &mdash; RHO is a resource-measurement unit, distinct from price and payment.</p>
-    </div>
+    <!-- MAIN CONTENT -->
+    <div class="docs-main" id="main">
+      <article>
 
-    <!-- OVERVIEW -->
-    <section>
-      <div class="section-label">Overview</div>
-      <h2>Three Integration Paths — One Physical Substrate</h2>
-      <p style="max-width:720px; margin-bottom:1.75rem;">ExergyNet is network-agnostic. Base Mainnet (x402/USDC) is the recommended settlement layer for new integrations, though its mainnet contract is not yet accepting real capital (see status notice above). ElizaOS plugin and MCP Gateway are available for all agent frameworks. Solana Mainnet-Beta remains available for legacy integrations, currently under active investigation for transaction failures.</p>
+        <!-- HEADER -->
+        <div class="doc-section" id="overview">
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Documentation · Quickstart</div>
+          <h1>Local memory quickstart</h1>
+          <p class="lead">Get a persistent memory node running locally with your MCP client in minutes. The Vanguard Memory Node is free, open source, and stores everything on your own machine — no cloud account required.</p>
 
-      <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
-
-        <!-- PATH A — BASE x402 PROMOTED -->
-        <div class="card accent-border" style="position:relative; overflow:hidden;">
-          <div style="position:absolute;top:0;right:0;background:var(--accent);color:#000;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:.08em;">PRIMARY</div>
-          <div class="badge badge-green" style="margin-bottom:0.75rem; margin-top:0.5rem;">Base Mainnet · x402</div>
-          <h3>x402 / USDC Integration</h3>
-          <p>HTTP-native payment protocol. Agents authenticate sensor endpoints via <code>Payment-Required</code> headers. USDC settlement on Base L2 (eip155:8453). No SDK required.</p>
-          <a href="#x402" class="btn btn-primary" style="margin-top:1rem; font-size:12px;">View Integration &darr;</a>
-        </div>
-
-        <!-- PATH B — ELIZAOS -->
-        <div class="card">
-          <div class="badge badge-blue" style="margin-bottom:0.75rem;">ElizaOS Ecosystem</div>
-          <h3>ElizaOS Plugin</h3>
-          <p>Plug-and-play integration. One npm install equips your agent with the <code>REQUEST_EXERGY_COMPUTE</code> action. Solana escrow path.</p>
-          <a href="#elizaos" class="btn btn-blue" style="margin-top:1rem; font-size:12px;">View Integration &darr;</a>
-        </div>
-
-        <!-- PATH C — MCP -->
-        <div class="card">
-          <div class="badge badge-gray" style="margin-bottom:0.75rem;">Custom Frameworks</div>
-          <h3>MCP Gateway</h3>
-          <p>Direct HTTP POST integration with Ed25519 cryptographic middleware for agents outside the ElizaOS ecosystem.</p>
-          <a href="#mcp-gateway" class="btn btn-ghost" style="margin-top:1rem; font-size:12px;">View Protocol &darr;</a>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         PATH A — x402 / BASE MAINNET (PROMOTED PRIMARY)
-    ═══════════════════════════════════════════════════════════ -->
-    <section id="x402">
-      <div class="section-label">Integration Path A — Primary</div>
-      <h2>x402 Payment Protocol · Base Mainnet</h2>
-      <p style="max-width:700px; margin-bottom:1.5rem;">x402 is an HTTP-native, agent-first payment standard. ExergyNet sensor endpoints return <code>402 Payment Required</code> with a signed USDC payment manifest. Your agent reads the manifest, authorizes the micro-payment via the Coinbase CDP facilitator, and re-submits the request with a <code>X-PAYMENT</code> header. No wallet SDK needed at the application layer.</p>
-
-      <!-- FLOW -->
-      <div class="card accent-border" style="margin-bottom:1.5rem;">
-        <h4>x402 Handshake — Atomic Sequence</h4>
-        <div class="flow" style="flex-direction:column; align-items:flex-start; gap:0.75rem; margin:1.5rem 0;">
-          <div style="display:flex;align-items:center;gap:.75rem;">
-            <span class="badge badge-blue">01</span>
-            <span><strong>Discovery</strong> — Agent GETs sensor endpoint. Server returns <code>HTTP 402</code> with base64-encoded payment manifest in <code>payment-required</code> header.</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem;">
-            <span class="badge badge-gray">02</span>
-            <span><strong>Manifest Decode</strong> — Agent base64-decodes manifest to obtain <code>payTo</code>, <code>maxAmountRequired</code>, <code>network</code>, <code>asset</code>.</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem;">
-            <span class="badge badge-gray">03</span>
-            <span><strong>Authorization</strong> — Agent signs USDC transfer intent via Coinbase CDP facilitator at <code>api.cdp.coinbase.com/platform/v2/x402</code>.</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem;">
-            <span class="badge badge-gray">04</span>
-            <span><strong>Re-submission</strong> — Agent re-sends original request with <code>X-PAYMENT: &lt;base64-payload&gt;</code> header.</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem;">
-            <span class="badge badge-green">05</span>
-            <span><strong>Settlement</strong> — Server verifies payment via facilitator, returns <code>HTTP 200</code> with signed ZK sensor data.</span>
+          <div class="callout" role="note">
+            <strong>What this sets up:</strong> A local MCP server that gives any compatible agent persistent memory — store, search, and retrieve across sessions. Tested with Claude Desktop and standard MCP stdio transport.
           </div>
         </div>
-      </div>
 
-      <!-- LIVE ENDPOINTS -->
-      <div class="card" style="margin-bottom:1.5rem;">
-        <h4>Live x402 Sensor Endpoints</h4>
-        <p style="font-size:13px; margin-bottom:1rem; opacity:.75;">All endpoints require x402 payment. <code>GET</code> returns <code>402</code> with manifest. Re-submit with <code>X-PAYMENT</code> header for data.</p>
-        <ul class="spec-list">
-          <li><span class="spec-key">Magnetometer</span><span class="spec-val"><code>https://explorer-api.exergynet.org/x402/sensor/magnetometer</code></span></li>
-          <li><span class="spec-key">Network Density</span><span class="spec-val"><code>https://explorer-api.exergynet.org/x402/sensor/network_density</code></span></li>
-          <li><span class="spec-key">Opcode (Magnetometer)</span><span class="spec-val"><code>0x06</code></span></li>
-          <li><span class="spec-key">Opcode (Network Density)</span><span class="spec-val"><code>0x08</code></span></li>
-          <li><span class="spec-key">Max Amount</span><span class="spec-val">3000 µUSDC (0.003 USDC) per call</span></li>
-          <li><span class="spec-key">Max Timeout</span><span class="spec-val">300 seconds</span></li>
-        </ul>
-      </div>
+        <!-- PREREQUISITES -->
+        <div class="doc-section" id="prerequisites">
+          <h2>Prerequisites</h2>
+          <p>Before you begin, confirm you have:</p>
+          <div class="prereqs-box">
+            <div class="prereq-row">
+              <div class="prereq-check" aria-hidden="true">✓</div>
+              <div>
+                <strong>Node.js 18 or later</strong>
+                <span class="prereq-note">Required to run the memory node server. <a class="text-link" href="https://nodejs.org">nodejs.org ↗</a></span>
+              </div>
+            </div>
+            <div class="prereq-row">
+              <div class="prereq-check" aria-hidden="true">✓</div>
+              <div>
+                <strong>An MCP-compatible client</strong>
+                <span class="prereq-note">Claude Desktop, or any client implementing the Model Context Protocol stdio transport.</span>
+              </div>
+            </div>
+            <div class="prereq-row">
+              <div class="prereq-check" aria-hidden="true">✓</div>
+              <div>
+                <strong>Write access to your home directory</strong>
+                <span class="prereq-note">The memory node stores its vault in <code>~/.vanguard/local_vault/</code> by default.</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <!-- x402 MANIFEST EXAMPLE -->
-      <div class="card accent-border" style="margin-bottom:1.5rem;">
-        <h4>Decoded Payment Manifest (Example)</h4>
-        <pre><code>{
-  "accepts": [
-    {
-      "asset":              "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-      "description":        "Electromagnetic field vectors from active Android magnetometer witnesses",
-      "extra":              { "decimals": 6, "name": "USD Coin", "version": "2" },
-      "maxAmountRequired":  "3000",
-      "maxTimeoutSeconds":  300,
-      "mimeType":           "application/json",
-      "network":            "eip155:8453",
-      "payTo":              "0x27cC42ee80CA945F96b93999CCdb02520618578B",
-      "resource":           "https://explorer-api.exergynet.org/x402/sensor/magnetometer",
-      "scheme":             "exact"
+        <!-- INSTALL -->
+        <div class="doc-section" id="install">
+          <h2>Install the memory node</h2>
+          <p>Install the Vanguard Memory Node globally using npm:</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">Terminal</span>
+              <button class="copy-button" data-copy="npm install -g vanguard-memory-node" aria-label="Copy install command">Copy</button>
+            </div>
+            <pre><code>npm install -g vanguard-memory-node</code></pre>
+          </div>
+          <p>Verify the installation:</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">Terminal</span>
+              <button class="copy-button" data-copy="vmn --version" aria-label="Copy version command">Copy</button>
+            </div>
+            <pre><code>vmn --version</code></pre>
+          </div>
+          <p style="margin-top:var(--s-4)">Source and issue tracking: <a class="text-link" href="https://github.com/ezumba/vanguard-memory-node">github.com/ezumba/vanguard-memory-node ↗</a></p>
+        </div>
+
+        <!-- CONNECT -->
+        <div class="doc-section" id="connect">
+          <h2>Connect to your MCP client</h2>
+          <p>Add the memory node as an MCP server in your client's configuration file. Choose your environment:</p>
+
+          <div class="os-tabs" role="tablist" aria-label="Operating system configuration">
+            <button role="tab" class="os-tab active" data-os="mac" aria-selected="true" aria-controls="tab-mac" id="tab-btn-mac">macOS</button>
+            <button role="tab" class="os-tab" data-os="win" aria-selected="false" aria-controls="tab-win" id="tab-btn-win">Windows</button>
+            <button role="tab" class="os-tab" data-os="wsl" aria-selected="false" aria-controls="tab-wsl" id="tab-btn-wsl">Windows + WSL2</button>
+          </div>
+
+          <div id="tab-mac" role="tabpanel" aria-labelledby="tab-btn-mac" class="tab-pane">
+            <div class="config-path-bar">
+              <span class="config-label">Config file</span>
+              <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>
+            </div>
+            <div class="code-panel">
+              <div class="code-panel-head">
+                <span class="code-lang">JSON</span>
+                <button class="copy-button" data-copy='{
+  "mcpServers": {
+    "vanguard-memory": {
+      "command": "node",
+      "args": ["/usr/local/lib/node_modules/vanguard-memory-node/dist/index.js"]
     }
-  ],
-  "error":        "X402 Payment Required",
-  "x402Version":  1
-}</code></pre>
-      </div>
-
-      <!-- RELAY ENDPOINTS -->
-      <div class="card" style="margin-bottom:1.5rem;">
-        <h4>Compute Relay Endpoints</h4>
-        <p style="font-size:13px; margin-bottom:1rem; opacity:.75;">Used by agents and desktop provers to submit and settle compute jobs. No x402 required — internal protocol.</p>
-        <ul class="spec-list">
-          <li>
-            <span class="spec-key"><code>POST /api/relay/payload</code></span>
-            <span class="spec-val">Route an inference or classification job to the LNES03 Desktop Prover grid. Returns <code>{"routed_to":"LNES03-XXXXXX","status":"relayed"}</code></span>
-          </li>
-          <li>
-            <span class="spec-key"><code>POST /api/compute/settle</code></span>
-            <span class="spec-val">Submit a ZK-STARK proof of completed desktop compute. Triggers L0 ledger settlement and USDC reward accounting.</span>
-          </li>
-          <li>
-            <span class="spec-key"><code>POST /api/v1/jobs/inject</code></span>
-            <span class="spec-val">Inject an <code>ActiveJob</code> into the L0 Router for dispatch to the mobile witness swarm.</span>
-          </li>
-          <li>
-            <span class="spec-key"><code>GET /api/v1/jobs/nearby</code></span>
-            <span class="spec-val">Returns open jobs visible to the mobile swarm. Filterable by geofence.</span>
-          </li>
-          <li>
-            <span class="spec-key"><code>GET /api/relay/status</code></span>
-            <span class="spec-val">L0 sequencer health and ledger stats.</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- RELAY PAYLOAD EXAMPLE -->
-      <div class="card">
-        <h4>Example: Relay Payload (Inference Job)</h4>
-        <pre><code>POST https://explorer-api.exergynet.org/api/relay/payload
-Content-Type: application/json
-
-{
-  "job_id":       "compute_004",
-  "opcode":       "0x0B",
-  "compute_type": "inference",
-  "input_hash":   "0x0000000000000000000000000000000000000000000000000000000000000000",
-  "input_data":   { "task": "classify" },
-  "reward_usdc":  0.18,
-  "deadline_ts":  9999999999,
-  "requester":    "0xbd1e..."
-}
-
-// Response
-{ "routed_to": "LNES03-027508", "status": "relayed" }</code></pre>
-      </div>
-
-      <!-- COMPUTE SETTLE -->
-      <div class="card accent-border" style="margin-top:1.5rem;">
-        <h4>Example: Compute Settlement (Desktop Prover → L0)</h4>
-        <p style="font-size:13px; margin-bottom:1rem; opacity:.75;">Desktop Provers submit this after completing RISC Zero STARK compression. The L0 sequencer records the settlement and updates reward accounting.</p>
-        <pre><code>POST https://explorer-api.exergynet.org/api/compute/settle
-Content-Type: application/json
-
-{
-  "job_id":       "compute_004",
-  "node_id":      "LNES03-027508",
-  "output_hash":  "0xabc123...",
-  "execution_ms": 842,
-  "reward_usdc":  0.18,
-  "miner_id":     "0xYourPayoutWallet"
-}
-
-// Settlement recorded on L0 ledger (Base Sepolia testnet).
-// On-chain ZK proof verification is in development — see proof.html for current status.</code></pre>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         0XWORK AGENT INTEGRATION
-    ═══════════════════════════════════════════════════════════ -->
-    <section id="0xwork">
-      <div class="section-label">Agent Marketplace</div>
-      <h2>0xWork Integration · Agent #116</h2>
-      <p style="max-width:700px; margin-bottom:1.5rem;">ExergyNet is registered on the 0xWork autonomous agent marketplace as <strong>Agent #116</strong>. This enables external AI agents to post data and verification bounties directly to the ExergyNet witness swarm. The AutoHunter daemon on Instance Beta polls 0xWork every 60 seconds and claims eligible jobs autonomously.</p>
-
-      <div class="card-grid" style="grid-template-columns:1fr 1fr; margin-bottom:1.5rem;">
-        <div class="card accent-border">
-          <h4>Agent Registration</h4>
-          <ul class="spec-list">
-            <li><span class="spec-key">Agent Name</span><span class="spec-val">ExergyNet</span></li>
-            <li><span class="spec-key">Agent ID</span><span class="spec-val">#116</span></li>
-            <li><span class="spec-key">Profile</span><span class="spec-val"><a href="https://0xwork.org/agents/116" target="_blank" style="color:var(--accent);">0xwork.org/agents/116</a></span></li>
-            <li><span class="spec-key">Capabilities</span><span class="spec-val">Verification · Data · Research</span></li>
-            <li><span class="spec-key">Stake</span><span class="spec-val">10,000 $AXOBOTL</span></li>
-            <li><span class="spec-key">Reg Tx</span><span class="spec-val"><code style="font-size:11px;">0x058caa...2c079</code></span></li>
-          </ul>
-        </div>
-        <div class="card">
-          <h4>AutoHunter Daemon</h4>
-          <p style="font-size:13px; line-height:1.7;">The <code>autohunter.cjs</code> daemon runs on Instance Beta under PM2. It polls <code>0xwork discover --json</code> every 60 seconds, claims Data and Research bounties above $3.00, and injects them into the L0 Router as <code>ActiveJob</code> objects for the Android witness swarm to fulfill.</p>
-          <div style="margin-top:1rem; display:flex; gap:.5rem; flex-wrap:wrap;">
-            <span class="badge badge-green">PM2 · online</span>
-            <span class="badge badge-gray">60s poll cadence</span>
-            <span class="badge badge-blue">$3.00 threshold</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h4>Posting a Bounty to ExergyNet via 0xWork</h4>
-        <p style="font-size:13px; margin-bottom:1rem; opacity:.75;">External agents post tasks to the 0xWork marketplace under the <strong>Data</strong> or <strong>Research</strong> category. ExergyNet's AutoHunter will claim and route them to the physical witness swarm automatically.</p>
-        <pre><code>// Post a Network Density or Sensor Survey bounty
-// Category: "Data" or "Research"
-// Minimum bounty: $3.00 USDC
-// ExergyNet Agent #116 will auto-claim and dispatch to mobile swarm
-
-// Direct job injection (if you hold API access):
-POST https://explorer-api.exergynet.org/api/v1/jobs/inject
-{
-  "jobId":             "oxwork_302",
-  "jobIdHex":          "0xoxwork_302",
-  "title":             "0xWork: WiFi Density Survey — Indianapolis",
-  "opcode":            "0x08",
-  "vector":            "NETWORK_DENSITY",
-  "agentId":           "ExergyNet_116",
-  "rewardMicroUsdc":   3000000,
-  "geofenceMeters":    1000,
-  "lat":               39.8283,
-  "lon":               -86.1581,
-  "status":            "open"
-}</code></pre>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         DESKTOP PROVER
-    ═══════════════════════════════════════════════════════════ -->
-    <section id="desktop-prover">
-      <div class="section-label">Compute Infrastructure</div>
-      <h2>LNES-03 Desktop Prover · v1.2</h2>
-      <p style="max-width:700px; margin-bottom:1.5rem;">The Desktop Prover is the RISC Zero STARK compression engine of the ExergyNet Desktop Compute Grid. It listens on TCP port 8003, accepts mobile witness payloads relayed by the L0 Router, runs ZK proof compression, and submits settlement proofs to <code>/api/compute/settle</code> to claim USDC rewards.</p>
-
-      <div class="card-grid" style="grid-template-columns:1fr 1fr; margin-bottom:1.5rem;">
-        <div class="card accent-border">
-          <h4>Technical Specification</h4>
-          <ul class="spec-list">
-            <li><span class="spec-key">Version</span><span class="spec-val">v1.2.0</span></li>
-            <li><span class="spec-key">Framework</span><span class="spec-val">Tauri v1 (native desktop)</span></li>
-            <li><span class="spec-key">TCP Port</span><span class="spec-val">8003</span></li>
-            <li><span class="spec-key">ZK Backend</span><span class="spec-val">RISC Zero STARK</span></li>
-            <li><span class="spec-key">Settlement</span><span class="spec-val">Base Mainnet · USDC</span></li>
-            <li><span class="spec-key">Platforms</span><span class="spec-val">Windows (x64) · macOS · Linux</span></li>
-          </ul>
-        </div>
-        <div class="card">
-          <h4>Downloads · v1.2.0</h4>
-          <ul class="spec-list">
-            <li><span class="spec-key">Windows (.exe)</span><span class="spec-val"><a href="https://github.com/ezumba/exergynet-site/releases/download/v1.2.0/ExergyNet-LNES03-Prover-v1.2.0-x64-setup.exe" style="color:var(--accent);">LNES03 Prover v1.2 Setup</a></span></li>
-            <li><span class="spec-key">Windows (.msi)</span><span class="spec-val"><a href="https://github.com/ezumba/exergynet-site/releases/download/v1.2.0/ExergyNet-LNES03-Prover-v1.2.0-x64.msi" style="color:var(--accent);">LNES03 Prover v1.2 MSI</a></span></li>
-            <li><span class="spec-key">macOS / Linux</span><span class="spec-val">Build from source: <code>npm run tauri build</code></span></li>
-            <li><span class="spec-key">All Assets</span><span class="spec-val"><a href="https://github.com/ezumba/exergynet-site/releases/tag/v1.2.0" target="_blank" style="color:var(--accent);">GitHub Release v1.2.0 ↗</a></span></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="card">
-        <h4>Desktop Prover Operating Model</h4>
-        <div class="flow" style="flex-direction:column; align-items:flex-start; gap:0.75rem; margin:1.5rem 0;">
-          <div style="display:flex;align-items:center;gap:.75rem;">
-            <span class="badge badge-blue">01</span>
-            <span><strong>Listen</strong> — Prover opens TCP 8003, awaits mobile witness payloads from the L0 Relay.</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem;">
-            <span class="badge badge-gray">02</span>
-            <span><strong>Prove</strong> — Receives sensor data package, runs RISC Zero STARK compression. Generates output hash.</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem;">
-            <span class="badge badge-gray">03</span>
-            <span><strong>Upload</strong> — Proof artifact uploaded to AWS S3. Settlement payload assembled.</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem;">
-            <span class="badge badge-green">04</span>
-            <span><strong>Settle</strong> — <code>POST /api/compute/settle</code> with proof hash. L0 ledger records <code>ZK-STARK VERIFIED</code>. USDC reward credited.</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         PATH B — ELIZAOS
-    ═══════════════════════════════════════════════════════════ -->
-    <section id="elizaos">
-      <div class="section-label">Integration Path B</div>
-      <h2>ElizaOS Native Integration</h2>
-      <p style="max-width:660px; margin-bottom:1.5rem;">For developers operating within the ElizaOS ecosystem, ExergyNet provides a native, plug-and-play plugin. Settlement routes through the Solana Mainnet-Beta LNES-03 Membrane, which is currently under active investigation for transaction failures — see <a href="proof.html">verification status</a> before routing real capital.</p>
-
-      <div class="card accent-border" style="margin-bottom:1.5rem;">
-        <h4>Step 1 — Install Plugin</h4>
-        <pre><code>pnpm install @elizaos/plugin-exergynet
-# or
-npm install @elizaos/plugin-exergynet</code></pre>
-      </div>
-
-      <div class="card">
-        <h4>Step 2 — DNA Injection (character.json)</h4>
-        <pre><code>{
-  "name": "YourAgent",
-  "plugins": ["@elizaos/plugin-exergynet"],
-  "settings": {
-    "secrets": {
-      "SOLANA_PRIVATE_KEY": "your_base58_private_key",
-      "RPC_URL": "https://api.mainnet-beta.solana.com"
+  }
+}' aria-label="Copy macOS config">Copy</button>
+              </div>
+              <pre><code>{
+  "mcpServers": {
+    "vanguard-memory": {
+      "command": "node",
+      "args": ["/usr/local/lib/node_modules/vanguard-memory-node/dist/index.js"]
     }
   }
 }</code></pre>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         LNES-03 MEMBRANE (SOLANA — RETAINED)
-    ═══════════════════════════════════════════════════════════ -->
-    <section>
-      <div class="section-label">Protocol Mechanics · Solana Path</div>
-      <h2>LNES-03 Membrane — Native SOL Escrow</h2>
-      <p style="max-width:680px; margin-bottom:1.5rem;">The LNES-03 Smart Contract on Solana Mainnet-Beta demands exactly 0.002 Native SOL per compute cycle. This path is used by ElizaOS agents and any integration targeting the Solana settlement layer. It is currently under active investigation for transaction failures — see <a href="proof.html">verification status</a> before routing real capital.</p>
-
-      <div class="card accent-border">
-        <h4>On-Chain Kinematics — Atomic Sequence</h4>
-        <div class="flow" style="flex-direction:column; align-items:flex-start; gap:0.75rem; margin:1.5rem 0;">
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <span class="badge badge-blue">01</span>
-            <span><strong>Kinetic Lock</strong> — Agent deposits 0.002 SOL into Escrow PDA</span>
+            </div>
+            <p class="config-note">If Node.js was installed via nvm or Homebrew, the path to <code>node_modules</code> may differ. Run <code>npm root -g</code> to confirm the global path.</p>
           </div>
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <span class="badge badge-gray">02</span>
-            <span><strong>Transient Forging</strong> — $EXG accounting tokens minted internally</span>
-          </div>
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <span class="badge badge-gray">03</span>
-            <span><strong>Network Settlement</strong> — ZK-STARK Master Proof verified</span>
-          </div>
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <span class="badge badge-green">04</span>
-            <span><strong>Yield Fracture</strong> — 30% to node operator · 70% to treasury</span>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         PATH C — MCP GATEWAY
-    ═══════════════════════════════════════════════════════════ -->
-    <section id="mcp-gateway">
-      <div class="section-label">Integration Path C</div>
-      <h2>MCP Gateway — Custom Frameworks</h2>
-      <p style="max-width:680px; margin-bottom:1.5rem;">Direct integration via the Model Context Protocol with strict Ed25519 authentication. Compatible with any agent framework outside the ElizaOS ecosystem.</p>
-
-      <div class="card" style="margin-bottom:1.5rem;">
-        <h4>Handshake Protocol</h4>
-        <ol style="font-size:14px; line-height:1.8; margin:1rem 0; padding-left:1.25rem;">
-          <li>Generate timestamp + 8-byte nonce</li>
-          <li>Concatenate: <code>method||timestamp||nonce</code></li>
-          <li>Sign with agent's Ed25519 private key</li>
-          <li>POST JSON payload to <code>https://exergynet.org/mcp</code></li>
-        </ol>
-      </div>
-
-      <div class="card accent-border">
-        <h4>Example POST Payload</h4>
-        <pre><code>{
-  "method":    "exergynet_open_job",
-  "client_id": "&lt;Agent_Base58_Public_Key&gt;",
-  "timestamp": 1777728610,
-  "nonce":     "a1b2c3d4e5f60718",
-  "signature": "&lt;Base58_Encoded_Signature&gt;"
+          <div id="tab-win" role="tabpanel" aria-labelledby="tab-btn-win" class="tab-pane" hidden>
+            <div class="config-path-bar">
+              <span class="config-label">Config file</span>
+              <code>%APPDATA%\Claude\claude_desktop_config.json</code>
+            </div>
+            <div class="code-panel">
+              <div class="code-panel-head">
+                <span class="code-lang">JSON</span>
+                <button class="copy-button" data-copy='{
+  "mcpServers": {
+    "vanguard-memory": {
+      "command": "node",
+      "args": ["C:\\Users\\YOUR_USER\\AppData\\Roaming\\npm\\node_modules\\vanguard-memory-node\\dist\\index.js"]
+    }
+  }
+}' aria-label="Copy Windows config">Copy</button>
+              </div>
+              <pre><code>{
+  "mcpServers": {
+    "vanguard-memory": {
+      "command": "node",
+      "args": ["C:\\Users\\YOUR_USER\\AppData\\Roaming\\npm\\node_modules\\vanguard-memory-node\\dist\\index.js"]
+    }
+  }
 }</code></pre>
-      </div>
-    </section>
+            </div>
+            <p class="config-note">Replace <code>YOUR_USER</code> with your Windows username. Run <code>npm root -g</code> in a command prompt to confirm the path.</p>
+          </div>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         NETWORK COORDINATES — ALL NETWORKS
-    ═══════════════════════════════════════════════════════════ -->
-    <section>
-      <div class="section-label">Infrastructure Coordinates</div>
-      <h2>Network Addresses — All Settlement Layers</h2>
-
-      <!-- BASE MAINNET PRIMARY -->
-      <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
-        <span class="badge badge-amber">Primary · Mock-Only</span>
-        <h3 style="margin:0; font-size:1rem;">Base Mainnet (eip155:8453) · x402 / USDC</h3>
-      </div>
-      <p style="font-size:12.5px;color:var(--text-faint);margin:-0.5rem 0 0.75rem;">Deployed and recommended for new integrations; the mainnet contract is operating in mock-only mode — do not route real capital. Base Sepolia is available for test and demonstration use today. See <a href="proof.html" style="color:var(--text-faint);">verification status</a>.</p>
-      <div class="card accent-border" style="margin-bottom:1.5rem;">
-        <ul class="spec-list">
-          <li><span class="spec-key">Network</span><span class="spec-val"><code>eip155:8453</code> (Base Mainnet)</span></li>
-          <li><span class="spec-key">Operator Wallet</span><span class="spec-val"><code>0x27cC42ee80CA945F96b93999CCdb02520618578B</code></span></li>
-          <li><span class="spec-key">USDC Contract</span><span class="spec-val"><code>0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code></span></li>
-          <li><span class="spec-key">x402 Facilitator</span><span class="spec-val"><code>https://api.cdp.coinbase.com/platform/v2/x402</code></span></li>
-          <li><span class="spec-key">x402 Version</span><span class="spec-val">1</span></li>
-          <li><span class="spec-key">Explorer API</span><span class="spec-val"><code>https://explorer-api.exergynet.org</code></span></li>
-          <li><span class="spec-key">L0 Relay Port</span><span class="spec-val">8080 (HTTP) · 8001 (TCP uplink)</span></li>
-          <li><span class="spec-key">Desktop Prover Port</span><span class="spec-val">TCP 8003</span></li>
-          <li><span class="spec-key">Max Sensor Toll</span><span class="spec-val">3000 µUSDC (0.003 USDC) per call</span></li>
-          <li><span class="spec-key">Omega Command Center</span><span class="spec-val">Not yet public &mdash; request access at <a href="mailto:operators@exergynet.org?subject=Omega%20Command%20Center%20Access" style="color:var(--accent);">operators@exergynet.org</a></span></li>
-        </ul>
-      </div>
-
-      <!-- SOLANA SECONDARY -->
-      <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
-        <span class="badge badge-amber">Deployed · Under Investigation</span>
-        <h3 style="margin:0; font-size:1rem;">Solana Mainnet-Beta · SOL Escrow (ElizaOS Path)</h3>
-      </div>
-      <p style="font-size:12.5px;color:var(--text-faint);margin:-0.5rem 0 0.75rem;">Has settled successfully before; currently under active investigation for transaction failures. Do not rely on it for settlement until this notice is updated — see <a href="proof.html" style="color:var(--text-faint);">verification status</a>.</p>
-      <div class="card" style="margin-bottom:1.5rem;">
-        <ul class="spec-list">
-          <li><span class="spec-key">Network</span><span class="spec-val">Solana Mainnet-Beta</span></li>
-          <li><span class="spec-key">Program ID</span><span class="spec-val"><code>7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
-          <li><span class="spec-key">Transient Mint</span><span class="spec-val"><code>5fZZJ29oH5SDqxiz2tkEf1wopp5Sn5TtcCF3fPS9rdiJ</code></span></li>
-          <li><span class="spec-key">Toll</span><span class="spec-val">0.002 SOL (2,000,000 lamports) per compute cycle</span></li>
-          <li><span class="spec-key">MCP Endpoint</span><span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
-          <li><span class="spec-key">Yield Split</span><span class="spec-val">30% node operator · 70% treasury</span></li>
-        </ul>
-      </div>
-
-      <!-- SENSOR OPCODES -->
-      <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
-        <h3 style="margin:0; font-size:1rem;">Sensor Vector Opcodes (All Networks)</h3>
-      </div>
-      <div class="card">
-        <ul class="spec-list">
-          <li><span class="spec-key"><code>0x01</code></span><span class="spec-val">Optical</span></li>
-          <li><span class="spec-key"><code>0x02</code></span><span class="spec-val">Geospatial</span></li>
-          <li><span class="spec-key"><code>0x06</code></span><span class="spec-val">Magnetometer</span></li>
-          <li><span class="spec-key"><code>0x08</code></span><span class="spec-val">Network Density (WiFi AP)</span></li>
-          <li><span class="spec-key"><code>0x0B</code></span><span class="spec-val">Inference / Desktop Compute</span></li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section" style="border-top:1px solid var(--border);">
-      <div class="container">
-        <h2>Deploy Your First Agent</h2>
-        <p>x402 sensor access. verifiable device evidence. USDC settlement on Base.</p>
-        <div class="btn-row" style="justify-content:center;">
-          <a href="mcp.html"        class="btn btn-primary">MCP Gateway Reference</a>
-          <a href="mailto:operators@exergynet.org?subject=Omega%20Command%20Center%20Access" class="btn btn-blue">Request Omega Command Center Access</a>
-          <a href="whitepaper.html" class="btn btn-ghost">Architecture Whitepaper &rarr;</a>
+          <div id="tab-wsl" role="tabpanel" aria-labelledby="tab-btn-wsl" class="tab-pane" hidden>
+            <div class="config-path-bar">
+              <span class="config-label">Config file</span>
+              <code>%APPDATA%\Claude\claude_desktop_config.json</code>
+            </div>
+            <div class="code-panel">
+              <div class="code-panel-head">
+                <span class="code-lang">JSON</span>
+                <button class="copy-button" data-copy='{
+  "mcpServers": {
+    "vanguard-memory": {
+      "command": "node",
+      "args": ["/home/YOUR_USER/node_modules/vanguard-memory-node/dist/index.js"]
+    }
+  }
+}' aria-label="Copy Windows WSL2 config">Copy</button>
+              </div>
+              <pre><code>{
+  "mcpServers": {
+    "vanguard-memory": {
+      "command": "node",
+      "args": ["/home/YOUR_USER/node_modules/vanguard-memory-node/dist/index.js"]
+    }
+  }
+}</code></pre>
+            </div>
+            <p class="config-note">When running Claude Desktop on Windows with the memory node installed inside WSL2, Claude Desktop's config must point to the WSL2 path. The <code>command</code> key must resolve to the WSL2 Node.js binary.</p>
+          </div>
         </div>
-      </div>
-    </section>
 
-  </div>
+        <!-- FIRST MEMORY -->
+        <div class="doc-section" id="first-memory">
+          <h2>Store your first memory</h2>
+          <p>Once your MCP client connects to the memory node, you have access to the <code>vmn_ingest</code> tool. Use it to store any text as a persistent memory shard.</p>
+          <p>In Claude Desktop, ask your model to run:</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">Natural language prompt</span>
+            </div>
+            <pre><code>Store a memory: "This project uses TypeScript. All API responses follow the shape {data, error, meta}."</code></pre>
+          </div>
+          <p>The model will call <code>vmn_ingest</code> and return the shard's SHA-256 hash:</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">Tool output</span>
+            </div>
+            <pre><code>Stored · sha256:4a7f9b2e1c8d3f6a5e0b7c4d1e9f2a3b8c5d0e7f4a1b6c3d8e5f2a9b4c1d6e</code></pre>
+          </div>
+          <p>To verify the memory persists, start a new Claude Desktop session and ask:</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">Natural language prompt</span>
+            </div>
+            <pre><code>What do you know about this project's API response shape?</code></pre>
+          </div>
+          <p>The model will call <code>vmn_search</code>, retrieve the stored shard, and answer from it — without that information being in the system prompt or conversation history.</p>
+        </div>
+
+        <!-- USAGE PATTERNS -->
+        <div class="doc-section" id="usage-patterns">
+          <h2>Common usage patterns</h2>
+
+          <h3>Accumulate project context</h3>
+          <p>Store facts as you discover them. The memory node's BM25 index retrieves relevant shards on each query — the model receives only what is relevant, not the entire vault.</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">Prompts</span>
+            </div>
+            <pre><code>Remember: the database is PostgreSQL 15, schema is "prod".
+Remember: the deployment target is AWS us-east-1, service: exn-api.
+Remember: authentication uses JWT RS256, public key rotates every 30 days.</code></pre>
+          </div>
+
+          <h3>Retrieve on demand</h3>
+          <p>At the start of a new session, ask the model to load context before beginning work:</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">Prompts</span>
+            </div>
+            <pre><code>Search your memory for anything relevant to the authentication system.
+Recall everything you know about the deployment setup.</code></pre>
+          </div>
+
+          <h3>Cross-session continuity</h3>
+          <p>At the end of a session, ask the model to store a summary of what changed:</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">Prompt</span>
+            </div>
+            <pre><code>Store a session summary: what we changed today, what's blocked, and what's next.</code></pre>
+          </div>
+        </div>
+
+        <!-- TOOLS REFERENCE -->
+        <div class="doc-section" id="tools-reference">
+          <h2>Tools reference</h2>
+          <p>The Vanguard Memory Node exposes the following MCP tools:</p>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tool</th>
+                  <th>Purpose</th>
+                  <th>Key parameters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>vmn_ingest</code></td>
+                  <td>Store text as a persistent memory shard</td>
+                  <td><code>content</code> (string)</td>
+                </tr>
+                <tr>
+                  <td><code>vmn_search</code></td>
+                  <td>BM25 keyword search over all shards</td>
+                  <td><code>query</code> (string), <code>limit</code></td>
+                </tr>
+                <tr>
+                  <td><code>vmn_recall</code></td>
+                  <td>Retrieve a shard by SHA-256 hash</td>
+                  <td><code>shard_id</code> (string)</td>
+                </tr>
+                <tr>
+                  <td><code>vmn_inspect</code></td>
+                  <td>Show metadata for a specific shard</td>
+                  <td><code>shard_id</code> (string)</td>
+                </tr>
+                <tr>
+                  <td><code>vmn_list</code></td>
+                  <td>List stored shards (most recent first)</td>
+                  <td><code>limit</code></td>
+                </tr>
+                <tr>
+                  <td><code>vmn_stats</code></td>
+                  <td>Vault statistics (count, index status)</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td><code>vmn_delete</code></td>
+                  <td>Delete a shard by hash</td>
+                  <td><code>shard_id</code> (string)</td>
+                </tr>
+                <tr>
+                  <td><code>vmn_rebuild_index</code></td>
+                  <td>Rebuild the BM25 search index</td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CONFIGURATION -->
+        <div class="doc-section" id="configuration">
+          <h2>Configuration</h2>
+          <p>The memory node reads from environment variables passed through the MCP server configuration:</p>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Default</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>VMN_VAULT_DIR</code></td>
+                  <td><code>~/.vanguard/local_vault</code></td>
+                  <td>Directory where shards and index are stored</td>
+                </tr>
+                <tr>
+                  <td><code>VMN_MAX_RESULTS</code></td>
+                  <td><code>10</code></td>
+                  <td>Maximum results returned by <code>vmn_search</code></td>
+                </tr>
+                <tr>
+                  <td><code>VMN_INDEX_AUTO_REBUILD</code></td>
+                  <td><code>true</code></td>
+                  <td>Rebuild index automatically after ingest</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>To set a custom vault path in Claude Desktop config:</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">JSON</span>
+              <button class="copy-button" data-copy='{
+  "mcpServers": {
+    "vanguard-memory": {
+      "command": "node",
+      "args": ["/usr/local/lib/node_modules/vanguard-memory-node/dist/index.js"],
+      "env": {
+        "VMN_VAULT_DIR": "/Users/YOUR_USER/my-project-vault"
+      }
+    }
+  }
+}' aria-label="Copy custom vault path config">Copy</button>
+            </div>
+            <pre><code>{
+  "mcpServers": {
+    "vanguard-memory": {
+      "command": "node",
+      "args": ["/usr/local/lib/node_modules/vanguard-memory-node/dist/index.js"],
+      "env": {
+        "VMN_VAULT_DIR": "/Users/YOUR_USER/my-project-vault"
+      }
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- OPEN SOURCE -->
+        <div class="doc-section" id="open-source">
+          <h2>Open source</h2>
+          <p>The Vanguard Memory Node is open source under the MIT license. Source, issues, and release notes are on GitHub.</p>
+          <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;margin-top:var(--s-6)">
+            <a class="btn btn-primary" href="https://github.com/ezumba/vanguard-memory-node">GitHub repository <span aria-hidden="true">↗</span></a>
+            <a class="btn btn-outline" href="https://exergynet.org/api-integration.html">API integration guide <span aria-hidden="true">↗</span></a>
+          </div>
+
+          <div class="callout" role="note" style="margin-top:var(--s-8)">
+            <strong>Building something with ExergyNet?</strong> The local memory node is the entry point. The full ExergyNet platform — persistent state at scale, xLMP retrieval, authority control — is described in the <a class="text-link" href="whitepaper.html">V5 research paper</a>.
+          </div>
+        </div>
+
+      </article>
+    </div><!-- /docs-main -->
+  </div><!-- /docs-layout -->
 </main>
 
-  <div id="site-footer"></div>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="ExergyNet home">
+          <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+        </a>
+        <p>Persistent state. Bounded context.<br>Independent authority for machine intelligence.</p>
+      </div>
+      <div class="foot-col">
+        <strong>Explore</strong>
+        <a href="index.html#platform">Platform overview</a>
+        <a href="index.html#workflow">Architecture</a>
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="https://exergynet.org/security.html">Security ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Build</strong>
+        <a href="docs.html">Documentation</a>
+        <a href="https://github.com/ezumba/vanguard-memory-node">Open source ↗</a>
+        <a href="https://exergynet.org/api-integration.html">API reference ↗</a>
+        <a href="https://exergynet.org/proof.html">Verification status ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Research</strong>
+        <a href="whitepaper.html">White paper V5</a>
+        <a href="https://exergynet.org/benchmarks.html">Benchmarks ↗</a>
+        <a href="https://exergynet.org/vanguard.html">Vanguard ↗</a>
+        <a href="https://x.com/ExergyNet">Follow ExergyNet ↗</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ExergyNet · Infrastructure for machine intelligence.</span>
+      <span><a href="https://exergynet.org/legal.html">Legal ↗</a></span>
+    </div>
+  </div>
+</footer>
 
-</div>
+<dialog class="search-dialog" id="search-dialog" aria-label="Search">
+  <div class="search-top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+    <label class="sr-only" for="site-search">Search pages and guides</label>
+    <input id="site-search" type="search" placeholder="Search pages and guides…" autocomplete="off">
+    <button class="search-esc" aria-label="Close search">Esc</button>
+  </div>
+  <div class="search-results" role="listbox"></div>
+  <div class="search-footer-bar">Tab to navigate · Enter to open · Esc to close</div>
+</dialog>
 
-<script src="main.js"></script>
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script src="app.js"></script>
 </body>
 </html>

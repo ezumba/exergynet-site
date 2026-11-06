@@ -1,773 +1,477 @@
-﻿<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>White Paper (Preview) - xLMP | ExergyNet</title>
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-<link rel="shortcut icon" href="assets/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Pre-release preview for the ExergyNet xLMP white paper: persistent AI memory, work compression, adaptive routing, evidence integrity, and authority separation.">
-<meta property="og:title" content="White Paper (Preview) - xLMP">
-<meta property="og:description" content="Preview the questions behind ExergyNet's persistent-state architecture (xLMP) and review the measured benchmark results before publication.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://exergynet.org/whitepaper.html">
-<link rel="stylesheet" href="style.css">
-<style>
-  .architecture-stack {
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:1rem;
-    margin-top:1.5rem;
-  }
-  .architecture-layer {
-    position:relative;
-    overflow:hidden;
-  }
-  .architecture-layer::before {
-    content:"";
-    position:absolute;
-    inset:0 auto 0 0;
-    width:3px;
-    background:var(--accent);
-    opacity:.85;
-  }
-  .architecture-layer h3 { margin-bottom:.45rem; }
-  .architecture-layer p { margin-bottom:.8rem; }
-  .architecture-layer ul,
-  .wp-bullets {
-    margin:.75rem 0 0;
-    padding-left:1.1rem;
-    color:var(--text-soft);
-  }
-  .architecture-layer li,
-  .wp-bullets li {
-    margin:.45rem 0;
-    line-height:1.65;
-  }
-  .invariant-grid {
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:1rem;
-    margin-top:1.25rem;
-  }
-  .metric-grid {
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:1rem;
-    margin:1.5rem 0;
-  }
-  .metric-card {
-    padding:1.15rem;
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    background:var(--surface);
-  }
-  .metric-value {
-    font-family:var(--mono);
-    font-size:1.65rem;
-    font-weight:700;
-    color:var(--accent);
-    margin:.35rem 0;
-  }
-  .trust-table,
-  .status-table {
-    width:100%;
-    border-collapse:collapse;
-    margin-top:1.25rem;
-    font-size:13px;
-  }
-  .trust-table th,
-  .trust-table td,
-  .status-table th,
-  .status-table td {
-    border:1px solid var(--border);
-    padding:.9rem;
-    text-align:left;
-    vertical-align:top;
-  }
-  .trust-table th,
-  .status-table th {
-    background:var(--surface);
-    color:var(--text);
-    font-family:var(--mono);
-    font-size:11px;
-    letter-spacing:.05em;
-    text-transform:uppercase;
-  }
-  .flow {
-    display:flex;
-    flex-wrap:wrap;
-    gap:.65rem;
-    align-items:center;
-    margin:1.25rem 0;
-  }
-  .flow-step {
-    padding:.75rem .9rem;
-    border:1px solid var(--border);
-    background:var(--surface);
-    border-radius:var(--radius);
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--text-soft);
-  }
-  .flow-arrow { color:var(--accent); font-family:var(--mono); }
-  .status-chip {
-    display:inline-flex;
-    align-items:center;
-    gap:.4rem;
-    padding:.25rem .55rem;
-    border:1px solid var(--border);
-    border-radius:999px;
-    font-family:var(--mono);
-    font-size:10px;
-    letter-spacing:.05em;
-    text-transform:uppercase;
-    color:var(--text-soft);
-  }
-  .status-chip.live { color:var(--accent); border-color:rgba(0,232,135,.35); }
-  .status-chip.validated { color:#7ab7ff; border-color:rgba(122,183,255,.35); }
-  .status-chip.research { color:#f6c56f; border-color:rgba(246,197,111,.35); }
-  .disclosure-note {
-    border:1px solid rgba(122,183,255,.25);
-    background:rgba(122,183,255,.06);
-    padding:1.1rem;
-    border-radius:var(--radius);
-    margin-top:1rem;
-  }
-  @media (max-width: 900px) {
-    .metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  }
-  @media (max-width: 720px) {
-    .architecture-stack,
-    .invariant-grid,
-    .metric-grid { grid-template-columns:1fr; }
-    .trust-table,
-    .status-table { display:block; overflow-x:auto; }
-  }
-</style>
-<script>
-// Inline theme init to prevent flash
-(function(){
-  var t = localStorage.getItem('exg-theme');
-  if (!t) {
-    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  document.documentElement.setAttribute('data-theme', t);
-})();
-</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>Memory Grows. Context Does Not Have To. — ExergyNet V5</title>
+<meta name="description" content="V5 research: ExergyNet at the 100M-token development operating point. Persistent state, bounded context delivery, retrieval performance, accelerator findings, and a live authority-layer result.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="exgn-web006.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<canvas id="circuit-canvas"></canvas>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="ExergyNet home">
+      <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+    </a>
+    <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+      <a href="index.html#platform">Platform</a>
+      <a href="docs.html">Developers</a>
+      <a href="whitepaper.html" aria-current="page">Research</a>
+      <a href="index.html#company">Company</a>
+    </nav>
+    <div class="header-actions">
+      <button class="search-trigger" aria-label="Search" id="search-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+        <span class="s-label">Search</span>
+        <kbd>⌘K</kbd>
+      </button>
+      <a class="btn btn-primary" href="docs.html">Start building <span aria-hidden="true">↗</span></a>
+      <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
+  </div>
+</header>
 
-<div class="site-wrap">
+<main id="main">
 
-  <!-- Header will be injected here -->
-  <div id="site-header"></div>
+  <!-- RESEARCH HERO -->
+  <section class="research-hero" aria-labelledby="paper-title">
+    <div class="wrap">
+      <div class="research-hero-inner">
+        <div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>V5 · ExergyNet White Paper · October 2026</div>
+          <h1 id="paper-title">Memory grows.<br>Context does not<br>have to.</h1>
+          <p class="lead">V5 examines ExergyNet at the 100M-token development operating point. Persistent state storage, bounded context delivery, retrieval performance at scale, accelerator infrastructure findings, and a live authority-layer result.</p>
+          <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;margin-top:var(--s-7)">
+            <a class="btn btn-primary" href="downloads/EXERGYNET_WHITEPAPER_PUBLIC_V5.pdf" download>Download PDF <span aria-hidden="true">↓</span></a>
+            <a class="btn btn-outline" href="#overview">Read online <span aria-hidden="true">↓</span></a>
+          </div>
+          <p class="fine-note" style="margin-top:var(--s-6)">Authors: Seven Ezumba · Veena Bontu · ExergyNet Research, October 2026</p>
+        </div>
+        <div class="paper-cover-lg" aria-label="V5 white paper cover illustration" aria-hidden="true">
+          <div class="cover-brand">EXERGYNET <span style="font:10px var(--mono)">V5</span></div>
+          <div class="cover-title">Memory Grows.<br>Context Does<br>Not Have To.</div>
+          <div class="cover-bottom">
+            <span>Persistent machine<br>infrastructure</span>
+            <span>October<br>2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<main class="page">
-
-  <!-- PAGE HEADER -->
-  <div class="page-header">
-    <div class="glow-accent" style="width:560px;height:420px;top:-120px;right:-200px;"></div>
-    <div class="glow-blue" style="width:500px;height:380px;bottom:-130px;left:-160px;"></div>
-
-    <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>White Paper · In Preparation</div>
-      <h1>xLMP:<br>Persistent-State Delivery<br><span class="accent">for Reasoning</span></h1>
-      <p class="hero-sub">The forthcoming paper explains why persistent AI memory creates a data-movement problem, why full-context replay is not enough, and how memory, reasoning, and authority must remain separate.</p>
-      <div class="btn-row" style="margin-top:1.5rem;">
-        <a href="benchmarks.html" class="btn btn-primary">Review Benchmarks</a>
-        <a href="docs.html" class="btn btn-ghost">Explore Documentation &rarr;</a>
+  <!-- KEY RESULTS STRIP -->
+  <div class="result-strip" aria-label="Key quantitative results">
+    <div class="wrap">
+      <div class="result-strip-inner">
+        <div class="rm">
+          <strong>≈101M</strong>
+          <span>Estimated persistent-state tokens · 100M development operating point</span>
+        </div>
+        <div class="rm">
+          <strong>800</strong>
+          <span>Median active-context tokens delivered per query</span>
+        </div>
+        <div class="rm">
+          <strong>220.5×</strong>
+          <span>Median paired retrieval speedup over comparative baseline</span>
+        </div>
+        <div class="rm">
+          <strong>11.3×</strong>
+          <span>H200 correct-task throughput vs. A100 baseline</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="container">
+  <!-- ARTICLE BODY -->
+  <div class="wrap">
+    <div class="research-layout">
 
-    <!-- ADDITIVE UPDATE NOTICE (OD-008: keep prior architecture overview accessible with honest context) -->
-    <div class="card" style="margin:0 0 2rem; border-color:var(--amber,#ffb830); background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px; color:var(--amber,#ffb830); margin:0;"><strong>Pre-Release State</strong></p>
-      <p style="font-size:13px; margin:0.5rem 0 0;">The new white paper is not public yet. This page previews the questions it will answer and points visitors to the benchmark evidence already available on the site.</p>
-    </div>
+      <!-- TABLE OF CONTENTS -->
+      <nav class="on-this-page" aria-label="Table of contents">
+        <strong>On this page</strong>
+        <a href="#overview">Overview</a>
+        <a href="#results">V5 results</a>
+        <a href="#authority">Authority layer</a>
+        <a href="#boundaries">Scope and boundaries</a>
+        <a href="#citation">Citation and verification</a>
+      </nav>
 
-    <section>
-      <div class="section-label">Questions the Paper Answers</div>
-      <h2>Architecture follows the measurements.</h2>
-      <ul class="wp-bullets">
-        <li>Why does persistent AI memory become a data-movement problem?</li>
-        <li>Why is full-context replay expensive even before physical memory is exhausted?</li>
-        <li>Why can indexed retrieval win dramatically in one workload and lose in another?</li>
-        <li>How can a system select the lower-work path without exposing the private routing recipe?</li>
-        <li>How should persistent evidence remain separate from execution authority?</li>
-        <li>How do these principles behave across accelerator architectures?</li>
-      </ul>
-      <div class="btn-row" style="margin-top:1.25rem;">
-        <a href="benchmarks.html" class="btn btn-primary">See Measured Results</a>
-        <a href="EXERGYNET_EXTERNAL_CLAIMS_AND_TS_BOUNDARY_REGISTER.md" class="btn btn-secondary">Disclosure Boundary</a>
-      </div>
-    </section>
+      <!-- ARTICLE -->
+      <article class="research-article">
 
-    <!-- ABSTRACT -->
-    <section>
-      <div class="section-label">Abstract</div>
-      <h2>The Mandate</h2>
-      <div class="card accent-border" style="margin-bottom:1.5rem;">
-        <p>Autonomous AI systems have execution capability but lack the infrastructure layer beneath it: persistent, portable, verifiable memory that survives models, sessions, devices, and hardware generations. The model context window is working memory. Applications that require durable state must reconstruct it at every invocation, paying the full prefill cost each time, approaching context limits as state accumulates, and losing continuity when models change.</p>
-        <p>xLMP, the ExergyNet Ledger Memory Protocol, defines the missing layer — persistent-state delivery for reasoning: the infrastructure that governs which identified, bounded, provenance-bearing evidence enters an agent's computation; where that state survives across models, devices, and accelerators; and how evidence integrity, provenance, and authority are maintained as independent, separately verifiable properties.</p>
-      </div>
-
-      <div class="card-grid">
-        <div class="card">
-          <h4>Problem</h4>
-          <h3>Stateless Intelligence</h3>
-          <p>Most AI systems repeatedly replay history, lose state across model boundaries, and rely on retrieval systems that may omit the exact fact required for high-stakes reasoning.</p>
+        <!-- ABSTRACT -->
+        <div class="article-abstract" role="note">
+          <strong>Abstract</strong>
+          ExergyNet decouples persistent memory from active context delivery. As stored state scales toward and beyond 100 million tokens, the delivered context per query remains bounded — by design, not by limitation. V5 characterizes this relationship at a development operating point, presents retrieval performance data from a live environment, examines accelerator infrastructure behavior at that operating point, and reports a live authority-layer result from a production-adjacent environment.
         </div>
-        <div class="card">
-          <h4>Solution</h4>
-          <h3>Persistent Infrastructure Layer</h3>
-          <p>Preserve state outside the model as integrity-rooted objects, address evidence deterministically with provenance, verify the execution path, and stage only the bounded context required by the current operation.</p>
-        </div>
-      </div>
-    </section>
 
-    <!-- INVARIANTS -->
-    <section>
-      <div class="section-label">Architecture Principles</div>
-      <h2>Four System Invariants</h2>
-      <p style="max-width:760px;">ExergyNet separates persistent memory from temporary context and separates the guarantees of computation, hardware, physical observation, and ledger settlement.</p>
+        <!-- SECTION 1: OVERVIEW -->
+        <section class="article-section" id="overview" aria-labelledby="s1-heading">
+          <h2 id="s1-heading">1 · Overview</h2>
 
-      <div class="invariant-grid">
-        <div class="card">
-          <h4>Invariant 01</h4>
-          <h3>Memory Is Persistent. Context Is Temporary.</h3>
-          <p>A model should not reread the complete history of a system for every operation. Persistent state remains in the Vault; only the required evidence enters active compute.</p>
-        </div>
-        <div class="card">
-          <h4>Invariant 02</h4>
-          <h3>Evidence Must Be Addressable and Complete.</h3>
-          <p>Approximate retrieval may discover candidates. The authoritative execution path must receive the complete object selected for the operation, with provenance and integrity preserved.</p>
-        </div>
-        <div class="card">
-          <h4>Invariant 03</h4>
-          <h3>Different Trust Domains Require Different Proofs.</h3>
-          <p>Digital execution, device identity, physical observation, source authenticity, and settlement finality are distinct claims. ExergyNet binds them without treating them as interchangeable.</p>
-        </div>
-        <div class="card">
-          <h4>Invariant 04</h4>
-          <h3>State Must Survive Model and Hardware Change.</h3>
-          <p>Persistent memory, evidence lineage, identity, and operational state should remain intact when the model, accelerator, cloud, chain, or network changes.</p>
-        </div>
-      </div>
-    </section>
+          <h3>1.1 The N→K relationship</h3>
+          <p>Standard language model deployment treats context as a resource that grows with what the model is expected to know. ExergyNet treats context and memory as separate concerns: N (what is stored) and K (what is delivered to the model at any point in time).</p>
 
-    <!-- ARCHITECTURE STACK -->
-    <section>
-      <div class="section-label">Section I</div>
-      <h2>The ExergyNet Architecture</h2>
-      <p style="max-width:760px;">ExergyNet is not a single chain, model, proving system, or application. It is a layered machine infrastructure in which memory, intelligence, verification, transport, and settlement remain independently addressable but operationally coordinated.</p>
-
-      <div class="architecture-stack">
-        <div class="card architecture-layer">
-          <h4>Layer 01</h4>
-          <h3>Persistent Memory</h3>
-          <p>Exergy Vault and xLMP preserve long-lived machine state outside active model context.</p>
-          <ul>
-            <li>Integrity-rooted objects and source provenance</li>
-            <li>Bounded evidence retrieval</li>
-            <li>Model-independent state continuity</li>
-          </ul>
-        </div>
-        <div class="card architecture-layer">
-          <h4>Layer 02</h4>
-          <h3>Intelligence &amp; Orchestration</h3>
-          <p>SEI-Vanguard resolves memory, selects evidence, dispatches models and tools, and preserves resulting state.</p>
-          <ul>
-            <li>Policy-aware execution</li>
-            <li>Model and accelerator routing</li>
-            <li>Operational receipts and state transitions</li>
-          </ul>
-        </div>
-        <div class="card architecture-layer">
-          <h4>Layer 03</h4>
-          <h3>Verification &amp; Attestation</h3>
-          <p>Proof receipts, hardware signatures, source attestations, and physical-world evidence form a traceable verification chain.</p>
-          <ul>
-            <li>Zero-knowledge execution receipts</li>
-            <li>Hardware-backed signatures</li>
-            <li>Authenticated external data</li>
-          </ul>
-        </div>
-        <div class="card architecture-layer">
-          <h4>Layer 04</h4>
-          <h3>Transport &amp; Presence</h3>
-          <p>Omega Carrier and the broader communications layer preserve identity, signaling, and machine presence across constrained networks.</p>
-          <ul>
-            <li>Infrastructure-agnostic signaling</li>
-            <li>Intermittent-connectivity operation</li>
-            <li>Identity-preserving machine transport</li>
-          </ul>
-        </div>
-        <div class="card architecture-layer">
-          <h4>Layer 05</h4>
-          <h3>Settlement</h3>
-          <p>Solana and Base provide complementary settlement rails for proof anchoring, fees, governance, and economic finality.</p>
-          <ul>
-            <li>Multi-rail execution</li>
-            <li>Protocol metering</li>
-            <li>Operator and treasury settlement</li>
-          </ul>
-        </div>
-        <div class="card architecture-layer">
-          <h4>Layer 06</h4>
-          <h3>Applications</h3>
-          <p>MyMonitor and other applications consume the underlying memory, verification, transport, and settlement services without redefining them.</p>
-          <ul>
-            <li>Clinical and scientific systems</li>
-            <li>Regulated enterprise agents</li>
-            <li>Robotics and sovereign infrastructure</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- VAULT / XLMP -->
-    <section>
-      <div class="section-label">Section II</div>
-      <h2>Exergy Vault &amp; xLMP</h2>
-      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">Persistent Machine Memory Without Proportional Context Growth</h3>
-
-      <div class="wp-section">
-        <p>Exergy Vault is the persistent memory substrate of ExergyNet. It stores source data, machine state, evidence lineage, and operational outputs as integrity-rooted objects that remain independent of any single model, accelerator, cloud provider, or application.</p>
-        <p>xLMP is the memory-delivery protocol. It resolves the relevant memory root, selects the smallest complete set of authoritative objects required by the operation, validates their integrity, and stages bounded evidence into active compute.</p>
-      </div>
-
-      <div class="flow" aria-label="xLMP data flow">
-        <div class="flow-step">Source Data</div><div class="flow-arrow">&rarr;</div>
-        <div class="flow-step">Normalized Object</div><div class="flow-arrow">&rarr;</div>
-        <div class="flow-step">Integrity Root</div><div class="flow-arrow">&rarr;</div>
-        <div class="flow-step">Bounded Evidence</div><div class="flow-arrow">&rarr;</div>
-        <div class="flow-step">Model Execution</div><div class="flow-arrow">&rarr;</div>
-        <div class="flow-step">Receipt &amp; State Update</div>
-      </div>
-
-      <div class="card-grid">
-        <div class="card accent-border">
-          <h4>Context Completeness</h4>
-          <h3>Complete Objects, Not Arbitrary Fragments</h3>
-          <p>xLMP preserves the identity and boundaries of the selected object so the model receives the complete authoritative evidence chosen for the operation.</p>
-        </div>
-        <div class="card">
-          <h4>Bounded Compute</h4>
-          <h3>Stored Memory Can Grow Without Prompt Replay</h3>
-          <p>Persistent knowledge remains outside active context. Only the evidence required for the current task enters the accelerator.</p>
-        </div>
-      </div>
-
-      <div class="disclosure-note">
-        <strong>Trade-secret boundary:</strong> This whitepaper describes system interfaces, invariants, guarantees, and measured outcomes. Internal shard construction, indexing, selection policies, scoring, compression, and orchestration mechanisms remain confidential.
-      </div>
-    </section>
-
-    <!-- VANGUARD -->
-    <section>
-      <div class="section-label">Section III</div>
-      <h2>SEI-Vanguard</h2>
-      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">The Native State and Execution Plane</h3>
-
-      <div class="wp-section">
-        <p>SEI-Vanguard is the orchestration layer that coordinates memory, models, tools, policies, and execution environments. It is not limited to one model family or accelerator class.</p>
-        <p>For each operation, Vanguard resolves the relevant memory root, identifies the required complete objects, excludes unrelated evidence, validates integrity, dispatches the appropriate model or tool, and preserves the resulting state back into persistent memory.</p>
-      </div>
-
-      <div class="card accent-border">
-        <h4>Vanguard Operational Cycle</h4>
-        <div class="spec-list">
-          <li><span class="spec-key">Resolve</span><span class="spec-val">Identify the memory root, source authority, policy, and task state.</span></li>
-          <li><span class="spec-key">Select</span><span class="spec-val">Choose the smallest complete evidence set required for the operation.</span></li>
-          <li><span class="spec-key">Dispatch</span><span class="spec-val">Route the task to the appropriate model, accelerator, tool, or node.</span></li>
-          <li><span class="spec-key">Verify</span><span class="spec-val">Validate evidence integrity, execution receipts, and policy compliance.</span></li>
-          <li><span class="spec-key">Persist</span><span class="spec-val">Write the resulting state, lineage, and receipt back into the Vault.</span></li>
-        </div>
-      </div>
-    </section>
-
-    <!-- VERIFIABLE EXECUTION -->
-    <section>
-      <div class="section-label">Section IV</div>
-      <h2>Verifiable Execution</h2>
-      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">Cryptographic Receipts for Defined Computation</h3>
-
-      <div class="wp-section">
-        <p>ExergyNet can bind a defined computation to committed inputs and outputs through zero-knowledge execution receipts. A valid proof establishes that the specified program executed according to the inputs committed by the proof. It does not, by itself, establish the semantic truth of external data or guarantee correct model reasoning.</p>
-        <p>Recursive aggregation can compress many independently verified jobs into a bounded settlement artifact, lowering the amortized verification and settlement overhead per operation as aggregation density increases.</p>
-      </div>
-
-      <div class="card accent-border">
-        <h4>Recursive Proof Aggregation</h4>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:1.5rem 0;">
-          <div>
-            <div style="font-family:var(--mono); font-size:10px; color:var(--text-faint); margin-bottom:.35rem; letter-spacing:.08em; text-transform:uppercase;">Individual Settlement</div>
-            <div style="font-family:var(--mono); font-size:2rem; color:var(--red); font-weight:700;">O(n)</div>
-            <p style="font-size:13px;">Each job carries its own settlement overhead.</p>
+          <div class="r-figure" aria-label="N to K relationship diagram">
+            <div class="nk-figure">
+              <div class="nk-box">
+                <strong>N</strong>
+                <span>Persistent State</span>
+                <span class="nk-val">≈ 101M tokens</span>
+              </div>
+              <div class="nk-arrow" aria-hidden="true">→</div>
+              <div class="nk-box accent-box">
+                <strong>K</strong>
+                <span>Active Context</span>
+                <span class="nk-val">800 median tokens</span>
+              </div>
+            </div>
+            <p class="r-caption">At the 100M development operating point, the ratio N/K ≈ 126,440. The model reasons over K, not N.</p>
           </div>
-          <div>
-            <div style="font-family:var(--mono); font-size:10px; color:var(--text-faint); margin-bottom:.35rem; letter-spacing:.08em; text-transform:uppercase;">Aggregated Settlement</div>
-            <div style="font-family:var(--mono); font-size:2rem; color:var(--accent); font-weight:700;">Bounded</div>
-            <p style="font-size:13px;">Many verified jobs are represented by a compact recursive artifact.</p>
+
+          <p>As N grows, K stays bounded. The ExergyNet retrieval layer selects relevant content from the persistent store before inference, delivering a bounded context window regardless of total storage size. This is not a performance optimization — it is an architectural property.</p>
+
+          <h3>1.2 Development operating point</h3>
+          <p>V5 characterizes behavior at approximately 101 million estimated state tokens, the 100M development operating point. This represents a single continuous run. The separately sealed holdout reaches 10.1 million tokens. All quantitative results in this paper refer to the development cohort unless noted otherwise.</p>
+        </section>
+
+        <!-- SECTION 2: RESULTS -->
+        <section class="article-section" id="results" aria-labelledby="s2-heading">
+          <h2 id="s2-heading">2 · V5 results</h2>
+
+          <h3>2.1 Persistent state at development scale</h3>
+          <p>At the 100M development operating point, the ExergyNet persistent store contains approximately 101,152,694 estimated state tokens. This includes structured state, identity records, evidence shards, and query history from 190 matched query executions.</p>
+
+          <div class="table-scroll">
+            <table>
+              <caption>Table 1 — Persistent state metrics at 100M development operating point</caption>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                  <th>Scope</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Estimated state tokens (N)</td>
+                  <td>≈ 101,152,694</td>
+                  <td>Development cohort · single run</td>
+                </tr>
+                <tr>
+                  <td>Holdout state tokens</td>
+                  <td>≈ 10,100,000</td>
+                  <td>Sealed holdout · separate run</td>
+                </tr>
+                <tr>
+                  <td>Total matched query executions</td>
+                  <td>190</td>
+                  <td>Development cohort</td>
+                </tr>
+                <tr>
+                  <td>Median active context tokens (K)</td>
+                  <td>800</td>
+                  <td>190 matched executions</td>
+                </tr>
+                <tr>
+                  <td>N/K ratio</td>
+                  <td>≈ 126,440</td>
+                  <td>Computed from median K</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
-        <p style="font-size:13px;">Aggregation reduces amortized on-chain settlement overhead toward a protocol-defined floor. It does not eliminate proving work, orchestration, or data-availability requirements.</p>
-      </div>
-    </section>
 
-    <!-- HARDWARE / PHYSICAL ATTESTATION -->
-    <section>
-      <div class="section-label">Section V</div>
-      <h2>Hardware &amp; Physical Attestation</h2>
-      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">Proof-of-Exergy, Edge Witness, and Device-Authenticated Evidence</h3>
+          <h3>2.2 Retrieval performance</h3>
+          <p>Retrieval speedup is measured as the ratio of time to locate and deliver relevant context via the ExergyNet retrieval layer versus a paired naive scan baseline. The median speedup across 190 matched executions is 220.5×.</p>
 
-      <div class="wp-section">
-        <p>Proof-of-Exergy is one verification primitive inside ExergyNet. It binds device identity, signed execution telemetry, and committed computational work into a traceable receipt. Physical measurements may be attached to that receipt as evidence of environmental or operational state.</p>
-        <p>Physical telemetry does not replace a computation proof. A secure device signature can establish which authorized hardware produced an observation. A zero-knowledge receipt can establish that a defined computation executed correctly. A ledger anchor can establish ordering and finality. ExergyNet combines these claims while preserving their separate assumptions.</p>
-      </div>
+          <div class="callout" role="note">
+            <strong>Measurement scope:</strong> These results represent a live tested environment. The retrieval speedup measures time-to-relevant-context, not total inference time. The baseline is a paired naive full-state scan on the same hardware.
+          </div>
 
-      <div class="card-grid">
-        <div class="card">
-          <h4>Edge Witness</h4>
-          <h3>Hardware-Backed Observation</h3>
-          <p>Secure-device signatures bind sensor or environmental observations to an authenticated hardware identity.</p>
-        </div>
-        <div class="card">
-          <h4>Proof-of-Exergy</h4>
-          <h3>Committed Useful Work</h3>
-          <p>Defined computational work, execution telemetry, and resulting commitments are combined into an auditable proof receipt.</p>
-        </div>
-      </div>
-    </section>
+          <div class="table-scroll">
+            <table>
+              <caption>Table 2 — Retrieval performance, 190 matched executions</caption>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Median paired retrieval speedup</td>
+                  <td>220.5×</td>
+                </tr>
+                <tr>
+                  <td>Mean paired retrieval speedup</td>
+                  <td>415.9×</td>
+                </tr>
+                <tr>
+                  <td>Total matched query executions</td>
+                  <td>190</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-    <!-- AERIS -->
-    <section>
-      <div class="section-label">Section VI</div>
-      <h2>AERIS &amp; Authenticated External Data</h2>
-      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">Bridging Legacy Web Systems Into Verifiable Agent Workflows</h3>
+          <p>The mean (415.9×) substantially exceeds the median (220.5×), indicating a long right tail in speedup distribution. Some queries exhibit very high speedup due to query specificity; the median provides a more conservative and representative estimate.</p>
 
-      <div class="wp-section">
-        <p>Autonomous systems must frequently consume data from web services, enterprise systems, and legacy APIs that were never designed for cryptographic verification. AERIS provides a bridge between those sources and the ExergyNet evidence chain.</p>
-        <p>The public architecture exposes authenticated source identity, committed response content, retrieval time, and resulting evidence receipts without disclosing private proving mechanics or application credentials.</p>
-      </div>
+          <h3>2.3 Accelerator infrastructure — H200 findings</h3>
+          <p>At the 100M development operating point, ExergyNet was characterized on NVIDIA H200 infrastructure alongside an NVIDIA A100 baseline. The H200 environment demonstrated 11.3× correct-task throughput relative to the A100 baseline.</p>
 
-      <div class="card accent-border">
-        <h4>Source Integrity Flow</h4>
-        <div class="flow">
-          <div class="flow-step">External Source</div><div class="flow-arrow">&rarr;</div>
-          <div class="flow-step">Authenticated Session</div><div class="flow-arrow">&rarr;</div>
-          <div class="flow-step">Committed Response</div><div class="flow-arrow">&rarr;</div>
-          <div class="flow-step">Evidence Receipt</div><div class="flow-arrow">&rarr;</div>
-          <div class="flow-step">Vault Memory Root</div>
-        </div>
-      </div>
-    </section>
+          <div class="table-scroll">
+            <table>
+              <caption>Table 3 — H200 vs. A100 at 100M development operating point</caption>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>H200</th>
+                  <th>A100 (baseline)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Correct-task throughput</td>
+                  <td>11.3× (vs. A100)</td>
+                  <td>1.0× (baseline)</td>
+                </tr>
+                <tr>
+                  <td>Baseline answer accuracy (development cohort)</td>
+                  <td colspan="2">45.3% (adversarial synthetic benchmark)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-    <!-- OMEGA CARRIER -->
-    <section>
-      <div class="section-label">Section VII</div>
-      <h2>Omega Carrier</h2>
-      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">Sovereign Transport, Presence, and Continuity</h3>
+          <div class="callout" role="note">
+            <strong>Accuracy scope:</strong> 45.3% baseline answer accuracy is measured on an adversarial synthetic benchmark designed to probe persistent-state recall failures. It does not represent general model accuracy. The benchmark is intentionally hostile to systems without reliable persistent context delivery.
+          </div>
+        </section>
 
-      <div class="wp-section">
-        <p>Persistent memory and verifiable execution are incomplete without resilient communication. Omega Carrier provides the transport and presence layer through which autonomous systems signal, exchange evidence, and preserve operational identity across changing networks.</p>
-        <p>The architecture is designed for infrastructure-agnostic signaling and can operate across standard internet transport, direct local links, and constrained or intermittent connectivity environments.</p>
-      </div>
+        <!-- SECTION 3: AUTHORITY -->
+        <section class="article-section" id="authority" aria-labelledby="s3-heading">
+          <h2 id="s3-heading">3 · Authority layer</h2>
 
-      <div class="card-grid">
-        <div class="card">
-          <h4>Presence</h4>
-          <h3>Persistent Machine Identity</h3>
-          <p>Nodes and agents maintain discoverable operational presence independent of any single messaging provider.</p>
-        </div>
-        <div class="card">
-          <h4>Transport</h4>
-          <h3>Multiple Connectivity Paths</h3>
-          <p>Evidence and state transitions can move across internet, local, and edge transports according to availability and policy.</p>
-        </div>
-      </div>
-    </section>
+          <h3>3.1 Architecture</h3>
+          <p>The ExergyNet authority layer operates independently of model inference. A model's proposal is evaluated by a separate deterministic system before execution. The authority layer does not reason — it enforces policy.</p>
 
-    <!-- SETTLEMENT -->
-    <section>
-      <div class="section-label">Section VIII</div>
-      <h2>Multi-Chain Settlement</h2>
-      <h3 style="color:var(--text-soft); font-size:1rem; font-weight:400; letter-spacing:0; text-transform:none; margin-bottom:1.25rem;">Solana and Base as Complementary Protocol Rails</h3>
+          <div class="r-figure" aria-label="Authority layer architecture">
+            <div class="boundary-list">
+              <div class="boundary-row">
+                <div class="boundary-num">01</div>
+                <div>
+                  <strong>Model reasoning</strong>
+                  <p>Receives bounded context K from the persistent store. Produces a proposal: a recommended action or response.</p>
+                </div>
+              </div>
+              <div class="boundary-sep" aria-hidden="true">↓ Proposal (not permission)</div>
+              <div class="boundary-row">
+                <div class="boundary-num">02</div>
+                <div>
+                  <strong>Authority gate</strong>
+                  <p>Receives the proposal. Evaluates against policy. Issues allow or deny — independent of the reasoning that produced the proposal.</p>
+                </div>
+              </div>
+              <div class="boundary-sep" aria-hidden="true">↓ Allow / Deny</div>
+              <div class="boundary-row">
+                <div class="boundary-num">03</div>
+                <div>
+                  <strong>Execution</strong>
+                  <p>Only authorized proposals reach the execution layer. A denied proposal is never executed, regardless of model confidence.</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      <div class="wp-section">
-        <p>ExergyNet is designed to operate across multiple settlement environments, including Solana and Base. Protocol functions are assigned according to latency, cost, compatibility, and finality requirements rather than forcing every operation through one chain.</p>
-        <p>Settlement records may anchor proof receipts, usage metering, node compensation, governance actions, and economic finality. The user-facing service layer remains separate from internal protocol accounting and operator settlement.</p>
-      </div>
+          <h3>3.2 Live environment result</h3>
+          <p>In a reported live authority-review environment, an adversarial instruction was submitted to the system. The model's reasoning layer accepted the instruction and produced a proposal to execute it. The ExergyNet authority gate evaluated the proposal and issued a denial — the action was not executed.</p>
+          <p>This result demonstrates the authority layer's operational independence from inference. A model that accepts an adversarial instruction does not constitute a compromised system when execution requires separate authorization.</p>
 
-      <div class="card-grid">
-        <div class="card">
-          <h4>Solana Rail</h4>
-          <h3>High-Throughput Settlement</h3>
-          <p>Optimized for rapid program interaction, metering, and low-latency protocol coordination.</p>
-        </div>
-        <div class="card">
-          <h4>Base Rail</h4>
-          <h3>EVM Compatibility</h3>
-          <p>Supports EVM-aligned integration, application interoperability, and complementary settlement requirements.</p>
-        </div>
-      </div>
+          <div class="callout" role="note">
+            <strong>Scope of this claim:</strong> This result was observed in a specific live production-adjacent environment under conditions described in the full paper. It is not a general security guarantee. The authority layer must be correctly configured and enforced for the property to hold.
+          </div>
+        </section>
 
-      <div class="card accent-border" style="margin-top:1.25rem;">
-        <h4>Economic Design</h4>
-        <p>ExergyNet separates user-facing service payment from internal protocol accounting. Fees may be settled through supported native assets, while operator compensation and treasury allocation follow protocol-defined rules that may vary by resource class and service level.</p>
-      </div>
-    </section>
+        <!-- SECTION 4: BOUNDARIES -->
+        <section class="article-section" id="boundaries" aria-labelledby="s4-heading">
+          <h2 id="s4-heading">4 · Scope and boundaries</h2>
 
-    <!-- TRUST MODEL -->
-    <section>
-      <div class="section-label">Section IX</div>
-      <h2>Trust Model</h2>
-      <p style="max-width:760px;">The architecture is explicit about what each verification layer proves and what remains outside its guarantee.</p>
+          <p>V5 is characterized under specific conditions. The following boundaries apply to all quantitative claims:</p>
 
-      <table class="trust-table">
-        <thead>
-          <tr>
-            <th>Layer</th>
-            <th>Primary Guarantee</th>
-            <th>Does Not Guarantee</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>xLMP memory root</td>
-            <td>Evidence identity, integrity, provenance, and object completeness for the addressed memory.</td>
-            <td>Correct model reasoning or correct source semantics.</td>
-          </tr>
-          <tr>
-            <td>Zero-knowledge receipt</td>
-            <td>The defined program executed according to the committed inputs.</td>
-            <td>Truthfulness of external data that was committed as input.</td>
-          </tr>
-          <tr>
-            <td>Hardware signature</td>
-            <td>An authorized device produced the signed observation or receipt.</td>
-            <td>That every attached sensor observation was physically accurate.</td>
-          </tr>
-          <tr>
-            <td>AERIS source receipt</td>
-            <td>The retrieved response is bound to an authenticated source interaction.</td>
-            <td>That the external source itself is free from error or manipulation.</td>
-          </tr>
-          <tr>
-            <td>Ledger anchor</td>
-            <td>Ordering, timestamping, and tamper-evident finality of the committed record.</td>
-            <td>Semantic correctness of off-chain computation or source data.</td>
-          </tr>
-          <tr>
-            <td>Vanguard policy receipt</td>
-            <td>Evidence selection, tool use, and state transitions followed the declared operational policy.</td>
-            <td>Absolute model infallibility.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+          <div class="table-scroll">
+            <table>
+              <caption>Table 4 — Scope and boundary conditions</caption>
+              <thead>
+                <tr>
+                  <th>Claim</th>
+                  <th>Scope</th>
+                  <th>Boundary</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>≈101M state tokens</td>
+                  <td>Development cohort · single run</td>
+                  <td>Estimated; not independently counted token-by-token</td>
+                </tr>
+                <tr>
+                  <td>800 median context tokens</td>
+                  <td>190 matched query executions</td>
+                  <td>Median across the development cohort; individual queries vary</td>
+                </tr>
+                <tr>
+                  <td>220.5× retrieval speedup</td>
+                  <td>190 matched executions · paired measurement</td>
+                  <td>Measured vs. paired naive scan baseline; not vs. production system</td>
+                </tr>
+                <tr>
+                  <td>11.3× H200 throughput</td>
+                  <td>Development operating point · correct-task metric</td>
+                  <td>H200 vs. A100; correct-task throughput, not raw token throughput</td>
+                </tr>
+                <tr>
+                  <td>45.3% baseline accuracy</td>
+                  <td>Adversarial synthetic benchmark</td>
+                  <td>Designed to test persistent-state recall; not general accuracy</td>
+                </tr>
+                <tr>
+                  <td>Authority gate live result</td>
+                  <td>Specific live production-adjacent environment</td>
+                  <td>Single observed event; not a statistical claim</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-    <!-- VALIDATION -->
-    <section>
-      <div class="section-label">Section X</div>
-      <h2>Measured Validation</h2>
-      <p style="max-width:760px;">Selected benchmark findings demonstrate bounded active context, cross-accelerator portability, compact deterministic retrieval, and the difference between complete-object delivery and top-k fragment retrieval.</p>
+          <h3>4.1 What V5 does not claim</h3>
+          <div class="callout warning" role="note">
+            V5 does not claim that the results generalize to arbitrary workloads, models, or infrastructure configurations. The 100M token operating point is a development characterization, not a production specification. ExergyNet is infrastructure — its properties depend on correct configuration and integration.
+          </div>
+        </section>
 
-      <div class="metric-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
-        <div class="metric-card">
-          <div class="section-label" style="margin-bottom:.4rem;">H200 Productivity</div>
-          <div class="metric-value">11.3×</div>
-          <p>Correct-task throughput over full-context replay for the tested workload on the same H200 and model.</p>
-        </div>
-        <div class="metric-card">
-          <div class="section-label" style="margin-bottom:.4rem;">Bounded Context (H200 / 285K corpus)</div>
-          <div class="metric-value">660–820</div>
-          <p>Approximate xLMP prompt-token range as stored memory grew 8K→285K tokens on the H200 benchmark workload.</p>
-        </div>
-        <div class="metric-card">
-          <div class="section-label" style="margin-bottom:.4rem;">Compact Retrieval</div>
-          <div class="metric-value">100%</div>
-          <p>Entity and NOT_FOUND retrieval accuracy at the validated 10 MB compact-index scale.</p>
-        </div>
-        <div class="metric-card">
-          <div class="section-label" style="margin-bottom:.4rem;">Tier 2 Accuracy</div>
-          <div class="metric-value">96.0%</div>
-          <p>xLMP accuracy versus 82.6% for the tested sparse top-k RAG path on cross-document synthesis.</p>
-        </div>
-        <div class="metric-card">
-          <div class="section-label" style="margin-bottom:.4rem;">N→K Corpus Scaling (32K–10M)</div>
-          <div class="metric-value" style="font-size:1.1rem; line-height:1.3;">No material<br>positive scaling</div>
-          <p>Across the tested 32K–10M nominal corpus envelope, mean staged context (K) showed no material positive growth. 10-point fit: b = 2.79×10⁻⁶ (95% CI includes zero; development data). Genuine 10M holdout: 5/5 runs deterministic, 0/190 per-query mismatches, mean K = 895.96.</p>
-        </div>
-      </div>
+        <!-- SECTION 5: CITATION -->
+        <section class="article-section" id="citation" aria-labelledby="s5-heading">
+          <h2 id="s5-heading">5 · Citation and verification</h2>
 
-      <div class="card accent-border">
-        <h4>What the Benchmarks Establish</h4>
-        <ul class="wp-bullets">
-          <li>Persistent memory can grow while active prompt context remains bounded — observed on H200 (8K–285K corpus) and on the LNES-82C campaign (32K–10M corpus).</li>
-          <li>Across the tested 32K–10M nominal envelope, mean staged context showed no material positive scaling with corpus size. Memory Growth ≠ Inference Growth, within the validated envelope.</li>
-          <li>The same memory plane can operate across T4, A10, and H200 environments.</li>
-          <li>Record-aware deterministic retrieval can remain compact, fast, and integrity-preserving.</li>
-          <li>Top-k fragment retrieval can omit independently listed evidence before a model receives the question.</li>
-          <li>Complete object delivery reduces that specific pre-model failure mode, while model reasoning remains a separate responsibility.</li>
-          <li>All N→K scaling claims are bounded to their tested corpus size, model, and hardware topology and do not extend to arbitrary scales, models, or architectures.</li>
-        </ul>
-      </div>
-    </section>
+          <h3>5.1 Citation</h3>
+          <div class="citation-wrap">
+            <div class="code-panel">
+              <div class="code-panel-head">
+                <span class="code-lang">BibTeX</span>
+                <button class="copy-button" data-copy='@techreport{exergynet2026v5,
+  title        = {Memory Grows. Context Does Not Have To.},
+  subtitle     = {ExergyNet White Paper V5},
+  author       = {Ezumba, Seven and Bontu, Veena},
+  institution  = {ExergyNet},
+  year         = {2026},
+  month        = {October},
+  note         = {Development characterization at the 100M-token operating point.}
+}' aria-label="Copy BibTeX citation">Copy</button>
+              </div>
+              <pre><code>@techreport{exergynet2026v5,
+  title        = {Memory Grows. Context Does Not Have To.},
+  subtitle     = {ExergyNet White Paper V5},
+  author       = {Ezumba, Seven and Bontu, Veena},
+  institution  = {ExergyNet},
+  year         = {2026},
+  month        = {October},
+  note         = {Development characterization at the 100M-token operating point.}
+}</code></pre>
+            </div>
+          </div>
 
-    <!-- APPLICATIONS -->
-    <section>
-      <div class="section-label">Section XI</div>
-      <h2>Application Domains</h2>
-      <div class="card-grid">
-        <div class="card">
-          <h4>Clinical AI</h4>
-          <h3>Persistent Patient and Protocol State</h3>
-          <p>Bounded evidence, source provenance, escalation rules, and verifiable operational history across models and care environments.</p>
-        </div>
-        <div class="card">
-          <h4>Scientific Systems</h4>
-          <h3>Traceable Research Memory</h3>
-          <p>Long-lived experimental state, source lineage, reproducible computation, and evidence-preserving agent workflows.</p>
-        </div>
-        <div class="card">
-          <h4>Regulated Enterprise</h4>
-          <h3>Auditable Autonomous Operations</h3>
-          <p>Policy-bound agents with complete evidence delivery, tool receipts, and persistent state across vendor boundaries.</p>
-        </div>
-        <div class="card">
-          <h4>Robotics &amp; Sovereign Infrastructure</h4>
-          <h3>Memory Beyond the Cloud Boundary</h3>
-          <p>Hardware-attested observation, resilient transport, and persistent machine identity across edge and disconnected environments.</p>
-        </div>
-      </div>
-    </section>
+          <h3>5.2 Document verification</h3>
+          <p>The V5 PDF is provided with a SHA-256 checksum for independent verification:</p>
+          <div class="hash-block">
+            <div class="hash-label">SHA-256 · EXERGYNET_WHITEPAPER_PUBLIC_V5.pdf</div>
+            <div class="hash-value">416974f1d7c1f4d569866027e2ff7a58d7480ed80b87738d8203feb6e518b0eb</div>
+          </div>
+          <p>Verify on macOS or Linux:</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">Terminal</span>
+              <button class="copy-button" data-copy="shasum -a 256 EXERGYNET_WHITEPAPER_PUBLIC_V5.pdf" aria-label="Copy verify command">Copy</button>
+            </div>
+            <pre><code>shasum -a 256 EXERGYNET_WHITEPAPER_PUBLIC_V5.pdf</code></pre>
+          </div>
+          <p>Verify on Windows (PowerShell):</p>
+          <div class="code-panel">
+            <div class="code-panel-head">
+              <span class="code-lang">PowerShell</span>
+              <button class="copy-button" data-copy="Get-FileHash EXERGYNET_WHITEPAPER_PUBLIC_V5.pdf -Algorithm SHA256 | Select-Object Hash" aria-label="Copy Windows verify command">Copy</button>
+            </div>
+            <pre><code>Get-FileHash EXERGYNET_WHITEPAPER_PUBLIC_V5.pdf -Algorithm SHA256 | Select-Object Hash</code></pre>
+          </div>
+          <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;margin-top:var(--s-6)">
+            <a class="btn btn-primary" href="downloads/EXERGYNET_WHITEPAPER_PUBLIC_V5.pdf" download>Download V5 PDF <span aria-hidden="true">↓</span></a>
+            <a class="btn btn-outline" href="downloads/EXERGYNET_WHITEPAPER_PUBLIC_V5.sha256" download>Download checksum <span aria-hidden="true">↓</span></a>
+          </div>
+        </section>
 
-    <!-- STATUS / ROADMAP -->
-    <section>
-      <div class="section-label">Section XII</div>
-      <h2>Deployment Status &amp; Roadmap</h2>
-      <p style="max-width:760px;">Architecture descriptions are separated from deployment status so validated capabilities are not confused with planned research.</p>
-
-      <table class="status-table">
-        <thead>
-          <tr>
-            <th>Capability</th>
-            <th>Status</th>
-            <th>Current Scope</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Exergy Vault and bounded xLMP retrieval</td>
-            <td><span class="status-chip validated">Validated</span></td>
-            <td>Persistent storage, bounded evidence delivery, compact deterministic indexing, integrity verification.</td>
-          </tr>
-          <tr>
-            <td>SEI-Vanguard orchestration</td>
-            <td><span class="status-chip live">Operational</span></td>
-            <td>Memory resolution, model/tool dispatch, state preservation, evidence-aware execution.</td>
-          </tr>
-          <tr>
-            <td>Solana and Base settlement rails</td>
-            <td><span class="status-chip live">Operational</span></td>
-            <td>Complementary protocol coordination and settlement functions.</td>
-          </tr>
-          <tr>
-            <td>Hardware and physical attestation</td>
-            <td><span class="status-chip validated">Validated</span></td>
-            <td>Device-authenticated evidence and signed execution telemetry.</td>
-          </tr>
-          <tr>
-            <td>Recursive proving at broad production scale</td>
-            <td><span class="status-chip research">Research</span></td>
-            <td>Proof aggregation, production hardening, cost optimization, and external engineering review.</td>
-          </tr>
-          <tr>
-            <td>Large-scale compact-index validation</td>
-            <td><span class="status-chip validated">Validated</span></td>
-            <td>1 GB / 100-query narrow-population compact-index validation complete (52,753.8× median paired speedup; 0.72× aggregate in realistic mixed vault — both numbers reported). Results are workload-dependent.</td>
-          </tr>
-          <tr>
-            <td>N→K corpus scaling (32K–10M)</td>
-            <td><span class="status-chip validated">Validated</span></td>
-            <td>Nine-point A100 TP=4 ladder (32K–4M): no material positive K scaling detected; 9-point fit b = 7.83×10⁻⁷ (CI includes zero). Holdouts at 1M/2M/4M all 5/5 deterministic runs, 0/190 per-query mismatches. Gates A and B failed at 500K corpus peak — preserved without relabeling; Gate D PASS. Genuine 10M holdout (5/5 deterministic runs, 0/190 mismatches, mean K = 895.96, WSL2/Windows): K_FLAT_OR_STABLE within established 764–908 envelope; Q_BEND FORMALLY TRIGGERED at 39.5% (0.5pp below 40% floor, Q3/Q4 adversarial density — retrieval-quality finding, not system error); C_R(10M) hardware-confounded. All results bounded to tested model, hardware, and corpus construction.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- MACHINE INTERFACE -->
-    <section>
-      <div class="section-label">Section XIII</div>
-      <h2>Machine Interface</h2>
-      <p style="max-width:720px; margin-bottom:1.5rem;">ExergyNet exposes canonical machine-readable manifests, capability descriptors, and integration surfaces for autonomous agent discovery.</p>
-
-      <div class="card-grid">
-        <div class="card">
-          <h4>llms.txt</h4>
-          <h3>LLM Discovery Manifest</h3>
-          <p>Plain-text protocol description for language models and autonomous development agents.</p>
-          <a href="llms.txt" class="btn btn-ghost" style="margin-top:1rem; font-size:12px;">View llms.txt &rarr;</a>
-        </div>
-        <div class="card">
-          <h4>.well-known/exergynet.json</h4>
-          <h3>Protocol Coordinates</h3>
-          <p>Canonical network identifiers, supported capabilities, settlement rails, and gateway metadata.</p>
-          <a href=".well-known/exergynet.json" class="btn btn-ghost" style="margin-top:1rem; font-size:12px;">View JSON &rarr;</a>
-        </div>
-        <div class="card">
-          <h4>MCP / OpenAPI</h4>
-          <h3>Agent Integration Surface</h3>
-          <p>Machine-readable tools, schemas, and SDK pathways for ExergyNet applications and enterprise systems.</p>
-          <a href="docs.html" class="btn btn-ghost" style="margin-top:1rem; font-size:12px;">View Integration Docs &rarr;</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- DISCLOSURE -->
-    <section>
-      <div class="section-label">Disclosure Boundary</div>
-      <h2>Public Architecture, Protected Mechanism</h2>
-      <div class="card accent-border">
-        <p>ExergyNet publishes system interfaces, architectural invariants, trust assumptions, public receipts, integration schemas, and measured outcomes. The mechanisms that create the operational advantage remain protected as trade secrets or are disclosed only through controlled technical review.</p>
-        <div class="spec-list" style="margin-top:1rem;">
-          <li><span class="spec-key">Public</span><span class="spec-val">Component roles, data flows, trust boundaries, APIs, proof formats, benchmark summaries, and deployment status.</span></li>
-          <li><span class="spec-key">Protected</span><span class="spec-val">Shard construction, indexing internals, evidence-selection policies, compression, scheduling, private circuits, source patches, and vulnerability details.</span></li>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section" style="border-top:1px solid var(--border);">
-      <div class="container">
-        <h2>Persistent Memory. Verifiable Execution. Sovereign Operation.</h2>
-        <p>Integrate ExergyNet as the memory, orchestration, verification, and settlement fabric beneath autonomous systems.</p>
-        <div class="btn-row" style="justify-content:center;">
-          <a href="docs.html" class="btn btn-primary">Integration Docs</a>
-          <a href="nodes.html" class="btn btn-blue">Run a Node</a>
-          <a href="proof.html" class="btn btn-ghost">Verify Public Receipts &rarr;</a>
-        </div>
-      </div>
-    </section>
-
-  </div>
+      </article>
+    </div><!-- /research-layout -->
+  </div><!-- /wrap -->
 
 </main>
 
-  <!-- Footer will be injected here -->
-  <div id="site-footer"></div>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="ExergyNet home">
+          <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+        </a>
+        <p>Persistent state. Bounded context.<br>Independent authority for machine intelligence.</p>
+      </div>
+      <div class="foot-col">
+        <strong>Explore</strong>
+        <a href="index.html#platform">Platform overview</a>
+        <a href="index.html#workflow">Architecture</a>
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="https://exergynet.org/security.html">Security ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Build</strong>
+        <a href="docs.html">Documentation</a>
+        <a href="https://github.com/ezumba/vanguard-memory-node">Open source ↗</a>
+        <a href="https://exergynet.org/api-integration.html">API reference ↗</a>
+        <a href="https://exergynet.org/proof.html">Verification status ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Research</strong>
+        <a href="whitepaper.html">White paper V5</a>
+        <a href="https://exergynet.org/benchmarks.html">Benchmarks ↗</a>
+        <a href="https://exergynet.org/vanguard.html">Vanguard ↗</a>
+        <a href="https://x.com/ExergyNet">Follow ExergyNet ↗</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ExergyNet · Infrastructure for machine intelligence.</span>
+      <span><a href="https://exergynet.org/legal.html">Legal ↗</a></span>
+    </div>
+  </div>
+</footer>
 
-</div>
+<dialog class="search-dialog" id="search-dialog" aria-label="Search">
+  <div class="search-top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+    <label class="sr-only" for="site-search">Search pages and guides</label>
+    <input id="site-search" type="search" placeholder="Search pages and guides…" autocomplete="off">
+    <button class="search-esc" aria-label="Close search">Esc</button>
+  </div>
+  <div class="search-results" role="listbox"></div>
+  <div class="search-footer-bar">Tab to navigate · Enter to open · Esc to close</div>
+</dialog>
 
-<script src="main.js"></script>
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script src="app.js"></script>
 </body>
 </html>
