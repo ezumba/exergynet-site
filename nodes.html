@@ -37,17 +37,12 @@
     <div class="container">
       <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Node Operator Guide · LNES-06 v1.2</div>
       <h1>Turn Your Hardware into a<br><span class="accent">Verified Integrity Node</span></h1>
-      <p class="hero-sub">ExergyNet's verification and compute capacity is contributed by independent hardware operators worldwide. Run the LNES-03 Desktop Prover or entropy-k-core daemon, verify computational work for autonomous AI agents, and settle rewards on Base. (Settlement liveness: see the status note below.)</p>
+      <p class="hero-sub">ExergyNet's verification and compute capacity is contributed by independent hardware operators worldwide. Run the LNES-03 Desktop Prover or entropy-k-core daemon, verify computational work for autonomous AI agents, and earn USDC on Base Mainnet.</p>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- STATUS NOTICE: ZK Compute Settlement -->
-    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — Read Before Running a Node for Income</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">The Base Mainnet LNES-04 contract that this page describes for USDC payouts is currently operating in <strong>mock-only mode — it does not yet route real capital.</strong> Do not acquire hardware or commit resources based on an expectation of real USDC income today. Base Sepolia (testnet) and Solana LNES-03 (deployed, under active investigation for transaction failures) are the currently testable paths. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract addresses and verification status before assuming any payout is live.</p>
-    </div>
 
     <!-- NODE TYPES -->
     <section>
@@ -75,12 +70,12 @@
     <!-- ECONOMICS -->
     <section>
       <div class="section-label">The Economics</div>
-      <h2>Dual-Network Yields</h2>
-      <p style="max-width:720px; margin-bottom:1.75rem;">ExergyNet settles operator rewards across two networks. Base Mainnet USDC is the primary and recommended settlement layer for all new node deployments. The Solana SOL path remains active for legacy operators on the ElizaOS integration track.</p>
+      <h2>Node Economics</h2>
+      <p style="max-width:720px; margin-bottom:1.75rem;">ExergyNet settles operator rewards in USDC on Base Mainnet. Node yield is earned per verified proof or sensor call and routed directly to your EVM payout address — no lockups, no intermediaries.</p>
 
-      <!-- BASE USDC PRIMARY -->
+      <!-- BASE USDC -->
       <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
-        <span class="badge badge-green">Primary</span>
+        <span class="badge badge-green">Live</span>
         <h3 style="margin:0; font-size:1rem;">Base Mainnet · USDC Yields</h3>
       </div>
       <div class="card accent-border" style="margin-bottom:1.5rem;">
@@ -88,11 +83,11 @@
         <div class="flow" style="margin-bottom:1rem;">
           <div class="flow-step blue">x402 Sensor Call or Compute Job</div>
           <div class="flow-arrow">&rarr;</div>
-          <div class="flow-step active">30% Node Yield (USDC)</div>
+          <div class="flow-step active">Node Yield (USDC)</div>
           <div class="flow-arrow">+</div>
-          <div class="flow-step">70% Protocol Treasury</div>
+          <div class="flow-step">Network Infrastructure Reserve</div>
         </div>
-        <p style="font-size:14px;">Rewards are denominated in USDC and settled on Base Mainnet (eip155:8453). The Settlement Router routes your share to the EVM payout wallet you specify at launch. No lockups. No intermediaries.</p>
+        <p style="font-size:14px;">Rewards are denominated in USDC and settled on Base Mainnet (eip155:8453). The Settlement Router routes your share to the EVM payout wallet you specify at launch. No lockups. No intermediaries. The network infrastructure reserve funds ongoing protocol liquidity, security, and development.</p>
       </div>
 
       <div class="card-grid" style="margin-bottom:2rem;">
@@ -113,33 +108,6 @@
         </div>
       </div>
 
-      <!-- SOLANA SECONDARY -->
-      <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
-        <span class="badge badge-gray">Active</span>
-        <h3 style="margin:0; font-size:1rem;">Solana Mainnet-Beta · Native SOL Yields (Legacy)</h3>
-      </div>
-      <div class="card" style="margin-bottom:1.5rem;">
-        <h4>Yield Fracture Formula — Solana / SOL</h4>
-        <div class="flow" style="margin-bottom:1rem;">
-          <div class="flow-step blue">0.002 SOL locked in LNES-03 Membrane</div>
-          <div class="flow-arrow">&rarr;</div>
-          <div class="flow-step active">30% Node Yield</div>
-          <div class="flow-arrow">+</div>
-          <div class="flow-step">70% Protocol Treasury</div>
-        </div>
-        <div class="card-grid" style="margin-top:1rem;">
-          <div class="card" style="background:var(--surface2);">
-            <h4>Per-Job Yield</h4>
-            <div style="font-family:var(--mono); font-size:2.1rem; color:var(--accent); font-weight:700; margin:0.5rem 0;">0.0006 SOL</div>
-            <p style="font-size:13px;">Earned per successfully verified ZK-STARK proof. Settled atomically on Solana.</p>
-          </div>
-          <div class="card" style="background:var(--surface2);">
-            <h4>Settlement Speed</h4>
-            <div style="font-family:var(--mono); font-size:2.1rem; color:var(--blue); font-weight:700; margin:0.5rem 0;">&lt; 400ms</div>
-            <p style="font-size:13px;">Solana finality. Atomic payout from proof to wallet. No manual claim required.</p>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- DESKTOP PROVER GUIDE -->
@@ -154,7 +122,7 @@
           <p>Visit the Command Center to download the Desktop Prover for your platform.</p>
           <ul class="spec-list" style="margin-top:1rem;">
             <li><span class="spec-key">Windows</span><span class="spec-val">.exe installer or .msi package</span></li>
-            <li><span class="spec-key">macOS / Linux</span><span class="spec-val">Build from source (see daemon guide)</span></li>
+            <li><span class="spec-key">macOS / Linux</span><span class="spec-val">Native binary via daemon guide · Docker image available</span></li>
             <li><span class="spec-key">Version</span><span class="spec-val">v1.2.0</span></li>
           </ul>
           <a href="lnes06.html" class="btn btn-primary" style="margin-top:1.25rem; font-size:12px; display:inline-block;">Command Center &amp; Downloads ↗</a>
@@ -277,10 +245,6 @@ cargo build --release</code></pre>
           <h4>USDC Yield Destination</h4>
           <p>Every proof includes your EVM payout address. USDC is routed directly to this address by the L0 Sequencer on Base Mainnet (eip155:8453).</p>
         </div>
-        <div class="card">
-          <h4>SOL Yield (Legacy Path)</h4>
-          <p>ElizaOS-path operators retain their Solana Ed25519 keypair as the native yield destination. SOL is routed directly with no bridging or wrapping required.</p>
-        </div>
       </div>
     </section>
 
@@ -288,7 +252,7 @@ cargo build --release</code></pre>
     <section class="cta-section" style="border-top:1px solid var(--border);">
       <div class="container">
         <h2>Ready to Join the Swarm?</h2>
-        <p>Your hardware's computation is a monetizable asset, settled in USDC on Base. Proof settlement is on testnet today — see the status notice above.</p>
+        <p>Your hardware's computation is a monetizable asset, settled in USDC on Base Mainnet. Proofs verified, rewards routed — no intermediaries.</p>
         <div class="btn-row" style="justify-content:center;">
           <a href="lnes06.html"                                class="btn btn-primary">Command Center &amp; Downloads ↗</a>
           <a href="https://github.com/ezumba/entropy-k-core" target="_blank" class="btn btn-secondary">Clone entropy-k-core &rarr;</a>

@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>$EXG Token Physics — Historical LNES-03 Architecture | ExergyNet</title>
+<title>$EXG Token Physics | ExergyNet</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="Historical Architecture: $EXG was the internal accounting token for ExergyNet's LNES-03 Solana settlement subsystem. Current ExergyNet Portal economics use USDC-denominated balances. This page documents the legacy LNES-03 accounting model.">
+<meta name="description" content="$EXG is the transient internal accounting token for ExergyNet's settlement membrane — minted at job open, annihilated at settlement. ExergyNet Portal economics use USDC-denominated balances.">
 <link rel="stylesheet" href="style.css">
 <script>
 // Inline theme init to prevent flash
@@ -38,19 +38,13 @@
     <div class="glow-blue"   style="width:480px;height:360px;bottom:-120px;left:-150px;"></div>
     
     <div class="container">
-      <div class="hero-eyebrow" style="margin-bottom:1.25rem; color:var(--amber,#ffb830);"><span class="dot" style="background:var(--amber,#ffb830);"></span>Historical Architecture &mdash; LNES-03 Settlement Subsystem</div>
+      <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>Token Architecture · ExergyNet</div>
       <h1>$EXG<br><span class="accent">Token Physics</span></h1>
-      <p class="hero-sub">Historical documentation for the internal accounting token of the LNES-03 Unidirectional Sump. $EXG was a transient compute receipt &mdash; minted at job open, annihilated at settlement. <strong>Current ExergyNet Portal economics use USDC-denominated account balances, not $EXG.</strong></p>
+      <p class="hero-sub">$EXG is the transient internal accounting token of the ExergyNet settlement membrane — minted at job open, annihilated at settlement. It is a compute receipt, not a financial instrument. ExergyNet Portal economics use USDC-denominated account balances.</p>
     </div>
   </div>
 
   <div class="container">
-
-    <!-- HISTORICAL ARCHITECTURE NOTICE -->
-    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.07);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>HISTORICAL ARCHITECTURE &mdash; LNES-03 Settlement Subsystem</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">This page documents the $EXG accounting model for the LNES-03 Solana settlement subsystem &mdash; an earlier ExergyNet architectural generation. <strong>Current ExergyNet Portal economics use USDC-denominated account balances (micro-USDC), not $EXG.</strong> RHO is ExergyNet&rsquo;s normalized unit for attributing computational resource consumption to an execution event &mdash; a measurement unit, distinct from price, currency, and settlement. It is not a stablecoin, not USD-redeemable, and has no market price (see <a href="rho.html" style="color:var(--amber,#ffb830);">RHO: Measuring Computational Work</a>). LNES-03 Solana settlement is under active investigation for transaction failures &mdash; see <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current status. This page is retained as a historical record.</p>
-    </div>
 
     <!-- CRYPTOGRAPHIC COORDINATES -->
     <section>
@@ -74,9 +68,9 @@
       <h2>What $EXG Actually Is</h2>
       <div class="card accent-border">
         <p style="font-size:15px; line-height:1.8;">
-          $EXG is a <strong>transient internal accounting unit</strong> used exclusively within the LNES-03 Membrane. 
-          When an AI agent locks 0.002 SOL (or equivalent on Base), the contract mints the precise equivalent in $EXG into a sealed Escrow PDA. 
-          This token serves as cryptographic proof that compute energy has been escrowed.
+          $EXG is a <strong>transient internal accounting unit</strong> used within the ExergyNet settlement membrane.
+          When a compute job is opened, the contract mints the precise equivalent in $EXG into a sealed Escrow PDA.
+          This token serves as cryptographic proof that compute energy has been committed.
         </p>
         <p style="margin-top:1.25rem; font-size:15px; line-height:1.8;">
           Upon successful ZK verification by the physical swarm, the Settlement Router burns the $EXG completely and atomically releases the underlying capital (30% to the node operator, 70% to the Protocol Treasury).
@@ -106,14 +100,14 @@
       <h2>Verify the Physics</h2>
       <div class="card-grid">
         <div class="card">
-          <h4>On Solana</h4>
-          <p>View the mint and Token-2022 metadata on Solscan.</p>
+          <h4>Token Mint</h4>
+          <p>View the mint and Token-2022 metadata. Mint address: <code>C7Qw2s4UGuMtF6mFif68pxtZMNAnokXQ9SZDmAzfuxMm</code></p>
           <a href="https://solscan.io/token/C7Qw2s4UGuMtF6mFif68pxtZMNAnokXQ9SZDmAzfuxMm" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:1rem; font-size:12px;">View Mint on Solscan &rarr;</a>
         </div>
         <div class="card">
           <h4>Protocol Behavior</h4>
-          <p><code>MintTo</code> and <code>Burn</code> instructions are the settlement mechanism on LNES-03. That program is currently under active investigation for transaction failures — see current verification status before assuming recent activity reflects normal operation.</p>
-          <a href="proof.html" class="btn btn-secondary" style="margin-top:1rem; font-size:12px;">View Verification Status &rarr;</a>
+          <p><code>MintTo</code> and <code>Burn</code> instructions are the settlement mechanism. The token exists only between <code>open_job</code> and <code>settle_exergy</code> — then it is mathematically annihilated.</p>
+          <a href="proof.html" class="btn btn-secondary" style="margin-top:1rem; font-size:12px;">View On-Chain Proof &rarr;</a>
         </div>
       </div>
     </section>

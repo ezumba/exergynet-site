@@ -131,9 +131,8 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            <strong>Deployed, recommended path (not yet routing real capital):</strong> LNES-04 on Base L2 is the recommended settlement layer for new integrations. The Base Mainnet contract is deployed but currently operating in mock-only mode &mdash; do not route real capital through it yet. Base Sepolia is available for test and demonstration use today. Execution-state portability is validated for same-process restoration and short fresh-process continuity.<br><br>
-            <strong>Deployed, under investigation:</strong> LNES-03 on Solana has settled successfully before but is currently under active investigation for transaction failures &mdash; see <a href="proof.html">verification status</a>.<br><br>
-            <strong>In development / not yet achieved:</strong> production-scale zero-knowledge verification in the evidence-query path; live real-capital settlement on Base Mainnet; medium- and long-context fresh-process continuity (0/10 in tested runs); cross-node execution-state portability (not yet reported).
+            <strong>Live on Base Mainnet:</strong> LNES-04 on Base Mainnet is the active settlement layer. USDC-denominated compute jobs are open, verified, and settled on-chain. The Settlement Router routes node rewards directly to EVM payout wallets. Execution-state portability is validated for same-process restoration and short fresh-process continuity.<br><br>
+            <strong>In active development:</strong> Expanded ZK verification coverage in the evidence-query path; cross-node execution-state portability.
           </div>
         </details>
       </div>
@@ -165,15 +164,6 @@
           </div>
         </details>
 
-        <details class="card">
-          <summary class="font-bold text-lg cursor-pointer flex justify-between items-center">
-            What is the difference between LNES-03 and LNES-04?
-            <span class="text-accent text-xl leading-none">+</span>
-          </summary>
-          <div class="mt-4 text-[15px] text-soft">
-            LNES-03 is the Solana Mainnet-Beta deployment. LNES-04 is the Base L2 (EVM) deployment. LNES-03 is deployed and has settled successfully before, but is currently under active investigation for transaction failures &mdash; see <a href="proof.html">verification status</a>. Base Mainnet USDC is the primary and recommended settlement layer for new integrations.
-          </div>
-        </details>
       </div>
     </section>
 
@@ -208,8 +198,8 @@
     <!-- NETWORK / ECONOMIC PROTOCOL -->
     <section>
       <div class="section-label">IV &middot; Network / Settlement Layer</div>
-      <h2>Protocol Mechanics &mdash; Settlement and Legacy Architecture</h2>
-      <p style="max-width:740px; margin-bottom:1.5rem; color:var(--text-soft); font-size:14px;">ExergyNet is execution infrastructure for machine intelligence &mdash; the state, identity, authority, transport, provenance, and evidence required to turn machine intelligence into verifiable action. It has optional settlement subsystems (LNES-03 on Solana, LNES-04 on Base L2) for verifiable compute use cases. The questions below describe those subsystems; they are not the primary ExergyNet product category.</p>
+      <h2>Protocol Mechanics &mdash; Settlement Architecture</h2>
+      <p style="max-width:740px; margin-bottom:1.5rem; color:var(--text-soft); font-size:14px;">ExergyNet is an AI Memory Control Plane. Settlement on Base Mainnet (LNES-04) handles economic finality for verifiable compute use cases — it is a supporting mechanism, not ExergyNet's primary product category.</p>
 
       <div class="space-y-4">
         <details class="card">
@@ -218,7 +208,7 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            No. ExergyNet is <strong>execution infrastructure for machine intelligence</strong> &mdash; the layer that turns model outputs into state-aware, authorized, attributable, verifiable actions. It has optional settlement and proof subsystems (LNES-03 on Solana, LNES-04 on Base L2) for verifiable compute use cases, but these are supporting mechanisms, not ExergyNet&rsquo;s primary category. Settlement and blockchain rails are available where economic finality is needed; they do not define what ExergyNet is. The primary architecture is: Persistent State (Exergy Vault / xLMP) &rarr; Bounded Evidence &rarr; Reasoning (Vanguard) &rarr; Authority (xISA / LNES-22) &rarr; Verified Action &rarr; Evidence &rarr; Settlement where required.
+            No. ExergyNet is an <strong>AI Memory Control Plane</strong> &mdash; infrastructure for persistent and autonomous AI systems. It settles on Base Mainnet (LNES-04) where economic finality is needed, but settlement is a supporting mechanism, not ExergyNet&rsquo;s primary category. The primary architecture is: Persistent Memory (VMN/xLMP) &rarr; Work Compression &rarr; Bounded Evidence &rarr; Reasoning (Vanguard) &rarr; Authority (LNES-22) &rarr; Consequence &rarr; Settlement where required.
           </div>
         </details>
 
@@ -239,7 +229,7 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            Pricing depends on the integration path. The LNES-03 Solana settlement path (under investigation for transaction failures) used 0.002 SOL per cycle. The LNES-04 Base L2 path uses USDC-denominated tolls &mdash; see the <a href="api-integration.html">API Integration</a> guide for current configuration. Vanguard API and Omega Carrier usage is metered through your portal account balance (USDC-denominated). See <a href="proof.html">verification status</a> for current LNES-03 and LNES-04 operational state.
+            Pricing is USDC-denominated. The LNES-04 Base Mainnet path uses USDC tolls per compute cycle &mdash; see the <a href="api-integration.html">API Integration</a> guide for current rate configuration. Vanguard API and Omega Carrier usage is metered through your portal account balance (USDC-denominated). See <a href="proof.html">On-Chain Proof</a> for live contract verification.
           </div>
         </details>
 
@@ -249,8 +239,7 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            <p style="font-size:12px; color:var(--amber,#ffb830); margin-bottom:0.75rem; padding:0.5rem 0.75rem; border-left:3px solid var(--amber,#ffb830); background:rgba(255,184,48,0.05);">LEGACY TOKEN &mdash; $EXG was the internal accounting token for the LNES-03 Solana settlement subsystem. Current portal economics use USDC-denominated account balances.</p>
-            $EXG was a transient internal accounting token used with the LNES-03 Solana settlement path. It was minted when capital was locked and burned upon successful settlement &mdash; never tradable, no speculative value. The current ExergyNet Portal uses USDC-denominated account balances (micro-USDC) for Vanguard API, Omega Carrier, and agent economics. RHO is ExergyNet&rsquo;s normalized unit for attributing computational resource consumption to an execution event &mdash; a measurement unit, distinct from price, currency, and settlement. It is not a stablecoin, not USD-redeemable, and has no market price. See <a href="rho.html">RHO: Measuring Computational Work</a> and <a href="token.html">Token Info</a> for the historical LNES-03 accounting model.
+            $EXG was an internal accounting token used in an earlier settlement architecture. The current ExergyNet Portal uses USDC-denominated account balances (micro-USDC) for Vanguard API, Omega Carrier, and agent economics. RHO is ExergyNet&rsquo;s normalized unit for attributing computational resource consumption to an execution event &mdash; a measurement unit, not a currency. See <a href="rho.html">RHO: Measuring Computational Work</a> and <a href="token.html">Token Info</a> for details.
           </div>
         </details>
 
@@ -270,7 +259,7 @@
             <span class="text-accent text-xl leading-none">+</span>
           </summary>
           <div class="mt-4 text-[15px] text-soft">
-            In the Solana LNES-03 model, 30% of every toll was routed atomically to the node operator&rsquo;s wallet upon successful proof verification. The Base LNES-04 model uses an equivalent USDC operator split. See the <a href="connect.html">Compute Partner Access</a> page and <a href="proof.html">verification status</a> for current settlement liveness on each path.
+            Node yield is paid in USDC on Base Mainnet. A share of every toll is routed atomically to the node operator&rsquo;s EVM payout wallet upon successful proof verification &mdash; no lockups, no manual claim. See the <a href="connect.html">Compute Partner Access</a> page and <a href="nodes.html">Node Operations</a> for the full yield model.
           </div>
         </details>
       </div>

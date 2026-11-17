@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="ExergyNet Protocol (LNES-06) — the interfaces and rules connecting ExergyNet's planes: state, evidence, orchestration, authority, and verification. Base and Solana are settlement rails beneath the architecture, not the product identity.">
+<meta name="description" content="ExergyNet Protocol (LNES-06) — the interfaces and rules connecting ExergyNet's planes: state, evidence, orchestration, authority, and verification. Base Mainnet is the settlement rail beneath the architecture.">
 <link rel="stylesheet" href="style.css">
 <style>
   /* ── Protocol-page local enhancements ── */
@@ -193,15 +193,12 @@
     <div class="container">
       <div class="hero-eyebrow" style="margin-bottom:1.25rem;"><span class="dot"></span>LNES-06 v1.2 · Protocol Reference</div>
       <h1>Protocol<br><span class="accent">Reference</span></h1>
-      <p class="hero-sub">The interfaces and rules that connect ExergyNet's planes — state, evidence, orchestration, authority, and verification. Settlement runs on Base (primary) and a Solana Unidirectional Sump as rails beneath the architecture, with RISC Zero compute verification. These are the coordination mechanics, not the definition of ExergyNet.</p>
+      <p class="hero-sub">The interfaces and rules that connect ExergyNet's planes — state, evidence, orchestration, authority, and verification. Settlement runs on Base Mainnet with RISC Zero compute verification. These are the coordination mechanics, not the definition of ExergyNet.</p>
 
       <!-- Live network status bar -->
       <div style="display:flex; gap:1rem; margin-top:2rem; flex-wrap:wrap;">
         <div class="network-pill pill-primary">
-          <span class="pill-dot"></span>Base Mainnet · eip155:8453 · Primary
-        </div>
-        <div class="network-pill pill-active">
-          <span class="pill-dot"></span>Solana Mainnet · Settlement Investigating
+          <span class="pill-dot"></span>Base Mainnet · eip155:8453 · Live
         </div>
         <div class="network-pill pill-active">
           <span class="pill-dot" style="background:var(--blue);"></span>L0 Sequencer · Online
@@ -212,66 +209,28 @@
 
   <div class="container">
 
-    <!-- STATUS NOTICE: ZK Compute Settlement -->
-    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — Settlement &amp; Verification</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">"Primary" below means recommended integration target, not currently live for real capital: the Base Mainnet contract is deployed but operating in mock-only mode. Base Sepolia is available for test and demonstration use today. Solana Mainnet-Beta (LNES-03) is deployed but under active investigation for transaction failures. On-chain ZK proof verification for the compute grid is in development. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current contract addresses and verification status.</p>
-    </div>
-
     <!-- ══════════════════════════════════════════════
          PROTOCOL IDENTITY — DUAL NETWORK
     ══════════════════════════════════════════════ -->
     <section>
       <div class="section-label">Protocol Identity</div>
-      <h2>Multi-Network Coordinates</h2>
+      <h2>Protocol Coordinates</h2>
 
-      <div class="proto-grid">
-
-        <!-- BASE PRIMARY -->
-        <div>
-          <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
-            <span class="network-pill pill-primary"><span class="pill-dot"></span>Primary Settlement</span>
-          </div>
-          <div class="card accent-border">
-            <ul class="spec-list">
-              <li><span class="spec-key">Protocol</span>       <span class="spec-val"><span class="badge badge-green">LNES-06 v1.2</span> x402 Compute Membrane</span></li>
-              <li><span class="spec-key">Network</span>        <span class="spec-val">Base Mainnet <code>eip155:8453</code></span></li>
-              <li><span class="spec-key">Payment</span>        <span class="spec-val">x402 / USDC · HTTP-native agent payments</span></li>
-              <li><span class="spec-key">x402 Version</span>   <span class="spec-val">1</span></li>
-              <li><span class="spec-key">Operator Wallet</span><span class="spec-val"><code style="font-size:11px;">0x27cC42ee80CA945F96b93999CCdb02520618578B</code></span></li>
-              <li><span class="spec-key">USDC Contract</span>  <span class="spec-val"><code style="font-size:11px;">0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code></span></li>
-              <li><span class="spec-key">Facilitator</span>    <span class="spec-val"><code style="font-size:11px;">api.cdp.coinbase.com/platform/v2/x402</code></span></li>
-              <li><span class="spec-key">Sensor Toll</span>    <span class="spec-val">3000 µUSDC (0.003 USDC) per x402 call</span></li>
-              <li><span class="spec-key">Yield Split</span>    <span class="spec-val">30% Node · 70% Protocol Treasury</span></li>
-              <li><span class="spec-key">Auth</span>           <span class="spec-val">x402 USDC EIP-3009 authorization</span></li>
-              <li><span class="spec-key">Proof System</span>   <span class="spec-val">RISC Zero ZK-STARK · recursive proof aggregation (in development)</span></li>
-              <li><span class="spec-key">Explorer API</span>   <span class="spec-val"><code>https://explorer-api.exergynet.org</code></span></li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- SOLANA ACTIVE -->
-        <div>
-          <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem;">
-            <span class="network-pill pill-active"><span class="pill-dot"></span>Active — Legacy / ElizaOS Path</span>
-          </div>
-          <div class="card">
-            <ul class="spec-list">
-              <li><span class="spec-key">Protocol</span>       <span class="spec-val"><span class="badge badge-gray">LNES-03</span> Unidirectional Sump</span></li>
-              <li><span class="spec-key">Version</span>        <span class="spec-val"><code>2.0.0-omega</code></span></li>
-              <li><span class="spec-key">Network</span>        <span class="spec-val">Solana Mainnet-Beta</span></li>
-              <li><span class="spec-key">Program ID</span>     <span class="spec-val"><code style="font-size:11px;">7BCPpUMBxQMPomsgTaJsQdLEfycNwPWqkQD1Cea4CcCL</code></span></li>
-              <li><span class="spec-key">Transient Mint</span> <span class="spec-val"><code style="font-size:11px;">5fZZJ29oH5SDqxiz2tkEf1wopp5Sn5TtcCF3fPS9rdiJ</code></span></li>
-              <li><span class="spec-key">Toll</span>           <span class="spec-val">0.002 SOL (2,000,000 lamports) per cycle</span></li>
-              <li><span class="spec-key">Yield Split</span>    <span class="spec-val">30% Node · 70% Protocol Cold Treasury</span></li>
-              <li><span class="spec-key">Auth</span>           <span class="spec-val">Ed25519 Mesh — zero-trust cryptographic identity</span></li>
-              <li><span class="spec-key">MCP Endpoint</span>   <span class="spec-val"><code>https://exergynet.org/mcp</code></span></li>
-              <li><span class="spec-key">Proof System</span>   <span class="spec-val">RISC Zero ZK-STARK · recursive proof aggregation (in development)</span></li>
-              <li><span class="spec-key">Finality</span>       <span class="spec-val">&lt; 400ms · lamport-level atomic settlement</span></li>
-            </ul>
-          </div>
-        </div>
-
+      <div class="card accent-border" style="margin-bottom:2rem;">
+        <ul class="spec-list">
+          <li><span class="spec-key">Protocol</span>       <span class="spec-val"><span class="badge badge-green">LNES-06 v1.2</span> x402 Compute Membrane</span></li>
+          <li><span class="spec-key">Network</span>        <span class="spec-val">Base Mainnet <code>eip155:8453</code></span></li>
+          <li><span class="spec-key">Payment</span>        <span class="spec-val">x402 / USDC · HTTP-native agent payments</span></li>
+          <li><span class="spec-key">x402 Version</span>   <span class="spec-val">1</span></li>
+          <li><span class="spec-key">Operator Wallet</span><span class="spec-val"><code style="font-size:11px;">0x27cC42ee80CA945F96b93999CCdb02520618578B</code></span></li>
+          <li><span class="spec-key">USDC Contract</span>  <span class="spec-val"><code style="font-size:11px;">0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code></span></li>
+          <li><span class="spec-key">Facilitator</span>    <span class="spec-val"><code style="font-size:11px;">api.cdp.coinbase.com/platform/v2/x402</code></span></li>
+          <li><span class="spec-key">Sensor Toll</span>    <span class="spec-val">3000 µUSDC (0.003 USDC) per x402 call</span></li>
+          <li><span class="spec-key">Yield Split</span>    <span class="spec-val">30% Node · 70% Protocol Treasury</span></li>
+          <li><span class="spec-key">Auth</span>           <span class="spec-val">x402 USDC EIP-3009 authorization</span></li>
+          <li><span class="spec-key">Proof System</span>   <span class="spec-val">RISC Zero ZK-STARK · recursive proof aggregation</span></li>
+          <li><span class="spec-key">Explorer API</span>   <span class="spec-val"><code>https://explorer-api.exergynet.org</code></span></li>
+        </ul>
       </div>
     </section>
 
@@ -281,7 +240,7 @@
     <section>
       <div class="section-label">Infrastructure Core</div>
       <h2>L0 Sequencer</h2>
-      <p style="max-width:680px; margin-bottom:1.5rem;">The L0 Sequencer is the Rust/Axum binary at the center of the ExergyNet compute mesh. It receives mobile witness payloads, routes jobs to Desktop Provers, coordinates x402 payment verification with the CDP facilitator, and writes ZK-STARK settlement records to both settlement networks.</p>
+      <p style="max-width:680px; margin-bottom:1.5rem;">The L0 Sequencer is the Rust/Axum binary at the center of the ExergyNet compute mesh. It receives mobile witness payloads, routes jobs to Desktop Provers, coordinates x402 payment verification with the CDP facilitator, and writes ZK-STARK settlement records to Base Mainnet.</p>
 
       <div class="card accent-border" style="margin-bottom:1.5rem;">
         <ul class="spec-list">
@@ -340,8 +299,8 @@
         <div class="arch-row">
           <div class="arch-label">L2</div>
           <div class="arch-content">
-            <h5>Payment Layer — x402 / Solana Escrow</h5>
-            <p><strong>Base path:</strong> HTTP 402 handshake. Agent decodes USDC manifest, signs EIP-3009 authorization via CDP facilitator, re-submits with <code>X-PAYMENT</code> header. <strong>Solana path:</strong> Agent locks 0.002 SOL into LNES-03 Escrow PDA. Transient $EXG minted to begin execution tracking.</p>
+            <h5>Payment Layer — x402 / USDC</h5>
+            <p>HTTP 402 handshake. Agent decodes USDC manifest, signs EIP-3009 authorization via CDP facilitator, re-submits with <code>X-PAYMENT</code> header. Settlement in canonical USDC on Base Mainnet.</p>
           </div>
         </div>
         <div class="arch-row blue-row">
@@ -361,8 +320,8 @@
         <div class="arch-row highlight-row">
           <div class="arch-label">S</div>
           <div class="arch-content">
-            <h5>Settlement Layer — Base Mainnet (Primary) · Solana Mainnet-Beta (Investigating)</h5>
-            <p>Desktop Prover submits <code>POST /api/compute/settle</code> with proof hash and payout address. L0 Sequencer records <code>ZK-STARK VERIFIED</code>. <strong>Base:</strong> Settlement Router routes USDC to operator EVM wallet. <strong>Solana:</strong> LNES-03 burns $EXG, fractures SOL yield 30/70 atomically.</p>
+            <h5>Settlement Layer — Base Mainnet</h5>
+            <p>Desktop Prover submits <code>POST /api/compute/settle</code> with proof hash and payout address. L0 Sequencer records <code>ZK-STARK VERIFIED</code>. Settlement Router routes USDC to operator EVM wallet atomically, 30/70 split.</p>
           </div>
         </div>
       </div>
@@ -373,7 +332,7 @@
     ══════════════════════════════════════════════ -->
     <section>
       <div class="section-label">Settlement Flows</div>
-      <h2>End-to-End Settlement — Both Networks</h2>
+      <h2>End-to-End Settlement — Base Mainnet</h2>
 
       <div class="flow-dual">
 
@@ -405,37 +364,6 @@
           <div class="flow-node active-node">
             <span class="badge badge-green" style="min-width:32px; text-align:center;">05</span>
             <span><strong>Settlement</strong> — <code>POST /api/compute/settle</code> submitted. L0 records proof. Settlement Router routes USDC to operator wallet.</span>
-          </div>
-        </div>
-
-        <!-- SOLANA SOL ACTIVE -->
-        <div class="flow-col">
-          <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.25rem;">
-            <span class="network-pill pill-active" style="font-size:10px;"><span class="pill-dot"></span>Solana Mainnet-Beta · SOL</span>
-          </div>
-          <div class="flow-node">
-            <span class="badge badge-blue" style="min-width:32px; text-align:center;">01</span>
-            <span><strong>Escrow Lock</strong> — AI Agent (ElizaOS / MCP) deposits 0.002 SOL into LNES-03 Escrow PDA.</span>
-          </div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="flow-node">
-            <span class="badge badge-gray" style="min-width:32px; text-align:center;">02</span>
-            <span><strong>Transient Forging</strong> — LNES-03 mints $EXG accounting tokens. Execution tracking begins on-chain.</span>
-          </div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="flow-node">
-            <span class="badge badge-gray" style="min-width:32px; text-align:center;">03</span>
-            <span><strong>Physical Execution</strong> — Swarm executes zkVM job. Entropy signed by node Ed25519 identity.</span>
-          </div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="flow-node">
-            <span class="badge badge-gray" style="min-width:32px; text-align:center;">04</span>
-            <span><strong>STARK Compression</strong> — the design aggregates individual proofs into a single recursive master proof; recursive aggregation at production scale is in development.</span>
-          </div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="flow-node">
-            <span class="badge badge-green" style="min-width:32px; text-align:center;">05</span>
-            <span><strong>Atomic Fracture</strong> — LNES-03 verifies proof, burns $EXG, routes 0.0006 SOL to node. 0.0014 SOL to treasury.</span>
           </div>
         </div>
 
@@ -499,7 +427,7 @@
     ══════════════════════════════════════════════ -->
     <section>
       <div class="section-label">Economic Architecture</div>
-      <h2>Unidirectional Sump — Dual Network</h2>
+      <h2>Unidirectional Sump — Base Mainnet</h2>
       <p style="max-width:680px; margin-bottom:1.5rem;">By eliminating bi-directional AMM liquidity pools, ExergyNet achieves zero-slippage, zero-inflation economics. Value flows in one direction — into the protocol — and is fractureed atomically at settlement to the operator and treasury.</p>
 
       <!-- BASE USDC STATS -->
@@ -519,29 +447,13 @@
         </div>
       </div>
 
-      <!-- SOLANA SOL STATS -->
-      <p style="font-size:12px; color:var(--text-faint); margin-bottom:.5rem; text-transform:uppercase; letter-spacing:.06em;">Solana Mainnet-Beta · SOL</p>
-      <div class="stat-block">
-        <div class="stat-cell">
-          <div class="stat-num" style="color:var(--blue);">0.002</div>
-          <div class="stat-label">SOL inbound toll<br>per verified compute cycle</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-num" style="color:var(--accent);">0.0006</div>
-          <div class="stat-label">SOL node yield<br>30% — instant settlement</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-num" style="color:var(--text-soft);">0.0014</div>
-          <div class="stat-label">SOL to treasury<br>70% — cold wallet sweep</div>
-        </div>
-      </div>
     </section>
 
     <!-- CTA -->
     <section class="cta-section" style="border-top:1px solid var(--border);">
       <div class="container">
         <h2>Inspect the Protocol</h2>
-        <p>Verify every settlement transaction on-chain. Integrate the x402 sensor layer. Run the LNES-03 Desktop Prover.</p>
+        <p>Verify every settlement transaction on-chain. Integrate the x402 sensor layer. Run the Desktop Prover.</p>
         <div class="btn-row" style="justify-content:center;">
           <a href="lnes06.html"     class="btn btn-primary">Command Center &amp; Downloads</a>
           <a href="proof.html"      class="btn btn-secondary">View On-Chain Proof</a>

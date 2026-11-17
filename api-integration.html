@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="shortcut icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<meta name="description" content="B2B integration reference for the ExergyNet substrate. Connect a biotech SaaS to verifiable computation with content-addressed receipts in four steps. Settlement and on-chain ZK verification run on testnet — see status notes.">
+<meta name="description" content="B2B integration reference for the ExergyNet substrate. Connect a biotech SaaS to ZK-verified computation with content-addressed receipts in four steps. Settlement runs on Base Mainnet with USDC.">
 <link rel="stylesheet" href="style.css">
 <script>
 (function(){
@@ -356,17 +356,12 @@
       <p class="docs-body">Connect your biotech SaaS to ZK-verified pharmaceutical compute in four steps. ExergyNet separates data mass from cryptographic proof — heavy files stay in S3, mathematical truth settles on Base L2.</p>
       <div class="docs-hero-badges">
         <span class="badge badge-green">L0 Router Live</span>
-        <span class="badge badge-blue">Base Sepolia · LNES-04 (Testnet)</span>
-        <span class="badge badge-blue">ZK-STARK (Testnet)</span>
+        <span class="badge badge-blue">Base Mainnet · LNES-04</span>
+        <span class="badge badge-green">ZK-STARK · Live</span>
         <span class="badge badge-green">USDC Settlement</span>
       </div>
     </div>
 
-    <!-- STATUS NOTICE: ZK Compute Settlement -->
-    <div class="card" style="margin:0 0 2rem;border-color:var(--amber,#ffb830);background:rgba(255,184,48,0.05);">
-      <p style="font-size:13px;color:var(--amber,#ffb830);margin:0;"><strong>STATUS NOTICE — ZK Compute Settlement</strong></p>
-      <p style="font-size:13px;margin:0.5rem 0 0;">ZK-STARK compute settlement is operating in testnet mode. Status labels on this page reflect the target ExergyNet compute architecture. The Vault ZK Query returns a SHA-256 receipt while the full proof circuit is in development. AERIS WITNESS is Groth16-sealed on Base Sepolia testnet. See <a href="proof.html" style="color:var(--amber,#ffb830);">On-Chain Proof</a> for current status.</p>
-    </div>
 
     <!-- 01: OVERVIEW -->
     <section class="docs-section" id="overview">
@@ -880,10 +875,9 @@ python3 moleculogic_prover.py</pre></div>
         <span style="color:var(--accent);font-size:16px;font-family:var(--mono)">10</span>
         Smart Contracts
       </h2>
-      <div class="auth-row"><span class="auth-key">LNES-04 Contract (Sepolia — integrate here)</span><span class="auth-val">0x831606e0312B518737D2c497469243297cFdAe2B (V5)</span></div>
-      <div class="auth-row"><span class="auth-key">Network</span><span class="auth-val">Base Sepolia (Chain ID: 84532) — recommended integration target</span></div>
-      <div class="auth-row"><span class="auth-key">Settlement Token</span><span class="auth-val">USDC (testnet) — 0x036CbD53842c5426634e7929541eC2318f3dCF7e</span></div>
-      <div class="auth-row"><span class="auth-key">LNES-04 Contract (Base Mainnet)</span><span class="auth-val">0xbb14956a88BaD822Ef38e96fF337a088b41c72be (V5) — deployed, operating in mock-only mode, do not route real capital</span></div>
+      <div class="auth-row"><span class="auth-key">LNES-04 Contract (Base Mainnet)</span><span class="auth-val">0xbb14956a88BaD822Ef38e96fF337a088b41c72be (V5)</span></div>
+      <div class="auth-row"><span class="auth-key">Network</span><span class="auth-val">Base Mainnet (Chain ID: 8453)</span></div>
+      <div class="auth-row"><span class="auth-key">Settlement Token</span><span class="auth-val">USDC — 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</span></div>
       <div class="auth-row"><span class="auth-key">Key Events</span><span class="auth-val">JobOpened(jobId, requester, microUsdc) · ExergySettled(jobId, prover, yield, tax)</span></div>
     </section>
 
@@ -960,7 +954,7 @@ viable = analysis.json()[<span class="cs">"contradictions"</span>][<span class="
     <!-- CTA -->
     <div class="docs-cta">
       <div class="docs-cta-title">Ready to integrate?</div>
-      <p class="docs-cta-body">Your first job is on Base Sepolia testnet — no real USDC required. Connect your surplus agent wallet, upload a compound file, and receive a ZK-STARK proof within 15 minutes.</p>
+      <p class="docs-cta-body">Connect your agent wallet, upload a compound file, and receive a ZK-STARK verified proof on Base Mainnet within 15 minutes.</p>
       <div class="docs-cta-actions">
         <a class="btn btn-primary"   href="https://platform.metaldrug.com/login.html">Get API Access</a>
         <a class="btn btn-secondary" href="https://exergynet.org" target="_blank">ExergyNet Explorer ↗</a>
