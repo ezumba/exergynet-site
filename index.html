@@ -8,6 +8,201 @@
 <meta name="description" content="ExergyNet provides persistent state, bounded evidence delivery, and independent execution authority for enterprise AI systems. Explore published benchmarks, local memory, and enterprise evaluations.">
 <link rel="icon" href="assets/favicon.png">
 <link rel="stylesheet" href="exgn-web006.css">
+<style>
+/* ═══════════════════════════════════════════════════
+   HERO FLOW DIAGRAM  —  WEB-024-VIS
+   Three-panel animated runtime: Vault → Context → Authority
+   Pure CSS + inline JS. No external deps.
+   ═══════════════════════════════════════════════════ */
+.hfd-wrap {
+  margin-top: 2.5rem;
+  position: relative;
+}
+.hfd {
+  display: grid;
+  grid-template-columns: 1fr 68px 1fr 68px 1fr;
+  grid-template-rows: auto 1fr;
+  background: #080e1c;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 13px;
+  padding: 0 1.25rem 1.5rem;
+  font-family: var(--mono);
+  position: relative;
+  overflow: hidden;
+}
+/* ambient top glow */
+.hfd::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 480px; height: 180px;
+  background: radial-gradient(ellipse, rgba(13,148,136,.13) 0%, transparent 70%);
+  pointer-events: none;
+}
+/* ── chrome strip ── */
+.hfd-chrome {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.85rem 0 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.hfd-dot { width:10px; height:10px; border-radius:50%; }
+.hfd-dot-r { background:#ef4444; }
+.hfd-dot-y { background:#f59e0b; }
+.hfd-dot-g { background:#10b981; }
+.hfd-chrome-label {
+  font-size:10px; color:rgba(255,255,255,.22);
+  letter-spacing:.12em; margin-left:auto;
+}
+/* ── panel shared ── */
+.hfd-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.5rem;
+}
+.hfd-plabel {
+  font-size:9px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--teal-500);
+  font-weight:600; margin-bottom:2px;
+}
+/* memory cell grid */
+.hfd-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 3px;
+  width: 100%;
+  max-width: 126px;
+}
+.hfd-c {
+  aspect-ratio:1; border-radius:2px;
+  background: var(--teal-600);
+  opacity: .1;
+  transition: opacity .35s, background .35s, box-shadow .35s;
+}
+.hfd-c.on { opacity:.55; background:var(--teal-500); }
+.hfd-c.glow {
+  opacity:1; background:var(--teal-300);
+  box-shadow:0 0 8px rgba(94,234,212,.7);
+}
+.hfd-c.sel {
+  opacity:1; background:var(--teal-200);
+  box-shadow:0 0 10px rgba(153,246,228,.85);
+  animation: hfd-sel 1.6s ease-in-out infinite;
+}
+@keyframes hfd-sel {
+  0%,100%{ box-shadow:0 0 10px rgba(153,246,228,.85); }
+  50%    { box-shadow:0 0 18px rgba(153,246,228,1); }
+}
+.hfd-mnum {
+  font-size:1.25rem; font-weight:700;
+  color:#fff; line-height:1; letter-spacing:-.02em;
+}
+.hfd-munit { font-size:.68rem; color:rgba(255,255,255,.35); }
+.hfd-pcap {
+  font-size:9px; letter-spacing:.08em;
+  color:rgba(255,255,255,.28); text-align:center;
+}
+/* ── connector ── */
+.hfd-conn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.hfd-ctag {
+  font-size:7.5px; letter-spacing:.12em;
+  color:rgba(255,255,255,.2); text-transform:uppercase;
+  text-align:center; white-space:nowrap;
+}
+.hfd-track {
+  position:relative; width:40px; height:2px;
+}
+.hfd-track-line {
+  position:absolute; inset:0;
+  background:linear-gradient(90deg,rgba(13,148,136,.2),rgba(13,148,136,.55));
+  border-radius:1px;
+}
+.hfd-arrowhead {
+  position:absolute; right:-4px; top:50%;
+  transform:translateY(-50%);
+  width:0; height:0;
+  border-left:5px solid rgba(13,148,136,.55);
+  border-top:3px solid transparent;
+  border-bottom:3px solid transparent;
+}
+.hfd-pk {
+  position:absolute; left:-4px; top:50%;
+  transform:translateY(-50%);
+  width:7px; height:7px; border-radius:50%;
+  background:var(--teal-300);
+  box-shadow:0 0 10px var(--teal-400), 0 0 4px var(--teal-200);
+  opacity:0; pointer-events:none;
+}
+.hfd-pk.go { animation: hfd-fly .65s ease-in forwards; }
+@keyframes hfd-fly {
+  0%  { left:-4px;  opacity:1; }
+  85% { opacity:.8; }
+  100%{ left:44px;  opacity:0; }
+}
+/* ── authority gate ── */
+.hfd-shield-wrap {
+  display:flex; flex-direction:column;
+  align-items:center; gap:0.5rem;
+}
+.hfd-shield {
+  width:42px; height:50px;
+  color:rgba(255,255,255,.15);
+  transition:color .45s, filter .45s;
+  overflow:visible;
+}
+.hfd-shield.permit {
+  color:var(--teal-400);
+  filter:drop-shadow(0 0 8px rgba(45,212,191,.5));
+}
+.hfd-shield.deny {
+  color:#f87171;
+  filter:drop-shadow(0 0 8px rgba(248,113,113,.55));
+}
+.hfd-smark {
+  stroke-dasharray:32;
+  stroke-dashoffset:32;
+  transition:stroke-dashoffset .4s ease;
+}
+.hfd-shield.permit .hfd-smark-ok { stroke-dashoffset:0; }
+.hfd-shield.deny   .hfd-smark-no { stroke-dashoffset:0; }
+.hfd-verd {
+  font-size:10.5px; font-weight:700; letter-spacing:.06em;
+  min-height:1.3em; text-align:center;
+  color:rgba(255,255,255,.2);
+  transition:color .4s;
+}
+.hfd-verd.checking { color:rgba(255,255,255,.45); }
+.hfd-verd.permit   { color:var(--teal-300); }
+.hfd-verd.deny     { color:#fca5a5; }
+/* ── responsive ── */
+@media (max-width:680px) {
+  .hfd {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: .75rem;
+    padding: 0 1rem 1.25rem;
+  }
+  .hfd-conn { flex-direction:row; gap:4px; }
+  .hfd-ctag:last-child { display:none; }
+  .hfd-track { width:60px; }
+  @keyframes hfd-fly {
+    100%{ left:64px; opacity:0; }
+  }
+}
+@media (max-width:420px) { .hfd-wrap { display:none; } }
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,6 +248,147 @@
         <a class="btn btn-outline btn-lg" href="whitepaper.html">Read V5 research <span aria-hidden="true">↓</span></a>
       </div>
       <p class="hero-tagline">REMEMBER · SELECT · REASON · AUTHORIZE · EXECUTE · RECORD</p>
+
+      <!-- hero flow diagram — decorative, aria-hidden -->
+      <div class="hfd-wrap" aria-hidden="true">
+        <div class="hfd" id="hfd">
+          <!-- chrome strip -->
+          <div class="hfd-chrome">
+            <span class="hfd-dot hfd-dot-r"></span>
+            <span class="hfd-dot hfd-dot-y"></span>
+            <span class="hfd-dot hfd-dot-g"></span>
+            <span class="hfd-chrome-label">EXERGYNET RUNTIME</span>
+          </div>
+          <!-- VAULT panel -->
+          <div class="hfd-panel" id="hfd-vault">
+            <div class="hfd-plabel">VAULT</div>
+            <div class="hfd-grid" id="hfd-vault-grid">
+              <div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div>
+              <div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div>
+              <div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div>
+              <div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div><div class="hfd-c on"></div>
+            </div>
+            <div class="hfd-mnum">101M</div>
+            <div class="hfd-munit">vectors</div>
+            <div class="hfd-pcap">persistent state</div>
+          </div>
+          <!-- connector 1: xLMP SELECT -->
+          <div class="hfd-conn" id="hfd-conn1">
+            <div class="hfd-ctag">xLMP</div>
+            <div class="hfd-track">
+              <div class="hfd-track-line"></div>
+              <div class="hfd-arrowhead"></div>
+              <div class="hfd-pk" id="hfd-pk1"></div>
+            </div>
+            <div class="hfd-ctag">select</div>
+          </div>
+          <!-- CONTEXT panel -->
+          <div class="hfd-panel" id="hfd-ctx">
+            <div class="hfd-plabel">CONTEXT</div>
+            <div class="hfd-grid" id="hfd-ctx-grid">
+              <div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div>
+              <div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div>
+              <div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div>
+              <div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div><div class="hfd-c"></div>
+            </div>
+            <div class="hfd-mnum">847</div>
+            <div class="hfd-munit">tokens</div>
+            <div class="hfd-pcap">bounded delivery</div>
+          </div>
+          <!-- connector 2: model proposes -->
+          <div class="hfd-conn" id="hfd-conn2">
+            <div class="hfd-ctag">model</div>
+            <div class="hfd-track">
+              <div class="hfd-track-line"></div>
+              <div class="hfd-arrowhead"></div>
+              <div class="hfd-pk" id="hfd-pk2"></div>
+            </div>
+            <div class="hfd-ctag">proposes</div>
+          </div>
+          <!-- AUTHORITY panel -->
+          <div class="hfd-panel" id="hfd-auth">
+            <div class="hfd-plabel">AUTHORITY</div>
+            <div class="hfd-shield-wrap">
+              <svg class="hfd-shield" id="hfd-shield" viewBox="0 0 42 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 2L4 10v13c0 10 7.3 19.4 17 22 9.7-2.6 17-12 17-22V10L21 2z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.5"/>
+                <path id="hfd-check" class="hfd-smark hfd-smark-ok" d="M13 25l5.5 6L29 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path id="hfd-x1" class="hfd-smark hfd-smark-no" d="M15 18l12 14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                <path id="hfd-x2" class="hfd-smark hfd-smark-no" d="M27 18L15 32" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              <div class="hfd-verd" id="hfd-verd">— IDLE —</div>
+            </div>
+            <div class="hfd-pcap">independent control</div>
+          </div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var CYCLE = 5500;
+        var vaultCells = document.getElementById('hfd-vault-grid').children;
+        var ctxCells   = document.getElementById('hfd-ctx-grid').children;
+        var pk1    = document.getElementById('hfd-pk1');
+        var pk2    = document.getElementById('hfd-pk2');
+        var shield = document.getElementById('hfd-shield');
+        var verd   = document.getElementById('hfd-verd');
+        var ambTimer = null;
+        var SEL_INDICES = [2, 7, 14];
+
+        function resetCtx() {
+          for (var i = 0; i < ctxCells.length; i++) ctxCells[i].classList.remove('sel');
+        }
+        function lightCtx() {
+          for (var i = 0; i < SEL_INDICES.length; i++) ctxCells[SEL_INDICES[i]].classList.add('sel');
+        }
+        function firePacket(el) {
+          el.classList.remove('go');
+          void el.offsetWidth;
+          el.classList.add('go');
+        }
+        function resetAuth() {
+          shield.classList.remove('permit','deny');
+          verd.className = 'hfd-verd';
+          verd.textContent = '— IDLE —';
+          document.getElementById('hfd-check').style.strokeDashoffset = '32';
+          document.getElementById('hfd-x1').style.strokeDashoffset = '32';
+          document.getElementById('hfd-x2').style.strokeDashoffset = '32';
+        }
+        function runAuth() {
+          verd.className = 'hfd-verd checking';
+          verd.textContent = 'CHECKING…';
+          setTimeout(function() {
+            var permit = Math.random() > 0.15;
+            if (permit) {
+              shield.classList.add('permit');
+              document.getElementById('hfd-check').style.strokeDashoffset = '0';
+              verd.className = 'hfd-verd permit';
+              verd.textContent = '✓ PERMIT';
+            } else {
+              shield.classList.add('deny');
+              document.getElementById('hfd-x1').style.strokeDashoffset = '0';
+              document.getElementById('hfd-x2').style.strokeDashoffset = '0';
+              verd.className = 'hfd-verd deny';
+              verd.textContent = '✗ DENY';
+            }
+          }, 1100);
+        }
+        function ambPulse() {
+          var idx = Math.floor(Math.random() * vaultCells.length);
+          vaultCells[idx].classList.add('glow');
+          setTimeout(function(){ vaultCells[idx].classList.remove('glow'); }, 400);
+        }
+        function startAmb() { stopAmb(); ambTimer = setInterval(ambPulse, 450); }
+        function stopAmb()  { if (ambTimer) { clearInterval(ambTimer); ambTimer = null; } }
+        function runCycle() {
+          startAmb();
+          resetCtx();
+          resetAuth();
+          setTimeout(function() { firePacket(pk1); }, 800);
+          setTimeout(function() { lightCtx(); firePacket(pk2); runAuth(); }, 1700);
+        }
+        runCycle();
+        setInterval(runCycle, CYCLE);
+      })();
+      </script>
     </div>
   </section>
 
