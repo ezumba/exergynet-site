@@ -68,6 +68,48 @@ const SEARCH_INDEX = [
     url: 'whitepaper.html#citation',
     keywords: 'citation bibtex SHA256 checksum download verify PDF',
   },
+  {
+    title: 'ExergyCode',
+    description: 'Model-independent AI engineering environment. Bring your own provider, persistent memory, governed execution.',
+    url: 'exergycode.html',
+    keywords: 'exergycode CLI terminal BYOK persistent memory governed execution RHO VMN model-independent',
+  },
+  {
+    title: 'ExergyCode — release status',
+    description: 'ExergyCode is in development. Agent Continuity beta and VMN are available now.',
+    url: 'exergycode.html#release-status',
+    keywords: 'ExergyCode release status download install Linux macOS Windows development alpha beta',
+  },
+  {
+    title: 'ExergyNet Studio',
+    description: 'Graphical workspace for AI engineering. 21/21 tests PASS. Distribution pending legal approval.',
+    url: 'studio.html',
+    keywords: 'studio graphical TUI Ink swarm multi-agent workspace alpha qualified',
+  },
+  {
+    title: 'Agent Continuity',
+    description: 'Carry project context across Claude Code, OpenCode, and Codex CLI. Local-first, no account required.',
+    url: 'continuity.html',
+    keywords: 'agent continuity cross-client checkpoint handoff Claude Code OpenCode Codex CLI local Ed25519',
+  },
+  {
+    title: 'Agent Continuity — installation',
+    description: 'Install Agent Continuity beta on Linux / Ubuntu WSL2. Version 0.4.0-beta.3.',
+    url: 'continuity.html#install',
+    keywords: 'continuity install beta 0.4.0 Linux WSL2 npm sha256 checksum',
+  },
+  {
+    title: 'Agent Continuity — trust and privacy',
+    description: 'Local-only storage, no cloud account required, Ed25519 checkpoint verification.',
+    url: 'continuity.html#trust',
+    keywords: 'continuity trust privacy local Ed25519 signatures checkpoint integrity no cloud',
+  },
+  {
+    title: 'ExergyNet products',
+    description: 'ExergyCode, ExergyNet Studio, Agent Continuity — three developer interfaces on one ExergyNet runtime.',
+    url: 'index.html#products',
+    keywords: 'products ExergyCode Studio Continuity developer interfaces runtime',
+  },
 ];
 
 /* ─── Search ──────────────────────────────────────────────────────────────── */

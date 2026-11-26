@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>ExergyCode | ExergyNet</title>
+<meta name="description" content="ExergyCode is a model-independent AI engineering environment powered by ExergyNet. Bring your own models, preserve engineering memory, and govern agent execution from your terminal.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="exgn-web006.css">
+<style>
+/* ═══════════════════════════════════════════════════
+   ExergyCode page — WEB006 supplemental styles
+   ═══════════════════════════════════════════════════ */
+
+/* Terminal mockup */
+.ec-terminal {
+  background: #0b1019;
+  border: 1px solid #1e2d3d;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.8;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+}
+.ec-terminal-chrome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  background: #0d1420;
+  border-bottom: 1px solid #1a2535;
+}
+.ec-terminal-dot { width:10px; height:10px; border-radius:50%; }
+.ec-terminal-dot-r { background: #ef4444; }
+.ec-terminal-dot-y { background: #f59e0b; }
+.ec-terminal-dot-g { background: #10b981; }
+.ec-terminal-title {
+  margin-left: auto;
+  font-size: 11px;
+  color: rgba(255,255,255,.25);
+  letter-spacing: .08em;
+}
+.ec-terminal-body {
+  padding: 20px 22px;
+  color: #c8d8ed;
+}
+.ec-terminal-body .prompt { color: #80dbb5; }
+.ec-terminal-body .cmd { color: #e3ecff; }
+.ec-terminal-body .out { color: #7a8da8; }
+.ec-terminal-body .val { color: #8cc9ff; }
+.ec-terminal-body .status-ok { color: #80dbb5; }
+.ec-terminal-body .cursor { opacity: .7; animation: blink 1.1s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:.7} 50%{opacity:0} }
+.ec-terminal-line { display: flex; gap: 8px; }
+.ec-terminal-gap { height: 10px; }
+.ec-terminal-caption {
+  font-size: 11px;
+  color: var(--text-3);
+  font-style: italic;
+  margin-top: var(--s-3);
+  font-family: var(--mono);
+  text-align: center;
+}
+
+/* Features grid */
+.ec-features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-4);
+}
+@media (max-width: 900px) { .ec-features-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 540px) { .ec-features-grid { grid-template-columns: 1fr; } }
+.ec-feat-card {
+  padding: var(--s-6);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+.ec-feat-card h3 {
+  font-size: var(--t-sm);
+  font-weight: 600;
+  margin: var(--s-4) 0 var(--s-2);
+  color: var(--text);
+}
+.ec-feat-card p {
+  font-size: var(--t-sm);
+  color: var(--text-2);
+  line-height: 1.65;
+  margin: 0;
+}
+.ec-feat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r);
+  background: var(--accent-bg);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+
+/* Provider pills */
+.ec-providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  justify-content: center;
+  margin: var(--s-8) 0;
+}
+.ec-provider-pill {
+  padding: var(--s-2) var(--s-4);
+  border: 1px solid var(--border-mid);
+  border-radius: 999px;
+  font-size: var(--t-sm);
+  font-family: var(--mono);
+  color: var(--text-2);
+  background: var(--bg);
+}
+.ec-provider-pill.planned {
+  color: var(--text-3);
+  background: var(--bg-subtle);
+  border-style: dashed;
+}
+
+/* Two-column layout */
+.ec-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-16);
+  align-items: start;
+}
+@media (max-width: 760px) { .ec-two-col { grid-template-columns: 1fr; gap: var(--s-8); } }
+.ec-two-col-rev {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-16);
+  align-items: start;
+}
+@media (max-width: 760px) { .ec-two-col-rev { grid-template-columns: 1fr; gap: var(--s-8); } }
+
+/* Spec box */
+.ec-spec-box {
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s-6);
+  margin-top: var(--s-6);
+}
+.ec-spec-box ul {
+  margin: 0;
+  padding: 0 0 0 var(--s-5);
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  color: var(--text-2);
+  line-height: 2;
+}
+
+/* Three governance cards */
+.ec-gov-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-4);
+}
+@media (max-width: 760px) { .ec-gov-grid { grid-template-columns: 1fr; } }
+.ec-gov-card {
+  padding: var(--s-7);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+}
+.ec-gov-card h3 {
+  font-size: var(--t-base);
+  font-weight: 600;
+  margin: var(--s-4) 0 var(--s-3);
+}
+.ec-gov-card p { font-size: var(--t-sm); color: var(--text-2); line-height: 1.65; margin: 0; }
+.ec-gov-num {
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* Steps */
+.ec-steps { display: grid; gap: var(--s-6); }
+.ec-step {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: var(--s-5);
+  align-items: start;
+}
+.ec-step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.ec-step-body h4 { font-size: var(--t-base); font-weight: 600; margin: 0 0 var(--s-2); }
+.ec-step-body p { font-size: var(--t-sm); color: var(--text-2); line-height: 1.65; margin: 0 0 var(--s-3); }
+
+/* Notice banner */
+.ec-notice {
+  background: color-mix(in srgb, #f59e0b 8%, var(--bg));
+  border: 1px solid color-mix(in srgb, #f59e0b 25%, transparent);
+  border-radius: var(--r-lg);
+  padding: var(--s-4) var(--s-5);
+  font-size: var(--t-sm);
+  color: var(--text-2);
+  margin-top: var(--s-6);
+}
+.ec-notice strong { color: var(--text); }
+
+/* Disabled button */
+.btn-disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Doc links grid */
+.ec-docs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+}
+@media (max-width: 760px) { .ec-docs-grid { grid-template-columns: 1fr; } }
+.ec-doc-link {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-5);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  color: var(--text);
+  font-size: var(--t-sm);
+  transition: border-color .15s;
+  text-decoration: none;
+}
+.ec-doc-link:hover { border-color: var(--border-mid); color: var(--accent); }
+.ec-doc-link-icon { font-size: 16px; }
+
+/* Release status table */
+.ec-release-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-sm);
+  margin-top: var(--s-6);
+}
+.ec-release-table th {
+  text-align: left;
+  padding: var(--s-3) var(--s-4);
+  font-size: var(--t-xs);
+  font-family: var(--mono);
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border);
+}
+.ec-release-table td {
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-2);
+  vertical-align: middle;
+}
+.ec-release-table td:first-child { color: var(--text); font-weight: 500; }
+.ec-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-family: var(--mono);
+  font-weight: 600;
+}
+.ec-badge-amber { background: color-mix(in srgb, #f59e0b 12%, transparent); color: #92400e; border: 1px solid color-mix(in srgb, #f59e0b 30%, transparent); }
+.ec-badge-gray { background: var(--bg-muted); color: var(--text-3); border: 1px solid var(--border); }
+.ec-badge-blue { background: color-mix(in srgb, #3b82f6 10%, transparent); color: #1d4ed8; border: 1px solid color-mix(in srgb, #3b82f6 25%, transparent); }
+.ec-badge-green { background: var(--accent-bg); color: var(--accent-h); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main-content">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="ExergyNet home">
+      <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+    </a>
+    <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+      <a href="index.html#platform">Platform</a>
+      <a href="exergycode.html" aria-current="page">Products</a>
+      <a href="docs.html">Developers</a>
+      <a href="whitepaper.html">Research</a>
+      <a href="index.html#company">Company</a>
+    </nav>
+    <div class="header-actions">
+      <button class="search-trigger" aria-label="Search" id="search-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+        <span class="s-label">Search</span>
+        <kbd>⌘K</kbd>
+      </button>
+      <a class="btn btn-primary" href="https://portal.exergynet.org" target="_blank" rel="noopener">Get early access <span aria-hidden="true">↗</span></a>
+      <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main-content">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow hero-eyebrow"><span class="dot" aria-hidden="true"></span>ExergyNet / ExergyCode</div>
+      <h1>Your models. Your code.<br><em>Persistent intelligence.</em></h1>
+      <p class="hero-sub">ExergyCode is a model-independent AI engineering environment powered by ExergyNet, designed to preserve engineering knowledge, govern computational consumption, and keep agent execution under operator control.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="https://portal.exergynet.org" target="_blank" rel="noopener">Get early access <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-outline btn-lg" href="docs.html">Read documentation <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="ec-terminal" aria-label="Illustrative ExergyCode terminal interface" style="max-width:640px;margin-top:var(--s-10)">
+        <div class="ec-terminal-chrome">
+          <div class="ec-terminal-dot ec-terminal-dot-r" aria-hidden="true"></div>
+          <div class="ec-terminal-dot ec-terminal-dot-y" aria-hidden="true"></div>
+          <div class="ec-terminal-dot ec-terminal-dot-g" aria-hidden="true"></div>
+          <span class="ec-terminal-title">EXERGYCODE · Powered by ExergyNet</span>
+        </div>
+        <div class="ec-terminal-body" aria-hidden="true">
+          <div class="ec-terminal-line"><span class="prompt">❯</span><span class="cmd">/status</span></div>
+          <div>Provider: Anthropic Claude &nbsp;&nbsp;&nbsp; <span class="status-ok">[BYOK connected]</span></div>
+          <div>Memory: &nbsp;VMN namespace #023 &nbsp; <span class="val">[2,847 vectors]</span></div>
+          <div>Mode: &nbsp;&nbsp;&nbsp;VMN-BOUNDED</div>
+          <div class="ec-terminal-gap"></div>
+          <div class="ec-terminal-line"><span class="prompt">❯</span><span class="cmd">/context</span></div>
+          <div>Active context: &nbsp;812 tokens</div>
+          <div>Full vault size: 101M vectors</div>
+          <div class="ec-terminal-gap"></div>
+          <div class="ec-terminal-line"><span class="prompt">❯</span><span class="cursor">_</span></div>
+        </div>
+      </div>
+      <p class="ec-terminal-caption">Illustrative interface. ExergyCode is in active development. <a href="#release-status" style="color:var(--accent)">See release status ↓</a></p>
+    </div>
+  </section>
+
+  <!-- WHY PERSISTENT INTELLIGENCE -->
+  <section class="section section-alt" aria-labelledby="why-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <h2 id="why-heading">Every AI session starts from zero.<br>Yours doesn't have to.</h2>
+      </div>
+      <div class="ec-two-col">
+        <div>
+          <p style="font-size:var(--t-lg);line-height:1.75;color:var(--text-2)">Traditional AI coding tools are stateless. When a session ends, the work disappears. You rebuild context from scratch. Your models forget what your team already established.</p>
+          <p style="font-size:var(--t-lg);line-height:1.75;color:var(--text-2);margin-top:var(--s-4)">Projects accumulate decisions, architectural constraints, and completed tasks. None of that should live exclusively in a chat window.</p>
+        </div>
+        <div>
+          <p style="font-size:var(--t-lg);line-height:1.75;color:var(--text-2)">ExergyCode connects to ExergyNet's persistent memory infrastructure. Engineering decisions, task completions, and verified checkpoints are preserved and selectively retrieved when needed — not replayed in full every time.</p>
+          <p style="font-size:var(--t-lg);line-height:1.75;color:var(--text-2);margin-top:var(--s-4)">Each session starts with what's relevant. Each session ends with a verifiable record of what was done.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES GRID -->
+  <section class="section" aria-labelledby="features-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Capabilities</div>
+        <h2 id="features-heading">Built for governed engineering.</h2>
+        <p>Eight design properties. Each independently useful. Together, a coherent development environment.</p>
+      </div>
+      <div class="ec-features-grid">
+        <div class="ec-feat-card">
+          <div class="ec-feat-icon" aria-hidden="true">🔑</div>
+          <h3>Bring your own inference provider</h3>
+          <p>Connect your existing Anthropic, OpenAI, or other authorized provider account. Your provider key stays in your environment.</p>
+        </div>
+        <div class="ec-feat-card">
+          <div class="ec-feat-icon" aria-hidden="true">◇</div>
+          <h3>Persistent engineering memory</h3>
+          <p>Session knowledge is stored in your VMN namespace and retrieved when relevant, not discarded when you close the terminal.</p>
+        </div>
+        <div class="ec-feat-card">
+          <div class="ec-feat-icon" aria-hidden="true">⌁</div>
+          <h3>Context-efficient AI development</h3>
+          <p>ExergyNet's xLMP layer selects the most relevant prior context rather than replaying your entire history. Work longer without hitting model limits.</p>
+        </div>
+        <div class="ec-feat-card">
+          <div class="ec-feat-icon" aria-hidden="true">↗</div>
+          <h3>Model-independent continuity</h3>
+          <p>Switch providers, change models, or resume from a different machine. Your verified checkpoints travel with you, not with the model.</p>
+        </div>
+        <div class="ec-feat-card">
+          <div class="ec-feat-icon" aria-hidden="true">▣</div>
+          <h3>Governed agent execution</h3>
+          <p>Agents operate under explicit, reviewable permissions. ExergyCode does not execute autonomously beyond what you have authorized.</p>
+        </div>
+        <div class="ec-feat-card">
+          <div class="ec-feat-icon" aria-hidden="true">✓</div>
+          <h3>Evidence-bound task completion</h3>
+          <p>Completed tasks produce verifiable evidence — cryptographic checkpoints you can inspect, audit, and hand off to the next session.</p>
+        </div>
+        <div class="ec-feat-card">
+          <div class="ec-feat-icon" aria-hidden="true">≋</div>
+          <h3>Transparent computational usage</h3>
+          <p>See what computational resources your sessions consumed, denominated in RHO — ExergyNet's normalized resource accounting unit.</p>
+        </div>
+        <div class="ec-feat-card">
+          <div class="ec-feat-icon" aria-hidden="true">⌘</div>
+          <h3>Native terminal development</h3>
+          <p>ExergyCode is built for the terminal. No browser required for the engineering workflow. Open ExergyNet Studio for the graphical workspace when you need it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORTED PROVIDERS -->
+  <section class="section section-alt" aria-labelledby="providers-heading">
+    <div class="wrap" style="text-align:center;max-width:680px;margin-inline:auto">
+      <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Provider integration</div>
+      <h2 id="providers-heading">Your models. Your rules.</h2>
+      <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-4)">ExergyCode is designed to work with the providers you already use. Connect your own API key — ExergyNet governs the session, not the model.</p>
+      <div class="ec-providers">
+        <span class="ec-provider-pill">Anthropic Claude (BYOK)</span>
+        <span class="ec-provider-pill">OpenAI-compatible endpoints (BYOK)</span>
+        <span class="ec-provider-pill planned">ExergyNet Vanguard (coming)</span>
+        <span class="ec-provider-pill planned">Local models (planned)</span>
+      </div>
+      <p style="font-size:var(--t-xs);color:var(--text-3);font-family:var(--mono);margin-top:var(--s-4)">BYOK provider keys are never transmitted to ExergyNet infrastructure. Provider availability is subject to ExergyNet's authorized integration list.</p>
+    </div>
+  </section>
+
+  <!-- CONTEXT AND USAGE -->
+  <section class="section" aria-labelledby="context-heading">
+    <div class="wrap">
+      <div class="ec-two-col">
+        <div>
+          <div class="eyebrow" style="margin-bottom:var(--s-4)"><span class="dot" aria-hidden="true"></span>Resource accounting</div>
+          <h2 id="context-heading">Know what you've spent.<br>Control what you spend next.</h2>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-4)">ExergyNet introduces RHO — a normalized resource accounting unit that attributes computational work to the tasks that created it.</p>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-6)">ExergyCode surfaces this measurement in your terminal so you can make informed decisions about session scope, model selection, and task boundaries.</p>
+          <p style="font-size:var(--t-sm);color:var(--text-3);font-style:italic">RHO is a measurement, not a price. It is not a cryptocurrency, stablecoin, or redeemable asset.</p>
+          <a class="btn btn-outline" href="rho.html" style="margin-top:var(--s-6)">Read the RHO specification <span aria-hidden="true">→</span></a>
+        </div>
+        <div>
+          <div class="ec-terminal" aria-label="Illustrative /context command output">
+            <div class="ec-terminal-chrome">
+              <div class="ec-terminal-dot ec-terminal-dot-r" aria-hidden="true"></div>
+              <div class="ec-terminal-dot ec-terminal-dot-y" aria-hidden="true"></div>
+              <div class="ec-terminal-dot ec-terminal-dot-g" aria-hidden="true"></div>
+              <span class="ec-terminal-title">exergycode</span>
+            </div>
+            <div class="ec-terminal-body" aria-hidden="true">
+              <div class="ec-terminal-line"><span class="prompt">❯</span><span class="cmd">/context</span></div>
+              <div>Session tokens: &nbsp;&nbsp;1,247</div>
+              <div>RHO accrued: &nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.012</span></div>
+              <div>Vault size: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2,847 vectors</div>
+              <div class="ec-terminal-gap"></div>
+              <div class="ec-terminal-line"><span class="prompt">❯</span><span class="cmd">/budget --session</span></div>
+              <div>Remaining: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.088 RHO</span></div>
+              <div>Estimated completion: <span class="status-ok">within budget</span></div>
+              <div class="ec-terminal-gap"></div>
+              <div class="ec-terminal-line"><span class="prompt">❯</span><span class="cursor">_</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENGINEERING MEMORY -->
+  <section class="section section-alt" aria-labelledby="memory-heading">
+    <div class="wrap">
+      <div class="ec-two-col-rev">
+        <div>
+          <div class="ec-spec-box">
+            <ul>
+              <li>BM25 keyword search over stored sessions</li>
+              <li>SHA-256 content addressing</li>
+              <li>Local-first; cloud sync via ExergyNet API key</li>
+              <li>Ed25519 checkpoint signatures</li>
+              <li>Namespace isolation per project</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:var(--s-4)"><span class="dot" aria-hidden="true"></span>Persistent state</div>
+          <h2 id="memory-heading">Memory that grows with your project.<br>Context that stays bounded.</h2>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-4)">ExergyCode stores engineering knowledge in your personal VMN namespace — a local-first, hash-linked memory vault powered by ExergyNet's persistent state infrastructure.</p>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-4)">When you start a new session, ExergyCode retrieves what's relevant. When you finish, it records what was verified.</p>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75">Each session starts better than the last, without replaying everything that came before it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GOVERNED EXECUTION -->
+  <section class="section" aria-labelledby="governance-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Authority layer</div>
+        <h2 id="governance-heading">Agents under authority.<br>Not running loose.</h2>
+        <p>ExergyCode sessions operate under a permission structure you define. This is not a soft guardrail.</p>
+      </div>
+      <div class="ec-gov-grid">
+        <div class="ec-gov-card">
+          <div class="ec-gov-num">01 / STRUCTURE</div>
+          <h3>Permission structure</h3>
+          <p>Elevated commands require explicit authorization. Agents cannot exceed the scope of what they have been permitted to do.</p>
+        </div>
+        <div class="ec-gov-card">
+          <div class="ec-gov-num">02 / EVIDENCE</div>
+          <h3>Evidence-bound checkpoints</h3>
+          <p>Verified task completions produce Ed25519-signed checkpoints — a durable, inspectable record of what was done and what evidence supported it.</p>
+        </div>
+        <div class="ec-gov-card">
+          <div class="ec-gov-num">03 / BOUNDARY</div>
+          <h3>Hard execution boundary</h3>
+          <p>The authority layer operates independently of the model. Execution decisions are not delegated to the inference provider.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXERGYCODE + STUDIO -->
+  <section class="section section-alt" aria-labelledby="studio-heading">
+    <div class="wrap">
+      <div class="ec-two-col">
+        <div>
+          <div class="eyebrow" style="margin-bottom:var(--s-4)"><span class="dot" aria-hidden="true"></span>Two interfaces</div>
+          <h2 id="studio-heading">Terminal first.<br>Workspace when you need it.</h2>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-4)">ExergyCode is a terminal-native tool. Everything works from the command line.</p>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-6)">When you want the graphical workspace — visual file diffs, checkpoint timelines, multi-agent coordination, approval interfaces — ExergyNet Studio is the graphical layer for the same underlying runtime.</p>
+          <p style="font-size:var(--t-sm);color:var(--text-3);font-family:var(--mono);margin-bottom:var(--s-6)">One account. One memory namespace. Two interfaces.</p>
+          <a class="btn btn-outline" href="studio.html">Explore ExergyNet Studio <span aria-hidden="true">→</span></a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+          <div class="ec-feat-card" style="flex:1">
+            <div class="ec-feat-icon" aria-hidden="true">⌘</div>
+            <h3>ExergyCode — terminal</h3>
+            <p>Full engineering capability from the command line. Persistent memory, governed execution, provider management, and resource accounting in one CLI.</p>
+          </div>
+          <div class="ec-feat-card" style="flex:1">
+            <div class="ec-feat-icon" aria-hidden="true">▣</div>
+            <h3>ExergyNet Studio — graphical layer</h3>
+            <p>Visual workspace for checkpoint review, multi-agent coordination, and approval workflows. Alpha release. Distribution pending legal approval.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGENT CONTINUITY -->
+  <section class="section" aria-labelledby="continuity-heading">
+    <div class="wrap">
+      <div class="ec-two-col-rev" style="align-items:center">
+        <div class="ec-feat-card" style="padding:var(--s-8)">
+          <div class="eyebrow" style="margin-bottom:var(--s-3)">Available now</div>
+          <h3 style="font-size:var(--t-2xl);font-weight:700;margin:0 0 var(--s-3)">Agent Continuity</h3>
+          <p style="font-size:var(--t-base);color:var(--text-2);line-height:1.7;margin-bottom:var(--s-5)">Carry project context across Claude Code, OpenCode, and Codex CLI — no account required. Local-first, verified checkpoints, Ed25519 signatures.</p>
+          <div style="font-family:var(--mono);font-size:var(--t-xs);color:var(--text-3);margin-bottom:var(--s-5)">Version 0.4.0-beta.3 · Linux / Ubuntu WSL2 qualified</div>
+          <a class="btn btn-primary" href="continuity.html">Get Agent Continuity <span aria-hidden="true">→</span></a>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:var(--s-4)"><span class="dot" aria-hidden="true"></span>Integration layer</div>
+          <h2 id="continuity-heading">Your checkpoints.<br>Every client.</h2>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-4)">Agent Continuity is the cross-client checkpoint layer that connects ExergyCode sessions to Claude Code, OpenCode, and Codex CLI. No ExergyNet account required for the beta.</p>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75">When ExergyCode reaches general availability, Continuity becomes the bridge between sessions — preserving what was verified and carrying it forward.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALLATION -->
+  <section class="section section-alt" aria-labelledby="install-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Onboarding</div>
+        <h2 id="install-heading">Get started in three steps.</h2>
+      </div>
+      <div style="max-width:620px">
+        <div class="ec-steps">
+          <div class="ec-step">
+            <div class="ec-step-num">1</div>
+            <div class="ec-step-body">
+              <h4>Create an ExergyNet account</h4>
+              <p>Register at the Developer Portal and obtain your API key (<code>sk-exergy-...</code>).</p>
+              <a class="btn btn-outline btn-sm" href="https://portal.exergynet.org" target="_blank" rel="noopener">Open portal <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+          <div class="ec-step">
+            <div class="ec-step-num">2</div>
+            <div class="ec-step-body">
+              <h4>Download ExergyCode</h4>
+              <p>Qualified releases are announced at <a href="mailto:ai@exergynet.org" style="color:var(--accent)">ai@exergynet.org</a>. Register at the portal to be notified when the first release is authorized.</p>
+              <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;margin-top:var(--s-3)">
+                <span class="btn btn-outline btn-sm btn-disabled" aria-disabled="true">Linux / WSL2 (coming)</span>
+                <span class="btn btn-outline btn-sm btn-disabled" aria-disabled="true">macOS (coming)</span>
+                <span class="btn btn-outline btn-sm btn-disabled" aria-disabled="true">Windows (coming)</span>
+              </div>
+            </div>
+          </div>
+          <div class="ec-step">
+            <div class="ec-step-num">3</div>
+            <div class="ec-step-body">
+              <h4>Connect and start</h4>
+              <div class="terminal-block" aria-label="Connection commands" style="margin-top:var(--s-3)">
+                <div><span class="tp">$</span> <span class="tx">exergycode auth --key sk-exergy-...</span></div>
+                <div><span class="tp">$</span> <span class="tx">exergycode connect --provider anthropic</span></div>
+                <div><span class="tp">$</span> <span class="tx">exergycode start</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ec-notice">
+          <strong>ExergyCode is in active development.</strong> The installer will be available when the first qualified release is authorized for public distribution. <a href="#release-status" style="color:var(--accent)">See release status ↓</a>
+        </div>
+        <p style="font-size:var(--t-sm);color:var(--text-3);margin-top:var(--s-4)">While ExergyCode reaches release, <a href="continuity.html" style="color:var(--accent)">Agent Continuity</a> and the <a href="https://github.com/ezumba/vanguard-memory-node" target="_blank" rel="noopener" style="color:var(--accent)">Vanguard Memory Node</a> are available today.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section" aria-labelledby="pricing-heading">
+    <div class="wrap" style="text-align:center;max-width:600px;margin-inline:auto">
+      <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Access</div>
+      <h2 id="pricing-heading">Start free.</h2>
+      <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-6)">ExergyCode is available to all ExergyNet developers. Free tier includes BYOK inference, local VMN memory, and governed execution. Professional, Team, and Enterprise plans add cloud-synced memory, ExergyNet Studio, and priority support.</p>
+      <div style="display:flex;gap:var(--s-4);justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary btn-lg" href="https://portal.exergynet.org" target="_blank" rel="noopener">Create account <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-outline btn-lg" href="docs.html">View documentation <span aria-hidden="true">→</span></a>
+      </div>
+      <p style="font-size:var(--t-xs);color:var(--text-3);margin-top:var(--s-6);font-family:var(--mono)">Subscription pricing will be published when ExergyCode reaches general availability.</p>
+    </div>
+  </section>
+
+  <!-- DOCUMENTATION -->
+  <section class="section section-alt" aria-labelledby="docs-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Resources</div>
+        <h2 id="docs-heading">Everything you need to build.</h2>
+      </div>
+      <div class="ec-docs-grid">
+        <a class="ec-doc-link" href="docs.html">
+          <span class="ec-doc-link-icon">📖</span>
+          <div>
+            <div style="font-weight:600">ExergyCode documentation</div>
+            <div style="color:var(--text-3);font-size:var(--t-xs);margin-top:2px">Installation, configuration, provider setup, CLI reference</div>
+          </div>
+        </a>
+        <a class="ec-doc-link" href="docs.html">
+          <span class="ec-doc-link-icon">◇</span>
+          <div>
+            <div style="font-weight:600">VMN quickstart</div>
+            <div style="color:var(--text-3);font-size:var(--t-xs);margin-top:2px">Local memory node setup and tool reference</div>
+          </div>
+        </a>
+        <a class="ec-doc-link" href="rho.html">
+          <span class="ec-doc-link-icon">≋</span>
+          <div>
+            <div style="font-weight:600">RHO specification</div>
+            <div style="color:var(--text-3);font-size:var(--t-xs);margin-top:2px">Resource accounting unit definition and accounting rules</div>
+          </div>
+        </a>
+        <a class="ec-doc-link" href="continuity.html">
+          <span class="ec-doc-link-icon">↗</span>
+          <div>
+            <div style="font-weight:600">Agent Continuity</div>
+            <div style="color:var(--text-3);font-size:var(--t-xs);margin-top:2px">Cross-client checkpoint handoff — no account required</div>
+          </div>
+        </a>
+        <a class="ec-doc-link" href="https://exergynet.org/api-integration.html">
+          <span class="ec-doc-link-icon">⚙</span>
+          <div>
+            <div style="font-weight:600">API reference <span aria-hidden="true">↗</span></div>
+            <div style="color:var(--text-3);font-size:var(--t-xs);margin-top:2px">Portal REST API and OpenAPI spec</div>
+          </div>
+        </a>
+        <a class="ec-doc-link" href="whitepaper.html">
+          <span class="ec-doc-link-icon">📄</span>
+          <div>
+            <div style="font-weight:600">ExergyNet V5 white paper</div>
+            <div style="color:var(--text-3);font-size:var(--t-xs);margin-top:2px">Persistent state, bounded context, authority layer</div>
+          </div>
+        </a>
+        <a class="ec-doc-link" href="mailto:ai@exergynet.org">
+          <span class="ec-doc-link-icon">✉</span>
+          <div>
+            <div style="font-weight:600">Support</div>
+            <div style="color:var(--text-3);font-size:var(--t-xs);margin-top:2px">ai@exergynet.org</div>
+          </div>
+        </a>
+        <a class="ec-doc-link" href="https://github.com/ezumba/vanguard-memory-node" target="_blank" rel="noopener">
+          <span class="ec-doc-link-icon">◫</span>
+          <div>
+            <div style="font-weight:600">Open source ↗</div>
+            <div style="color:var(--text-3);font-size:var(--t-xs);margin-top:2px">Vanguard Memory Node on GitHub</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELEASE STATUS -->
+  <section class="section" id="release-status" aria-labelledby="release-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Current state</div>
+        <h2 id="release-heading">Release status</h2>
+        <p>What is available today, what is in development, and what is coming.</p>
+      </div>
+      <table class="ec-release-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ExergyCode binary</td>
+            <td><span class="ec-badge ec-badge-amber">IN DEVELOPMENT</span></td>
+            <td>Not yet available for download</td>
+          </tr>
+          <tr>
+            <td>Linux / Ubuntu WSL2</td>
+            <td><span class="ec-badge ec-badge-gray">PLANNED</span></td>
+            <td>First qualified environment</td>
+          </tr>
+          <tr>
+            <td>macOS</td>
+            <td><span class="ec-badge ec-badge-gray">PLANNED</span></td>
+            <td>Planned qualified environment</td>
+          </tr>
+          <tr>
+            <td>Windows (native)</td>
+            <td><span class="ec-badge ec-badge-gray">PLANNED</span></td>
+            <td>Planned qualified environment</td>
+          </tr>
+          <tr>
+            <td>ExergyNet Studio (graphical layer)</td>
+            <td><span class="ec-badge ec-badge-blue">ALPHA</span></td>
+            <td>21/21 automated tests PASS. Distribution pending legal approval.</td>
+          </tr>
+          <tr>
+            <td>Agent Continuity (integration layer)</td>
+            <td><span class="ec-badge ec-badge-amber">BETA</span></td>
+            <td>v0.4.0-beta.3. Distribution pending final EDT licensing approval.</td>
+          </tr>
+          <tr>
+            <td>VMN local memory node</td>
+            <td><span class="ec-badge ec-badge-green">PRODUCTION ✓</span></td>
+            <td>Available via npm. <a href="https://github.com/ezumba/vanguard-memory-node" target="_blank" rel="noopener" style="color:var(--accent)">View on GitHub ↗</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:var(--s-10);display:flex;gap:var(--s-4);flex-wrap:wrap">
+        <a class="btn btn-primary" href="continuity.html">Get Agent Continuity now <span aria-hidden="true">→</span></a>
+        <a class="btn btn-outline" href="https://portal.exergynet.org" target="_blank" rel="noopener">Get notified about ExergyCode <span aria-hidden="true">↗</span></a>
+      </div>
+      <p style="font-size:var(--t-xs);color:var(--text-3);font-family:var(--mono);margin-top:var(--s-4)">ExergyCode will be announced at ai@exergynet.org when the first qualified release is authorized for public distribution.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer" id="company">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="ExergyNet home">
+          <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+        </a>
+        <p>Persistent state. Bounded context.<br>Independent authority for machine intelligence.</p>
+      </div>
+      <div class="foot-col">
+        <strong>Products</strong>
+        <a href="exergycode.html">ExergyCode</a>
+        <a href="studio.html">ExergyNet Studio</a>
+        <a href="continuity.html">Agent Continuity</a>
+        <a href="https://github.com/ezumba/vanguard-memory-node">Vanguard Memory Node ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Build</strong>
+        <a href="docs.html">Documentation</a>
+        <a href="https://github.com/ezumba/vanguard-memory-node">Open source ↗</a>
+        <a href="https://exergynet.org/api-integration.html">API reference ↗</a>
+        <a href="https://exergynet.org/proof.html">Verification status ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Research</strong>
+        <a href="whitepaper.html">White paper V5</a>
+        <a href="https://exergynet.org/benchmarks.html">Benchmarks ↗</a>
+        <a href="https://exergynet.org/vanguard.html">Vanguard ↗</a>
+        <a href="https://x.com/ExergyNet">Follow ExergyNet ↗</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 EDT INC. ExergyNet — Infrastructure for machine intelligence.</span>
+      <span><a href="https://exergynet.org/legal.html">Legal ↗</a></span>
+    </div>
+  </div>
+</footer>
+
+<dialog class="search-dialog" id="search-dialog" aria-label="Search">
+  <div class="search-top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+    <label class="sr-only" for="site-search">Search pages and guides</label>
+    <input id="site-search" type="search" placeholder="Search pages and guides…" autocomplete="off">
+    <button class="search-esc" aria-label="Close search">Esc</button>
+  </div>
+  <div class="search-results" role="listbox"></div>
+  <div class="search-footer-bar">Tab to navigate · Enter to open · Esc to close</div>
+</dialog>
+
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

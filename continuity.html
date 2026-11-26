@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>Agent Continuity | ExergyNet</title>
+<meta name="description" content="ExergyNet Agent Continuity preserves local project context and verified checkpoints as you move between Claude Code, OpenCode, and Codex CLI. No account required.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="exgn-web006.css">
+<style>
+/* ═══════════════════════════════════════════════════
+   Agent Continuity page — WEB006 supplemental styles
+   WEB006 (WEB-017) — migrated from AC-010 inline CSS
+   ═══════════════════════════════════════════════════ */
+
+/* Release status topbar */
+.ac-topbar {
+  background: var(--bg-muted);
+  border-bottom: 1px solid var(--border);
+  padding: var(--s-2) var(--s-4);
+  text-align: center;
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+.ac-topbar strong { color: var(--accent-h); }
+.ac-topbar a { color: var(--accent); }
+
+/* Hero pill */
+.ac-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-4);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent-h);
+  font-size: var(--t-xs);
+  font-family: var(--mono);
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: var(--s-6);
+}
+.ac-pulse {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* Terminal mockup */
+.ac-terminal {
+  background: #0b1019;
+  border: 1px solid #1e2d3d;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.8;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+}
+.ac-terminal-chrome {
+  display: flex; align-items: center; gap: 6px;
+  padding: 12px 16px;
+  background: #0d1420;
+  border-bottom: 1px solid #1a2535;
+}
+.ac-terminal-dot { width:10px; height:10px; border-radius:50%; }
+.ac-terminal-dot-r { background: #ef4444; }
+.ac-terminal-dot-y { background: #f59e0b; }
+.ac-terminal-dot-g { background: #10b981; }
+.ac-terminal-title { margin-left:auto; font-size:11px; color:rgba(255,255,255,.25); letter-spacing:.08em; }
+.ac-terminal-body { padding: 20px 22px; color: #c8d8ed; }
+.ac-t-row { display: flex; gap: 8px; }
+.ac-t-prompt { color: #80dbb5; }
+.ac-t-cmd { color: #e3ecff; }
+.ac-t-out { color: #7a8da8; }
+.ac-t-hl { color: #8cc9ff; }
+.ac-t-ok { color: #80dbb5; }
+.ac-t-gap { height: 10px; }
+.ac-terminal-card {
+  margin-top: 12px;
+  border: 1px solid rgba(144,178,248,.16);
+  border-radius: 8px;
+  background: rgba(80,123,205,.07);
+  padding: 11px 14px;
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  font-size: 11px;
+}
+.ac-terminal-card .ac-card-label { color: #879ab9; font-size: 10px; }
+.ac-terminal-card strong { color: #ddecff; font-weight: 600; }
+.ac-flow-chips {
+  display: flex; gap: 6px; margin-top: 12px; align-items: center; flex-wrap: wrap;
+}
+.ac-flow-chips span {
+  font: 11px var(--mono); padding: 5px 9px;
+  border: 1px solid rgba(164,187,229,.16); border-radius: 7px;
+  color: #bdc9dd; background: rgba(255,255,255,.02);
+}
+.ac-flow-chips b { color: #526780; font-weight: 500; }
+
+/* Proof strip */
+.ac-proof-strip {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-subtle);
+  padding-block: 0;
+}
+.ac-proof-inner {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: var(--s-8);
+  padding-block: var(--s-6);
+}
+.ac-proof-label {
+  font-family: var(--mono); font-size: var(--t-xs); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--text-3);
+  max-width: 180px;
+}
+.ac-metrics { display: flex; gap: var(--s-14); flex-wrap: wrap; }
+.ac-metric { display: flex; align-items: baseline; gap: var(--s-2); }
+.ac-metric-num { font-size: var(--t-3xl); font-weight: 800; letter-spacing: -.04em; color: var(--text); }
+.ac-metric-label { font-size: var(--t-sm); color: var(--text-3); }
+@media (max-width: 700px) {
+  .ac-proof-inner { flex-direction: column; align-items: flex-start; }
+  .ac-proof-label { max-width: none; }
+  .ac-metrics { gap: var(--s-6); }
+}
+
+/* Feature cards */
+.ac-feat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-4);
+}
+@media (max-width: 860px) { .ac-feat-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 540px) { .ac-feat-grid { grid-template-columns: 1fr; } }
+.ac-feat-card {
+  padding: var(--s-6);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  min-height: 180px;
+}
+.ac-feat-icon {
+  width: 42px; height: 42px; border-radius: var(--r);
+  background: var(--accent-bg);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  display: grid; place-items: center; font-size: 20px;
+  margin-bottom: var(--s-4);
+}
+.ac-feat-card h3 { font-size: var(--t-base); font-weight: 600; margin: 0 0 var(--s-2); }
+.ac-feat-card p { font-size: var(--t-sm); color: var(--text-2); line-height: 1.65; margin: 0; }
+
+/* Workflow steps */
+.ac-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-4);
+}
+@media (max-width: 760px) { .ac-steps-grid { grid-template-columns: 1fr; } }
+.ac-step-card {
+  padding: var(--s-6) var(--s-7);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  position: relative;
+}
+.ac-step-card:not(:last-child)::after {
+  content: "→";
+  position: absolute; right: calc(var(--s-4) * -1 - 10px); top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px; color: var(--text-3);
+}
+@media (max-width: 760px) {
+  .ac-step-card:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: calc(100% + 4px); transform: translateX(-50%); }
+}
+.ac-step-n { font-family: var(--mono); font-size: var(--t-xs); font-weight: 600; color: var(--accent); margin-bottom: var(--s-5); }
+.ac-step-title { font-size: var(--t-xl); font-weight: 700; margin-bottom: var(--s-3); }
+.ac-step-card p { font-size: var(--t-sm); color: var(--text-2); line-height: 1.65; margin: 0 0 var(--s-4); min-height: 60px; }
+.ac-step-foot {
+  display: inline-block;
+  font-family: var(--mono); font-size: var(--t-xs);
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: var(--s-1) var(--s-3);
+}
+
+/* Install panel */
+.ac-install-layout {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: var(--s-14);
+  align-items: center;
+}
+@media (max-width: 860px) { .ac-install-layout { grid-template-columns: 1fr; gap: var(--s-8); } }
+.ac-support-list { display: grid; gap: var(--s-4); margin-top: var(--s-6); }
+.ac-support-item { display: flex; gap: var(--s-3); font-size: var(--t-sm); color: var(--text-2); }
+.ac-check { color: var(--accent); font-size: 15px; flex-shrink: 0; }
+
+.ac-code-panel {
+  background: #0d131e;
+  border: 1px solid #1a2535;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.14);
+  color: #c7d5e9;
+}
+.ac-code-tabs {
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(194,211,245,.09);
+  padding: 0 16px; gap: 8px;
+}
+.ac-tabs-row { display: flex; gap: 16px; }
+.ac-tab {
+  border: 0; border-bottom: 2px solid transparent;
+  padding: 15px 2px 12px; background: transparent;
+  color: #8c9cb4; font-size: 12px; font-weight: 650; cursor: pointer;
+}
+.ac-tab[aria-selected="true"] { color: #dce9ff; border-color: #79a9ff; }
+.ac-copy-btn {
+  font-size: 11px; background: rgba(255,255,255,.045);
+  border: 1px solid rgba(194,211,245,.15); color: #b5c5de;
+  border-radius: 7px; padding: 5px 10px; cursor: pointer;
+}
+.ac-copy-btn:hover { color: #fff; }
+pre.ac-code-content {
+  padding: 22px;
+  min-height: 260px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #c7d5e9;
+  font: 12px/2 var(--mono);
+}
+.ac-code-note {
+  border-top: 1px solid rgba(194,211,245,.09);
+  font-size: 11px; color: #8fa1bc;
+  padding: 11px 22px;
+}
+
+/* Trust grid */
+.ac-trust-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: var(--s-4);
+}
+@media (max-width: 860px) { .ac-trust-grid { grid-template-columns: 1fr; } }
+.ac-trust-lead, .ac-trust-side {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s-7);
+}
+.ac-trust-lead { background: var(--bg-subtle); }
+.ac-trust-side { background: var(--bg); }
+.ac-trust-lead h3, .ac-trust-side h3 { font-size: var(--t-2xl); font-weight: 700; margin: var(--s-3) 0 var(--s-3); }
+.ac-trust-lead p, .ac-trust-side p { font-size: var(--t-sm); color: var(--text-2); line-height: 1.65; }
+.ac-tags { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-5); }
+.ac-tag {
+  font-family: var(--mono); font-size: 11px;
+  padding: var(--s-1) var(--s-3);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--r);
+  color: var(--text-2);
+  background: var(--bg-muted);
+}
+.ac-trust-lines { margin-top: var(--s-5); border-top: 1px solid var(--border); padding-top: var(--s-4); display: grid; gap: var(--s-3); }
+.ac-trust-row { display: flex; justify-content: space-between; gap: var(--s-4); font-size: var(--t-sm); }
+.ac-trust-row span { color: var(--text-3); }
+.ac-trust-row strong { color: var(--text); font-weight: 600; text-align: right; }
+
+/* FAQ */
+.ac-faq-list { border-top: 1px solid var(--border); }
+.ac-faq-list details { border-bottom: 1px solid var(--border); padding: var(--s-5) var(--s-1); }
+.ac-faq-list summary {
+  font-size: var(--t-base); font-weight: 600; cursor: pointer;
+  list-style: none; display: flex; align-items: center;
+  justify-content: space-between; gap: var(--s-4);
+}
+.ac-faq-list summary::-webkit-details-marker { display: none; }
+.ac-faq-list summary::after { content: "+"; font-size: 22px; color: var(--accent); font-weight: 300; }
+.ac-faq-list details[open] summary::after { content: "−"; }
+.ac-faq-list details p { font-size: var(--t-sm); color: var(--text-2); line-height: 1.8; max-width: 840px; margin: var(--s-4) 0 0; }
+
+/* Final CTA box */
+.ac-cta-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s-14);
+  position: relative;
+  overflow: hidden;
+}
+.ac-cta-box h2 { font-size: clamp(var(--t-2xl), 4vw, var(--t-5xl)); font-weight: 800; letter-spacing: -.04em; line-height: 1.1; max-width: 600px; margin-bottom: var(--s-4); }
+.ac-cta-box p { font-size: var(--t-base); color: var(--text-2); max-width: 540px; margin-bottom: var(--s-7); }
+.ac-cta-note { font-size: var(--t-xs); font-family: var(--mono); color: var(--text-3); margin-top: var(--s-5); }
+.ac-hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; align-items: center; gap: var(--s-16); }
+.ac-rel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-16); align-items: center; }
+@media (max-width: 860px) { .ac-hero-grid, .ac-rel-grid { grid-template-columns: 1fr; gap: var(--s-8); } }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main-content">Skip to content</a>
+
+<div class="ac-topbar">
+  <strong>Release candidate verified.</strong> Public distribution is pending final EDT licensing approval. <a href="#release-status">Release status ↓</a>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="ExergyNet home">
+      <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+    </a>
+    <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+      <a href="index.html#platform">Platform</a>
+      <a href="exergycode.html" aria-current="page">Products</a>
+      <a href="docs.html">Developers</a>
+      <a href="whitepaper.html">Research</a>
+      <a href="index.html#company">Company</a>
+    </nav>
+    <div class="header-actions">
+      <button class="search-trigger" aria-label="Search" id="search-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+        <span class="s-label">Search</span>
+        <kbd>⌘K</kbd>
+      </button>
+      <a class="btn btn-primary" href="#install">Get started <span aria-hidden="true">→</span></a>
+      <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main-content">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="ac-hero-grid">
+        <div>
+          <div class="ac-hero-pill"><span class="ac-pulse" aria-hidden="true"></span>Local-first developer infrastructure · Beta 0.4.0</div>
+          <h1>One project.<br><em>Every AI agent.</em></h1>
+          <p class="hero-sub">Your work should outlive your AI session. Carry project requirements, architectural decisions, and verified checkpoints across Claude Code, OpenCode, and Codex CLI — without rebuilding context every time.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="#install">Get started <span aria-hidden="true">↗</span></a>
+            <a class="btn btn-outline btn-lg" href="#workflow">See how it works <span aria-hidden="true">→</span></a>
+          </div>
+          <div style="display:flex;gap:var(--s-5);flex-wrap:wrap;margin-top:var(--s-6);font-size:var(--t-sm);color:var(--text-3)">
+            <span>✓ No account required</span>
+            <span>✓ Local project memory</span>
+            <span>✓ Compatible MCP clients</span>
+          </div>
+        </div>
+        <div>
+          <div class="ac-terminal" aria-label="Illustrative terminal showing continuity across AI clients">
+            <div class="ac-terminal-chrome">
+              <div class="ac-terminal-dot ac-terminal-dot-r" aria-hidden="true"></div>
+              <div class="ac-terminal-dot ac-terminal-dot-y" aria-hidden="true"></div>
+              <div class="ac-terminal-dot ac-terminal-dot-g" aria-hidden="true"></div>
+              <span class="ac-terminal-title">exergynet / project-state</span>
+            </div>
+            <div class="ac-terminal-body" aria-hidden="true">
+              <div class="ac-t-row"><span class="ac-t-prompt">❯</span><span class="ac-t-cmd">exergynet status</span></div>
+              <div>project <span class="ac-t-hl">my-app</span> &nbsp;·&nbsp; storage <span class="ac-t-ok">LOCAL_ONLY</span></div>
+              <div class="ac-t-gap"></div>
+              <div class="ac-t-row"><span class="ac-t-prompt">❯</span><span class="ac-t-cmd">exergynet checkpoints --verify</span></div>
+              <div>cp-001 &nbsp; Claude Code &nbsp; <span class="ac-t-ok">✓ verified</span></div>
+              <div>cp-002 &nbsp; OpenCode &nbsp;&nbsp;&nbsp; <span class="ac-t-ok">✓ verified</span></div>
+              <div>cp-003 &nbsp; Codex CLI &nbsp; <span class="ac-t-ok">✓ verified</span></div>
+              <div class="ac-terminal-card">
+                <div><div class="ac-card-label">LATEST PROJECT CHECKPOINT</div><strong>State retained across clients</strong></div>
+                <span class="ac-t-ok">● LOCAL</span>
+              </div>
+              <div class="ac-flow-chips" aria-label="Supported clients">
+                <span>Claude Code</span><b>→</b><span>OpenCode</span><b>→</b><span>Codex CLI</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF STRIP -->
+  <div class="ac-proof-strip" aria-label="Controlled qualification results">
+    <div class="wrap ac-proof-inner">
+      <div class="ac-proof-label">Demonstrated in isolated real-client qualification</div>
+      <div class="ac-metrics">
+        <div class="ac-metric"><strong class="ac-metric-num">3/3</strong><span class="ac-metric-label">AI clients completed</span></div>
+        <div class="ac-metric"><strong class="ac-metric-num">30/30</strong><span class="ac-metric-label">Project tests passed</span></div>
+        <div class="ac-metric"><strong class="ac-metric-num">3</strong><span class="ac-metric-label">Chained checkpoints</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="section" id="features" aria-labelledby="features-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Designed for uninterrupted work</div>
+        <h2 id="features-heading">Switch tools.<br>Not your project's direction.</h2>
+        <p>Agent Continuity gives the tools you already use a shared local project-state layer, so important decisions survive client changes and process restarts.</p>
+      </div>
+      <div class="ac-feat-grid">
+        <article class="ac-feat-card">
+          <div class="ac-feat-icon" aria-hidden="true">↗</div>
+          <h3>Cross-client handoff</h3>
+          <p>Start with one AI coding client and continue with another, retrieving the latest checkpoint instead of manually reproducing the project brief.</p>
+        </article>
+        <article class="ac-feat-card">
+          <div class="ac-feat-icon" aria-hidden="true">◇</div>
+          <h3>Persistent project context</h3>
+          <p>Store the requirements, decisions, task progress, and relevant evidence that help the next agent understand what is already established.</p>
+        </article>
+        <article class="ac-feat-card">
+          <div class="ac-feat-icon" aria-hidden="true">⌁</div>
+          <h3>Verifiable checkpoints</h3>
+          <p>Use hash-linked local checkpoints, Ed25519 signatures, and source hashes to detect unauthorized changes to recorded state.</p>
+        </article>
+        <article class="ac-feat-card">
+          <div class="ac-feat-icon" aria-hidden="true">▣</div>
+          <h3>Local control</h3>
+          <p>Project vaults and checkpoint state stay on your workstation in this beta. No ExergyNet cloud account or hosted sync is required.</p>
+        </article>
+        <article class="ac-feat-card">
+          <div class="ac-feat-icon" aria-hidden="true">⌘</div>
+          <h3>Native terminal workflow</h3>
+          <p>Initialize, connect clients, inspect state, diagnose problems, and restore prior client configurations through the ExergyNet CLI.</p>
+        </article>
+        <article class="ac-feat-card">
+          <div class="ac-feat-icon" aria-hidden="true">◫</div>
+          <h3>Local project dashboard</h3>
+          <p>Open a browser-based view of your local checkpoints, connection state, and diagnostics, served only over loopback (<code>127.0.0.1</code>).</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKFLOW -->
+  <section class="section section-alt" id="workflow" aria-labelledby="workflow-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>A simpler way to continue</div>
+        <h2 id="workflow-heading">One workflow. Three clients.<br>Context intact.</h2>
+        <p>Based on the three-stage acceptance scenario. Each agent can build from a previous checkpoint without receiving a manually copied conversation summary.</p>
+      </div>
+      <div class="ac-steps-grid">
+        <article class="ac-step-card">
+          <div class="ac-step-n">01 / ESTABLISH</div>
+          <div class="ac-step-title">Build in Claude Code</div>
+          <p>Implement the first task. Save requirements, decisions, completion state, and file hashes in a local checkpoint.</p>
+          <span class="ac-step-foot">cp-001 · version 1</span>
+        </article>
+        <article class="ac-step-card">
+          <div class="ac-step-n">02 / CONTINUE</div>
+          <div class="ac-step-title">Switch to OpenCode</div>
+          <p>Discover and verify prior state, preserve the contract, and continue the next task without manual handoff.</p>
+          <span class="ac-step-foot">cp-002 · version 2</span>
+        </article>
+        <article class="ac-step-card">
+          <div class="ac-step-n">03 / RECOVER</div>
+          <div class="ac-step-title">Restart. Finish in Codex.</div>
+          <p>Recover the checkpoint after authority restart, verify existing files, and complete the remaining work.</p>
+          <span class="ac-step-foot">cp-003 · version 3</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section class="section" id="install" aria-labelledby="install-heading">
+    <div class="wrap">
+      <div class="ac-install-layout">
+        <div>
+          <div class="eyebrow" style="margin-bottom:var(--s-4)"><span class="dot" aria-hidden="true"></span>Terminal-first setup</div>
+          <h2 id="install-heading">Get continuity<br>into your workflow.</h2>
+          <p style="font-size:var(--t-base);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-4)">Install locally, initialize your project, and connect the coding clients you already use. The public download link will activate after release approval.</p>
+          <div class="ac-support-list">
+            <div class="ac-support-item"><span class="ac-check">✓</span><span>Node.js 20+, npm, and network access during installation</span></div>
+            <div class="ac-support-item"><span class="ac-check">✓</span><span>Qualified on Linux / Ubuntu WSL2 and Windows Claude Code with WSL bridge</span></div>
+            <div class="ac-support-item"><span class="ac-check">✓</span><span>macOS and native Windows CLI remain experimental and unqualified</span></div>
+          </div>
+          <a class="btn btn-outline" href="#release-status" style="margin-top:var(--s-6)">View release status <span aria-hidden="true">↗</span></a>
+        </div>
+        <div>
+          <div class="ac-code-panel">
+            <div class="ac-code-tabs">
+              <div class="ac-tabs-row" role="tablist" aria-label="Installation commands">
+                <button type="button" role="tab" id="ac-tab-setup" class="ac-tab" aria-selected="true" aria-controls="ac-commands-panel" data-tab="setup">Install</button>
+                <button type="button" role="tab" id="ac-tab-connect" class="ac-tab" aria-selected="false" aria-controls="ac-commands-panel" data-tab="connect">Connect</button>
+                <button type="button" role="tab" id="ac-tab-verify" class="ac-tab" aria-selected="false" aria-controls="ac-commands-panel" data-tab="verify">Verify</button>
+              </div>
+              <button class="ac-copy-btn" type="button" id="ac-copy-code" aria-label="Copy current commands">Copy</button>
+            </div>
+            <pre id="ac-commands-panel" role="tabpanel" aria-labelledby="ac-tab-setup" class="ac-code-content"># After obtaining the approved release archive and checksum
+sha256sum -c exergynet-agent-continuity-0.4.0-beta.3.tar.gz.sha256
+tar -xzf exergynet-agent-continuity-0.4.0-beta.3.tar.gz
+cd exergynet-agent-continuity-0.4.0-beta.3
+sha256sum -c SHA256SUMS
+./install.sh --prefix "$HOME/.exergynet-continuity"</pre>
+            <div class="ac-code-note">Version 0.4.0-beta.3 · Local-only · Installation uses pinned npm dependencies</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <section class="section section-alt" id="trust" aria-labelledby="trust-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Bounded by design</div>
+        <h2 id="trust-heading">Your project stays yours.</h2>
+        <p>Precise trust boundaries matter. The local beta verifies checkpoint integrity without claiming independently attested remote authority.</p>
+      </div>
+      <div class="ac-trust-grid">
+        <div class="ac-trust-lead">
+          <div class="eyebrow">Privacy &amp; control</div>
+          <h3>Local memory.<br>No required cloud account.</h3>
+          <p>Your project vault, checkpoint chain, and local signing material remain on your machine in the supported beta configuration. The local dashboard binds to <code>127.0.0.1</code>.</p>
+          <div class="ac-tags">
+            <span class="ac-tag">LOCAL_ONLY</span>
+            <span class="ac-tag">authoritative: false</span>
+            <span class="ac-tag">expected_origin_attested: false</span>
+            <span class="ac-tag">Ed25519 verification</span>
+            <span class="ac-tag">No required payment</span>
+          </div>
+        </div>
+        <div class="ac-trust-side">
+          <div class="eyebrow">Trust scope</div>
+          <h3>Verified does not mean hosted.</h3>
+          <p>Local signature and integrity validation are distinct from independent origin attestation or hosted synchronization.</p>
+          <div class="ac-trust-lines">
+            <div class="ac-trust-row"><span>Local checkpoint integrity</span><strong>Verified in test</strong></div>
+            <div class="ac-trust-row"><span>Independent remote authority</span><strong>Not enabled</strong></div>
+            <div class="ac-trust-row"><span>Storage mode</span><strong>Local only</strong></div>
+            <div class="ac-trust-row"><span>Multi-writer operation</span><strong>Not qualified</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXERGYCODE RELATIONSHIP -->
+  <section class="section" aria-labelledby="ec-rel-heading">
+    <div class="wrap">
+      <div class="ac-rel-grid">
+        <div>
+          <div class="eyebrow" style="margin-bottom:var(--s-4)"><span class="dot" aria-hidden="true"></span>ExergyNet ecosystem</div>
+          <h2 id="ec-rel-heading">Continuity is part of a larger infrastructure.</h2>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75;margin-bottom:var(--s-4)">Agent Continuity is the cross-client checkpoint layer. ExergyCode is the terminal engineering environment. ExergyNet Studio is the graphical workspace.</p>
+          <p style="font-size:var(--t-lg);color:var(--text-2);line-height:1.75">When ExergyCode reaches general availability, Continuity becomes the bridge between sessions — carrying what was verified from one interface to the next.</p>
+        </div>
+        <div style="display:grid;gap:var(--s-4)">
+          <div style="padding:var(--s-5) var(--s-6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-subtle)">
+            <div style="font-family:var(--mono);font-size:var(--t-xs);font-weight:600;color:var(--accent);margin-bottom:var(--s-2)">AGENT CONTINUITY</div>
+            <div style="font-size:var(--t-sm);color:var(--text-2)">Cross-client checkpoint layer. No account required. Available now in beta.</div>
+          </div>
+          <div style="padding:var(--s-5) var(--s-6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg)">
+            <div style="font-family:var(--mono);font-size:var(--t-xs);font-weight:600;color:var(--text-3);margin-bottom:var(--s-2)">EXERGYCODE</div>
+            <div style="font-size:var(--t-sm);color:var(--text-2)">Terminal AI engineering environment. In development. <a href="exergycode.html" style="color:var(--accent)">Learn more →</a></div>
+          </div>
+          <div style="padding:var(--s-5) var(--s-6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg)">
+            <div style="font-family:var(--mono);font-size:var(--t-xs);font-weight:600;color:var(--text-3);margin-bottom:var(--s-2)">EXERGYNET STUDIO</div>
+            <div style="font-size:var(--t-sm);color:var(--text-2)">Graphical workspace. Alpha. Distribution pending legal approval. <a href="studio.html" style="color:var(--accent)">Learn more →</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section-alt" id="faq" aria-labelledby="faq-heading">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Questions, answered</div>
+        <h2 id="faq-heading">Built to fit how you work.</h2>
+      </div>
+      <div class="ac-faq-list">
+        <details>
+          <summary>Is Agent Continuity another AI coding assistant?</summary>
+          <p>No. It is a continuity and memory layer for supported AI coding clients. Claude Code, OpenCode, and Codex CLI remain the tools that perform the coding work.</p>
+        </details>
+        <details>
+          <summary>Does my project get uploaded to ExergyNet?</summary>
+          <p>Not in this local-first beta. The supported configuration stores local memory and checkpoints on your workstation. Feedback is optional and should never include credentials or confidential project content.</p>
+        </details>
+        <details>
+          <summary>What happens when I restart my environment?</summary>
+          <p>The local authority can reload persisted checkpoint state. The accepted three-client test included an authority restart before Codex CLI recovered and verified the prior checkpoint.</p>
+        </details>
+        <details>
+          <summary>Can several people write to the same vault simultaneously?</summary>
+          <p>Concurrent multi-writer operation is not qualified in this beta. Use sequential single-writer access to each local vault.</p>
+        </details>
+        <details>
+          <summary>Is the beta open source?</summary>
+          <p>The Vanguard Memory Node component is licensed separately under MIT, and third-party dependencies retain their own licenses. Newly authored ExergyNet CLI, bridge, and web components are intended for proprietary beta distribution, subject to final Trustee and legal approval.</p>
+        </details>
+        <details>
+          <summary>Which operating systems are supported?</summary>
+          <p>Linux and Ubuntu WSL2 were qualified, including Windows Claude Code through the WSL bridge. Native Windows without WSL2 and macOS remain experimental and have not received the same qualification.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELEASE STATUS -->
+  <section class="section" id="release-status" aria-labelledby="rs-heading">
+    <div class="wrap">
+      <div class="ac-cta-box">
+        <div class="eyebrow" style="margin-bottom:var(--s-3)">0.4.0-beta.3 · Distribution gate</div>
+        <h2>Continuity should not end<br>when a session does.</h2>
+        <p>The release candidate has passed local qualification. Public package distribution is awaiting approval of the proprietary beta license and source disclosure boundary.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#install">Review installation <span aria-hidden="true">↗</span></a>
+          <a class="btn btn-outline btn-lg" href="#trust">Trust &amp; licensing status <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="ac-cta-note">Public release destination awaits final proprietary license approval. Archive SHA-256: 32d7b8317247ded2ae4545b4adeadd113ce9cb737ad9ff66872ea8808590d209</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer" id="company">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="ExergyNet home">
+          <img src="assets/logo.png" alt="ExergyNet" width="175" height="34">
+        </a>
+        <p>Persistent state. Bounded context.<br>Independent authority for machine intelligence.</p>
+      </div>
+      <div class="foot-col">
+        <strong>Products</strong>
+        <a href="exergycode.html">ExergyCode</a>
+        <a href="studio.html">ExergyNet Studio</a>
+        <a href="continuity.html">Agent Continuity</a>
+        <a href="https://github.com/ezumba/vanguard-memory-node">Vanguard Memory Node ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Build</strong>
+        <a href="docs.html">Documentation</a>
+        <a href="https://github.com/ezumba/vanguard-memory-node">Open source ↗</a>
+        <a href="https://exergynet.org/api-integration.html">API reference ↗</a>
+        <a href="https://exergynet.org/proof.html">Verification status ↗</a>
+      </div>
+      <div class="foot-col">
+        <strong>Research</strong>
+        <a href="whitepaper.html">White paper V5</a>
+        <a href="https://exergynet.org/benchmarks.html">Benchmarks ↗</a>
+        <a href="https://exergynet.org/vanguard.html">Vanguard ↗</a>
+        <a href="https://x.com/ExergyNet">Follow ExergyNet ↗</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 EDT INC. ExergyNet proprietary components. Third-party licenses retained.</span>
+      <span><a href="https://exergynet.org/legal.html">Legal ↗</a></span>
+    </div>
+  </div>
+</footer>
+
+<dialog class="search-dialog" id="search-dialog" aria-label="Search">
+  <div class="search-top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+    <label class="sr-only" for="site-search">Search pages and guides</label>
+    <input id="site-search" type="search" placeholder="Search pages and guides…" autocomplete="off">
+    <button class="search-esc" aria-label="Close search">Esc</button>
+  </div>
+  <div class="search-results" role="listbox"></div>
+  <div class="search-footer-bar">Tab to navigate · Enter to open · Esc to close</div>
+</dialog>
+
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script src="app.js"></script>
+<script>
+(()=>{
+  const snippets = {
+    setup: '# After obtaining the approved release archive and checksum\nsha256sum -c exergynet-agent-continuity-0.4.0-beta.3.tar.gz.sha256\ntar -xzf exergynet-agent-continuity-0.4.0-beta.3.tar.gz\ncd exergynet-agent-continuity-0.4.0-beta.3\nsha256sum -c SHA256SUMS\n./install.sh --prefix "$HOME/.exergynet-continuity"',
+    connect: '# Make the CLI available in your terminal\nexport PATH="$HOME/.exergynet-continuity/bin:$PATH"\n\n# Initialize a project and connect supported clients\nexergynet init\nexergynet connect all\nexergynet doctor',
+    verify: '# Inspect project continuity and verified local checkpoints\nexergynet status\nexergynet checkpoints --verify\n\n# View your private local dashboard\nexergynet web --port 4318\n\n# Restore earlier client configuration when needed\nexergynet disconnect all --rollback',
+  };
+  const panel = document.getElementById('ac-commands-panel');
+  const tabs = [...document.querySelectorAll('.ac-tab')];
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+      panel.textContent = snippets[tab.dataset.tab];
+      panel.setAttribute('aria-labelledby', tab.id);
+    });
+  });
+  const copyBtn = document.getElementById('ac-copy-code');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(panel.textContent);
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1600);
+      } catch {
+        copyBtn.textContent = 'Select text';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1800);
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
